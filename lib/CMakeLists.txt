@@ -3,6 +3,7 @@ add_library(StormByte-videoconvert-library STATIC
     ffmpeg/stream/base.cxx
 	ffmpeg/stream/audio/base.cxx
 	ffmpeg/stream/audio/aac.cxx
+	ffmpeg/stream/audio/fdk_aac.cxx
 	ffmpeg/stream/audio/ac3.cxx
 	ffmpeg/stream/audio/eac3.cxx
 	ffmpeg/stream/audio/opus.cxx

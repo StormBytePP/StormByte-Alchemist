@@ -25,7 +25,5 @@ int main(int argc, char **argv) {
 
 	StormByte::VideoConvert::Application app;
 
-	app.run(argc, argv);
-
-	return 0;
+	return app.run(argc, argv);
 }

@@ -15,7 +15,7 @@ StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {
 }
 
 StormByte::VideoConvert::Application::Application::~Application() {}
-
+#include "database/sqlite3.hxx"
 int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 	if (!init_from_config()) return 1;
 	switch(init_from_cli(argc, argv)) {
@@ -29,6 +29,15 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 		case ERROR:
 			return 1;
 	}
+	try {
+		StormByte::VideoConvert::Database::SQLite3 db(m_database_file);
+		db.test();
+	}
+	catch (const std::runtime_error& err) {
+		std::cerr << "Can not start program" << std::endl << err.what() << std::endl;
+		return 1;
+	}
+
 	return 0;
 }
 

@@ -7,6 +7,7 @@
 #include "stream/video/hevc.hxx"
 #include "stream/video/copy.hxx"
 #include "stream/audio/aac.hxx"
+#include "stream/audio/fdk_aac.hxx"
 #include "stream/audio/ac3.hxx"
 #include "stream/audio/eac3.hxx"
 #include "stream/audio/opus.hxx"
