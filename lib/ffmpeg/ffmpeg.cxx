@@ -81,7 +81,7 @@ void StormByte::VideoConvert::FFmpeg::debug() const {
 	std::cout << "Input file: " << m_input_file << "\n";
 	std::cout << "Output file: " << m_output_file << "\n";
 	std::cout << "Streams (" << m_streams.size() << "):\n";
-	// for (auto it = m_streams.begin(); it != m_streams.end(); it++)
-	// 	std::cout << "\t" << (*it)->get_encoder() << "\n";
+	for (auto it = m_streams.begin(); it != m_streams.end(); it++)
+		std::cout << "\t" << (*it)->get_encoder() << "\n";
 	std::cout << std::endl;
 }

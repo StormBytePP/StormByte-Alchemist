@@ -7,6 +7,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			Base(unsigned short stream_id, const std::string& encoder);
 			Base(const Base& base);
+			Base(Base&& base) = default;
 			Base& operator=(const Base& base);
 			virtual ~Base() = default;
 			

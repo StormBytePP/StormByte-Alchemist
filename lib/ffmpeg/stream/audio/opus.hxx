@@ -7,6 +7,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			Opus(unsigned short stream_id);
 			Opus(const Opus& opus);
+			Opus(Opus&& opus) = default;
 			Opus& operator=(const Opus& opus);
 			~Opus() = default;
 

@@ -3,8 +3,8 @@
 const bool StormByte::VideoConvert::Stream::Video::Base::IS_ANIMATION_DEFAULT = false;
 
 StormByte::VideoConvert::Stream::Video::Base::Base(unsigned short stream_id, const std::string& encoder):StormByte::VideoConvert::Stream::Base::Base(stream_id, encoder), m_is_animation(IS_ANIMATION_DEFAULT) {}
-#include <iostream>
-StormByte::VideoConvert::Stream::Video::Base::Base(const Base& copy):StormByte::VideoConvert::Stream::Base::Base(copy), m_is_animation(copy.m_is_animation), m_max_rate(copy.m_max_rate) {}
+
+StormByte::VideoConvert::Stream::Video::Base::Base(const Base& base):StormByte::VideoConvert::Stream::Base::Base(base), m_is_animation(base.m_is_animation), m_max_rate(base.m_max_rate) {}
 
 StormByte::VideoConvert::Stream::Video::Base& StormByte::VideoConvert::Stream::Video::Base::operator=(const Base& base) {
 	if (&base != this) {

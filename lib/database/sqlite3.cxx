@@ -1,6 +1,5 @@
 #include "sqlite3.hxx"
 #include <stdexcept>
-#include <iostream>
 
 const std::string StormByte::VideoConvert::Database::SQLite3::DATABASE_CREATE_SQL =
 	"CREATE TABLE films("

@@ -9,7 +9,7 @@ namespace StormByte::VideoConvert::Stream {
 		public:
 			Base(unsigned short stream_id, const std::string& encoder);
 			Base(const Base& codec_base);
-			Base(Base&&);
+			Base(Base&&) = default;
 			Base& operator=(const Base& codec_base);
 			virtual ~Base() = default;
 

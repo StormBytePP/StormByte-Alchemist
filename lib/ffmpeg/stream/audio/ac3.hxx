@@ -7,6 +7,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			AC3(unsigned short stream_id);
 			AC3(const AC3& ac3);
+			AC3(AC3&& ac3) = default;
 			AC3& operator=(const AC3& ac3);
 			~AC3() = default;
 

@@ -7,6 +7,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			FDKAAC(unsigned short stream_id);
 			FDKAAC(const FDKAAC& fdkaac);
+			FDKAAC(FDKAAC&& fdkaac) = default;
 			virtual FDKAAC& operator=(const FDKAAC& fdkaac);
 			~FDKAAC() = default;
 
