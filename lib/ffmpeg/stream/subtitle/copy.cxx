@@ -10,3 +10,7 @@ StormByte::VideoConvert::Stream::Subtitle::Copy& StormByte::VideoConvert::Stream
 	}
 	return *this;
 }
+
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Subtitle::Copy::copy() const {
+	return new Copy(*this);
+}

@@ -96,6 +96,10 @@ StormByte::VideoConvert::Stream::Video::HEVC& StormByte::VideoConvert::Stream::V
 	return *this;
 }
 
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Video::HEVC::copy() const {
+	return new HEVC(*this);
+}
+
 void StormByte::VideoConvert::Stream::Video::HEVC::set_HDR(const HDR& hdr) {
 	m_hdr = hdr;
 }

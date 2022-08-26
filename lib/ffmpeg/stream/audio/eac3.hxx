@@ -10,6 +10,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			EAC3(EAC3&& eac3) = default;
 			EAC3& operator=(const EAC3& eac3);
 			~EAC3() = default;
+			StormByte::VideoConvert::Stream::Base* copy() const;
 
 			static const std::string EAC3_DEFAULT_ENCODER;
 	};

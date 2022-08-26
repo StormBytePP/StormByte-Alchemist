@@ -17,6 +17,10 @@ StormByte::VideoConvert::Stream::Audio::FDKAAC& StormByte::VideoConvert::Stream:
 	return *this;
 }
 
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::FDKAAC::copy() const {
+	return new FDKAAC(*this);
+}
+
 std::list<std::string> StormByte::VideoConvert::Stream::Audio::FDKAAC::ffmpeg_parameters() const {
 	std::list<std::string> result = StormByte::VideoConvert::Stream::Audio::AAC::ffmpeg_parameters();
 

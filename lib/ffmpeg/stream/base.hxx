@@ -12,6 +12,7 @@ namespace StormByte::VideoConvert::Stream {
 			Base(Base&&) = default;
 			Base& operator=(const Base& codec_base);
 			virtual ~Base() = default;
+			virtual Base* copy() const = 0;
 
 			virtual std::list<std::string> ffmpeg_parameters() const = 0;
 			inline void set_bitrate(const std::string& bit_rate) { m_bitrate = bit_rate; }

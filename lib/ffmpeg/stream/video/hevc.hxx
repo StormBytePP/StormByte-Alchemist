@@ -36,6 +36,7 @@ namespace StormByte::VideoConvert::Stream::Video {
 			HEVC(HEVC&& hevc) = default;
 			HEVC& operator=(const HEVC& hevc);
 			~HEVC() = default;
+			StormByte::VideoConvert::Stream::Base* copy() const;
 
 			void set_HDR(const HDR& hdr);
 			std::list<std::string> ffmpeg_parameters() const;

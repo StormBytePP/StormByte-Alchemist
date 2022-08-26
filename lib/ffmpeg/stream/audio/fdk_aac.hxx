@@ -10,6 +10,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			FDKAAC(FDKAAC&& fdkaac) = default;
 			virtual FDKAAC& operator=(const FDKAAC& fdkaac);
 			~FDKAAC() = default;
+			StormByte::VideoConvert::Stream::Base* copy() const;
 
 			std::list<std::string> ffmpeg_parameters() const;
 

@@ -10,6 +10,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			Copy(Copy&& copy) = default;
 			Copy& operator=(const Copy& copy);
 			~Copy() = default;
+			StormByte::VideoConvert::Stream::Base* copy() const;
 
 			std::list<std::string> ffmpeg_parameters() const;
 	};

@@ -14,12 +14,14 @@ StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg):m_input_file(ffmpeg.m_i
 }
 
 StormByte::VideoConvert::FFmpeg::~FFmpeg() {
+	for (auto it = m_streams.begin(); it != m_streams.end(); it++)
+		delete *it;
 	m_streams.clear();
 	clear_parameters();
 }
 
-void StormByte::VideoConvert::FFmpeg::add_stream(StormByte::VideoConvert::Stream::Base&& stream) {
-	m_streams.push_back(&stream);
+void StormByte::VideoConvert::FFmpeg::add_stream(const StormByte::VideoConvert::Stream::Base& stream) {
+	m_streams.push_back(stream.copy());
 }
 
 #include <iostream>

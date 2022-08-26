@@ -12,3 +12,7 @@ StormByte::VideoConvert::Stream::Audio::Opus& StormByte::VideoConvert::Stream::A
 	}
 	return *this;
 }
+
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::Opus::copy() const {
+	return new Opus(*this);
+}

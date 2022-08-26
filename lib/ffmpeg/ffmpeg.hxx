@@ -23,7 +23,7 @@ namespace StormByte::VideoConvert {
 			FFmpeg& operator=(const FFmpeg& ffmpeg) = delete;
 			~FFmpeg();
 
-			void add_stream(StormByte::VideoConvert::Stream::Base&&);
+			void add_stream(const StormByte::VideoConvert::Stream::Base&);
 			bool exec();
 			inline bool is_empty() const { return m_streams.empty(); }
 			void debug() const; // To be removed

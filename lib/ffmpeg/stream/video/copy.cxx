@@ -11,6 +11,10 @@ StormByte::VideoConvert::Stream::Video::Copy& StormByte::VideoConvert::Stream::V
 	return *this;
 }
 
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Video::Copy::copy() const {
+	return new Copy(*this);
+}
+
 std::list<std::string> StormByte::VideoConvert::Stream::Video::Copy::ffmpeg_parameters() const {
 	std::list<std::string> result = StormByte::VideoConvert::Stream::Video::Base::ffmpeg_parameters();
 

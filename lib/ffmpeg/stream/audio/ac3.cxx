@@ -13,3 +13,6 @@ StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Au
 	return *this;
 }
 
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::AC3::copy() const {
+	return new AC3(*this);
+}

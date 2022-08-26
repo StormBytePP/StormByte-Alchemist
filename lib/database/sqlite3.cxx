@@ -94,39 +94,39 @@ std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database
 						}
 						codec.set_HDR(hdr);
 					}
-					film.add_stream(std::move(codec));
+					film.add_stream(codec);
 					break;
 				}
 				case Data::VIDEO_COPY: {
-					film.add_stream(std::move(Video::Copy(it->id)));
+					film.add_stream(Video::Copy(it->id));
 					break;
 				}
 				case Data::AUDIO_AAC: {
-					film.add_stream(std::move(Audio::AAC(it->id)));
+					film.add_stream(Audio::AAC(it->id));
 					break;
 				}
 				case Data::AUDIO_FDKAAC: {
-					film.add_stream(std::move(Audio::FDKAAC(it->id)));
+					film.add_stream(Audio::FDKAAC(it->id));
 					break;
 				}
 				case Data::AUDIO_AC3: {
-					film.add_stream(std::move(Audio::AC3(it->id)));
+					film.add_stream(Audio::AC3(it->id));
 					break;
 				}
 				case Data::AUDIO_COPY: {
-					film.add_stream(std::move(Audio::Copy(it->id)));
+					film.add_stream(Audio::Copy(it->id));
 					break;
 				}
 				case Data::AUDIO_EAC3: {
-					film.add_stream(std::move(Audio::EAC3(it->id)));
+					film.add_stream(Audio::EAC3(it->id));
 					break;
 				}
 				case Data::AUDIO_OPUS: {
-					film.add_stream(std::move(Audio::Opus(it->id)));
+					film.add_stream(Audio::Opus(it->id));
 					break;
 				}
 				case Data::SUBTITLE_COPY: {
-					film.add_stream(std::move(Subtitle::Copy(it->id)));
+					film.add_stream(Subtitle::Copy(it->id));
 					break;
 				}
 				default: {

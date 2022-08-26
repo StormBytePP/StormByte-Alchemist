@@ -12,3 +12,7 @@ StormByte::VideoConvert::Stream::Audio::AAC& StormByte::VideoConvert::Stream::Au
 	}
 	return *this;
 }
+
+StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::AAC::copy() const {
+	return new AAC(*this);
+}
