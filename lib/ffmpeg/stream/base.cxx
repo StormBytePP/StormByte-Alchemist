@@ -12,3 +12,7 @@ StormByte::VideoConvert::Stream::Base& StormByte::VideoConvert::Stream::Base::op
 	}
 	return *this;
 }
+#include <iostream>
+StormByte::VideoConvert::Stream::Base::Base(Base&& base) {
+	std::cout << "Is this called?" << std::endl;
+}

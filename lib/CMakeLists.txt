@@ -1,7 +1,6 @@
 add_library(StormByte-videoconvert-library STATIC
 	database/sqlite3.cxx
     ffmpeg/stream/base.cxx
-	ffmpeg/stream/ignore.cxx
 	ffmpeg/stream/audio/base.cxx
 	ffmpeg/stream/audio/aac.cxx
 	ffmpeg/stream/audio/fdk_aac.cxx

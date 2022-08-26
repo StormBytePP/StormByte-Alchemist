@@ -33,6 +33,7 @@ namespace StormByte::VideoConvert::Stream::Video {
 
 			HEVC(unsigned short stream_id);
 			HEVC(const HEVC& hevc);
+			HEVC(HEVC&& hevc);
 			HEVC& operator=(const HEVC& hevc);
 			~HEVC() = default;
 

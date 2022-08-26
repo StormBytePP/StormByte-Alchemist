@@ -17,7 +17,7 @@ namespace StormByte::VideoConvert {
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
 			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_OWNER, PROGRAM_VERSION;
-			enum status { OK = 0, CONTINUE, HALT_OK, ERROR };
+			enum status { CONTINUE = 0, HALT_OK, ERROR };
 
 			bool init_from_config();
 			status init_from_cli(int argc, char** argv);

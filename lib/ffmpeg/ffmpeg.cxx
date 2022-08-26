@@ -8,13 +8,10 @@ StormByte::VideoConvert::FFmpeg::FFmpeg(const std::filesystem::path& in, const s
 	m_input_file 	= in;
 	m_output_file 	= out;
 }
-
-// StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg) {
-// 	m_input_file = std::move(ffmpeg.m_input_file);
-// 	m_output_file = std::move(ffmpeg.m_output_file);
-// 	m_streams = std::move(ffmpeg.m_streams);
-// 	m_parameters = std::move(ffmpeg.m_parameters);
-// }
+StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg):m_input_file(ffmpeg.m_input_file), m_output_file(ffmpeg.m_output_file),m_streams(ffmpeg.m_streams),m_parameters(ffmpeg.m_parameters) {
+	ffmpeg.m_streams.clear();
+	ffmpeg.m_parameters.clear();
+}
 
 StormByte::VideoConvert::FFmpeg::~FFmpeg() {
 	m_streams.clear();
@@ -30,7 +27,6 @@ void StormByte::VideoConvert::FFmpeg::add_stream(StormByte::VideoConvert::Stream
 
 bool StormByte::VideoConvert::FFmpeg::exec() {
 	auto& log = StormByte::VideoConvert::Logger::getInstance();
-	auto& log2 = StormByte::VideoConvert::Logger::getInstance();
 
 	log.message("Started");
 
@@ -78,4 +74,14 @@ char* StormByte::VideoConvert::FFmpeg::convert(const std::string& str) {
 	char *pc = new char[str.size()+1];
 	std::strcpy(pc, str.c_str());
 	return pc; 
+}
+
+void StormByte::VideoConvert::FFmpeg::debug() const {
+	std::cout << "FFmpeg contents:\n\n";
+	std::cout << "Input file: " << m_input_file << "\n";
+	std::cout << "Output file: " << m_output_file << "\n";
+	std::cout << "Streams (" << m_streams.size() << "):\n";
+	// for (auto it = m_streams.begin(); it != m_streams.end(); it++)
+	// 	std::cout << "\t" << (*it)->get_encoder() << "\n";
+	std::cout << std::endl;
 }

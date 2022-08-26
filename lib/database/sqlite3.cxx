@@ -1,5 +1,4 @@
 #include "sqlite3.hxx"
-#include "../ffmpeg/stream/ignore.hxx"
 #include <stdexcept>
 #include <iostream>
 
@@ -43,7 +42,7 @@ const std::map<std::string, std::string> StormByte::VideoConvert::Database::SQLi
 	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = TRUE WHERE id = ?"},
 	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
-	{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate WHERE film_id = ?"},
+	{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
@@ -72,6 +71,7 @@ StormByte::VideoConvert::Database::SQLite3::~SQLite3() {
 }
 
 std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database::SQLite3::get_film_for_process(const std::filesystem::path& output_path) {
+	using namespace StormByte::VideoConvert::Stream;
 	std::optional<FFmpeg> ffmpeg;
 	int film_id = get_film_id_for_process();
 
@@ -80,12 +80,64 @@ std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database
 		FFmpeg film(film_data.file, output_path);
 		auto streams = get_film_streams(film_id);
 		for (auto it = streams.begin(); it != streams.end(); it++) {
-			film.add_stream(create_stream_object(*it));
+			switch (it->codec) {
+				case Data::VIDEO_HEVC: {
+					auto codec = Video::HEVC(it->id);
+					if (has_film_stream_HDR(*it)) {
+						auto hdr_data = get_film_stream_HDR(*it);
+						Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
+												hdr_data.green_x, hdr_data.green_y,
+												hdr_data.blue_x, hdr_data.blue_y,
+												hdr_data.white_point_x, hdr_data.white_point_y,
+												hdr_data.luminance_min, hdr_data.luminance_max);
+						if (hdr_data.light_level_max.has_value() && hdr_data.light_level_average.has_value()) {
+							hdr.set_light_level(hdr_data.light_level_max.value(), hdr_data.light_level_average.value());
+						}
+						codec.set_HDR(hdr);
+					}
+					film.add_stream(std::move(codec));
+					break;
+				}
+				case Data::VIDEO_COPY: {
+					film.add_stream(std::move(Video::Copy(it->id)));
+					break;
+				}
+				case Data::AUDIO_AAC: {
+					film.add_stream(std::move(Audio::AAC(it->id)));
+					break;
+				}
+				case Data::AUDIO_FDKAAC: {
+					film.add_stream(std::move(Audio::FDKAAC(it->id)));
+					break;
+				}
+				case Data::AUDIO_AC3: {
+					film.add_stream(std::move(Audio::AC3(it->id)));
+					break;
+				}
+				case Data::AUDIO_COPY: {
+					film.add_stream(std::move(Audio::Copy(it->id)));
+					break;
+				}
+				case Data::AUDIO_EAC3: {
+					film.add_stream(std::move(Audio::EAC3(it->id)));
+					break;
+				}
+				case Data::AUDIO_OPUS: {
+					film.add_stream(std::move(Audio::Opus(it->id)));
+					break;
+				}
+				case Data::SUBTITLE_COPY: {
+					film.add_stream(std::move(Subtitle::Copy(it->id)));
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+			ffmpeg.emplace(std::move(film));
 		}
-
-		ffmpeg.emplace(std::move(film));
 	}
-	return std::move(ffmpeg);
+	return ffmpeg;
 }
 
 bool StormByte::VideoConvert::Database::SQLite3::check_database() {
@@ -114,8 +166,10 @@ void StormByte::VideoConvert::Database::SQLite3::reset_stmt(sqlite3_stmt* stmt) 
 
 void StormByte::VideoConvert::Database::SQLite3::prepare_sentences() {
 	for (auto it = DATABASE_PREPARED_SENTENCES.begin(); it != DATABASE_PREPARED_SENTENCES.end(); it++) {
-		m_prepared[it->first] = NULL;
+		m_prepared[it->first] = nullptr;
 		sqlite3_prepare_v2( m_database, it->second.c_str(), it->second.length(), &m_prepared[it->first], nullptr);
+		if (!m_prepared[it->first])
+			throw std::runtime_error("Prepared sentence " + (it->first) + " can not be loaded!");
 	}
 }
 
@@ -153,15 +207,16 @@ std::list<StormByte::VideoConvert::Database::Data::stream> StormByte::VideoConve
 	std::list<Data::stream> result;
 	auto stmt = m_prepared["getFilmStreams"];
 	sqlite3_bind_int(stmt, 1, film_id);
-	if (sqlite3_step(stmt) == SQLITE_ROW) {
+	while (sqlite3_step(stmt) == SQLITE_ROW) {
 		Data::stream stream;
-		stream.id 		= sqlite3_column_int(stmt, 1);
-		stream.codec 	= static_cast<Data::stream_codec>(sqlite3_column_int(stmt, 2));
-		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+		stream.id 		= sqlite3_column_int(stmt, 0);
+		stream.codec 	= static_cast<Data::stream_codec>(sqlite3_column_int(stmt, 1));
+		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
 		if (has_film_stream_HDR(stream)) {
 			stream.HDR = get_film_stream_HDR(stream);
 		}
+		result.push_back(stream);
 	}
 	reset_stmt(stmt);
 	return result;
@@ -205,7 +260,7 @@ StormByte::VideoConvert::Database::Data::hdr StormByte::VideoConvert::Database::
 }
 
 int StormByte::VideoConvert::Database::SQLite3::insert_film(const Data::film& film) {
-	int result;
+	int result = -1;
 	auto stmt = m_prepared["insertFilm"];
 	sqlite3_bind_text(stmt, 1, film.file.c_str(), -1, SQLITE_STATIC);
 	sqlite3_bind_int(stmt, 2, film.prio);
@@ -232,8 +287,8 @@ void StormByte::VideoConvert::Database::SQLite3::insert_stream(const Data::strea
 	reset_stmt(stmt);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::insertHDR(const Data::stream& stream, const Data::hdr& hdr) {
-	auto stmt = m_prepared["insertStream"];
+void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& stream, const Data::hdr& hdr) {
+	auto stmt = m_prepared["insertHDR"];
 	sqlite3_bind_int(stmt, 1, stream.id);
 	sqlite3_bind_int(stmt, 2, stream.film_id);
 	sqlite3_bind_int(stmt, 3, stream.codec);
@@ -259,55 +314,29 @@ void StormByte::VideoConvert::Database::SQLite3::insertHDR(const Data::stream& s
 	reset_stmt(stmt);
 }
 
-StormByte::VideoConvert::Stream::Base&& StormByte::VideoConvert::Database::SQLite3::create_stream_object(const Data::stream& stream) {
-	using namespace StormByte::VideoConvert::Stream;
-	switch (stream.codec) {
-		case Data::VIDEO_HEVC: {
-			auto codec = Video::HEVC(stream.id);
-			if (has_film_stream_HDR(stream)) {
-				auto hdr_data = get_film_stream_HDR(stream);
-				Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
-										hdr_data.green_x, hdr_data.green_y,
-										hdr_data.blue_x, hdr_data.blue_y,
-										hdr_data.white_point_x, hdr_data.white_point_y,
-										hdr_data.luminance_min, hdr_data.luminance_max);
-				if (hdr_data.light_level_max.has_value() && hdr_data.light_level_average.has_value()) {
-					hdr.set_light_level(hdr_data.light_level_max.value(), hdr_data.light_level_average.value());
-				}
-				codec.set_HDR(hdr);
-			}
-			return std::move(codec);
-		}
-		case Data::VIDEO_COPY: {
-			return std::move(Video::Copy(stream.id));
-		}
-		case Data::AUDIO_AAC: {
-			return std::move(Audio::AAC(stream.id));
-		}
-		case Data::AUDIO_FDKAAC: {
-			return std::move(Audio::FDKAAC(stream.id));
-		}
-		case Data::AUDIO_AC3: {
-			return std::move(Audio::AC3(stream.id));
-		}
-		case Data::AUDIO_EAC3: {
-			return std::move(Audio::EAC3(stream.id));
-		}
-		case Data::AUDIO_OPUS: {
-			return std::move(Audio::Opus(stream.id));
-		}
-		case Data::SUBTITLE_COPY: {
-			return std::move(Subtitle::Copy(stream.id));
-		}
-		default: {
-			return std::move(Ignore());
-		}
-	}
-}
-
 /****************** TO BE REMOVED *******************/
 void StormByte::VideoConvert::Database::SQLite3::test() {
-	insert_film({ "/folder/film.mkv", 0 });
-	Data::film result = get_film_basic_data(1);
-	std::cout << "Film data: " << result.file << " " << result.prio << " " << result.processing << std::endl;
+	/* Insert a complete film */
+	int film_id = insert_film({ "/folder/film.mkv", 0 });
+	Data::hdr HDR = {
+		34000,		16000,
+		13250,		34500,
+		7500,		3000,
+		15635,		16450,
+		10000000,	1,
+		1016,		115
+	};
+	Data::stream video = {0, film_id, Data::VIDEO_HEVC };
+	Data::stream audio1 = {0, film_id, Data::AUDIO_COPY };
+	Data::stream audio2 = {1, film_id, Data::AUDIO_FDKAAC };
+	insert_stream(video);
+	insert_HDR(video, HDR);
+	//insert_stream(audio1);
+	//insert_stream(audio2);
+
+	//std::cout << "Num of streams: " << (get_film_streams(11).size()) << std::endl;
+	auto ffmpeg = get_film_for_process("/tmp/out.mkv");
+	if (ffmpeg.has_value()) ffmpeg->debug();
+	//std::cout << ffmpeg->exec() << std::endl;
 }
+

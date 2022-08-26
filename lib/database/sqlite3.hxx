@@ -38,18 +38,7 @@ namespace StormByte::VideoConvert::Database {
 			Data::hdr get_film_stream_HDR(const Data::stream& stream);
 			int insert_film(const Data::film& film);
 			void insert_stream(const Data::stream& stream);
-			void insertHDR(const Data::stream& stream, const Data::hdr& hdr);
-			StormByte::VideoConvert::Stream::Base&& create_stream_object(const Data::stream& stream);
+			void insert_HDR(const Data::stream& stream, const Data::hdr& hdr);
 			
-			/*
-			{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},
-			{"setProcessingStatusForFilm",	"UPDATE films SET processing = TRUE WHERE id = ?"},
-			{"getFilmData",					"SELECT file, prio, processing FROM films WHERE id = ?"},
-			{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate WHERE film_id = ?"},
-			{"getFilmStreamHDR",			"SELECT * FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"}
-			{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
-			{"insertStream",				"INSERT INTO streams(id, film_id, codec, max_rate, bitrate) VALUES (?, ?, ?, ?, ?)"},
-			{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"}
-			*/
 	};
 }
