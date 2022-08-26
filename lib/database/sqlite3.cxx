@@ -1,4 +1,5 @@
 #include "sqlite3.hxx"
+#include "../ffmpeg/stream/ignore.hxx"
 #include <stdexcept>
 #include <iostream>
 
@@ -68,6 +69,23 @@ StormByte::VideoConvert::Database::SQLite3::~SQLite3() {
 	}
 	m_prepared.clear();
 	sqlite3_close(m_database);
+}
+
+std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database::SQLite3::get_film_for_process(const std::filesystem::path& output_path) {
+	std::optional<FFmpeg> ffmpeg;
+	int film_id = get_film_id_for_process();
+
+	if (film_id != -1) {
+		Data::film film_data = get_film_basic_data(film_id);
+		FFmpeg film(film_data.file, output_path);
+		auto streams = get_film_streams(film_id);
+		for (auto it = streams.begin(); it != streams.end(); it++) {
+			film.add_stream(create_stream_object(*it));
+		}
+
+		ffmpeg.emplace(std::move(film));
+	}
+	return std::move(ffmpeg);
 }
 
 bool StormByte::VideoConvert::Database::SQLite3::check_database() {
@@ -241,6 +259,51 @@ void StormByte::VideoConvert::Database::SQLite3::insertHDR(const Data::stream& s
 	reset_stmt(stmt);
 }
 
+StormByte::VideoConvert::Stream::Base&& StormByte::VideoConvert::Database::SQLite3::create_stream_object(const Data::stream& stream) {
+	using namespace StormByte::VideoConvert::Stream;
+	switch (stream.codec) {
+		case Data::VIDEO_HEVC: {
+			auto codec = Video::HEVC(stream.id);
+			if (has_film_stream_HDR(stream)) {
+				auto hdr_data = get_film_stream_HDR(stream);
+				Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
+										hdr_data.green_x, hdr_data.green_y,
+										hdr_data.blue_x, hdr_data.blue_y,
+										hdr_data.white_point_x, hdr_data.white_point_y,
+										hdr_data.luminance_min, hdr_data.luminance_max);
+				if (hdr_data.light_level_max.has_value() && hdr_data.light_level_average.has_value()) {
+					hdr.set_light_level(hdr_data.light_level_max.value(), hdr_data.light_level_average.value());
+				}
+				codec.set_HDR(hdr);
+			}
+			return std::move(codec);
+		}
+		case Data::VIDEO_COPY: {
+			return std::move(Video::Copy(stream.id));
+		}
+		case Data::AUDIO_AAC: {
+			return std::move(Audio::AAC(stream.id));
+		}
+		case Data::AUDIO_FDKAAC: {
+			return std::move(Audio::FDKAAC(stream.id));
+		}
+		case Data::AUDIO_AC3: {
+			return std::move(Audio::AC3(stream.id));
+		}
+		case Data::AUDIO_EAC3: {
+			return std::move(Audio::EAC3(stream.id));
+		}
+		case Data::AUDIO_OPUS: {
+			return std::move(Audio::Opus(stream.id));
+		}
+		case Data::SUBTITLE_COPY: {
+			return std::move(Subtitle::Copy(stream.id));
+		}
+		default: {
+			return std::move(Ignore());
+		}
+	}
+}
 
 /****************** TO BE REMOVED *******************/
 void StormByte::VideoConvert::Database::SQLite3::test() {

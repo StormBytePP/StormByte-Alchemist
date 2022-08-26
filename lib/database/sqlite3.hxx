@@ -14,8 +14,9 @@ namespace StormByte::VideoConvert::Database {
 			SQLite3(const SQLite3& db) = delete;
 			~SQLite3();
 			SQLite3& operator=(const SQLite3& db) = delete;
-			FFmpeg* new_ffmpeg_from_film(int film_id);
+			std::optional<FFmpeg> get_film_for_process(const std::filesystem::path& output_path);
 			void test(); // To be removed
+			void set_film_id_as_processing(int film_id);
 
 		private:
 			sqlite3* m_database;
@@ -31,7 +32,6 @@ namespace StormByte::VideoConvert::Database {
 
 		public: //to be removed
 			int get_film_id_for_process();
-			void set_film_id_as_processing(int film_id);
 			Data::film get_film_basic_data(int film_id);
 			std::list<Data::stream> get_film_streams(int film_id);
 			bool has_film_stream_HDR(const Data::stream& stream);
@@ -39,6 +39,7 @@ namespace StormByte::VideoConvert::Database {
 			int insert_film(const Data::film& film);
 			void insert_stream(const Data::stream& stream);
 			void insertHDR(const Data::stream& stream, const Data::hdr& hdr);
+			StormByte::VideoConvert::Stream::Base&& create_stream_object(const Data::stream& stream);
 			
 			/*
 			{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},

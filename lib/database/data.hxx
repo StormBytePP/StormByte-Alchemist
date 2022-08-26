@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <filesystem>
 
 namespace StormByte::VideoConvert::Database::Data {
 	struct film {
@@ -33,7 +34,8 @@ namespace StormByte::VideoConvert::Database::Data {
 		AUDIO_COPY,
 		AUDIO_EAC3,
 		AUDIO_OPUS,
-		SUBTITLE_COPY
+		SUBTITLE_COPY,
+		INVALID_CODEC = 666
 	};
 
 	struct stream {

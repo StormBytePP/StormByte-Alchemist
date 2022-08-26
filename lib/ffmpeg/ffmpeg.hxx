@@ -19,11 +19,13 @@ namespace StormByte::VideoConvert {
 		public:
 			FFmpeg(const std::filesystem::path& in, const std::filesystem::path& out);
 			FFmpeg(const FFmpeg& ffmpeg) = delete;
+			FFmpeg(FFmpeg&& ffmpeg) = default;
 			FFmpeg& operator=(const FFmpeg& ffmpeg) = delete;
 			~FFmpeg();
 
 			void add_stream(StormByte::VideoConvert::Stream::Base&&);
 			bool exec();
+			inline bool is_empty() const { return m_streams.empty(); }
 
 		private:
 			std::string m_input_file, m_output_file;

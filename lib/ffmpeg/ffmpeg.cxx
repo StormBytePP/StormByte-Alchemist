@@ -9,6 +9,13 @@ StormByte::VideoConvert::FFmpeg::FFmpeg(const std::filesystem::path& in, const s
 	m_output_file 	= out;
 }
 
+// StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg) {
+// 	m_input_file = std::move(ffmpeg.m_input_file);
+// 	m_output_file = std::move(ffmpeg.m_output_file);
+// 	m_streams = std::move(ffmpeg.m_streams);
+// 	m_parameters = std::move(ffmpeg.m_parameters);
+// }
+
 StormByte::VideoConvert::FFmpeg::~FFmpeg() {
 	m_streams.clear();
 	clear_parameters();

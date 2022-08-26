@@ -19,9 +19,10 @@ namespace StormByte::VideoConvert::Stream::Video {
 						unsigned int luminance_min,		unsigned int luminance_max,
 						unsigned int light_level_max,	unsigned int light_level_average);
 					HDR(const HDR& hdr);
+					HDR(HDR&&) = default;
 					HDR& operator=(const HDR& hdr);
 					~HDR() = default;
-					inline void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
+					void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
 					std::string ffmpeg_parameters() const;
 			
 				private:
