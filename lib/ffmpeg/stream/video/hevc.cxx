@@ -46,6 +46,7 @@ void StormByte::VideoConvert::Stream::Video::HEVC::HDR::copy(const HDR& hdr) {
 	m_blue			= hdr.m_blue;
 	m_white_point	= hdr.m_white_point;
 	m_luminance		= hdr.m_luminance;
+	m_light_level	= hdr.m_light_level;
 }
 
 std::string StormByte::VideoConvert::Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
