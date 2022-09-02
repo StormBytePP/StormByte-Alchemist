@@ -24,13 +24,14 @@ namespace StormByte::VideoConvert::Database {
 			static const std::string DATABASE_CREATE_SQL;
 			static const std::map<std::string, std::string> DATABASE_PREPARED_SENTENCES;
 
+			/* Database internals */
 			bool check_database();
 			void init_database();
 			void prepare_sentences();
 			void throw_error(char* err_msg);
 			void reset_stmt(sqlite3_stmt*);
 
-		public: //to be removed
+			/* Data managing internal functions */
 			int get_film_id_for_process();
 			Data::film get_film_basic_data(int film_id);
 			std::list<Data::stream> get_film_streams(int film_id);

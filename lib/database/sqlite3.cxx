@@ -313,30 +313,3 @@ void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& 
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 }
-
-/****************** TO BE REMOVED *******************/
-void StormByte::VideoConvert::Database::SQLite3::test() {
-	/* Insert a complete film */
-	// int film_id = insert_film({ "/folder/film.mkv", 0 });
-	// Data::hdr HDR = {
-	// 	34000,		16000,
-	// 	13250,		34500,
-	// 	7500,		3000,
-	// 	15635,		16450,
-	// 	10000000,	1,
-	// 	1016,		115
-	// };
-	// Data::stream video = {0, film_id, Data::VIDEO_HEVC };
-	// Data::stream audio1 = {0, film_id, Data::AUDIO_COPY };
-	// Data::stream audio2 = {1, film_id, Data::AUDIO_FDKAAC };
-	// insert_stream(video);
-	// insert_HDR(video, HDR);
-	// insert_stream(audio1);
-	// insert_stream(audio2);
-
-	//std::cout << "Num of streams: " << (get_film_streams(11).size()) << std::endl;
-	auto ffmpeg = get_film_for_process("/tmp/out.mkv");
-	//if (ffmpeg.has_value()) ffmpeg->debug();
-	if (ffmpeg.has_value()) ffmpeg->exec();
-}
-
