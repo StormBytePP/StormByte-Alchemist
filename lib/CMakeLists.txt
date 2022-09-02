@@ -1,4 +1,4 @@
-add_library(StormByte-videoconvert-library STATIC
+add_library(StormByte-videoconvert-library SHARED
 	database/sqlite3.cxx
     ffmpeg/stream/base.cxx
 	ffmpeg/stream/audio/base.cxx
@@ -19,5 +19,7 @@ add_library(StormByte-videoconvert-library STATIC
 
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormByte-videoconvert")
 target_link_libraries(StormByte-videoconvert-library sqlite3)
 target_link_libraries(StormByte-videoconvert-library config++)
+install(TARGETS StormByte-videoconvert-library DESTINATION ${CMAKE_INSTALL_LIBDIR})

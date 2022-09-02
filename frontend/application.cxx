@@ -1,5 +1,6 @@
 #include "application.hxx"
 #include "logger/logger.hxx"
+#include "database/sqlite3.hxx"
 
 #include <libconfig.h++>
 #include <iostream>
@@ -10,12 +11,10 @@ const std::string StormByte::VideoConvert::Application::PROGRAM_OWNER 					= "Da
 const std::string StormByte::VideoConvert::Application::PROGRAM_VERSION 				= "1.0.0";
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 
-StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {
-
-}
+StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {}
 
 StormByte::VideoConvert::Application::Application::~Application() {}
-#include "database/sqlite3.hxx"
+
 int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 	if (!init_from_config()) return 1;
 	switch(init_from_cli(argc, argv)) {
@@ -31,7 +30,6 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 	}
 	try {
 		StormByte::VideoConvert::Database::SQLite3 db(m_database_file);
-		db.test();
 	}
 	catch (const std::runtime_error& err) {
 		std::cerr << "Can not start program" << std::endl << err.what() << std::endl;
@@ -43,6 +41,7 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 
 bool StormByte::VideoConvert::Application::init_from_config() {
 	libconfig::Config cfg;
+	
 	try {
     	cfg.readFile(DEFAULT_CONFIG_FILE.c_str());
 	}

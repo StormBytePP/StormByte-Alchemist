@@ -1,23 +1,21 @@
-FIND_PATH(CONFIG++_INCLUDE_DIR libconfig.h++ /usr/include /usr/local/include)
+# Look for the necessary header
+find_path(Config++_INCLUDE_DIR NAMES libconfig.h++)
+mark_as_advanced(Config++_INCLUDE_DIR)
 
-FIND_LIBRARY(CONFIG++_LIBRARY NAMES config++ PATH /usr/lib /usr/local/lib) 
+# Look for the necessary library
+find_library(Config++_LIBRARY NAMES config++ config++)
+mark_as_advanced(Config++_LIBRARY)
 
-IF (CONFIG++_INCLUDE_DIR AND CONFIG++_LIBRARY)
-    SET(CONFIG++_FOUND TRUE)
-ENDIF ( CONFIG++_INCLUDE_DIR AND CONFIG++_LIBRARY)
-
-IF (CONFIG++_FOUND)
-    IF (NOT CONFIG++_FIND_QUIETLY)
-	MESSAGE(STATUS "Found Config++: ${CONFIG++_LIBRARY}")
-    ENDIF (NOT  CONFIG++_FIND_QUIETLY)
-ELSE(CONFIG++_FOUND)
-    IF (Config++_FIND_REQUIRED)
-	IF(NOT CONFIG++_INCLUDE_DIR)
-	    MESSAGE(FATAL_ERROR "Could not find LibConfig++ header file!")
-	ENDIF(NOT CONFIG++_INCLUDE_DIR)
-
-	IF(NOT CONFIG++_LIBRARY)
-	    MESSAGE(FATAL_ERROR "Could not find LibConfig++ library file!")
-	ENDIF(NOT CONFIG++_LIBRARY)
-    ENDIF (Config++_FIND_REQUIRED)
-ENDIF (CONFIG++_FOUND)
+# Create the imported target
+if(Config++_LIBRARY AND Config++_INCLUDE_DIR)
+    if(NOT TARGET Config++)
+        add_library(Config++ UNKNOWN IMPORTED)
+        set_target_properties(Config++ PROPERTIES
+            IMPORTED_LOCATION             "${Config++_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${Config++_INCLUDE_DIR}"
+		)
+    endif()
+	message(STATUS "Found Config++")
+else()
+	message(FATAL_ERROR "Could NOT find Config++ library")
+endif()
