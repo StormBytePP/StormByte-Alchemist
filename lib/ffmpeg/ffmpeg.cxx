@@ -55,12 +55,12 @@ int StormByte::VideoConvert::FFmpeg::exec() {
 	if (pid == 0) {
 		// Create parameters in a c-like form for calling execvp
 		auto params = parameters();
-		char* parameters[params.size() + 1];
+		std::unique_ptr<char*> parameters(new char*[params.size() + 1]); // ISO C++ forbids variable length array
 		for (size_t i = 0; i < params.size(); i++)
-			parameters[i] = const_cast<char*>(params[i].c_str());
-		parameters[params.size()] = nullptr;
+			parameters.get()[i] = const_cast<char*>(params[i].c_str());
+		parameters.get()[params.size()] = nullptr;
 
-		execvp("/usr/bin/ffmpeg", parameters);
+		execvp("/usr/bin/ffmpeg", parameters.get());
 	}
 	else {
 		waitpid(pid, &status, 0);
