@@ -15,29 +15,24 @@ StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {}
 
 StormByte::VideoConvert::Application::Application::~Application() {}
 
-int StormByte::VideoConvert::Application::run(int argc, char** argv) {
+int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (!init_from_config()) return 1;
-	switch(init_from_cli(argc, argv)) {
-		case CONTINUE:
-			if (m_daemon_mode) std::cout << "Will init daemon" << std::endl; else std::cout << "Will init interactive mode" << std::endl;
-			break;
+	
+	auto main_action = init_from_cli(argc, argv);
 
-		case HALT_OK:
-			return 0;
-
-		case ERROR:
-			return 1;
+	if (main_action == HALT_OK)
+		return 0;
+	else if (main_action == CONTINUE) {
+		if (m_daemon_mode) {
+			std::cout << "Will init daemon" << std::endl;
+		}
+		else {
+			std::cout << "Will init interactive mode" << std::endl;
+		}
+		return 0;
 	}
-	try {
-		StormByte::VideoConvert::Database::SQLite3 db(m_database_file);
-		db.test();
-	}
-	catch (const std::runtime_error& err) {
-		std::cerr << "Can not start program" << std::endl << err.what() << std::endl;
+	else
 		return 1;
-	}
-
-	return 0;
 }
 
 bool StormByte::VideoConvert::Application::init_from_config() {
@@ -150,5 +145,5 @@ void StormByte::VideoConvert::Application::help() const {
 }
 
 void StormByte::VideoConvert::Application::version() const {
-	std::cout << PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_OWNER;
+	std::cout << PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_OWNER << std::endl;
 }

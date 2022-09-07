@@ -9,7 +9,7 @@ namespace StormByte::VideoConvert {
 			Application& operator=(const Application&) = delete;
 			~Application();
 
-			int run(int argc, char** argv);
+			int run(int argc, char** argv) noexcept;
 
 		private:
 			bool m_daemon_mode;
