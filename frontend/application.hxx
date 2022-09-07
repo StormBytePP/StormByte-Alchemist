@@ -37,6 +37,7 @@ namespace StormByte::VideoConvert {
 			bool init_from_config();
 			status init_from_cli(int argc, char** argv);
 			bool init_application();
+			bool is_folder_writable(const std::filesystem::path& fullpath) const;
 			void header() const;
 			void help() const;
 			void version() const;

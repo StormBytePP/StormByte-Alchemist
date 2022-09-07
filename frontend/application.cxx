@@ -129,18 +129,29 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 
 bool StormByte::VideoConvert::Application::init_application() {
 	try {
-		if (m_database_file)
+		if (m_database_file) {
+			if (!is_folder_writable(m_database_file.value().parent_path()))
+				throw std::runtime_error("Error: Database folder " + m_database_file.value().parent_path().string() + " is not writable!");
 			m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file.value()));
+		}
 		else
 			throw std::runtime_error("ERROR: Database file not set neither in config file either from command line.");
+		
+		if (!m_logfile)
+			throw std::runtime_error("ERROR: Log file not set neither in config file either from command line.");
 
-		if (!m_daemon_mode && !m_output_path) // Output path is only for registering new items0
-			throw std::runtime_error("ERROR: Output file not set neither in config file either from command line.");
+		if (!m_loglevel)
+			throw std::runtime_error("ERROR: Log level not set neither in config file either from command line.");
 
-		if (!m_logfile || !m_loglevel)
-			throw std::runtime_error("ERROR: Log file and/or log level not set neither in config file either from command line.");
+		if (!is_folder_writable(m_logfile.value().parent_path()))
+			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
 		else
 			m_logger.reset(new StormByte::VideoConvert::Logger(m_logfile.value(), m_loglevel.value()));
+		
+		if (!m_output_path)
+			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
+		else if (!is_folder_writable(m_output_path.value()))
+			throw std::runtime_error("ERROR: Output folder " + m_output_path.value().string() + " is not writable!");
 	}
 	catch(const std::runtime_error& e) {
 		header();
@@ -149,6 +160,10 @@ bool StormByte::VideoConvert::Application::init_application() {
 		return false;
 	}
 	return true;
+}
+
+bool StormByte::VideoConvert::Application::is_folder_writable(const std::filesystem::path& fullpath) const {
+	return access(fullpath.c_str(), W_OK) == 0;
 }
 
 void StormByte::VideoConvert::Application::header() const {
