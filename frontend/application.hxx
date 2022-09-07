@@ -1,3 +1,5 @@
+#pragma once
+
 #include "database/sqlite3.hxx"
 
 #include <filesystem>
