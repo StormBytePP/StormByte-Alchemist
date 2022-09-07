@@ -1,19 +1,14 @@
 #include "application.hxx"
 #include "logger/logger.hxx"
 #include "database/sqlite3.hxx"
+#include "version.hxx"
 
 #include <libconfig.h++>
 #include <iostream>
 
-const std::string StormByte::VideoConvert::Application::PROGRAM_NAME 					= "StormByte-videoconvert";
-const std::string StormByte::VideoConvert::Application::PROGRAM_DESCRIPTION				= "This is a program to handle automatic ffmpeg conversions between downloaded videos in order to format them to be properly stored";
-const std::string StormByte::VideoConvert::Application::PROGRAM_OWNER 					= "David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>";
-const std::string StormByte::VideoConvert::Application::PROGRAM_VERSION 				= "1.0.0";
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 
 StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {}
-
-StormByte::VideoConvert::Application::Application::~Application() {}
 
 int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (!init_from_config()) return 1;

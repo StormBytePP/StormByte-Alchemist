@@ -7,7 +7,7 @@ namespace StormByte::VideoConvert {
 			Application();
 			Application(const Application&) = delete;
 			Application& operator=(const Application&) = delete;
-			~Application();
+			~Application() = default;
 
 			int run(int argc, char** argv) noexcept;
 
