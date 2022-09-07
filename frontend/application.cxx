@@ -30,6 +30,7 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) {
 	}
 	try {
 		StormByte::VideoConvert::Database::SQLite3 db(m_database_file);
+		db.test();
 	}
 	catch (const std::runtime_error& err) {
 		std::cerr << "Can not start program" << std::endl << err.what() << std::endl;

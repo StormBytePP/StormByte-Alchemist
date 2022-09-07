@@ -7,11 +7,12 @@ namespace StormByte::VideoConvert::Stream::Video {
 		public:
 			Base(unsigned short stream_id, const std::string& encoder);
 			Base(const Base& base);
-			Base(Base&& base) = default;
+			Base(Base&& base) noexcept;
 			Base& operator=(const Base& base);
+			Base& operator=(Base&& base) noexcept;
 			virtual ~Base() = default;
 			
-			virtual std::list<std::string> ffmpeg_parameters() const;
+			virtual std::list<std::string> ffmpeg_parameters() const override;
 			inline void set_tune_animation() { m_is_animation = true; }
 			inline void set_max_rate(const std::string& max_rate) { m_max_rate = max_rate; }
 

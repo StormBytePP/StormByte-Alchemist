@@ -7,17 +7,18 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			FDKAAC(unsigned short stream_id);
 			FDKAAC(const FDKAAC& fdkaac);
-			FDKAAC(FDKAAC&& fdkaac) = default;
-			virtual FDKAAC& operator=(const FDKAAC& fdkaac);
+			FDKAAC(FDKAAC&& fdkaac) noexcept;
+			FDKAAC& operator=(const FDKAAC& fdkaac);
+			FDKAAC& operator=(FDKAAC&& fdkaac) noexcept;
 			~FDKAAC() = default;
-			StormByte::VideoConvert::Stream::Base* copy() const;
 
-			std::list<std::string> ffmpeg_parameters() const;
+			std::list<std::string> ffmpeg_parameters() const override;
 
 		private:
 			std::optional<std::string> m_profile;
-
 			static const std::string FDKAAC_DEFAULT_ENCODER;
 			static const std::string FDKAAC_DEFAULT_PROFILE;
+
+			FDKAAC* copy() const override;
 	};
 }

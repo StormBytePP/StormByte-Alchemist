@@ -19,32 +19,34 @@ namespace StormByte::VideoConvert::Stream::Video {
 						unsigned int luminance_min,		unsigned int luminance_max,
 						unsigned int light_level_max,	unsigned int light_level_average);
 					HDR(const HDR& hdr);
-					HDR(HDR&&) = default;
+					HDR(HDR&&) noexcept;
 					HDR& operator=(const HDR& hdr);
+					HDR& operator=(HDR&& hdr) noexcept;
 					~HDR() = default;
 					void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
 					std::string ffmpeg_parameters() const;
 			
 				private:
-					void copy(const HDR& hdr);
 					std::pair<std::string, std::string> m_red, m_green, m_blue, m_white_point, m_luminance;
 					std::optional<std::pair<std::string, std::string>> m_light_level;
 			};
 
 			HEVC(unsigned short stream_id);
 			HEVC(const HEVC& hevc);
-			HEVC(HEVC&& hevc) = default;
+			HEVC(HEVC&& hevc) noexcept;
 			HEVC& operator=(const HEVC& hevc);
+			HEVC& operator=(HEVC&& hevc) noexcept;
 			~HEVC() = default;
-			StormByte::VideoConvert::Stream::Base* copy() const;
 
 			void set_HDR(const HDR& hdr);
-			std::list<std::string> ffmpeg_parameters() const;
+			std::list<std::string> ffmpeg_parameters() const override;
 			
 			static const HDR DEFAULT_HDR;
 
 		private:
 			std::optional<HDR> m_hdr;
 			static const std::string DEFAULT_MAX_BITRATE, DEFAULT_BUFFSIZE, X265_PARAMS;
+
+			HEVC* copy() const override;
 	};
 }

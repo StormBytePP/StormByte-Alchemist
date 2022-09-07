@@ -6,6 +6,8 @@ StormByte::VideoConvert::Stream::Audio::EAC3::EAC3(unsigned short stream_id):Sto
 
 StormByte::VideoConvert::Stream::Audio::EAC3::EAC3(const EAC3& eac3):StormByte::VideoConvert::Stream::Audio::Base(eac3) {}
 
+StormByte::VideoConvert::Stream::Audio::EAC3::EAC3(EAC3&& eac3) noexcept :StormByte::VideoConvert::Stream::Audio::Base(eac3) {}
+
 StormByte::VideoConvert::Stream::Audio::EAC3& StormByte::VideoConvert::Stream::Audio::EAC3::operator=(const EAC3& eac3) {
 	if (&eac3 != this) {
 		StormByte::VideoConvert::Stream::Audio::Base::operator=(eac3);
@@ -13,6 +15,13 @@ StormByte::VideoConvert::Stream::Audio::EAC3& StormByte::VideoConvert::Stream::A
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::EAC3::copy() const {
+StormByte::VideoConvert::Stream::Audio::EAC3& StormByte::VideoConvert::Stream::Audio::EAC3::operator=(EAC3&& eac3) noexcept {
+	if (&eac3 != this) {
+		StormByte::VideoConvert::Stream::Audio::Base::operator=(eac3);
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Audio::EAC3* StormByte::VideoConvert::Stream::Audio::EAC3::copy() const {
 	return new EAC3(*this);
 }

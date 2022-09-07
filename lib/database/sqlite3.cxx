@@ -313,3 +313,16 @@ void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& 
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 }
+
+void StormByte::VideoConvert::Database::SQLite3::test() {
+	std::cout << "Getting a film..." << std::endl;
+	auto film = get_film_for_process("/tmp");
+	auto film2 = film;
+	if (film) {
+		std::cout << "Film found!" << std::endl;
+		film->debug();
+		film->exec();
+	}
+	else
+		std::cout << "NO film found!" << std::endl;
+}

@@ -21,32 +21,58 @@ StormByte::VideoConvert::Stream::Video::HEVC::HDR::HDR(	unsigned int red_x,				u
 														unsigned int luminance_min,		unsigned int luminance_max,
 														unsigned int light_level_max,	unsigned int light_level_average) {
 
-	HDR(red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max);
-	m_light_level = std::make_pair(std::to_string(light_level_max), std::to_string(light_level_average));
+	m_red 			= std::make_pair(std::to_string(red_x),			std::to_string(red_y));
+	m_green 		= std::make_pair(std::to_string(green_x),		std::to_string(green_y));
+	m_blue			= std::make_pair(std::to_string(blue_x),		std::to_string(blue_y));
+	m_white_point 	= std::make_pair(std::to_string(white_point_x),	std::to_string(white_point_y));
+	m_luminance 	= std::make_pair(std::to_string(luminance_min),	std::to_string(luminance_max));
+	m_light_level 	= std::make_pair(std::to_string(light_level_max), std::to_string(light_level_average));
 }
 
 StormByte::VideoConvert::Stream::Video::HEVC::HDR::HDR(const HDR& hdr) {
-	copy(hdr);
+	m_red 			= hdr.m_red;
+	m_green 		= hdr.m_green;
+	m_blue			= hdr.m_blue;
+	m_white_point 	= hdr.m_white_point;
+	m_luminance		= hdr.m_luminance;
+	m_light_level	= hdr.m_light_level;
+}
+
+StormByte::VideoConvert::Stream::Video::HEVC::HDR::HDR(HDR&& hdr) noexcept {
+	m_red 			= hdr.m_red;
+	m_green 		= hdr.m_green;
+	m_blue			= hdr.m_blue;
+	m_white_point 	= hdr.m_white_point;
+	m_luminance		= hdr.m_luminance;
+	m_light_level	= hdr.m_light_level;
 }
 
 StormByte::VideoConvert::Stream::Video::HEVC::HDR& StormByte::VideoConvert::Stream::Video::HEVC::HDR::operator=(const HDR& hdr) {
 	if (&hdr != this) {
-		copy(hdr);
+		m_red 			= hdr.m_red;
+		m_green 		= hdr.m_green;
+		m_blue			= hdr.m_blue;
+		m_white_point 	= hdr.m_white_point;
+		m_luminance		= hdr.m_luminance;
+		m_light_level	= hdr.m_light_level;
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Video::HEVC::HDR& StormByte::VideoConvert::Stream::Video::HEVC::HDR::operator=(HDR&& hdr) noexcept {
+	if (&hdr != this) {
+		m_red 			= hdr.m_red;
+		m_green 		= hdr.m_green;
+		m_blue			= hdr.m_blue;
+		m_white_point 	= hdr.m_white_point;
+		m_luminance		= hdr.m_luminance;
+		m_light_level	= hdr.m_light_level;
 	}
 	return *this;
 }
 
 void StormByte::VideoConvert::Stream::Video::HEVC::HDR::set_light_level(unsigned int light_level_max, unsigned int light_level_average) {
 	m_light_level = std::make_pair(std::to_string(light_level_max), std::to_string(light_level_average));
-}
-
-void StormByte::VideoConvert::Stream::Video::HEVC::HDR::copy(const HDR& hdr) {
-	m_red 			= hdr.m_red;
-	m_green			= hdr.m_green;
-	m_blue			= hdr.m_blue;
-	m_white_point	= hdr.m_white_point;
-	m_luminance		= hdr.m_luminance;
-	m_light_level	= hdr.m_light_level;
 }
 
 std::string StormByte::VideoConvert::Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
@@ -76,7 +102,7 @@ std::string StormByte::VideoConvert::Stream::Video::HEVC::HDR::ffmpeg_parameters
 
 /********************************* HEVC *************************************/
 const std::string StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_MAX_BITRATE 	= "6M";
-const std::string StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_BUFFSIZE 	= "200M";
+const std::string StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_BUFFSIZE 		= "200M";
 const std::string StormByte::VideoConvert::Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc";
 const StormByte::VideoConvert::Stream::Video::HEVC::HDR StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_HDR = HDR(34000, 16000, 13250, 34500, 7500, 3000, 15635, 16450, 1, 10000000);
 
@@ -84,10 +110,9 @@ StormByte::VideoConvert::Stream::Video::HEVC::HEVC(unsigned short stream_id):Sto
 	m_max_rate = DEFAULT_MAX_BITRATE;
 }
 
-StormByte::VideoConvert::Stream::Video::HEVC::HEVC(const HEVC& hevc):StormByte::VideoConvert::Stream::Video::Base(hevc) {
-	m_hdr = hevc.m_hdr;
-	m_bitrate = hevc.m_bitrate;
-}
+StormByte::VideoConvert::Stream::Video::HEVC::HEVC(const HEVC& hevc):StormByte::VideoConvert::Stream::Video::Base(hevc),m_hdr(hevc.m_hdr) { }
+
+StormByte::VideoConvert::Stream::Video::HEVC::HEVC(HEVC&& hevc) noexcept :StormByte::VideoConvert::Stream::Video::Base(hevc),m_hdr(hevc.m_hdr) { }
 
 StormByte::VideoConvert::Stream::Video::HEVC& StormByte::VideoConvert::Stream::Video::HEVC::operator=(const HEVC& hevc) {
 	if (&hevc != this) {
@@ -97,7 +122,15 @@ StormByte::VideoConvert::Stream::Video::HEVC& StormByte::VideoConvert::Stream::V
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Video::HEVC::copy() const {
+StormByte::VideoConvert::Stream::Video::HEVC& StormByte::VideoConvert::Stream::Video::HEVC::operator=(HEVC&& hevc) noexcept {
+	if (&hevc != this) {
+		StormByte::VideoConvert::Stream::Video::Base::operator=(hevc);
+		m_hdr = hevc.m_hdr;
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Video::HEVC* StormByte::VideoConvert::Stream::Video::HEVC::copy() const {
 	return new HEVC(*this);
 }
 

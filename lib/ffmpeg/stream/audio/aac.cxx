@@ -6,6 +6,8 @@ StormByte::VideoConvert::Stream::Audio::AAC::AAC(unsigned short stream_id):Storm
 
 StormByte::VideoConvert::Stream::Audio::AAC::AAC(const AAC& aac):StormByte::VideoConvert::Stream::Audio::Base(aac) {}
 
+StormByte::VideoConvert::Stream::Audio::AAC::AAC(AAC&& aac) noexcept:StormByte::VideoConvert::Stream::Audio::Base(aac) {}
+
 StormByte::VideoConvert::Stream::Audio::AAC& StormByte::VideoConvert::Stream::Audio::AAC::operator=(const AAC& aac) {
 	if (&aac != this) {
 		StormByte::VideoConvert::Stream::Audio::Base::operator=(aac);
@@ -13,6 +15,13 @@ StormByte::VideoConvert::Stream::Audio::AAC& StormByte::VideoConvert::Stream::Au
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::AAC::copy() const {
+StormByte::VideoConvert::Stream::Audio::AAC& StormByte::VideoConvert::Stream::Audio::AAC::operator=(AAC&& aac) noexcept {
+	if (&aac != this) {
+		StormByte::VideoConvert::Stream::Audio::Base::operator=(aac);
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Audio::AAC* StormByte::VideoConvert::Stream::Audio::AAC::copy() const {
 	return new AAC(*this);
 }

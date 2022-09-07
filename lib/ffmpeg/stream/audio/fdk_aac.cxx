@@ -9,6 +9,8 @@ StormByte::VideoConvert::Stream::Audio::FDKAAC::FDKAAC(unsigned short stream_id)
 
 StormByte::VideoConvert::Stream::Audio::FDKAAC::FDKAAC(const FDKAAC& fdkaac):StormByte::VideoConvert::Stream::Audio::AAC(fdkaac), m_profile(fdkaac.m_profile) {}
 
+StormByte::VideoConvert::Stream::Audio::FDKAAC::FDKAAC(FDKAAC&& fdkaac) noexcept :StormByte::VideoConvert::Stream::Audio::AAC(fdkaac), m_profile(fdkaac.m_profile) {}
+
 StormByte::VideoConvert::Stream::Audio::FDKAAC& StormByte::VideoConvert::Stream::Audio::FDKAAC::operator=(const FDKAAC& fdkaac) {
 	if (&fdkaac != this) {
 		StormByte::VideoConvert::Stream::Audio::AAC::operator=(fdkaac);
@@ -17,7 +19,15 @@ StormByte::VideoConvert::Stream::Audio::FDKAAC& StormByte::VideoConvert::Stream:
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::FDKAAC::copy() const {
+StormByte::VideoConvert::Stream::Audio::FDKAAC& StormByte::VideoConvert::Stream::Audio::FDKAAC::operator=(FDKAAC&& fdkaac) noexcept {
+	if (&fdkaac != this) {
+		StormByte::VideoConvert::Stream::Audio::AAC::operator=(fdkaac);
+		m_profile = fdkaac.m_profile;
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Audio::FDKAAC* StormByte::VideoConvert::Stream::Audio::FDKAAC::copy() const {
 	return new FDKAAC(*this);
 }
 
@@ -27,8 +37,6 @@ std::list<std::string> StormByte::VideoConvert::Stream::Audio::FDKAAC::ffmpeg_pa
 	if (m_profile.has_value()) {
 		result.push_back("-profile:a:" + std::to_string(m_stream_id));	result.push_back(m_profile.value());
 	}
-
-	result.push_back("-afterburner:a:" + std::to_string(m_stream_id));	result.push_back("1"); // Improves quality in theory
 
 	return result;
 }

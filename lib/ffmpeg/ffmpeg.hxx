@@ -18,9 +18,10 @@ namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
 			FFmpeg(const std::filesystem::path& in, const std::filesystem::path& out);
-			FFmpeg(const FFmpeg& ffmpeg) = delete;
-			FFmpeg(FFmpeg&& ffmpeg);
-			FFmpeg& operator=(const FFmpeg& ffmpeg) = delete;
+			FFmpeg(const FFmpeg& ffmpeg);
+			FFmpeg(FFmpeg&& ffmpeg) noexcept;
+			FFmpeg& operator=(const FFmpeg& ffmpeg);
+			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept;
 			~FFmpeg();
 
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);
@@ -30,12 +31,9 @@ namespace StormByte::VideoConvert {
 
 		private:
 			std::string m_input_file, m_output_file;
-			std::list<StormByte::VideoConvert::Stream::Base*> m_streams;
-			std::vector<char*> m_parameters;
+			std::list<std::unique_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
 			static const std::list<const char*> FFMPEG_INIT_OPTIONS;
-			
-			void clear_parameters();
-			void prepare_parameters();
-			static char* convert(const std::string& str);
+
+			std::vector<std::string> parameters() const;
 	};
 }

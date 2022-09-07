@@ -6,7 +6,19 @@ StormByte::VideoConvert::Stream::Video::Base::Base(unsigned short stream_id, con
 
 StormByte::VideoConvert::Stream::Video::Base::Base(const Base& base):StormByte::VideoConvert::Stream::Base::Base(base), m_is_animation(base.m_is_animation), m_max_rate(base.m_max_rate) {}
 
+StormByte::VideoConvert::Stream::Video::Base::Base(Base&& base) noexcept :StormByte::VideoConvert::Stream::Base::Base(base), m_is_animation(base.m_is_animation), m_max_rate(base.m_max_rate) {}
+
 StormByte::VideoConvert::Stream::Video::Base& StormByte::VideoConvert::Stream::Video::Base::operator=(const Base& base) {
+	if (&base != this) {
+		StormByte::VideoConvert::Stream::Base::operator=(base);
+		m_is_animation = base.m_is_animation;
+		m_max_rate = base.m_max_rate;
+	}
+
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Video::Base& StormByte::VideoConvert::Stream::Video::Base::operator=(Base&& base) noexcept {
 	if (&base != this) {
 		StormByte::VideoConvert::Stream::Base::operator=(base);
 		m_is_animation = base.m_is_animation;

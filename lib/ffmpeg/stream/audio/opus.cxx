@@ -6,6 +6,8 @@ StormByte::VideoConvert::Stream::Audio::Opus::Opus(unsigned short stream_id):Sto
 
 StormByte::VideoConvert::Stream::Audio::Opus::Opus(const Opus& opus):StormByte::VideoConvert::Stream::Audio::Base(opus) {}
 
+StormByte::VideoConvert::Stream::Audio::Opus::Opus(Opus&& opus) noexcept :StormByte::VideoConvert::Stream::Audio::Base(opus) {}
+
 StormByte::VideoConvert::Stream::Audio::Opus& StormByte::VideoConvert::Stream::Audio::Opus::operator=(const Opus& opus) {
 	if (&opus != this) {
 		StormByte::VideoConvert::Stream::Audio::Base::operator=(opus);
@@ -13,6 +15,13 @@ StormByte::VideoConvert::Stream::Audio::Opus& StormByte::VideoConvert::Stream::A
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::Opus::copy() const {
+StormByte::VideoConvert::Stream::Audio::Opus& StormByte::VideoConvert::Stream::Audio::Opus::operator=(Opus&& opus) noexcept {
+	if (&opus != this) {
+		StormByte::VideoConvert::Stream::Audio::Base::operator=(opus);
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Audio::Opus* StormByte::VideoConvert::Stream::Audio::Opus::copy() const {
 	return new Opus(*this);
 }

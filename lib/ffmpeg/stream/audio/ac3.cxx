@@ -6,6 +6,8 @@ StormByte::VideoConvert::Stream::Audio::AC3::AC3(unsigned short stream_id):Storm
 
 StormByte::VideoConvert::Stream::Audio::AC3::AC3(const AC3& ac3):StormByte::VideoConvert::Stream::Audio::Base(ac3) {}
 
+StormByte::VideoConvert::Stream::Audio::AC3::AC3(AC3&& ac3) noexcept :StormByte::VideoConvert::Stream::Audio::Base(ac3) {}
+
 StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Audio::AC3::operator=(const AC3& ac3) {
 	if (&ac3 != this) {
 		StormByte::VideoConvert::Stream::Audio::Base::operator=(ac3);
@@ -13,6 +15,13 @@ StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Au
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Audio::AC3::copy() const {
+StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Audio::AC3::operator=(AC3&& ac3) noexcept {
+	if (&ac3 != this) {
+		StormByte::VideoConvert::Stream::Audio::Base::operator=(ac3);
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Audio::AC3* StormByte::VideoConvert::Stream::Audio::AC3::copy() const {
 	return new AC3(*this);
 }

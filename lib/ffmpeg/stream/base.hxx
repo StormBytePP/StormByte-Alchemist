@@ -3,16 +3,18 @@
 #include <string>
 #include <list>
 #include <optional>
+#include <memory>
 
 namespace StormByte::VideoConvert::Stream {
 	class Base {
 		public:
 			Base(unsigned short stream_id, const std::string& encoder);
 			Base(const Base& codec_base);
-			Base(Base&&) = default;
+			Base(Base&&) noexcept;
 			Base& operator=(const Base& codec_base);
+			Base& operator=(Base&& codec_base) noexcept;
 			virtual ~Base() = default;
-			virtual Base* copy() const = 0;
+			inline std::unique_ptr<Base> clone() const { return std::unique_ptr<Base>(copy()); }
 
 			virtual std::list<std::string> ffmpeg_parameters() const = 0;
 			inline void set_bitrate(const std::string& bit_rate) { m_bitrate = bit_rate; }
@@ -22,5 +24,7 @@ namespace StormByte::VideoConvert::Stream {
 			unsigned short m_stream_id;
 			std::string m_encoder;
 			std::optional<std::string> m_bitrate;
+
+			virtual Base* copy() const = 0;
 	};
 }

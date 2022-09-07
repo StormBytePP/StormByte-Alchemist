@@ -7,12 +7,14 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			AAC(unsigned short stream_id);
 			AAC(const AAC& aac);
-			AAC(AAC&& aac) = default;
-			virtual AAC& operator=(const AAC& aac);
+			AAC(AAC&& aac) noexcept;
+			AAC& operator=(const AAC& aac);
+			AAC& operator=(AAC&& aac) noexcept;
 			~AAC() = default;
-			StormByte::VideoConvert::Stream::Base* copy() const;
 
 		private:
 			static const std::string AAC_DEFAULT_ENCODER;
+
+			AAC* copy() const override;
 	};
 }

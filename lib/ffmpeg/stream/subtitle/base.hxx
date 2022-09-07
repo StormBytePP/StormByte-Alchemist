@@ -7,10 +7,11 @@ namespace StormByte::VideoConvert::Stream::Subtitle {
 		public:
 			Base(unsigned short stream_id, const std::string& encoder);
 			Base(const Base& base);
-			Base(Base&& base) = default;
+			Base(Base&& base) noexcept;
 			Base& operator=(const Base& base);
+			Base& operator=(Base&& base) noexcept;
 			virtual ~Base() = default;
 			
-			virtual std::list<std::string> ffmpeg_parameters() const;
+			virtual std::list<std::string> ffmpeg_parameters() const override;
 	};
 }

@@ -7,11 +7,14 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		public:
 			Opus(unsigned short stream_id);
 			Opus(const Opus& opus);
-			Opus(Opus&& opus) = default;
+			Opus(Opus&& opus) noexcept;
 			Opus& operator=(const Opus& opus);
+			Opus& operator=(Opus&& opus) noexcept;
 			~Opus() = default;
-			StormByte::VideoConvert::Stream::Base* copy() const;
 
+		private:
 			static const std::string OPUS_DEFAULT_ENCODER;
+
+			Opus* copy() const override;
 	};
 }

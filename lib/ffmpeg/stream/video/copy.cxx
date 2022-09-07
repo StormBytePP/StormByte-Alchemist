@@ -4,6 +4,8 @@ StormByte::VideoConvert::Stream::Video::Copy::Copy(unsigned short stream_id): St
 
 StormByte::VideoConvert::Stream::Video::Copy::Copy(const Copy& copy):StormByte::VideoConvert::Stream::Video::Base(copy) {}
 
+StormByte::VideoConvert::Stream::Video::Copy::Copy(Copy&& copy) noexcept :StormByte::VideoConvert::Stream::Video::Base(copy) {}
+
 StormByte::VideoConvert::Stream::Video::Copy& StormByte::VideoConvert::Stream::Video::Copy::operator=(const Copy& copy) {
 	if (&copy != this) {
 		StormByte::VideoConvert::Stream::Video::Base::operator=(copy);
@@ -11,7 +13,14 @@ StormByte::VideoConvert::Stream::Video::Copy& StormByte::VideoConvert::Stream::V
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Base* StormByte::VideoConvert::Stream::Video::Copy::copy() const {
+StormByte::VideoConvert::Stream::Video::Copy& StormByte::VideoConvert::Stream::Video::Copy::operator=(Copy&& copy) noexcept {
+	if (&copy != this) {
+		StormByte::VideoConvert::Stream::Video::Base::operator=(copy);
+	}
+	return *this;
+}
+
+StormByte::VideoConvert::Stream::Video::Copy* StormByte::VideoConvert::Stream::Video::Copy::copy() const {
 	return new Copy(*this);
 }
 

@@ -7,11 +7,14 @@ namespace StormByte::VideoConvert::Stream::Video {
 		public:
 			Copy(unsigned short stream_id);
 			Copy(const Copy& copy);
-			Copy(Copy&& copy) = default;
+			Copy(Copy&& copy) noexcept;
 			Copy& operator=(const Copy& copy);
+			Copy& operator=(Copy&& copy) noexcept;
 			~Copy() = default;
-			StormByte::VideoConvert::Stream::Base* copy() const;
 
-			std::list<std::string> ffmpeg_parameters() const;
+			std::list<std::string> ffmpeg_parameters() const override;
+
+		private:
+			Copy* copy() const override;
 	};
 }

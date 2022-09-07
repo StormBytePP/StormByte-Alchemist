@@ -1,6 +1,7 @@
 #include "ffmpeg.hxx"
 #include <cstring>
 #include <algorithm>
+#include <iostream>
 
 const std::list<const char*> StormByte::VideoConvert::FFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-y", "-map_metadata", "0", "-map_chapters", "0" });
 
@@ -8,54 +9,68 @@ StormByte::VideoConvert::FFmpeg::FFmpeg(const std::filesystem::path& in, const s
 	m_input_file 	= in;
 	m_output_file 	= out;
 }
-StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg):m_input_file(ffmpeg.m_input_file), m_output_file(ffmpeg.m_output_file),m_streams(ffmpeg.m_streams),m_parameters(ffmpeg.m_parameters) {
-	ffmpeg.m_streams.clear();
-	ffmpeg.m_parameters.clear();
+
+StormByte::VideoConvert::FFmpeg::FFmpeg(const FFmpeg& ffmpeg):m_input_file(ffmpeg.m_input_file), m_output_file(ffmpeg.m_output_file) {
+	std::cout << "FFMPEG copy called" << std::endl;
+	for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
+		m_streams.push_back(it->get()->clone());
 }
 
-StormByte::VideoConvert::FFmpeg::~FFmpeg() {
-	for (auto it = m_streams.begin(); it != m_streams.end(); it++)
-		delete *it;
-	m_streams.clear();
-	clear_parameters();
+StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg) noexcept :m_input_file(std::move(ffmpeg.m_input_file)), m_output_file(std::move(ffmpeg.m_output_file)),m_streams(std::move(ffmpeg.m_streams)) {
+	std::cout << "FFMPEG move called" << std::endl;
 }
+
+StormByte::VideoConvert::FFmpeg& StormByte::VideoConvert::FFmpeg::operator=(const FFmpeg& ffmpeg) {
+	std::cout << "FFMPEG copy called" << std::endl;
+	if (&ffmpeg != this) {
+		m_streams.clear();
+
+		m_input_file = ffmpeg.m_input_file;
+		m_output_file = ffmpeg.m_output_file;
+		for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
+			m_streams.push_back(it->get()->clone());
+	}
+
+	return *this;
+}
+
+StormByte::VideoConvert::FFmpeg& StormByte::VideoConvert::FFmpeg::operator=(FFmpeg&& ffmpeg) noexcept {
+	std::cout << "FFMPEG move called" << std::endl;
+	if (&ffmpeg != this) {
+		m_streams.clear();
+
+		m_input_file = std::move(ffmpeg.m_input_file);
+		m_output_file = std::move(ffmpeg.m_output_file);
+		m_streams = std::move(ffmpeg.m_streams);
+	}
+
+	return *this;
+}
+
+StormByte::VideoConvert::FFmpeg::~FFmpeg() {}
 
 void StormByte::VideoConvert::FFmpeg::add_stream(const StormByte::VideoConvert::Stream::Base& stream) {
-	m_streams.push_back(stream.copy());
+	m_streams.push_back(stream.clone());
 }
 
-#include <iostream>
-#include "logger/logger.hxx"
-
 bool StormByte::VideoConvert::FFmpeg::exec() {
-	auto& log = StormByte::VideoConvert::Logger::getInstance();
+	std::cout << "Started" << std::endl;
 
-	log.message("Started");
+	auto params = parameters();
 
-	prepare_parameters();
-
-	for (size_t i = 0; i < m_parameters.size() - 1; i++) // As last element is NULL
-		std::cout << m_parameters[i] << " ";
-
+	std::cout << "Will execute: ffmpeg";
+	for (std::string param : params)
+		std::cout << " " << param;
 	std::cout << std::endl;
 
-	log.message("Finished");
+	std::cout << "Finished" << std::endl;
 
 	return true;
 }
 
-void StormByte::VideoConvert::FFmpeg::clear_parameters() {
-	for ( size_t i = 0 ; i < m_parameters.size() ; i++ )
-        delete[] m_parameters[i];
-	m_parameters.clear();
-}
-
-void StormByte::VideoConvert::FFmpeg::prepare_parameters() {
-	/* Clearing old parameters if present */
-	clear_parameters();
-
+std::vector<std::string> StormByte::VideoConvert::FFmpeg::parameters() const {
 	/* Generating new parameters */
-	std::list<std::string> result({ "-i", m_input_file.c_str() });
+	std::vector<std::string> result { "-i", m_input_file };
 	result.insert(result.end(), FFMPEG_INIT_OPTIONS.begin(), FFMPEG_INIT_OPTIONS.end());
 
 	for (auto it = m_streams.begin(); it != m_streams.end(); it++) {
@@ -65,17 +80,7 @@ void StormByte::VideoConvert::FFmpeg::prepare_parameters() {
 
 	result.push_back(m_output_file);
 
-	/* Converting and storing them */
-	std::transform(result.begin(), result.end(), std::back_inserter(m_parameters), convert);
-
-	/* Adding a last NULL element */
-	m_parameters.push_back(NULL);
-}
-
-char* StormByte::VideoConvert::FFmpeg::convert(const std::string& str) {
-	char *pc = new char[str.size()+1];
-	std::strcpy(pc, str.c_str());
-	return pc; 
+	return result;
 }
 
 void StormByte::VideoConvert::FFmpeg::debug() const {
