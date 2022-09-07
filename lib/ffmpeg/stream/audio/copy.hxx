@@ -12,8 +12,6 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			Copy& operator=(Copy&& copy) noexcept;
 			~Copy() = default;
 
-			std::list<std::string> ffmpeg_parameters() const override;
-
 		private:
 			Copy* copy() const override;
 	};

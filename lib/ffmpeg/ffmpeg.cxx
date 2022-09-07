@@ -42,15 +42,16 @@ StormByte::VideoConvert::FFmpeg& StormByte::VideoConvert::FFmpeg::operator=(FFmp
 	return *this;
 }
 
-StormByte::VideoConvert::FFmpeg::~FFmpeg() {}
-
 void StormByte::VideoConvert::FFmpeg::add_stream(const StormByte::VideoConvert::Stream::Base& stream) {
 	m_streams.push_back(stream.clone());
 }
 
 int StormByte::VideoConvert::FFmpeg::exec() {
-	pid_t pid = fork();
+#ifdef DEBUG
+	debug();
+#endif
 	int status = 0;
+	pid_t pid = fork();
 	if (pid == 0) {
 		// Create parameters in a c-like form for calling execvp
 		auto params = parameters();
@@ -68,7 +69,6 @@ int StormByte::VideoConvert::FFmpeg::exec() {
 }
 
 std::vector<std::string> StormByte::VideoConvert::FFmpeg::parameters() const {
-	/* Generating new parameters */
 	std::vector<std::string> result { "ffmpeg", "-i", m_input_file };
 	result.insert(result.end(), FFMPEG_INIT_OPTIONS.begin(), FFMPEG_INIT_OPTIONS.end());
 
@@ -82,6 +82,7 @@ std::vector<std::string> StormByte::VideoConvert::FFmpeg::parameters() const {
 	return result;
 }
 
+#ifdef DEBUG
 #include <iostream>
 void StormByte::VideoConvert::FFmpeg::debug() const {
 	std::cout << "FFmpeg contents:\n\n";
@@ -89,6 +90,11 @@ void StormByte::VideoConvert::FFmpeg::debug() const {
 	std::cout << "Output file: " << m_output_file << "\n";
 	std::cout << "Streams (" << m_streams.size() << "):\n";
 	for (auto it = m_streams.begin(); it != m_streams.end(); it++)
-		std::cout << "\t" << (*it)->get_encoder() << "\n";
+		std::cout << "\t(" << (*it)->get_type() << ") " << (*it)->get_encoder() << "\n";
+	std::cout << std::endl;
+	std::cout << "Parameters:";
+	for (std::string i : parameters())
+		std::cout << " " << i;
 	std::cout << std::endl;
 }
+#endif

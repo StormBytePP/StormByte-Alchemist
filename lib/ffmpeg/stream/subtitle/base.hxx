@@ -11,7 +11,5 @@ namespace StormByte::VideoConvert::Stream::Subtitle {
 			Base& operator=(const Base& base);
 			Base& operator=(Base&& base) noexcept;
 			virtual ~Base() = default;
-			
-			virtual std::list<std::string> ffmpeg_parameters() const override;
 	};
 }

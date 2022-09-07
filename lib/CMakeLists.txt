@@ -17,6 +17,7 @@ add_library(StormByte-videoconvert-library SHARED
 	logger/logger.cxx
 )
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormByte-videoconvert")

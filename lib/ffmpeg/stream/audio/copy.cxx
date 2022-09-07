@@ -23,15 +23,3 @@ StormByte::VideoConvert::Stream::Audio::Copy& StormByte::VideoConvert::Stream::A
 StormByte::VideoConvert::Stream::Audio::Copy* StormByte::VideoConvert::Stream::Audio::Copy::copy() const {
 	return new Copy(*this);
 }
-
-std::list<std::string> StormByte::VideoConvert::Stream::Audio::Copy::ffmpeg_parameters() const {
-	std::list<std::string> result = StormByte::VideoConvert::Stream::Audio::Base::ffmpeg_parameters();
-
-	/* Since copy has no bitrate if it was set then we need to remove it */
-	if (m_bitrate.has_value()) {
-		result.pop_back();
-		result.pop_back();
-	}
-
-	return result;
-}

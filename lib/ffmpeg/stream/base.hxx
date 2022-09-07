@@ -8,7 +8,7 @@
 namespace StormByte::VideoConvert::Stream {
 	class Base {
 		public:
-			Base(unsigned short stream_id, const std::string& encoder);
+			Base(unsigned short stream_id, const std::string& encoder, char type);
 			Base(const Base& codec_base);
 			Base(Base&&) noexcept;
 			Base& operator=(const Base& codec_base);
@@ -16,13 +16,16 @@ namespace StormByte::VideoConvert::Stream {
 			virtual ~Base() = default;
 			inline std::unique_ptr<Base> clone() const { return std::unique_ptr<Base>(copy()); }
 
-			virtual std::list<std::string> ffmpeg_parameters() const = 0;
+			virtual std::list<std::string> ffmpeg_parameters() const;
+			std::string ffmpeg_stream_id() const;
 			inline void set_bitrate(const std::string& bit_rate) { m_bitrate = bit_rate; }
 			inline std::string get_encoder() const { return m_encoder; }
+			inline char get_type() const { return m_type; }
 
 		protected:
 			unsigned short m_stream_id;
 			std::string m_encoder;
+			char m_type;
 			std::optional<std::string> m_bitrate;
 
 			virtual Base* copy() const = 0;

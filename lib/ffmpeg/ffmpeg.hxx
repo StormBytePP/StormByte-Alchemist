@@ -22,12 +22,14 @@ namespace StormByte::VideoConvert {
 			FFmpeg(FFmpeg&& ffmpeg) noexcept;
 			FFmpeg& operator=(const FFmpeg& ffmpeg);
 			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept;
-			~FFmpeg();
+			~FFmpeg() = default;
 
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);
 			int exec();
 			inline bool is_empty() const { return m_streams.empty(); }
-			void debug() const; // To be removed
+#ifdef DEBUG
+			void debug() const;
+#endif
 
 		private:
 			std::string m_input_file, m_output_file;

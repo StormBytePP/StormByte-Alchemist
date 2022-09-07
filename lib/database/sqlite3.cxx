@@ -320,7 +320,6 @@ void StormByte::VideoConvert::Database::SQLite3::test() {
 	auto film2 = std::move(film);
 	if (film2) {
 		std::cout << "Film found!" << std::endl;
-		film2->debug();
 		film2->exec();
 	}
 	else
