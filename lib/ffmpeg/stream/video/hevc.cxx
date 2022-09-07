@@ -142,9 +142,9 @@ std::list<std::string> StormByte::VideoConvert::Stream::Video::HEVC::ffmpeg_para
 	std::list<std::string> result = StormByte::VideoConvert::Stream::Video::Base::ffmpeg_parameters();
 	std::string x265_params;
 	if (m_hdr.has_value())
-		x265_params = ("\"" + X265_PARAMS + ":" + m_hdr.value().ffmpeg_parameters() + "\"");
+		x265_params = (X265_PARAMS + ":" + m_hdr.value().ffmpeg_parameters());
 	else
-		x265_params = ("\"" + X265_PARAMS + "\"");
+		x265_params = X265_PARAMS;
 
 	result.push_back("-profile:v:" + std::to_string(m_stream_id));		result.push_back("main10");
 	result.push_back("-level:v:" + std::to_string(m_stream_id));		result.push_back("5.1");
