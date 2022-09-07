@@ -7,7 +7,7 @@ namespace StormByte::VideoConvert {
 	class Logger {
 		public:
 			Logger(const Logger&) = delete;
-			void operator=(const Logger&) = delete;
+			Logger& operator=(const Logger&) = delete;
 			~Logger();
 			
 			static Logger& getInstance();

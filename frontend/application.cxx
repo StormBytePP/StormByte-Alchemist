@@ -10,6 +10,11 @@ const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG
 
 StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr) {}
 
+StormByte::VideoConvert::Application& StormByte::VideoConvert::Application::getInstance() {
+	static Application instance;
+	return instance;
+}
+
 int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (!init_from_config()) return 1;
 	

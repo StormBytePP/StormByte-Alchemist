@@ -6,11 +6,11 @@
 namespace StormByte::VideoConvert {
 	class Application {
 		public:
-			Application();
 			Application(const Application&) = delete;
 			Application& operator=(const Application&) = delete;
 			~Application() = default;
 
+			static Application& getInstance();
 			int run(int argc, char** argv) noexcept;
 
 		private:
@@ -23,6 +23,7 @@ namespace StormByte::VideoConvert {
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			enum status { CONTINUE = 0, HALT_OK, ERROR };
 
+			Application(); // Hide constructor
 			bool init_from_config();
 			status init_from_cli(int argc, char** argv);
 			void init_database();
