@@ -15,7 +15,6 @@ namespace StormByte::VideoConvert::Database {
 			~SQLite3();
 			SQLite3& operator=(const SQLite3& db) = delete;
 			std::optional<FFmpeg> get_film_for_process(const std::filesystem::path& output_path);
-			void test(); // To be removed
 			void set_film_id_as_processing(int film_id);
 
 		private:

@@ -76,7 +76,7 @@ std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database
 
 	if (film_id != -1) {
 		Data::film film_data = get_film_basic_data(film_id);
-		FFmpeg film(film_data.file, output_path);
+		FFmpeg film(film_id, film_data.file, output_path);
 		auto streams = get_film_streams(film_id);
 		for (auto it = streams.begin(); it != streams.end(); it++) {
 			switch (it->codec) {
@@ -312,16 +312,4 @@ void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& 
 		sqlite3_bind_null(stmt, 15);
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
-}
-
-void StormByte::VideoConvert::Database::SQLite3::test() {
-	std::cout << "Getting a film..." << std::endl;
-	auto film = get_film_for_process("/tmp/output.mkv");
-	auto film2 = std::move(film);
-	if (film2) {
-		std::cout << "Film found!" << std::endl;
-		film2->exec();
-	}
-	else
-		std::cout << "NO film found!" << std::endl;
 }

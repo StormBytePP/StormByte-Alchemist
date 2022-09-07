@@ -17,7 +17,7 @@
 namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
-			FFmpeg(const std::filesystem::path& in, const std::filesystem::path& out);
+			FFmpeg(unsigned int film_id, const std::filesystem::path& in, const std::filesystem::path& out);
 			FFmpeg(const FFmpeg& ffmpeg);
 			FFmpeg(FFmpeg&& ffmpeg) noexcept;
 			FFmpeg& operator=(const FFmpeg& ffmpeg);
@@ -32,6 +32,7 @@ namespace StormByte::VideoConvert {
 #endif
 
 		private:
+			unsigned int m_film_id;
 			std::string m_input_file, m_output_file;
 			std::list<std::unique_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
 			static const std::list<const char*> FFMPEG_INIT_OPTIONS;

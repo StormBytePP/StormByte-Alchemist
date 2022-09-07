@@ -5,22 +5,20 @@
 
 const std::list<const char*> StormByte::VideoConvert::FFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0" });
 
-StormByte::VideoConvert::FFmpeg::FFmpeg(const std::filesystem::path& in, const std::filesystem::path& out) {
-	m_input_file 	= in;
-	m_output_file 	= out;
-}
+StormByte::VideoConvert::FFmpeg::FFmpeg(unsigned int film_id, const std::filesystem::path& in, const std::filesystem::path& out): m_film_id(film_id), m_input_file(in), m_output_file(out) {}
 
-StormByte::VideoConvert::FFmpeg::FFmpeg(const FFmpeg& ffmpeg):m_input_file(ffmpeg.m_input_file), m_output_file(ffmpeg.m_output_file) {
+StormByte::VideoConvert::FFmpeg::FFmpeg(const FFmpeg& ffmpeg):m_film_id(ffmpeg.m_film_id), m_input_file(ffmpeg.m_input_file), m_output_file(ffmpeg.m_output_file) {
 	for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
 		m_streams.push_back(it->get()->clone());
 }
 
-StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg) noexcept :m_input_file(std::move(ffmpeg.m_input_file)), m_output_file(std::move(ffmpeg.m_output_file)),m_streams(std::move(ffmpeg.m_streams)) {}
+StormByte::VideoConvert::FFmpeg::FFmpeg(FFmpeg&& ffmpeg) noexcept :m_film_id(ffmpeg.m_film_id), m_input_file(std::move(ffmpeg.m_input_file)), m_output_file(std::move(ffmpeg.m_output_file)), m_streams(std::move(ffmpeg.m_streams)) {}
 
 StormByte::VideoConvert::FFmpeg& StormByte::VideoConvert::FFmpeg::operator=(const FFmpeg& ffmpeg) {
 	if (&ffmpeg != this) {
 		m_streams.clear();
 
+		m_film_id = ffmpeg.m_film_id;
 		m_input_file = ffmpeg.m_input_file;
 		m_output_file = ffmpeg.m_output_file;
 		for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
@@ -34,6 +32,7 @@ StormByte::VideoConvert::FFmpeg& StormByte::VideoConvert::FFmpeg::operator=(FFmp
 	if (&ffmpeg != this) {
 		m_streams.clear();
 
+		m_film_id = ffmpeg.m_film_id;
 		m_input_file = std::move(ffmpeg.m_input_file);
 		m_output_file = std::move(ffmpeg.m_output_file);
 		m_streams = std::move(ffmpeg.m_streams);
@@ -86,6 +85,7 @@ std::vector<std::string> StormByte::VideoConvert::FFmpeg::parameters() const {
 #include <iostream>
 void StormByte::VideoConvert::FFmpeg::debug() const {
 	std::cout << "FFmpeg contents:\n\n";
+	std::cout << "Film ID: " << m_film_id << "\n";
 	std::cout << "Input file: " << m_input_file << "\n";
 	std::cout << "Output file: " << m_output_file << "\n";
 	std::cout << "Streams (" << m_streams.size() << "):\n";
