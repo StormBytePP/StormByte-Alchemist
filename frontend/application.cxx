@@ -5,12 +5,16 @@
 
 #include <libconfig.h++>
 #include <iostream>
+#include <unistd.h>
+#include <csignal>
 
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 
-StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr) {}
+StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr), m_worker(), m_must_terminate(false) {
+	signal(SIGTERM, Application::signal_handler);
+}
 
-StormByte::VideoConvert::Application& StormByte::VideoConvert::Application::getInstance() {
+StormByte::VideoConvert::Application& StormByte::VideoConvert::Application::get_instance() {
 	static Application instance;
 	return instance;
 }
@@ -23,9 +27,9 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (main_action == HALT_OK)
 		return 0;
 	else if (main_action == CONTINUE) {
-		init_database();
+		init_application();
 		if (m_daemon_mode) {
-			std::cout << "Will init daemon" << std::endl;
+			return daemon();
 		}
 		else {
 			std::cout << "Will init interactive mode" << std::endl;
@@ -127,7 +131,7 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 	return CONTINUE;
 }
 
-void StormByte::VideoConvert::Application::init_database() {
+void StormByte::VideoConvert::Application::init_application() {
 	m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file));
 }
 
@@ -156,4 +160,19 @@ void StormByte::VideoConvert::Application::version() const {
 
 void StormByte::VideoConvert::Application::compiler_info() const {
 	std::cout << "Compiled by " << COMPILER_NAME << "(" << COMPILER_VERSION << ")" << " with flags " << COMPILER_FLAGS << std::endl;
+}
+
+int StormByte::VideoConvert::Application::daemon() {
+	while(!m_must_terminate) {
+		std::cout << "Check!" << std::endl;
+		sleep(1);
+	}
+	return 0;
+}
+
+void StormByte::VideoConvert::Application::signal_handler(int) {
+	std::cout << "Signal handler called!" << std::endl;
+	Application::get_instance().m_must_terminate = true;
+	if (Application::get_instance().m_worker)
+		kill(Application::get_instance().m_worker.value(), SIGTERM);
 }

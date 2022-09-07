@@ -25,7 +25,7 @@ namespace StormByte::VideoConvert {
 			~FFmpeg() = default;
 
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);
-			int exec();
+			pid_t exec();
 			inline bool is_empty() const { return m_streams.empty(); }
 #ifdef DEBUG
 			void debug() const;

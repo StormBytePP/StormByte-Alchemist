@@ -45,11 +45,10 @@ void StormByte::VideoConvert::FFmpeg::add_stream(const StormByte::VideoConvert::
 	m_streams.push_back(stream.clone());
 }
 
-int StormByte::VideoConvert::FFmpeg::exec() {
+pid_t StormByte::VideoConvert::FFmpeg::exec() {
 #ifdef DEBUG
 	debug();
 #endif
-	int status = 0;
 	pid_t pid = fork();
 	if (pid == 0) {
 		// Create parameters in a c-like form for calling execvp
@@ -61,10 +60,8 @@ int StormByte::VideoConvert::FFmpeg::exec() {
 
 		execvp("/usr/bin/ffmpeg", parameters.get());
 	}
-	else {
-		waitpid(pid, &status, 0);
-	}
-	return status / 256;
+	// Child will never return but we need to make compiler happy
+	return pid;
 }
 
 std::vector<std::string> StormByte::VideoConvert::FFmpeg::parameters() const {
