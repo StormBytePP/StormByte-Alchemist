@@ -19,7 +19,8 @@ namespace StormByte::VideoConvert {
 			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
-			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_OWNER, PROGRAM_VERSION;
+			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_AUTHOR, PROGRAM_VERSION;
+			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			enum status { CONTINUE = 0, HALT_OK, ERROR };
 
 			bool init_from_config();
@@ -28,5 +29,6 @@ namespace StormByte::VideoConvert {
 			void header() const;
 			void help() const;
 			void version() const;
+			void compiler_info() const;
 	};
 }

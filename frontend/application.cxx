@@ -127,7 +127,7 @@ void StormByte::VideoConvert::Application::init_database() {
 }
 
 void StormByte::VideoConvert::Application::header() const {
-	const std::string caption = PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_OWNER;
+	const std::string caption = PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_AUTHOR;
 	std::cout << caption << std::endl;
 	std::cout << std::string(caption.size(), '=') << std::endl;
 	std::cout << PROGRAM_DESCRIPTION << std::endl << std::endl;
@@ -145,5 +145,10 @@ void StormByte::VideoConvert::Application::help() const {
 }
 
 void StormByte::VideoConvert::Application::version() const {
-	std::cout << PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_OWNER << std::endl;
+	std::cout << PROGRAM_NAME + " " + PROGRAM_VERSION + " by " + PROGRAM_AUTHOR << std::endl;
+	compiler_info();
+}
+
+void StormByte::VideoConvert::Application::compiler_info() const {
+	std::cout << "Compiled by " << COMPILER_NAME << "(" << COMPILER_VERSION << ")" << " with flags " << COMPILER_FLAGS << std::endl;
 }
