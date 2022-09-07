@@ -6,17 +6,24 @@
 namespace StormByte::VideoConvert {
 	class Logger {
 		public:
+			enum LEVEL:unsigned short {
+				LEVEL_DEBUG = 0,
+				LEVEL_WARNING,
+				LEVEL_INFO,
+				LEVEL_ERROR,
+				LEVEL_FATAL,
+				LEVEL_MAX
+			};
+			Logger(const std::filesystem::path& logfile, LEVEL display_level);
 			Logger(const Logger&) = delete;
 			Logger& operator=(const Logger&) = delete;
 			~Logger();
 			
 			static Logger& getInstance();
-			void message(const std::string& msg);
+			void message(const LEVEL& level, const std::string& msg);
 
 		private:
-			Logger();
-
 			std::ofstream m_logfile;
-			static const std::filesystem::path DEFAULT_LOGFILE;
+			LEVEL m_display_level;
 	};
 }

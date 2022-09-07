@@ -1,6 +1,7 @@
 #pragma once
 
 #include "database/sqlite3.hxx"
+#include "logger/logger.hxx"
 
 #include <filesystem>
 #include <string>
@@ -16,9 +17,13 @@ namespace StormByte::VideoConvert {
 			int run(int argc, char** argv) noexcept;
 
 		private:
+			/* Config data */
+			std::optional<std::filesystem::path> m_database_file, m_output_path, m_logfile;
+			std::optional<StormByte::VideoConvert::Logger::LEVEL> m_loglevel;
+
 			bool m_daemon_mode;
-			std::filesystem::path m_database_file, m_output_path;
 			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
+			std::unique_ptr<StormByte::VideoConvert::Logger> m_logger;
 			std::optional<pid_t> m_worker;
 			bool m_must_terminate;
 
@@ -31,7 +36,7 @@ namespace StormByte::VideoConvert {
 			Application(); // Hide constructor
 			bool init_from_config();
 			status init_from_cli(int argc, char** argv);
-			void init_application();
+			bool init_application();
 			void header() const;
 			void help() const;
 			void version() const;

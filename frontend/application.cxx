@@ -10,7 +10,7 @@
 
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 
-StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr), m_worker(), m_must_terminate(false) {
+StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
 }
 
@@ -27,7 +27,8 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (main_action == HALT_OK)
 		return 0;
 	else if (main_action == CONTINUE) {
-		init_application();
+		if (!init_application()) return 1;
+		
 		if (m_daemon_mode) {
 			return daemon();
 		}
@@ -56,12 +57,10 @@ bool StormByte::VideoConvert::Application::init_from_config() {
 	}
 
 	try {
-    	m_database_file = cfg.lookup("database");
-  	}
-  	catch(const libconfig::SettingNotFoundException&) { /* ignore */ }
-
-	try {
-    	m_output_path = cfg.lookup("output");
+    	m_database_file	= cfg.lookup("database");
+    	m_output_path	= cfg.lookup("output");
+		m_logfile		= cfg.lookup("logfile");
+		m_loglevel		= static_cast<StormByte::VideoConvert::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
   	}
   	catch(const libconfig::SettingNotFoundException&) { /* ignore */ }
 
@@ -70,69 +69,86 @@ bool StormByte::VideoConvert::Application::init_from_config() {
 
 StormByte::VideoConvert::Application::status StormByte::VideoConvert::Application::init_from_cli(int argc, char** argv) {
 	int counter = 1; // Because first item or "argv is always the executable name
-	while (counter < argc) {
-		std::string argument = argv[counter];
-		if (argument == "-d" || argument == "--daemon") {
-			m_daemon_mode = true;
-			counter++;
-		}
-		else if (argument == "-db" || argument == "--database") {
-			if (++counter < argc)
-				m_database_file = argv[counter++];
-			else {
-				header();
-				std::cerr << "Database specified without argument, correct usage:" << std::endl << std::endl;
-				help();
-				return ERROR;
+	try {
+		while (counter < argc) {
+			std::string argument = argv[counter];
+			if (argument == "-d" || argument == "--daemon") {
+				m_daemon_mode = true;
+				counter++;
 			}
-		}
-		else if (argument == "-o" || argument == "--output") {
-			if (++counter < argc)
-				m_output_path = argv[counter++];
-			else {
-				header();
-				std::cerr << "Output path specified without argument, correct usage:" << std::endl << std::endl;
-				help();
-				return ERROR;
+			else if (argument == "-db" || argument == "--database") {
+				if (++counter < argc)
+					m_database_file = argv[counter++];
+				else
+					throw std::runtime_error("Database specified without argument, correct usage:");
 			}
-		}
-		else if (argument == "-v" || argument == "--version") {
-			version();
-			return HALT_OK;
-		}
-		else if (argument == "-h" || argument == "--help") {
-			header();
-			help();
-			return HALT_OK;
-		}
-		else {
-			header();
-			std::cerr << "Unknown argument: " << argument << ", correct usage" << std::endl << std::endl;
-			help();
-			return ERROR;
+			else if (argument == "-o" || argument == "--output") {
+				if (++counter < argc)
+					m_output_path = argv[counter++];
+				else
+					throw std::runtime_error("Output path specified without argument, correct usage:");
+			}
+			else if (argument == "-l" || argument == "--logfile") {
+				if (++counter < argc)
+					m_logfile = argv[counter++];
+				else
+					throw std::runtime_error("Logfile specified without argument, correct usage:");
+			}
+			else if (argument == "-ll" || argument == "--loglevel") {
+				if (++counter < argc) {
+					char *endptr;
+					int loglevel = strtol(argv[counter++], &endptr, 10);
+					if (*endptr != '\0' || loglevel < 0 || loglevel >= StormByte::VideoConvert::Logger::LEVEL_MAX)
+						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(StormByte::VideoConvert::Logger::LEVEL_MAX - 1));
+					m_loglevel = static_cast<StormByte::VideoConvert::Logger::LEVEL>(loglevel);
+				}
+				else
+					throw std::runtime_error("Logfile specified without argument, correct usage:");
+			}
+			else if (argument == "-v" || argument == "--version") {
+				version();
+				return HALT_OK;
+			}
+			else if (argument == "-h" || argument == "--help") {
+				header();
+				help();
+				return HALT_OK;
+			}
+			else
+				throw std::runtime_error("Unknown argument: " + argument + ", correct usage");
 		}
 	}
-
-	// If we reach here we should have all data correct
-	if (m_database_file.empty()) {
+	catch(const std::runtime_error& exception) {
 		header();
-		std::cerr << "Database file not set neither in config file either from command line." << std::endl << std::endl;
+		std::cerr << exception.what() << std::endl;
 		help();
 		return ERROR;
 	}
-
-	if (!m_daemon_mode && m_output_path.empty()) {
-		header();
-		std::cerr << "Output file not set neither in config file either from command line." << std::endl << std::endl;
-		help();
-		return ERROR;
-	}
-
 	return CONTINUE;
 }
 
-void StormByte::VideoConvert::Application::init_application() {
-	m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file));
+bool StormByte::VideoConvert::Application::init_application() {
+	try {
+		if (m_database_file)
+			m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file.value()));
+		else
+			throw std::runtime_error("ERROR: Database file not set neither in config file either from command line.");
+
+		if (!m_daemon_mode && !m_output_path) // Output path is only for registering new items0
+			throw std::runtime_error("ERROR: Output file not set neither in config file either from command line.");
+
+		if (!m_logfile || !m_loglevel)
+			throw std::runtime_error("ERROR: Log file and/or log level not set neither in config file either from command line.");
+		else
+			m_logger.reset(new StormByte::VideoConvert::Logger(m_logfile.value(), m_loglevel.value()));
+	}
+	catch(const std::runtime_error& e) {
+		header();
+		std::cerr << e.what() << std::endl << std::endl;
+		help();
+		return false;
+	}
+	return true;
 }
 
 void StormByte::VideoConvert::Application::header() const {
@@ -147,6 +163,8 @@ void StormByte::VideoConvert::Application::help() const {
 	std::cout << "\t--daemon\t\tRun daemon reading database items to keep converting files (also -d)" << std::endl;
 	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
 	std::cout << "\t--output <folder>\tSpecify output folder to store converted files (also -o <path>)" << std::endl;
+	std::cout << "\t--logfile <file>\tSpecify a file for storing logs (also -l <file>)" << std::endl;
+	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(StormByte::VideoConvert::Logger::LEVEL_MAX - 1) << std::endl; 
 	std::cout << "\t--version\t\tShow version information (also -v)" << std::endl;
 	std::cout << "\t--help\t\t\tShow this message (also -h)" << std::endl;
 	std::cout << std::endl;
