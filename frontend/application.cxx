@@ -8,7 +8,7 @@
 
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 
-StormByte::VideoConvert::Application::Application():m_daemon_mode(false) {}
+StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr) {}
 
 int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (!init_from_config()) return 1;
@@ -18,6 +18,7 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 	if (main_action == HALT_OK)
 		return 0;
 	else if (main_action == CONTINUE) {
+		init_database();
 		if (m_daemon_mode) {
 			std::cout << "Will init daemon" << std::endl;
 		}
@@ -119,6 +120,10 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 	}
 
 	return CONTINUE;
+}
+
+void StormByte::VideoConvert::Application::init_database() {
+	m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file));
 }
 
 void StormByte::VideoConvert::Application::header() const {

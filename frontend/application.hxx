@@ -1,3 +1,5 @@
+#include "database/sqlite3.hxx"
+
 #include <filesystem>
 #include <string>
 
@@ -14,6 +16,7 @@ namespace StormByte::VideoConvert {
 		private:
 			bool m_daemon_mode;
 			std::filesystem::path m_database_file, m_output_path;
+			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
 			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_OWNER, PROGRAM_VERSION;
@@ -21,6 +24,7 @@ namespace StormByte::VideoConvert {
 
 			bool init_from_config();
 			status init_from_cli(int argc, char** argv);
+			void init_database();
 			void header() const;
 			void help() const;
 			void version() const;
