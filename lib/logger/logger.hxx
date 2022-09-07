@@ -19,7 +19,6 @@ namespace StormByte::VideoConvert {
 			Logger& operator=(const Logger&) = delete;
 			~Logger();
 			
-			static Logger& getInstance();
 			void message(const LEVEL& level, const std::string& msg);
 
 		private:
