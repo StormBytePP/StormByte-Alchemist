@@ -20,6 +20,7 @@ namespace StormByte::VideoConvert {
 			/* Config data */
 			std::optional<std::filesystem::path> m_database_file, m_output_path, m_logfile;
 			std::optional<StormByte::VideoConvert::Logger::LEVEL> m_loglevel;
+			int m_sleep_idle_seconds;
 
 			bool m_daemon_mode;
 			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
@@ -28,6 +29,7 @@ namespace StormByte::VideoConvert {
 			bool m_must_terminate;
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
+			static const unsigned int DEFAULT_SLEEP_IDLE_SECONDS;
 			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_AUTHOR, PROGRAM_VERSION;
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			static void signal_handler(int);

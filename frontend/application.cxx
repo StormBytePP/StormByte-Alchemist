@@ -9,8 +9,9 @@
 #include <csignal>
 
 const std::filesystem::path StormByte::VideoConvert::Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
+const unsigned int StormByte::VideoConvert::Application::DEFAULT_SLEEP_IDLE_SECONDS		= 60;
 
-StormByte::VideoConvert::Application::Application():m_daemon_mode(false), m_database(nullptr), m_must_terminate(false) {
+StormByte::VideoConvert::Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
 }
 
@@ -57,10 +58,11 @@ bool StormByte::VideoConvert::Application::init_from_config() {
 	}
 
 	try {
-    	m_database_file	= cfg.lookup("database");
-    	m_output_path	= cfg.lookup("output");
-		m_logfile		= cfg.lookup("logfile");
-		m_loglevel		= static_cast<StormByte::VideoConvert::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
+    	m_database_file			= cfg.lookup("database");
+    	m_output_path			= cfg.lookup("output");
+		m_logfile				= cfg.lookup("logfile");
+		m_loglevel				= static_cast<StormByte::VideoConvert::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
+		m_sleep_idle_seconds	= cfg.lookup("sleep");
   	}
   	catch(const libconfig::SettingNotFoundException&) { /* ignore */ }
 
@@ -105,6 +107,17 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 				else
 					throw std::runtime_error("Logfile specified without argument, correct usage:");
 			}
+			else if (argument == "-s" || argument == "--sleep") {
+				if (++counter < argc) {
+					char *endptr;
+					int sleep = strtol(argv[counter++], &endptr, 10);
+					if (*endptr != '\0' || sleep < 0)
+						throw std::runtime_error("Sleep time is not recognized as integer or it has a negative value");
+					m_sleep_idle_seconds = sleep;
+				}
+				else
+					throw std::runtime_error("Sleep time specified without argument, correct usage:");
+			}
 			else if (argument == "-v" || argument == "--version") {
 				version();
 				return HALT_OK;
@@ -120,7 +133,7 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 	}
 	catch(const std::runtime_error& exception) {
 		header();
-		std::cerr << exception.what() << std::endl;
+		std::cerr << exception.what() << std::endl << std::endl;
 		help();
 		return ERROR;
 	}
@@ -152,6 +165,9 @@ bool StormByte::VideoConvert::Application::init_application() {
 			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
 		else if (!is_folder_writable(m_output_path.value()))
 			throw std::runtime_error("ERROR: Output folder " + m_output_path.value().string() + " is not writable!");
+
+		if (m_sleep_idle_seconds < 0)
+			throw std::runtime_error("ERROR: Sleep idle time is negative!");
 	}
 	catch(const std::runtime_error& e) {
 		header();
@@ -177,9 +193,10 @@ void StormByte::VideoConvert::Application::help() const {
 	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
 	std::cout << "\t--daemon\t\tRun daemon reading database items to keep converting files (also -d)" << std::endl;
 	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
-	std::cout << "\t--output <folder>\tSpecify output folder to store converted files (also -o <path>)" << std::endl;
+	std::cout << "\t--output <folder>\tSpecify output folder to store converted files (also -o <folder>)" << std::endl;
 	std::cout << "\t--logfile <file>\tSpecify a file for storing logs (also -l <file>)" << std::endl;
 	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(StormByte::VideoConvert::Logger::LEVEL_MAX - 1) << std::endl; 
+	std::cout << "\t--sleep <seconds>\tSpecify the time to sleep in main loop (also -s <seconds>). Of course should be positive integer unless you are my boyfriend ;)" << std::endl;
 	std::cout << "\t--version\t\tShow version information (also -v)" << std::endl;
 	std::cout << "\t--help\t\t\tShow this message (also -h)" << std::endl;
 	std::cout << std::endl;
