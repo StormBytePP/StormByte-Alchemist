@@ -27,6 +27,7 @@ namespace StormByte::VideoConvert {
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);
 			pid_t exec();
 			inline bool is_empty() const { return m_streams.empty(); }
+			inline auto get_input_file() const { return m_input_file; }
 #ifdef DEBUG
 			void debug() const;
 #endif

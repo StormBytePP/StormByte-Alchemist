@@ -19,10 +19,17 @@ namespace StormByte::VideoConvert {
 			Logger& operator=(const Logger&) = delete;
 			~Logger();
 			
-			void message(const LEVEL& level, const std::string& msg);
+			void message_part_begin(const LEVEL& level, const std::string& msg);
+			void message_part_continue(const LEVEL& level, const std::string& msg);
+			void message_part_end(const LEVEL& level, const std::string& msg);
+			void message_line(const LEVEL& level, const std::string& msg);
+			void end_line(const LEVEL& level);
+			
 
 		private:
 			std::ofstream m_logfile;
 			LEVEL m_display_level;
+
+			void timestamp();
 	};
 }

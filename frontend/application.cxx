@@ -213,15 +213,25 @@ void StormByte::VideoConvert::Application::compiler_info() const {
 }
 
 int StormByte::VideoConvert::Application::daemon() {
+	m_logger->message_line(Logger::LEVEL_INFO, "Starting daemon...");
 	while(!m_must_terminate) {
-		std::cout << "Check!" << std::endl;
-		sleep(1);
+		m_logger->message_part_begin(Logger::LEVEL_INFO, "Checking for films to convert...");
+		auto film = m_database->get_film_for_process(m_output_path.value());
+		if (film) {
+			m_logger->message_part_end(Logger::LEVEL_INFO, " film " + film.value().get_input_file());
+		}
+		else {
+			m_logger->message_part_end(Logger::LEVEL_INFO, " no films found");
+		}
+		m_logger->message_line(Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
+		sleep(m_sleep_idle_seconds);
 	}
+	m_logger->message_line(Logger::LEVEL_INFO, "Stopping daemon...");
 	return 0;
 }
 
 void StormByte::VideoConvert::Application::signal_handler(int) {
-	std::cout << "Signal handler called!" << std::endl;
+	Application::get_instance().m_logger->message_line(Logger::LEVEL_INFO, "Signal received!");
 	Application::get_instance().m_must_terminate = true;
 	if (Application::get_instance().m_worker)
 		kill(Application::get_instance().m_worker.value(), SIGTERM);
