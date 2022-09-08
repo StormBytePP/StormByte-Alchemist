@@ -1,5 +1,6 @@
 #include "application.hxx"
 #include "database/sqlite3.hxx"
+#include "utils/filesystem.hxx"
 #include "version.hxx"
 
 #include <libconfig.h++>
@@ -142,7 +143,7 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 bool StormByte::VideoConvert::Application::init_application() {
 	try {
 		if (m_database_file) {
-			if (!is_folder_writable(m_database_file.value().parent_path()))
+			if (!StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(m_database_file.value().parent_path()))
 				throw std::runtime_error("Error: Database folder " + m_database_file.value().parent_path().string() + " is not writable!");
 			m_database.reset(new StormByte::VideoConvert::Database::SQLite3(m_database_file.value()));
 		}
@@ -155,14 +156,14 @@ bool StormByte::VideoConvert::Application::init_application() {
 		if (!m_loglevel)
 			throw std::runtime_error("ERROR: Log level not set neither in config file either from command line.");
 
-		if (!is_folder_writable(m_logfile.value().parent_path()))
+		if (!StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(m_logfile.value().parent_path()))
 			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
 		else
 			m_logger.reset(new StormByte::VideoConvert::Utils::Logger(m_logfile.value(), m_loglevel.value()));
 		
 		if (!m_output_path)
 			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
-		else if (!is_folder_writable(m_output_path.value()))
+		else if (!StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(m_output_path.value()))
 			throw std::runtime_error("ERROR: Output folder " + m_output_path.value().string() + " is not writable!");
 
 		if (m_sleep_idle_seconds < 0)
@@ -175,24 +176,6 @@ bool StormByte::VideoConvert::Application::init_application() {
 		return false;
 	}
 	return true;
-}
-
-bool StormByte::VideoConvert::Application::is_folder_writable(const std::filesystem::path& fullpath, bool use_cerr) const {
-	if (access(fullpath.c_str(), W_OK) == 0)
-		return true;
-	else {
-		if (use_cerr) std::cerr << "Folder " << fullpath << " is not writable!" << std::endl;
-		return false;
-	}
-}
-
-bool StormByte::VideoConvert::Application::exists_file(const std::filesystem::path& fullpath, bool use_cerr) const {
-	if (std::filesystem::exists(fullpath))
-		return true;
-	else {
-		if (use_cerr) std::cerr << "File " << fullpath << " does not exist" << std::endl;
-		return false;
-	}
 }
 
 void StormByte::VideoConvert::Application::header() const {
@@ -254,7 +237,7 @@ int StormByte::VideoConvert::Application::interactive() {
 		std::cout << "Enter full film path: ";
 		std::getline(std::cin, buffer);
 		in = std::move(buffer);
-	} while(!exists_file(in, true));
+	} while(!StormByte::VideoConvert::Utils::Filesystem::exists_file(in, true));
 
 	return 0;
 }
