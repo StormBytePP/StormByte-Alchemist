@@ -214,6 +214,8 @@ void StormByte::VideoConvert::Application::compiler_info() const {
 
 int StormByte::VideoConvert::Application::daemon() {
 	m_logger->message_line(Logger::LEVEL_INFO, "Starting daemon...");
+	m_logger->message_line(Logger::LEVEL_DEBUG, "Resetting previously in process films");
+	m_database->reset_processing_films();
 	while(!m_must_terminate) {
 		m_logger->message_part_begin(Logger::LEVEL_INFO, "Checking for films to convert...");
 		auto film = m_database->get_film_for_process(m_output_path.value());

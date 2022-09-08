@@ -6,7 +6,8 @@ const std::string StormByte::VideoConvert::Database::SQLite3::DATABASE_CREATE_SQ
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
 		"prio TINYINT,"
-		"processing BOOL DEFAULT FALSE"
+		"processing BOOL DEFAULT FALSE,"
+		"finished BOOL DEFAULT FALSE"		
 	");"
 	"CREATE TABLE streams("
 		"id INTEGER,"
@@ -38,7 +39,7 @@ const std::string StormByte::VideoConvert::Database::SQLite3::DATABASE_CREATE_SQ
 	");";
 
 const std::map<std::string, std::string> StormByte::VideoConvert::Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
-	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},
+	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND finished = FALSE ORDER BY prio ASC LIMIT 1"},
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = TRUE WHERE id = ?"},
 	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate FROM streams WHERE film_id = ?"},
@@ -46,7 +47,8 @@ const std::map<std::string, std::string> StormByte::VideoConvert::Database::SQLi
 	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, max_rate, bitrate) VALUES (?, ?, ?, ?, ?)"},
-	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"}
+	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
+	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE WHERE finished = FALSE"} // Finished films no matter processing status
 };
 
 StormByte::VideoConvert::Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -310,6 +312,12 @@ void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& 
 		sqlite3_bind_int(stmt, 15, hdr.light_level_average.value());
 	else
 		sqlite3_bind_null(stmt, 15);
+	sqlite3_step(stmt); // No result
+	reset_stmt(stmt);
+}
+
+void StormByte::VideoConvert::Database::SQLite3::reset_processing_films() {
+	auto stmt = m_prepared["resetProcessingFilms"];
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 }
