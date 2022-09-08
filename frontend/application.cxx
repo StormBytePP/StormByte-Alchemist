@@ -229,15 +229,20 @@ int StormByte::VideoConvert::Application::daemon() {
 }
 
 int StormByte::VideoConvert::Application::interactive() {
-	header();
+	/* Needed variables */
 	std::string buffer;
 	std::filesystem::path in;
-	// In file film
+	
+	header();
+	
+	// In file
 	do {
 		std::cout << "Enter full film path: ";
 		std::getline(std::cin, buffer);
 		in = std::move(buffer);
 	} while(!StormByte::VideoConvert::Utils::Filesystem::exists_file(in, true));
+
+	
 
 	return 0;
 }
