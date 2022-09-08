@@ -34,7 +34,7 @@ int StormByte::VideoConvert::Application::run(int argc, char** argv) noexcept {
 			return daemon();
 		}
 		else {
-			std::cout << "Will init interactive mode" << std::endl;
+			return interactive();
 		}
 		return 0;
 	}
@@ -178,8 +178,22 @@ bool StormByte::VideoConvert::Application::init_application() {
 	return true;
 }
 
-bool StormByte::VideoConvert::Application::is_folder_writable(const std::filesystem::path& fullpath) const {
-	return access(fullpath.c_str(), W_OK) == 0;
+bool StormByte::VideoConvert::Application::is_folder_writable(const std::filesystem::path& fullpath, bool use_cerr) const {
+	if (access(fullpath.c_str(), W_OK) == 0)
+		return true;
+	else {
+		if (use_cerr) std::cerr << "Folder " << fullpath << " is not writable!" << std::endl;
+		return false;
+	}
+}
+
+bool StormByte::VideoConvert::Application::exists_file(const std::filesystem::path& fullpath, bool use_cerr) const {
+	if (std::filesystem::exists(fullpath))
+		return true;
+	else {
+		if (use_cerr) std::cerr << "File " << fullpath << " does not exist" << std::endl;
+		return false;
+	}
 }
 
 void StormByte::VideoConvert::Application::header() const {
@@ -229,6 +243,20 @@ int StormByte::VideoConvert::Application::daemon() {
 		sleep(m_sleep_idle_seconds);
 	}
 	m_logger->message_line(Logger::LEVEL_INFO, "Stopping daemon...");
+	return 0;
+}
+
+int StormByte::VideoConvert::Application::interactive() {
+	header();
+	std::string buffer;
+	std::filesystem::path in;
+	// In file film
+	do {
+		std::cout << "Enter full film path: ";
+		std::getline(std::cin, buffer);
+		in = std::move(buffer);
+	} while(!exists_file(in, true));
+
 	return 0;
 }
 
