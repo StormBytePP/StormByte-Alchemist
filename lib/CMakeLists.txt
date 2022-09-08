@@ -14,7 +14,7 @@ add_library(StormByte-videoconvert-library SHARED
 	ffmpeg/stream/subtitle/base.cxx
 	ffmpeg/stream/subtitle/copy.cxx
 	ffmpeg/ffmpeg.cxx
-	logger/logger.cxx
+	utils/logger.cxx
 )
 
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)

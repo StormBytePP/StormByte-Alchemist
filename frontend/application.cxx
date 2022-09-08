@@ -1,5 +1,4 @@
 #include "application.hxx"
-#include "logger/logger.hxx"
 #include "database/sqlite3.hxx"
 #include "version.hxx"
 
@@ -61,7 +60,7 @@ bool StormByte::VideoConvert::Application::init_from_config() {
     	m_database_file			= cfg.lookup("database");
     	m_output_path			= cfg.lookup("output");
 		m_logfile				= cfg.lookup("logfile");
-		m_loglevel				= static_cast<StormByte::VideoConvert::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
+		m_loglevel				= static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
 		m_sleep_idle_seconds	= cfg.lookup("sleep");
   	}
   	catch(const libconfig::SettingNotFoundException&) { /* ignore */ }
@@ -100,9 +99,9 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 				if (++counter < argc) {
 					char *endptr;
 					int loglevel = strtol(argv[counter++], &endptr, 10);
-					if (*endptr != '\0' || loglevel < 0 || loglevel >= StormByte::VideoConvert::Logger::LEVEL_MAX)
-						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(StormByte::VideoConvert::Logger::LEVEL_MAX - 1));
-					m_loglevel = static_cast<StormByte::VideoConvert::Logger::LEVEL>(loglevel);
+					if (*endptr != '\0' || loglevel < 0 || loglevel >= StormByte::VideoConvert::Utils::Logger::LEVEL_MAX)
+						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(StormByte::VideoConvert::Utils::Logger::Logger::LEVEL_MAX - 1));
+					m_loglevel = static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>(loglevel);
 				}
 				else
 					throw std::runtime_error("Logfile specified without argument, correct usage:");
@@ -159,7 +158,7 @@ bool StormByte::VideoConvert::Application::init_application() {
 		if (!is_folder_writable(m_logfile.value().parent_path()))
 			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
 		else
-			m_logger.reset(new StormByte::VideoConvert::Logger(m_logfile.value(), m_loglevel.value()));
+			m_logger.reset(new StormByte::VideoConvert::Utils::Logger(m_logfile.value(), m_loglevel.value()));
 		
 		if (!m_output_path)
 			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
@@ -209,7 +208,7 @@ void StormByte::VideoConvert::Application::help() const {
 	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
 	std::cout << "\t--output <folder>\tSpecify output folder to store converted files (also -o <folder>)" << std::endl;
 	std::cout << "\t--logfile <file>\tSpecify a file for storing logs (also -l <file>)" << std::endl;
-	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(StormByte::VideoConvert::Logger::LEVEL_MAX - 1) << std::endl; 
+	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(StormByte::VideoConvert::Utils::Logger::Logger::LEVEL_MAX - 1) << std::endl; 
 	std::cout << "\t--sleep <seconds>\tSpecify the time to sleep in main loop (also -s <seconds>). Of course should be positive integer unless you are my boyfriend ;)" << std::endl;
 	std::cout << "\t--version\t\tShow version information (also -v)" << std::endl;
 	std::cout << "\t--help\t\t\tShow this message (also -h)" << std::endl;
@@ -227,22 +226,22 @@ void StormByte::VideoConvert::Application::compiler_info() const {
 }
 
 int StormByte::VideoConvert::Application::daemon() {
-	m_logger->message_line(Logger::LEVEL_INFO, "Starting daemon...");
-	m_logger->message_line(Logger::LEVEL_DEBUG, "Resetting previously in process films");
+	m_logger->message_line(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, "Starting daemon...");
+	m_logger->message_line(StormByte::VideoConvert::Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
 	while(!m_must_terminate) {
-		m_logger->message_part_begin(Logger::LEVEL_INFO, "Checking for films to convert...");
+		m_logger->message_part_begin(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, "Checking for films to convert...");
 		auto film = m_database->get_film_for_process(m_output_path.value());
 		if (film) {
-			m_logger->message_part_end(Logger::LEVEL_INFO, " film " + film.value().get_input_file());
+			m_logger->message_part_end(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, " film " + film.value().get_input_file());
 		}
 		else {
-			m_logger->message_part_end(Logger::LEVEL_INFO, " no films found");
+			m_logger->message_part_end(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, " no films found");
 		}
-		m_logger->message_line(Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
+		m_logger->message_line(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
 		sleep(m_sleep_idle_seconds);
 	}
-	m_logger->message_line(Logger::LEVEL_INFO, "Stopping daemon...");
+	m_logger->message_line(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, "Stopping daemon...");
 	return 0;
 }
 
@@ -261,7 +260,7 @@ int StormByte::VideoConvert::Application::interactive() {
 }
 
 void StormByte::VideoConvert::Application::signal_handler(int) {
-	Application::get_instance().m_logger->message_line(Logger::LEVEL_INFO, "Signal received!");
+	Application::get_instance().m_logger->message_line(StormByte::VideoConvert::Utils::Logger::LEVEL_INFO, "Signal received!");
 	Application::get_instance().m_must_terminate = true;
 	if (Application::get_instance().m_worker)
 		kill(Application::get_instance().m_worker.value(), SIGTERM);

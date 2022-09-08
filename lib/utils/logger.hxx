@@ -3,7 +3,7 @@
 #include <fstream>
 #include <filesystem>
 
-namespace StormByte::VideoConvert {
+namespace StormByte::VideoConvert::Utils {
 	class Logger {
 		public:
 			enum LEVEL:unsigned short {
@@ -30,6 +30,6 @@ namespace StormByte::VideoConvert {
 			std::ofstream m_logfile;
 			LEVEL m_display_level;
 
-			void timestamp();
+			void timestamp(const LEVEL& log_level);
 	};
 }
