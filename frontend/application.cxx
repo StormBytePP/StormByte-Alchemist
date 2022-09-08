@@ -1,6 +1,7 @@
 #include "application.hxx"
 #include "database/sqlite3.hxx"
 #include "utils/filesystem.hxx"
+#include "utils/numbers.hxx"
 #include "version.hxx"
 
 #include <libconfig.h++>
@@ -98,9 +99,8 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 			}
 			else if (argument == "-ll" || argument == "--loglevel") {
 				if (++counter < argc) {
-					char *endptr;
-					int loglevel = strtol(argv[counter++], &endptr, 10);
-					if (*endptr != '\0' || loglevel < 0 || loglevel >= StormByte::VideoConvert::Utils::Logger::LEVEL_MAX)
+					int loglevel;
+					if (!StormByte::VideoConvert::Utils::Numbers::to_int(argv[counter++], loglevel) || loglevel < 0 || loglevel >= StormByte::VideoConvert::Utils::Logger::LEVEL_MAX)
 						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(StormByte::VideoConvert::Utils::Logger::Logger::LEVEL_MAX - 1));
 					m_loglevel = static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>(loglevel);
 				}
@@ -109,9 +109,8 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 			}
 			else if (argument == "-s" || argument == "--sleep") {
 				if (++counter < argc) {
-					char *endptr;
-					int sleep = strtol(argv[counter++], &endptr, 10);
-					if (*endptr != '\0' || sleep < 0)
+					int sleep;
+					if (!StormByte::VideoConvert::Utils::Numbers::to_int(argv[counter++], sleep) || sleep < 0)
 						throw std::runtime_error("Sleep time is not recognized as integer or it has a negative value");
 					m_sleep_idle_seconds = sleep;
 				}
