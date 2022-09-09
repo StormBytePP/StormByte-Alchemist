@@ -30,6 +30,8 @@ namespace StormByte::VideoConvert::Utils {
 			std::ofstream m_logfile;
 			LEVEL m_display_level;
 
-			void timestamp(const LEVEL& log_level);
+			void header(const LEVEL& log_level);
+			void timestamp();
+			void loglevel_display(const LEVEL& level);
 	};
 }
