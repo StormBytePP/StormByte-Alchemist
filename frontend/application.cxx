@@ -259,17 +259,17 @@ void Application::header() const {
 
 void Application::help() const {
 	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
-	std::cout << "\t--daemon\t\tRun daemon reading database items to keep converting files (also -d)" << std::endl;
-	std::cout << "\t--add <file>\t\tInteractivelly add a new film to database files (also -a <file>)" << std::endl;
-	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
-	std::cout << "\t--input <folder>\tSpecify input folder to read films from (also -i <folder>)" << std::endl;
-	std::cout << "\t--output <folder>\tSpecify output folder to store converted files once finished (also -o <folder>)" << std::endl;
-	std::cout << "\t--work <folder>\t\tSpecify temprary working folder to store files while being converted (also -w <folder>)" << std::endl;
-	std::cout << "\t--logfile <file>\tSpecify a file for storing logs (also -l <file>)" << std::endl;
-	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << std::endl; 
-	std::cout << "\t--sleep <seconds>\tSpecify the time to sleep in main loop (also -s <seconds>). Of course should be positive integer unless you are my boyfriend ;)" << std::endl;
-	std::cout << "\t--version\t\tShow version information (also -v)" << std::endl;
-	std::cout << "\t--help\t\t\tShow this message (also -h)" << std::endl;
+	std::cout << "\t-d,  --daemon\t\tRun daemon reading database items to keep converting files" << std::endl;
+	std::cout << "\t-a,  --add <file>\tInteractivelly add a new film to database files" << std::endl;
+	std::cout << "\t-db, --database <file>\tSpecify SQLite database file to be used" << std::endl;
+	std::cout << "\t-i,  --input <folder>\tSpecify input folder to read films from" << std::endl;
+	std::cout << "\t-o,  --output <folder>\tSpecify output folder to store converted files once finished" << std::endl;
+	std::cout << "\t-w,  --work <folder>\tSpecify temprary working folder to store files while being converted" << std::endl;
+	std::cout << "\t-l,  --logfile <file>\tSpecify a file for storing logs" << std::endl;
+	std::cout << "\t-ll, --loglevel <level>\tSpecify which loglevel to display (Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << ")" << std::endl; 
+	std::cout << "\t-s,  --sleep <seconds>\tSpecify the time to sleep in main loop. Of course should be positive integer unless you are my boyfriend and have that ability ;)" << std::endl;
+	std::cout << "\t-v,  --version\t\tShow version and compile information" << std::endl;
+	std::cout << "\t-h,  --help\t\tShow this message" << std::endl;
 	std::cout << std::endl;
 	std::cout << "Please note that every unrecognized option in config file will be ignored but every unrecognized option in command line will throw an error." << std::endl;
 }
