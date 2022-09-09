@@ -8,7 +8,8 @@ COMMAND="/usr/bin/StormByte-videoconvert"
 USER="stormbyte"
 
 depend() {
-    use logger
+    	use logger
+	need localmount
 }
 
 start() {
@@ -25,7 +26,7 @@ stop() {
 
 configtest() {
 	ebegin "Checking for StormByte-videoconvert daemon start without starting it"
-	${COMMAND} -c > /dev/null
+	start-stop-daemon --start --user ${USER} --exec ${COMMAND} -- -c > /dev/null
 	eend $?
 }
 
