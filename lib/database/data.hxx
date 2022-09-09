@@ -49,15 +49,16 @@ namespace StormByte::VideoConvert::Database::Data {
 	};
 
 	static const std::map<stream_codec, std::string> codec_string {
-		{ VIDEO_HEVC, 	"HEVC/H.265" },
-		{ VIDEO_COPY, 	"Video Copy" },
-		{ AUDIO_AAC, 	"AAC" },
-		{ AUDIO_FDKAAC, "Fraunhoffer AAC" },
-		{ AUDIO_AC3, 	"Dolby AC-3" },
-		{ AUDIO_COPY,	"Audio Copy" },
-		{ AUDIO_EAC3, 	"Dolby Enhanced AC-3" },
-		{ AUDIO_OPUS,	"Opus" },
-		{ SUBTITLE_COPY,"Subtitle Copy" }
+		{ VIDEO_HEVC, 		"HEVC/H.265" },
+		{ VIDEO_COPY, 		"Video Copy" },
+		{ AUDIO_AAC, 		"Advanced Audio Codec (AAC)" },
+		{ AUDIO_FDKAAC, 	"Fraunhoffer Advanced Audio Codec (AAC-HE)" },
+		{ AUDIO_AC3, 		"Dolby AC-3" },
+		{ AUDIO_COPY,		"Audio Copy" },
+		{ AUDIO_EAC3, 		"Dolby Enhanced AC-3" },
+		{ AUDIO_OPUS,		"Opus" },
+		{ SUBTITLE_COPY,	"Subtitle Copy" },
+		{ INVALID_CODEC,	"Invalid or unsupported codec"}
 	};
 
 	struct stream {

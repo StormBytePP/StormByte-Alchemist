@@ -173,6 +173,7 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 					break;
 				}
 				default: {
+					unsupported_codecs.push_back(Data::INVALID_CODEC);
 					break;
 				}
 			}
