@@ -1,25 +1,27 @@
 #include "copy.hxx"
 
-StormByte::VideoConvert::Stream::Audio::Copy::Copy(unsigned short stream_id):StormByte::VideoConvert::Stream::Audio::Base(stream_id, "copy") {}
+using namespace StormByte::VideoConvert;
 
-StormByte::VideoConvert::Stream::Audio::Copy::Copy(const Copy& copy):StormByte::VideoConvert::Stream::Audio::Base(copy) {}
+Stream::Audio::Copy::Copy(unsigned short stream_id):Stream::Audio::Base(stream_id, "copy") {}
 
-StormByte::VideoConvert::Stream::Audio::Copy::Copy(Copy&& copy) noexcept :StormByte::VideoConvert::Stream::Audio::Base(copy) {}
+Stream::Audio::Copy::Copy(const Copy& copy):Stream::Audio::Base(copy) {}
 
-StormByte::VideoConvert::Stream::Audio::Copy& StormByte::VideoConvert::Stream::Audio::Copy::operator=(const Copy& copy) {
+Stream::Audio::Copy::Copy(Copy&& copy) noexcept :Stream::Audio::Base(copy) {}
+
+Stream::Audio::Copy& Stream::Audio::Copy::operator=(const Copy& copy) {
 	if (&copy != this) {
-		StormByte::VideoConvert::Stream::Audio::Base::operator=(copy);
+		Stream::Audio::Base::operator=(copy);
 	}
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Audio::Copy& StormByte::VideoConvert::Stream::Audio::Copy::operator=(Copy&& copy) noexcept {
+Stream::Audio::Copy& Stream::Audio::Copy::operator=(Copy&& copy) noexcept {
 	if (&copy != this) {
-		StormByte::VideoConvert::Stream::Audio::Base::operator=(copy);
+		Stream::Audio::Base::operator=(copy);
 	}
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Audio::Copy* StormByte::VideoConvert::Stream::Audio::Copy::copy() const {
+Stream::Audio::Copy* Stream::Audio::Copy::copy() const {
 	return new Copy(*this);
 }

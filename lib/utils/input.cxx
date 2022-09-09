@@ -4,7 +4,9 @@
 #include <iostream>
 #include <algorithm>
 
-bool StormByte::VideoConvert::Utils::Input::to_int(const std::string& possible_number, int& store, bool use_cerr) {
+using namespace StormByte::VideoConvert;
+
+bool Utils::Input::to_int(const std::string& possible_number, int& store, bool use_cerr) {
 	char *endptr;
 	store = strtol(possible_number.c_str(), &endptr, 10);
 
@@ -17,7 +19,7 @@ bool StormByte::VideoConvert::Utils::Input::to_int(const std::string& possible_n
 	}
 }
 
-bool StormByte::VideoConvert::Utils::Input::to_int_positive(const std::string& possible_number, int& store, bool use_cerr) {
+bool Utils::Input::to_int_positive(const std::string& possible_number, int& store, bool use_cerr) {
 	if (to_int(possible_number, store, use_cerr)) {
 		if (store < 0) {
 			if (use_cerr) std::cerr << "Introduced number is not a positive integer" << std::endl;
@@ -32,11 +34,11 @@ bool StormByte::VideoConvert::Utils::Input::to_int_positive(const std::string& p
 	}
 }
 
-bool StormByte::VideoConvert::Utils::Input::to_int_in_range(const std::string& possible_number, int& store, int min, int max, bool use_cerr) {
+bool Utils::Input::to_int_in_range(const std::string& possible_number, int& store, int min, int max, bool use_cerr) {
 	return to_int(possible_number, store, use_cerr) && in_range(store, min, max, use_cerr);
 }
 
-bool StormByte::VideoConvert::Utils::Input::in_range(int number, int min, int max, bool use_cerr) {
+bool Utils::Input::in_range(int number, int min, int max, bool use_cerr) {
 	if (number>=min && number<=max)
 		return true;
 	else {
@@ -45,7 +47,7 @@ bool StormByte::VideoConvert::Utils::Input::in_range(int number, int min, int ma
 	}
 }
 
-bool StormByte::VideoConvert::Utils::Input::in_options(const std::string& input, const std::list<std::string>& options, bool use_cerr) {
+bool Utils::Input::in_options(const std::string& input, const std::list<std::string>& options, bool use_cerr) {
 	if (std::find(options.begin(), options.end(), input) == options.end()) {
 		if (use_cerr) {
 			std::cerr << "Selected option " << input << " not found in " << list_to_string(options) << std::endl;
@@ -57,7 +59,7 @@ bool StormByte::VideoConvert::Utils::Input::in_options(const std::string& input,
 	}
 }
 
-std::string StormByte::VideoConvert::Utils::Input::list_to_string(const std::list<std::string>& list_of_strings) {
+std::string Utils::Input::list_to_string(const std::list<std::string>& list_of_strings) {
 	std::string result ="[ ";
 	
 	for (std::string i: list_of_strings)

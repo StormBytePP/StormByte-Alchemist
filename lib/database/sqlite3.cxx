@@ -1,7 +1,9 @@
 #include "sqlite3.hxx"
 #include <stdexcept>
 
-const std::string StormByte::VideoConvert::Database::SQLite3::DATABASE_CREATE_SQL =
+using namespace StormByte::VideoConvert;
+
+const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 	"CREATE TABLE films("
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
@@ -38,7 +40,7 @@ const std::string StormByte::VideoConvert::Database::SQLite3::DATABASE_CREATE_SQ
 		"FOREIGN KEY (film_id, stream_id, codec) REFERENCES streams(id, film_id, codec)"
 	");";
 
-const std::map<std::string, std::string> StormByte::VideoConvert::Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
+const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
 	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND finished = FALSE ORDER BY prio ASC LIMIT 1"},
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = TRUE WHERE id = ?"},
 	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
@@ -51,7 +53,7 @@ const std::map<std::string, std::string> StormByte::VideoConvert::Database::SQLi
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE WHERE finished = FALSE"} // Finished films no matter processing status
 };
 
-StormByte::VideoConvert::Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
+Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
 	int rc = sqlite3_open(dbfile.c_str(), &m_database);
 
 	if (rc != SQLITE_OK) {
@@ -63,7 +65,7 @@ StormByte::VideoConvert::Database::SQLite3::SQLite3(const std::filesystem::path&
 	prepare_sentences();
 	
 }
-StormByte::VideoConvert::Database::SQLite3::~SQLite3() {
+Database::SQLite3::~SQLite3() {
 	for (auto it = m_prepared.begin(); it != m_prepared.end(); it++) {
 		sqlite3_finalize(it->second);
 	}
@@ -71,8 +73,8 @@ StormByte::VideoConvert::Database::SQLite3::~SQLite3() {
 	sqlite3_close(m_database);
 }
 #include <iostream>
-std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database::SQLite3::get_film_for_process(const std::filesystem::path& output_path) {
-	using namespace StormByte::VideoConvert::Stream;
+std::optional<FFmpeg> Database::SQLite3::get_film_for_process(const std::filesystem::path& output_path) {
+	using namespace Stream;
 	std::optional<FFmpeg> ffmpeg;
 	int film_id = get_film_id_for_process();
 
@@ -141,31 +143,31 @@ std::optional<StormByte::VideoConvert::FFmpeg> StormByte::VideoConvert::Database
 	return ffmpeg;
 }
 
-bool StormByte::VideoConvert::Database::SQLite3::check_database() {
+bool Database::SQLite3::check_database() {
 	char* err_msg = NULL;
 	int rc = sqlite3_exec(m_database, "SELECT * FROM films;", 0, 0, &err_msg);
 	sqlite3_free(err_msg);
 	return rc == SQLITE_OK;
 }
 
-void StormByte::VideoConvert::Database::SQLite3::init_database() {
+void Database::SQLite3::init_database() {
 	char* err_msg = NULL;
 	int rc = sqlite3_exec(m_database, DATABASE_CREATE_SQL.c_str(), 0, 0, &err_msg);
 	if (rc != SQLITE_OK) throw_error(err_msg);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::throw_error(char* err_msg) {
+void Database::SQLite3::throw_error(char* err_msg) {
 	const std::string message = "Error creating database: " + std::string(err_msg);
 	sqlite3_free(err_msg);
 	throw std::runtime_error(message);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::reset_stmt(sqlite3_stmt* stmt) {
+void Database::SQLite3::reset_stmt(sqlite3_stmt* stmt) {
 	sqlite3_clear_bindings(stmt);
 	sqlite3_reset(stmt);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::prepare_sentences() {
+void Database::SQLite3::prepare_sentences() {
 	for (auto it = DATABASE_PREPARED_SENTENCES.begin(); it != DATABASE_PREPARED_SENTENCES.end(); it++) {
 		m_prepared[it->first] = nullptr;
 		sqlite3_prepare_v2( m_database, it->second.c_str(), it->second.length(), &m_prepared[it->first], nullptr);
@@ -174,7 +176,7 @@ void StormByte::VideoConvert::Database::SQLite3::prepare_sentences() {
 	}
 }
 
-int StormByte::VideoConvert::Database::SQLite3::get_film_id_for_process() {
+int Database::SQLite3::get_film_id_for_process() {
 	int result = -1; // No films for converting available
 	auto stmt = m_prepared["getFilmIDForProcess"];
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -184,14 +186,14 @@ int StormByte::VideoConvert::Database::SQLite3::get_film_id_for_process() {
 	return result;
 }
 
-void StormByte::VideoConvert::Database::SQLite3::set_film_id_as_processing(int film_id) {
+void Database::SQLite3::set_film_id_as_processing(int film_id) {
 	auto stmt = m_prepared["setProcessingStatusForFilm"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }
 
-StormByte::VideoConvert::Database::Data::film StormByte::VideoConvert::Database::SQLite3::get_film_basic_data(int film_id) {
+Database::Data::film Database::SQLite3::get_film_basic_data(int film_id) {
 	Data::film result;
 	auto stmt = m_prepared["getFilmBasicData"];
 	sqlite3_bind_int(stmt, 1, film_id);
@@ -204,7 +206,7 @@ StormByte::VideoConvert::Database::Data::film StormByte::VideoConvert::Database:
 	return result;
 }
 
-std::list<StormByte::VideoConvert::Database::Data::stream> StormByte::VideoConvert::Database::SQLite3::get_film_streams(int film_id) {
+std::list<Database::Data::stream> Database::SQLite3::get_film_streams(int film_id) {
 	std::list<Data::stream> result;
 	auto stmt = m_prepared["getFilmStreams"];
 	sqlite3_bind_int(stmt, 1, film_id);
@@ -224,7 +226,7 @@ std::list<StormByte::VideoConvert::Database::Data::stream> StormByte::VideoConve
 	return result;
 }
 
-bool StormByte::VideoConvert::Database::SQLite3::has_film_stream_HDR(const Data::stream& stream) {
+bool Database::SQLite3::has_film_stream_HDR(const Data::stream& stream) {
 	bool result = false;
 	auto stmt = m_prepared["hasStreamHDR?"];
 	sqlite3_bind_int(stmt, 1, stream.film_id);
@@ -237,7 +239,7 @@ bool StormByte::VideoConvert::Database::SQLite3::has_film_stream_HDR(const Data:
 	return result;
 }
 
-StormByte::VideoConvert::Database::Data::hdr StormByte::VideoConvert::Database::SQLite3::get_film_stream_HDR(const Data::stream& stream) {
+Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& stream) {
 	Data::hdr result;
 	auto stmt = m_prepared["getFilmStreamHDR"];
 	sqlite3_bind_int(stmt, 1, stream.film_id);
@@ -261,7 +263,7 @@ StormByte::VideoConvert::Database::Data::hdr StormByte::VideoConvert::Database::
 	return result;
 }
 
-bool StormByte::VideoConvert::Database::SQLite3::insert_film(Data::film& film) {
+bool Database::SQLite3::insert_film(Data::film& film) {
 	int result = -1;
 	auto stmt = m_prepared["insertFilm"];
 	sqlite3_bind_text(stmt, 1, film.file.c_str(), -1, SQLITE_STATIC);
@@ -277,7 +279,7 @@ bool StormByte::VideoConvert::Database::SQLite3::insert_film(Data::film& film) {
 		return false;
 }
 
-void StormByte::VideoConvert::Database::SQLite3::insert_stream(const Data::stream& stream) {
+void Database::SQLite3::insert_stream(const Data::stream& stream) {
 	auto stmt = m_prepared["insertStream"];
 	sqlite3_bind_int(stmt, 1, stream.id);
 	sqlite3_bind_int(stmt, 2, stream.film_id);
@@ -296,7 +298,7 @@ void StormByte::VideoConvert::Database::SQLite3::insert_stream(const Data::strea
 	if (stream.HDR.has_value()) insert_HDR(stream);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& stream) {
+void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 	auto stmt = m_prepared["insertHDR"];
 	sqlite3_bind_int(stmt, 1, stream.film_id);
 	sqlite3_bind_int(stmt, 2, stream.id);
@@ -323,7 +325,7 @@ void StormByte::VideoConvert::Database::SQLite3::insert_HDR(const Data::stream& 
 	reset_stmt(stmt);
 }
 
-void StormByte::VideoConvert::Database::SQLite3::reset_processing_films() {
+void Database::SQLite3::reset_processing_films() {
 	auto stmt = m_prepared["resetProcessingFilms"];
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);

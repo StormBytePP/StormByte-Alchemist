@@ -3,7 +3,9 @@
 #include <iostream>
 #include <unistd.h>
 
-bool StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(const std::filesystem::path& fullpath, bool use_cerr) {
+using namespace StormByte::VideoConvert;
+
+bool Utils::Filesystem::is_folder_writable(const std::filesystem::path& fullpath, bool use_cerr) {
 	if (access(fullpath.c_str(), W_OK) == 0)
 		return true;
 	else {
@@ -12,7 +14,7 @@ bool StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(const std::f
 	}
 }
 
-bool StormByte::VideoConvert::Utils::Filesystem::exists_file(const std::filesystem::path& fullpath, bool use_cerr) {
+bool Utils::Filesystem::exists_file(const std::filesystem::path& fullpath, bool use_cerr) {
 	if (std::filesystem::exists(fullpath))
 		return true;
 	else {

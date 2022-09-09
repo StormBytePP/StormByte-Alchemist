@@ -1,27 +1,29 @@
 #include "ac3.hxx"
 
-const std::string StormByte::VideoConvert::Stream::Audio::AC3::AC3_DEFAULT_ENCODER	= "ac3";
+using namespace StormByte::VideoConvert;
 
-StormByte::VideoConvert::Stream::Audio::AC3::AC3(unsigned short stream_id):StormByte::VideoConvert::Stream::Audio::Base(stream_id, AC3_DEFAULT_ENCODER) {}
+const std::string Stream::Audio::AC3::AC3_DEFAULT_ENCODER	= "ac3";
 
-StormByte::VideoConvert::Stream::Audio::AC3::AC3(const AC3& ac3):StormByte::VideoConvert::Stream::Audio::Base(ac3) {}
+Stream::Audio::AC3::AC3(unsigned short stream_id):Stream::Audio::Base(stream_id, AC3_DEFAULT_ENCODER) {}
 
-StormByte::VideoConvert::Stream::Audio::AC3::AC3(AC3&& ac3) noexcept :StormByte::VideoConvert::Stream::Audio::Base(ac3) {}
+Stream::Audio::AC3::AC3(const AC3& ac3):Stream::Audio::Base(ac3) {}
 
-StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Audio::AC3::operator=(const AC3& ac3) {
+Stream::Audio::AC3::AC3(AC3&& ac3) noexcept :Stream::Audio::Base(ac3) {}
+
+Stream::Audio::AC3& Stream::Audio::AC3::operator=(const AC3& ac3) {
 	if (&ac3 != this) {
-		StormByte::VideoConvert::Stream::Audio::Base::operator=(ac3);
+		Stream::Audio::Base::operator=(ac3);
 	}
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Audio::AC3& StormByte::VideoConvert::Stream::Audio::AC3::operator=(AC3&& ac3) noexcept {
+Stream::Audio::AC3& Stream::Audio::AC3::operator=(AC3&& ac3) noexcept {
 	if (&ac3 != this) {
-		StormByte::VideoConvert::Stream::Audio::Base::operator=(ac3);
+		Stream::Audio::Base::operator=(ac3);
 	}
 	return *this;
 }
 
-StormByte::VideoConvert::Stream::Audio::AC3* StormByte::VideoConvert::Stream::Audio::AC3::copy() const {
+Stream::Audio::AC3* Stream::Audio::AC3::copy() const {
 	return new AC3(*this);
 }
