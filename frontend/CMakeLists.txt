@@ -6,6 +6,9 @@ add_executable(StormByte-videoconvert
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
+mark_as_advanced(FFMPEG_EXECUTABLE)
+
 file(CONFIGURE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version.hxx CONTENT "
 const std::string StormByte::VideoConvert::Application::PROGRAM_NAME 			= \"StormByte-videoconvert\";
 const std::string StormByte::VideoConvert::Application::PROGRAM_DESCRIPTION		= \"${PROJECT_DESCRIPTION}\";
@@ -14,6 +17,8 @@ const std::string StormByte::VideoConvert::Application::PROGRAM_VERSION 		= \"${
 
 const std::string StormByte::VideoConvert::Application::COMPILER_NAME			= \"${CMAKE_CXX_COMPILER_ID}\";
 const std::string StormByte::VideoConvert::Application::COMPILER_VERSION		= \"${CMAKE_CXX_COMPILER_VERSION}\";
+
+const std::string StormByte::VideoConvert::Application::FFMPEG_EXECUTABLE		= \"${FFMPEG_EXECUTABLE}\";
 ")
 string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
 if (build_type STREQUAL DEBUG)
@@ -27,7 +32,6 @@ elseif(build_type STREQUAL RELEASE)
 else()
 	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/version.hxx "const std::string StormByte::VideoConvert::Application::COMPILER_FLAGS			= \"${CMAKE_CXX_FLAGS}\";\n")
 endif()
-
 
 target_link_libraries(StormByte-videoconvert StormByte-videoconvert-library)
 set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD 17)

@@ -84,7 +84,7 @@ pid_t FFmpeg::exec() const {
 
 	pid_t pid = fork();
 	if (pid == 0) {
-		execvp("/usr/bin/ffmpeg", parameters.get());
+		execvp(Application::FFMPEG_EXECUTABLE.c_str(), parameters.get());
 	}
 
 	return pid;
