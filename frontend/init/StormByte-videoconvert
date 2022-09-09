@@ -1,8 +1,11 @@
 #!/sbin/openrc-run
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+extra_commands="configtest"
+
 PIDFILE="/var/run/StormByte-videoconvert.pid"
 COMMAND="/usr/bin/StormByte-videoconvert"
+USER="stormbyte"
 
 depend() {
     use logger
@@ -10,13 +13,19 @@ depend() {
 
 start() {
 	ebegin "Starting StormByte-videoconvert daemon"
-	start-stop-daemon --start --background --make-pidfile --pidfile ${PIDFILE} --exec ${COMMAND} -- --daemon
+	start-stop-daemon --start --background --make-pidfile --user ${USER} --pidfile ${PIDFILE} --exec ${COMMAND} -- --daemon
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping StormByte-videoconvert daemon"
 	start-stop-daemon --pidfile $PIDFILE --signal TERM
+	eend $?
+}
+
+configtest() {
+	ebegin "Checking for StormByte-videoconvert daemon start without starting it"
+	${COMMAND} -c > /dev/null
 	eend $?
 }
 
