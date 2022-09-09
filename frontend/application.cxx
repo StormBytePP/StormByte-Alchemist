@@ -635,17 +635,17 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 	if (buffer_str == "y" || buffer_str == "Y") {
 		do {
 			buffer_str = "";
-			std::cout << "light level average: ";
-			std::getline(std::cin, buffer_str);
-		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
-		HDR.light_level_average = buffer_int;
-
-		do {
-			buffer_str = "";
 			std::cout << "light level max: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 		HDR.light_level_max = buffer_int;
+
+		do {
+			buffer_str = "";
+			std::cout << "light level average: ";
+			std::getline(std::cin, buffer_str);
+		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+		HDR.light_level_average = buffer_int;
 	}
 
 	return HDR;
