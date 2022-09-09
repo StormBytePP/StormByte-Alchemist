@@ -541,7 +541,7 @@ Database::Data::stream Application::ask_stream() const {
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
 	}
 	else {
-		std::cout << "Subtitles have only copy codec so it is being autoselected";
+		std::cout << "Subtitles have only copy codec so it is being autoselected" << std::endl;
 		stream.codec = Database::Data::SUBTITLE_COPY;
 	}
 
