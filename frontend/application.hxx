@@ -33,7 +33,7 @@ namespace StormByte::VideoConvert {
 			std::optional<short> m_loglevel; // To not confuse users if they set it in negative in config
 			int m_sleep_idle_seconds;
 
-			bool m_daemon_mode;
+			bool m_daemon_mode, m_pretend_run;
 			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
 			std::shared_ptr<StormByte::VideoConvert::Utils::Logger> m_logger;
 			std::optional<pid_t> m_worker;

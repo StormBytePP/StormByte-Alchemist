@@ -39,7 +39,7 @@ const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
 	Database::Data::SUBTITLE_COPY
 };
 
-Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_must_terminate(false) {
+Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_pretend_run(false), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
 	signal(SIGINT, Application::signal_handler);
 }
@@ -60,7 +60,10 @@ int Application::run(int argc, char** argv) noexcept {
 		if (!init_application()) return 1;
 		
 		if (m_daemon_mode) {
-			return daemon();
+			if (m_pretend_run) // Do not execute but if it reached here it means config was ok
+				return 0;
+			else
+				return daemon();
 		}
 		else {
 			return interactive();
@@ -113,7 +116,12 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 	try {
 		while (counter < argc) {
 			std::string argument = argv[counter];
-			if (argument == "-d" || argument == "--daemon") {
+			if (argument == "-c" || argument == "--check") {
+				m_pretend_run = true;
+				m_daemon_mode = true;
+				counter++;
+			}
+			else if (argument == "-d" || argument == "--daemon") {
 				m_daemon_mode = true;
 				counter++;
 			}
@@ -259,6 +267,7 @@ void Application::header() const {
 
 void Application::help() const {
 	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
+	std::cout << "\t-c,  --check\t\tCheck for config validity without running daemon" << std::endl;
 	std::cout << "\t-d,  --daemon\t\tRun daemon reading database items to keep converting files" << std::endl;
 	std::cout << "\t-a,  --add <file>\tInteractivelly add a new film to database files" << std::endl;
 	std::cout << "\t-db, --database <file>\tSpecify SQLite database file to be used" << std::endl;
