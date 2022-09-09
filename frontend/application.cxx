@@ -167,6 +167,12 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 				else
 					throw std::runtime_error("Sleep time specified without argument, correct usage:");
 			}
+			else if (argument == "-a" || argument == "--add") {
+				if (++counter < argc)
+					m_add_film_path = argv[counter++];
+				else
+					throw std::runtime_error("Add film specified without argument, correct usage:");
+			}
 			else if (argument == "-v" || argument == "--version") {
 				version();
 				return HALT_OK;
@@ -178,7 +184,10 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 			}
 			else
 				throw std::runtime_error("Unknown argument: " + argument + ", correct usage");
+
 		}
+		if(!m_daemon_mode && !m_add_film_path.has_value())
+			throw std::runtime_error("Either --add(-a) neither --daemon(-d) mode have been provided as argument");
 	}
 	catch(const std::runtime_error& exception) {
 		header();
@@ -251,6 +260,7 @@ void Application::header() const {
 void Application::help() const {
 	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
 	std::cout << "\t--daemon\t\tRun daemon reading database items to keep converting files (also -d)" << std::endl;
+	std::cout << "\t--add <file>\t\tInteractivelly add a new film to database files (also -a <file>)" << std::endl;
 	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
 	std::cout << "\t--input <folder>\tSpecify input folder to read films from (also -i <folder>)" << std::endl;
 	std::cout << "\t--output <folder>\tSpecify output folder to store converted files once finished (also -o <folder>)" << std::endl;
@@ -361,19 +371,17 @@ int Application::interactive() {
 	/* Query required data */
 
 	/* Film source file */
-	do {
-		buffer_str = "";
-		std::cout << "Enter full film path: ";
-		std::getline(std::cin, buffer_str);
-		film.file = buffer_str;
-	} while(!Utils::Filesystem::exists_file(m_input_path.value() / film.file, true));
+	if (!Utils::Filesystem::exists_file(m_input_path.value() / m_add_film_path.value(), true))
+		return 1;
+	else
+		film.file = m_add_film_path.value();
 
 	do {
 		buffer_str = "";
-		std::cout << "Which priority? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
+		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
 		std::getline(std::cin, buffer_str);
-	} while (!Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
-	film.prio = buffer_int;
+	} while (buffer_str != "" && !Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
+	film.prio = (buffer_str == "") ? 1 : buffer_int;
 
 	std::cout << "Film stream addition:" << std::endl;
 	bool add_new_stream = true;

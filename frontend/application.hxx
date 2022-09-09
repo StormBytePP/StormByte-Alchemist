@@ -38,6 +38,7 @@ namespace StormByte::VideoConvert {
 			std::shared_ptr<StormByte::VideoConvert::Utils::Logger> m_logger;
 			std::optional<pid_t> m_worker;
 			volatile bool m_must_terminate;
+			std::optional<std::filesystem::path> m_add_film_path;
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
 			static const unsigned int DEFAULT_SLEEP_IDLE_SECONDS;
