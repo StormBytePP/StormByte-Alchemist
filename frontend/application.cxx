@@ -221,6 +221,7 @@ int Application::daemon() {
 		auto film = m_database->get_film_for_process(m_output_path.value());
 		if (film) {
 			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " film " + film.value().get_input_file());
+			execute_ffmpeg(film.value());
 		}
 		else {
 			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " no films found");
@@ -230,6 +231,10 @@ int Application::daemon() {
 	}
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Stopping daemon...");
 	return 0;
+}
+
+void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
+	ffmpeg.exec(m_logger.get());
 }
 
 int Application::interactive() {

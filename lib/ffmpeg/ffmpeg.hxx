@@ -14,6 +14,8 @@
 #include "stream/audio/copy.hxx"
 #include "stream/subtitle/copy.hxx"
 
+namespace StormByte::VideoConvert::Utils { class Logger; }
+
 namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
@@ -25,16 +27,13 @@ namespace StormByte::VideoConvert {
 			~FFmpeg() = default;
 
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);
-			pid_t exec();
+			pid_t exec(Utils::Logger*) const;
 			inline bool is_empty() const { return m_streams.empty(); }
 			inline auto get_input_file() const { return m_input_file; }
-#ifdef DEBUG
-			void debug() const;
-#endif
 
 		private:
 			unsigned int m_film_id;
-			std::string m_input_file, m_output_file;
+			std::string m_input_file, m_output_path;
 			std::list<std::unique_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
 			static const std::list<const char*> FFMPEG_INIT_OPTIONS;
 

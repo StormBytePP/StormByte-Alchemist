@@ -45,6 +45,7 @@ namespace StormByte::VideoConvert {
 			void compiler_info() const;
 
 			int daemon();
+			void execute_ffmpeg(const FFmpeg& ffmpeg);
 			int interactive();
 			Database::Data::stream ask_stream() const;
 			Database::Data::hdr ask_stream_hdr() const;
