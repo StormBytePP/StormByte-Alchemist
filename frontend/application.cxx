@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sys/wait.h>
 #include <csignal>
+#include <chrono>
 
 using namespace StormByte::VideoConvert;
 
@@ -247,6 +248,23 @@ void Application::compiler_info() const {
 	std::cout << "Compiled by " << COMPILER_NAME << "(" << COMPILER_VERSION << ")" << " with flags " << COMPILER_FLAGS << std::endl;
 }
 
+std::string Application::elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const {
+	std::string result = "";
+	auto hours = std::chrono::duration_cast<std::chrono::hours>(end - begin).count();
+	auto minutes = std::chrono::duration_cast<std::chrono::minutes>(end - begin).count();
+	auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();
+
+	result += std::to_string(hours);
+	result += ":";
+	if (minutes < 10) result += "0";
+	result += std::to_string(minutes);
+	result += ":";
+	if (seconds < 10) result += "0";
+	result += std::to_string(seconds);
+
+	return result;
+}
+
 int Application::daemon() {
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon...");
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
@@ -269,18 +287,21 @@ int Application::daemon() {
 }
 
 void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	std::filesystem::path input_file = ffmpeg.get_full_input_file();
 	std::filesystem::path work_file = ffmpeg.get_full_work_file();
 	std::filesystem::path output_path = ffmpeg.get_full_output_path();
 	std::filesystem::path output_file = ffmpeg.get_full_output_file();
+
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as being processed in database");
 	m_database->set_film_processing_status(ffmpeg.get_film_id(), true);
 	m_worker = ffmpeg.exec();
 	int status;
 	wait(&status);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	m_worker.reset(); // Worker has finished
 	if (status == 0) {
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + input_file.string() + " finished!");
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + input_file.string() + " finished in " + elapsed_time(begin, end));
 		if (!std::filesystem::exists(output_path)) {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Creating output path " + output_path.string());
 			std::filesystem::create_directories(output_path);
@@ -359,7 +380,7 @@ int Application::interactive() {
 }
 
 void Application::signal_handler(int) {
-	Application::get_instance().m_logger->message_line(Utils::Logger::LEVEL_INFO, "Signal received!");
+	Application::get_instance().m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal received!");
 	Application::get_instance().m_must_terminate = true;
 	if (Application::get_instance().m_worker)
 		kill(Application::get_instance().m_worker.value(), SIGTERM);

@@ -48,6 +48,7 @@ namespace StormByte::VideoConvert {
 			void help() const;
 			void version() const;
 			void compiler_info() const;
+			std::string elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const;
 
 			int daemon();
 			void execute_ffmpeg(const FFmpeg& ffmpeg);

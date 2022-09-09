@@ -16,10 +16,10 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 		"id INTEGER,"
         "film_id INTEGER,"
 		"codec INTEGER NOT NULL,"
-        "max_rate VARCHAR,"
-        "bitrate VARCHAR,"
+        "max_rate VARCHAR DEFAULT NULL,"
+        "bitrate VARCHAR DEFAULT NULL,"
         "PRIMARY KEY(id, film_id, codec),"
-        "FOREIGN KEY(film_id) REFERENCES films(id)"
+        "FOREIGN KEY(film_id) REFERENCES films(id) ON DELETE CASCADE"
 	");"
 	"CREATE TABLE stream_hdr("
 		"film_id INTEGER,"
@@ -38,7 +38,7 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 		"light_level_max INTEGER,"
 		"light_level_average INTEGER,"
 		"PRIMARY KEY (film_id, stream_id, codec),"
-		"FOREIGN KEY (film_id, stream_id, codec) REFERENCES streams(id, film_id, codec)"
+		"FOREIGN KEY (film_id, stream_id, codec) REFERENCES streams(id, film_id, codec) ON DELETE CASCADE"
 	");";
 
 const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
@@ -52,7 +52,9 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, max_rate, bitrate) VALUES (?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE"},
-	{"deleteFilm",					"DELETE FROM films WHERE id = ?"}
+	{"deleteFilm",					"DELETE FROM films WHERE id = ?"},
+	{"deleteFilmStream",			"DELETE FROM streams WHERE film_id = ?"},
+	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"}
 };
 
 Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -338,6 +340,22 @@ void Database::SQLite3::reset_processing_films() {
 
 void Database::SQLite3::delete_film(int film_id) {
 	auto stmt = m_prepared["deleteFilm"];
+	sqlite3_bind_int(stmt, 1, film_id);
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+	delete_film_stream(film_id);
+	delete_film_stream_HDR(film_id);
+}
+
+void Database::SQLite3::delete_film_stream(int film_id) {
+	auto stmt = m_prepared["deleteFilmStream"];
+	sqlite3_bind_int(stmt, 1, film_id);
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+}
+
+void Database::SQLite3::delete_film_stream_HDR(int film_id) {
+	auto stmt = m_prepared["deleteFilmStreamHDR"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);

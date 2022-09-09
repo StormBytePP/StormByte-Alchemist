@@ -43,5 +43,7 @@ namespace StormByte::VideoConvert::Database {
 			bool has_film_stream_HDR(const Data::stream& stream);
 			Data::hdr get_film_stream_HDR(const Data::stream& stream);
 			void insert_HDR(const Data::stream& stream);
+			void delete_film_stream(int film_id);
+			void delete_film_stream_HDR(int film_id);
 	};
 }
