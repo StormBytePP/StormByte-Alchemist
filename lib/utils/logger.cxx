@@ -63,6 +63,9 @@ void Utils::Logger::loglevel_display(const LEVEL& level) {
 		case LEVEL_WARNING:
 			m_logfile << "[WARNING]";
 			break;
+		case LEVEL_NOTICE:
+			m_logfile << "[NOTICE]";
+			break;
 		case LEVEL_INFO:
 			m_logfile << "[INFO]";
 			break;

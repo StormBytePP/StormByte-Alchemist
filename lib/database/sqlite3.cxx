@@ -1,4 +1,6 @@
 #include "sqlite3.hxx"
+#include "application.hxx"
+
 #include <stdexcept>
 
 using namespace StormByte::VideoConvert;
@@ -8,8 +10,7 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
 		"prio TINYINT,"
-		"processing BOOL DEFAULT FALSE,"
-		"finished BOOL DEFAULT FALSE"		
+		"processing BOOL DEFAULT FALSE"
 	");"
 	"CREATE TABLE streams("
 		"id INTEGER,"
@@ -41,8 +42,8 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 	");";
 
 const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
-	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND finished = FALSE ORDER BY prio ASC LIMIT 1"},
-	{"setProcessingStatusForFilm",	"UPDATE films SET processing = TRUE WHERE id = ?"},
+	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},
+	{"setProcessingStatusForFilm",	"UPDATE films SET processing = ? WHERE id = ?"},
 	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
@@ -50,7 +51,8 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, max_rate, bitrate) VALUES (?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
-	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE WHERE finished = FALSE"} // Finished films no matter processing status
+	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE"},
+	{"deleteFilm",					"DELETE FROM films WHERE id = ?"}
 };
 
 Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -72,23 +74,25 @@ Database::SQLite3::~SQLite3() {
 	m_prepared.clear();
 	sqlite3_close(m_database);
 }
-#include <iostream>
-std::optional<FFmpeg> Database::SQLite3::get_film_for_process(const std::filesystem::path& output_path) {
-	using namespace Stream;
+
+std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 	std::optional<FFmpeg> ffmpeg;
 	int film_id = get_film_id_for_process();
 
 	if (film_id != -1) {
 		Data::film film_data = get_film_basic_data(film_id);
-		FFmpeg film(film_id, film_data.file, output_path);
+		std::filesystem::path input_path	= Application::get_instance().get_input_folder();
+		std::filesystem::path output_path	= Application::get_instance().get_output_folder();
+		std::filesystem::path work_path	= Application::get_instance().get_work_folder();
+		FFmpeg film(film_id, input_path, film_data.file, work_path, output_path);
 		auto streams = get_film_streams(film_id);
 		for (auto it = streams.begin(); it != streams.end(); it++) {
 			switch (it->codec) {
 				case Data::VIDEO_HEVC: {
-					auto codec = Video::HEVC(it->id);
+					auto codec = Stream::Video::HEVC(it->id);
 					if (it->HDR.has_value()) {
 						auto hdr_data = it->HDR.value();
-						Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
+						Stream::Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
 												hdr_data.green_x, hdr_data.green_y,
 												hdr_data.blue_x, hdr_data.blue_y,
 												hdr_data.white_point_x, hdr_data.white_point_y,
@@ -102,35 +106,35 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process(const std::filesys
 					break;
 				}
 				case Data::VIDEO_COPY: {
-					film.add_stream(Video::Copy(it->id));
+					film.add_stream(Stream::Video::Copy(it->id));
 					break;
 				}
 				case Data::AUDIO_AAC: {
-					film.add_stream(Audio::AAC(it->id));
+					film.add_stream(Stream::Audio::AAC(it->id));
 					break;
 				}
 				case Data::AUDIO_FDKAAC: {
-					film.add_stream(Audio::FDKAAC(it->id));
+					film.add_stream(Stream::Audio::FDKAAC(it->id));
 					break;
 				}
 				case Data::AUDIO_AC3: {
-					film.add_stream(Audio::AC3(it->id));
+					film.add_stream(Stream::Audio::AC3(it->id));
 					break;
 				}
 				case Data::AUDIO_COPY: {
-					film.add_stream(Audio::Copy(it->id));
+					film.add_stream(Stream::Audio::Copy(it->id));
 					break;
 				}
 				case Data::AUDIO_EAC3: {
-					film.add_stream(Audio::EAC3(it->id));
+					film.add_stream(Stream::Audio::EAC3(it->id));
 					break;
 				}
 				case Data::AUDIO_OPUS: {
-					film.add_stream(Audio::Opus(it->id));
+					film.add_stream(Stream::Audio::Opus(it->id));
 					break;
 				}
 				case Data::SUBTITLE_COPY: {
-					film.add_stream(Subtitle::Copy(it->id));
+					film.add_stream(Stream::Subtitle::Copy(it->id));
 					break;
 				}
 				default: {
@@ -186,9 +190,10 @@ int Database::SQLite3::get_film_id_for_process() {
 	return result;
 }
 
-void Database::SQLite3::set_film_id_as_processing(int film_id) {
+void Database::SQLite3::set_film_processing_status(int film_id, bool status) {
 	auto stmt = m_prepared["setProcessingStatusForFilm"];
-	sqlite3_bind_int(stmt, 1, film_id);
+	sqlite3_bind_int(stmt, 1, status);
+	sqlite3_bind_int(stmt, 2, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }
@@ -328,5 +333,12 @@ void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 void Database::SQLite3::reset_processing_films() {
 	auto stmt = m_prepared["resetProcessingFilms"];
 	sqlite3_step(stmt); // No result
+	reset_stmt(stmt);
+}
+
+void Database::SQLite3::delete_film(int film_id) {
+	auto stmt = m_prepared["deleteFilm"];
+	sqlite3_bind_int(stmt, 1, film_id);
+	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }

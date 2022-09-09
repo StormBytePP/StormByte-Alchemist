@@ -9,6 +9,7 @@ namespace StormByte::VideoConvert::Utils {
 			enum LEVEL:unsigned short {
 				LEVEL_DEBUG = 0,
 				LEVEL_WARNING,
+				LEVEL_NOTICE,
 				LEVEL_INFO,
 				LEVEL_ERROR,
 				LEVEL_FATAL,

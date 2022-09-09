@@ -16,17 +16,22 @@ namespace StormByte::VideoConvert {
 			static Application& get_instance();
 			int run(int argc, char** argv) noexcept;
 
+			inline std::filesystem::path get_input_folder() const { return m_input_path.value_or(""); }
+			inline std::filesystem::path get_output_folder() const { return m_output_path.value_or(""); }
+			inline std::filesystem::path get_work_folder() const { return m_work_path.value_or(""); }
+			inline std::shared_ptr<Utils::Logger> get_logger() const { return m_logger; }
+
 		private:
 			/* Config data */
-			std::optional<std::filesystem::path> m_database_file, m_output_path, m_logfile;
+			std::optional<std::filesystem::path> m_database_file, m_input_path, m_output_path, m_work_path, m_logfile;
 			std::optional<short> m_loglevel; // To not confuse users if they set it in negative in config
 			int m_sleep_idle_seconds;
 
 			bool m_daemon_mode;
-			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
-			std::unique_ptr<StormByte::VideoConvert::Utils::Logger> m_logger;
+			std::shared_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
+			std::shared_ptr<StormByte::VideoConvert::Utils::Logger> m_logger;
 			std::optional<pid_t> m_worker;
-			bool m_must_terminate;
+			volatile bool m_must_terminate;
 
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
 			static const unsigned int DEFAULT_SLEEP_IDLE_SECONDS;

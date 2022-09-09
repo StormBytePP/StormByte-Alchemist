@@ -5,7 +5,7 @@
 
 #include <libconfig.h++>
 #include <iostream>
-#include <unistd.h>
+#include <sys/wait.h>
 #include <csignal>
 
 using namespace StormByte::VideoConvert;
@@ -15,6 +15,7 @@ const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS		= 60;
 
 Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
+	signal(SIGINT, Application::signal_handler);
 }
 
 Application& Application::get_instance() {
@@ -59,12 +60,22 @@ bool Application::init_from_config() {
 		return false;
 	}
 
-	try {
-    	m_database_file			= cfg.lookup("database");
-    	m_output_path			= cfg.lookup("output");
+	if (cfg.exists("database"))
+		m_database_file			= cfg.lookup("database");
+	if (cfg.exists("input"))
+		m_input_path			= cfg.lookup("input");
+	if (cfg.exists("output"))
+		m_output_path			= cfg.lookup("output");
+	if (cfg.exists("work"))
+		m_work_path				= cfg.lookup("work");
+	if (cfg.exists("logfile"))
 		m_logfile				= cfg.lookup("logfile");
+	try {
 		m_loglevel				= static_cast<int>(cfg.lookup("loglevel"));
-		m_sleep_idle_seconds	= cfg.lookup("sleep");
+	}
+	catch(const std::exception&) { /* ignore */ }
+	try {
+		m_sleep_idle_seconds	= static_cast<int>(cfg.lookup("sleep"));
   	}
   	catch(const std::exception&) { /* ignore */ }
 
@@ -86,11 +97,23 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 				else
 					throw std::runtime_error("Database specified without argument, correct usage:");
 			}
+			else if (argument == "-i" || argument == "--input") {
+				if (++counter < argc)
+					m_output_path = argv[counter++];
+				else
+					throw std::runtime_error("Input path specified without argument, correct usage:");
+			}
 			else if (argument == "-o" || argument == "--output") {
 				if (++counter < argc)
 					m_output_path = argv[counter++];
 				else
 					throw std::runtime_error("Output path specified without argument, correct usage:");
+			}
+			else if (argument == "-w" || argument == "--work") {
+				if (++counter < argc)
+					m_work_path = argv[counter++];
+				else
+					throw std::runtime_error("Work path specified without argument, correct usage:");
 			}
 			else if (argument == "-l" || argument == "--logfile") {
 				if (++counter < argc)
@@ -165,10 +188,20 @@ bool Application::init_application() {
 		else
 			m_logger.reset(new Utils::Logger(m_logfile.value(), static_cast<Utils::Logger::LEVEL>(m_loglevel.value())));
 		
+		if (!m_input_path)
+			throw std::runtime_error("ERROR: Input folder not set neither in config file either from command line.");
+		else if (!Utils::Filesystem::is_folder_readable_and_writable(m_output_path.value()))
+			throw std::runtime_error("ERROR: Input folder " + m_output_path.value().string() + " is not readable!");
+
 		if (!m_output_path)
 			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
 		else if (!Utils::Filesystem::is_folder_writable(m_output_path.value()))
 			throw std::runtime_error("ERROR: Output folder " + m_output_path.value().string() + " is not writable!");
+
+		if (!m_work_path)
+			throw std::runtime_error("ERROR: Working folder not set neither in config file either from command line.");
+		else if (!Utils::Filesystem::is_folder_writable(m_work_path.value()))
+			throw std::runtime_error("ERROR: Working folder " + m_work_path.value().string() + " is not writable!");
 
 		if (m_sleep_idle_seconds < 0)
 			throw std::runtime_error("ERROR: Sleep idle time is negative!");
@@ -193,7 +226,9 @@ void Application::help() const {
 	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
 	std::cout << "\t--daemon\t\tRun daemon reading database items to keep converting files (also -d)" << std::endl;
 	std::cout << "\t--database <file>\tSpecify SQLite database file to be used (also -db <file>)" << std::endl;
-	std::cout << "\t--output <folder>\tSpecify output folder to store converted files (also -o <folder>)" << std::endl;
+	std::cout << "\t--input <folder>\tSpecify input folder to read films from (also -i <folder>)" << std::endl;
+	std::cout << "\t--output <folder>\tSpecify output folder to store converted files once finished (also -o <folder>)" << std::endl;
+	std::cout << "\t--work <folder>\t\tSpecify temprary working folder to store files while being converted (also -w <folder>)" << std::endl;
 	std::cout << "\t--logfile <file>\tSpecify a file for storing logs (also -l <file>)" << std::endl;
 	std::cout << "\t--loglevel <level>\tSpecify which loglevel to display (also -ll <integer>). Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << std::endl; 
 	std::cout << "\t--sleep <seconds>\tSpecify the time to sleep in main loop (also -s <seconds>). Of course should be positive integer unless you are my boyfriend ;)" << std::endl;
@@ -216,25 +251,56 @@ int Application::daemon() {
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon...");
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
-	while(!m_must_terminate) {
+	do {
 		m_logger->message_part_begin(Utils::Logger::LEVEL_INFO, "Checking for films to convert...");
-		auto film = m_database->get_film_for_process(m_output_path.value());
+		auto film = m_database->get_film_for_process();
 		if (film) {
-			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " film " + film.value().get_input_file());
+			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " film " + film.value().get_input_file().string());
 			execute_ffmpeg(film.value());
 		}
 		else {
 			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " no films found");
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
+			sleep(m_sleep_idle_seconds);
 		}
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
-		sleep(m_sleep_idle_seconds);
-	}
+	} while(!m_must_terminate);
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Stopping daemon...");
 	return 0;
 }
 
 void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
-	ffmpeg.exec(m_logger.get());
+	std::filesystem::path input_file = ffmpeg.get_full_input_file();
+	std::filesystem::path work_file = ffmpeg.get_full_work_file();
+	std::filesystem::path output_path = ffmpeg.get_full_output_path();
+	std::filesystem::path output_file = ffmpeg.get_full_output_file();
+	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as being processed in database");
+	m_database->set_film_processing_status(ffmpeg.get_film_id(), true);
+	m_worker = ffmpeg.exec();
+	int status;
+	wait(&status);
+	m_worker.reset(); // Worker has finished
+	if (status == 0) {
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + input_file.string() + " finished!");
+		if (!std::filesystem::exists(output_path)) {
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Creating output path " + output_path.string());
+			std::filesystem::create_directories(output_path);
+		}
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Copying file " + work_file.string() + " to " + output_file.string());
+		std::filesystem::copy_file(work_file, output_file);
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting original input file " + input_file.string());
+		std::filesystem::remove(input_file);
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting original work file " + work_file.string());
+		std::filesystem::remove(work_file);
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting film from database");
+		m_database->delete_film(ffmpeg.get_film_id());
+	}
+	else {
+		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + input_file.string() + " failed or interrupted!");
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting temporary unfinished file " + work_file.string());
+		std::filesystem::remove(work_file);
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as not being processed in database");
+		m_database->set_film_processing_status(ffmpeg.get_film_id(), false);
+	}
 }
 
 int Application::interactive() {
@@ -253,7 +319,7 @@ int Application::interactive() {
 		std::cout << "Enter full film path: ";
 		std::getline(std::cin, buffer_str);
 		film.file = std::move(buffer_str);
-	} while(!Utils::Filesystem::exists_file(film.file, true));
+	} while(!Utils::Filesystem::exists_file(m_input_path.value() /= film.file, true));
 
 	do {
 		std::cout << "Which priority? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";

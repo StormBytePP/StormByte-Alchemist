@@ -18,6 +18,6 @@ find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
 
 include_directories(lib)
-add_subdirectory(lib)
 include_directories(frontend)
+add_subdirectory(lib)
 add_subdirectory(frontend)
