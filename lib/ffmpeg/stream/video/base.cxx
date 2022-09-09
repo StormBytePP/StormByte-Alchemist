@@ -4,7 +4,7 @@ using namespace StormByte::VideoConvert;
 
 const bool Stream::Video::Base::IS_ANIMATION_DEFAULT = false;
 
-Stream::Video::Base::Base(unsigned short stream_id, const std::string& encoder):Stream::Base::Base(stream_id, encoder, 'v'), m_is_animation(IS_ANIMATION_DEFAULT) {}
+Stream::Video::Base::Base(unsigned short stream_id, const std::string& encoder, Database::Data::stream_codec codec):Stream::Base::Base(stream_id, encoder, codec, 'v'), m_is_animation(IS_ANIMATION_DEFAULT) {}
 
 Stream::Video::Base::Base(const Base& base):Stream::Base::Base(base), m_is_animation(base.m_is_animation), m_max_rate(base.m_max_rate) {}
 

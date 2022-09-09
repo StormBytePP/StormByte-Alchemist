@@ -2,7 +2,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Audio::Copy::Copy(unsigned short stream_id):Stream::Audio::Base(stream_id, "copy") {}
+Stream::Audio::Copy::Copy(unsigned short stream_id):Stream::Audio::Base(stream_id, "copy", Database::Data::AUDIO_COPY) {}
 
 Stream::Audio::Copy::Copy(const Copy& copy):Stream::Audio::Base(copy) {}
 

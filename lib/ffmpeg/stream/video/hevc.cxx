@@ -119,7 +119,7 @@ const std::string Stream::Video::HEVC::DEFAULT_BUFFSIZE 		= "200M";
 const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc";
 const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMIN);
 
-Stream::Video::HEVC::HEVC(unsigned short stream_id):Stream::Video::Base(stream_id, "libx265") {
+Stream::Video::HEVC::HEVC(unsigned short stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::VIDEO_HEVC) {
 	m_max_rate = DEFAULT_MAX_BITRATE;
 }
 

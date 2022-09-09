@@ -1,5 +1,6 @@
 #include "sqlite3.hxx"
 #include "application.hxx"
+#include "ffmpeg/ffmpeg.hxx"
 
 #include <stdexcept>
 
@@ -10,7 +11,8 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
 		"prio TINYINT,"
-		"processing BOOL DEFAULT FALSE"
+		"processing BOOL DEFAULT FALSE,"
+		"unsupported BOOL DEFAULT FALSE"
 	");"
 	"CREATE TABLE streams("
 		"id INTEGER,"
@@ -42,8 +44,10 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 	");";
 
 const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
-	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE ORDER BY prio ASC LIMIT 1"},
+	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND unsupported = FALSE ORDER BY prio ASC LIMIT 1"},
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = ? WHERE id = ?"},
+	{"setUnsupportedStatusForFilm",	"UPDATE films SET unsupported = ? WHERE id = ?"},
+	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
 	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
@@ -51,7 +55,7 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, max_rate, bitrate) VALUES (?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
-	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE"},
+	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE, unsupported = FALSE"},
 	{"deleteFilm",					"DELETE FROM films WHERE id = ?"},
 	{"deleteFilmStream",			"DELETE FROM streams WHERE film_id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"}
@@ -80,6 +84,7 @@ Database::SQLite3::~SQLite3() {
 std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 	std::optional<FFmpeg> ffmpeg;
 	int film_id = get_film_id_for_process();
+	auto logger = Application::get_instance().get_logger();
 
 	if (film_id != -1) {
 		Data::film film_data = get_film_basic_data(film_id);
@@ -88,9 +93,12 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 		std::filesystem::path work_path	= Application::get_instance().get_work_folder();
 		FFmpeg film(film_id, input_path, film_data.file, work_path, output_path);
 		auto streams = get_film_streams(film_id);
+		std::list<Data::stream_codec> unsupported_codecs;
+
 		for (auto it = streams.begin(); it != streams.end(); it++) {
 			switch (it->codec) {
 				case Data::VIDEO_HEVC: {
+					#ifdef ENABLE_HEVC
 					auto codec = Stream::Video::HEVC(it->id);
 					if (it->HDR.has_value()) {
 						auto hdr_data = it->HDR.value();
@@ -105,6 +113,9 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 						codec.set_HDR(hdr);
 					}
 					film.add_stream(codec);
+					#else
+					unsupported_codecs.push_back(Data::VIDEO_HEVC);
+					#endif
 					break;
 				}
 				case Data::VIDEO_COPY: {
@@ -112,15 +123,27 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 					break;
 				}
 				case Data::AUDIO_AAC: {
+					#ifdef ENABLE_AAC
 					film.add_stream(Stream::Audio::AAC(it->id));
+					#else
+					unsupported_codecs.push_back(Data::AUDIO_AAC);
+					#endif
 					break;
 				}
 				case Data::AUDIO_FDKAAC: {
+					#ifdef ENABLE_FDKAAC
 					film.add_stream(Stream::Audio::FDKAAC(it->id));
+					#else
+					unsupported_codecs.push_back(Data::AUDIO_FDKAAC);
+					#endif
 					break;
 				}
 				case Data::AUDIO_AC3: {
+					#ifdef ENABLE_AC3
 					film.add_stream(Stream::Audio::AC3(it->id));
+					#else
+					unsupported_codecs.push_back(Data::AUDIO_AC3);
+					#endif
 					break;
 				}
 				case Data::AUDIO_COPY: {
@@ -128,11 +151,19 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 					break;
 				}
 				case Data::AUDIO_EAC3: {
+					#ifdef ENABLE_EAC3
 					film.add_stream(Stream::Audio::EAC3(it->id));
+					#else
+					unsupported_codecs.push_back(Data::AUDIO_EAC3);
+					#endif
 					break;
 				}
 				case Data::AUDIO_OPUS: {
+					#ifdef ENABLE_OPUS
 					film.add_stream(Stream::Audio::Opus(it->id));
+					#else
+					unsupported_codecs.push_back(Data::AUDIO_OPUS);
+					#endif
 					break;
 				}
 				case Data::SUBTITLE_COPY: {
@@ -144,7 +175,19 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 				}
 			}
 		}
-		ffmpeg.emplace(std::move(film));
+
+		// We now check if we have unsupported codecs
+		if (!unsupported_codecs.empty()) {
+			logger->message_part_begin(Utils::Logger::LEVEL_ERROR, "The file " + film.get_input_file().string() + " has the following unsupported codecs: ");
+			for (auto it = unsupported_codecs.begin(); it != unsupported_codecs.end(); it++) {
+				logger->message_part_continue(Utils::Logger::LEVEL_ERROR, Database::Data::codec_string.at(*it) + ", ");
+			}
+			logger->message_part_end(Utils::Logger::LEVEL_ERROR, "and therefore could NOT be converted!");
+			logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as unsupported");
+			set_film_unsupported_status(film.get_film_id(), true);
+		}
+		else
+			ffmpeg.emplace(std::move(film));
 	}
 	return ffmpeg;
 }
@@ -194,6 +237,14 @@ int Database::SQLite3::get_film_id_for_process() {
 
 void Database::SQLite3::set_film_processing_status(int film_id, bool status) {
 	auto stmt = m_prepared["setProcessingStatusForFilm"];
+	sqlite3_bind_int(stmt, 1, status);
+	sqlite3_bind_int(stmt, 2, film_id);
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+}
+
+void Database::SQLite3::set_film_unsupported_status(int film_id, bool status) {
+	auto stmt = m_prepared["setUnsupportedStatusForFilm"];
 	sqlite3_bind_int(stmt, 1, status);
 	sqlite3_bind_int(stmt, 2, film_id);
 	sqlite3_step(stmt);

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "aac.hxx"
+#include "base.hxx"
 
 namespace StormByte::VideoConvert::Stream::Audio {
-	class FDKAAC: public AAC {
+	class FDKAAC: public Base {
 		public:
 			FDKAAC(unsigned short stream_id);
 			FDKAAC(const FDKAAC& fdkaac);

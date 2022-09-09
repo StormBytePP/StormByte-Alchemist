@@ -2,7 +2,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Audio::Base::Base(unsigned short stream_id, const std::string& encoder):Stream::Base::Base(stream_id, encoder, 'a') {}
+Stream::Audio::Base::Base(unsigned short stream_id, const std::string& encoder, Database::Data::stream_codec codec):Stream::Base::Base(stream_id, encoder, codec, 'a') {}
 
 Stream::Audio::Base::Base(const Base& base):Stream::Base::Base(base) {}
 

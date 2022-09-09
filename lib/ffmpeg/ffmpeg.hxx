@@ -4,15 +4,29 @@
 #include <vector>
 
 /* For convenience, all usable codecs are included here */
+#ifdef ENABLE_HEVC
 #include "stream/video/hevc.hxx"
-#include "stream/video/copy.hxx"
+#endif
+#ifdef ENABLE_AAC
 #include "stream/audio/aac.hxx"
+#endif
+#ifdef ENABLE_FDKAAC
 #include "stream/audio/fdk_aac.hxx"
+#endif
+#ifdef ENABLE_AC3
 #include "stream/audio/ac3.hxx"
+#endif
+#ifdef ENABLE_EAC3
 #include "stream/audio/eac3.hxx"
+#endif
+#ifdef ENABLE_OPUS
 #include "stream/audio/opus.hxx"
+#endif
+
+#include "stream/video/copy.hxx"
 #include "stream/audio/copy.hxx"
 #include "stream/subtitle/copy.hxx"
+#include "database/data.hxx"
 
 namespace StormByte::VideoConvert::Utils { class Logger; }
 

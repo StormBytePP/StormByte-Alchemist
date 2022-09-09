@@ -4,7 +4,7 @@ using namespace StormByte::VideoConvert;
 
 const std::string Stream::Audio::AAC::AAC_DEFAULT_ENCODER	= "aac";
 
-Stream::Audio::AAC::AAC(unsigned short stream_id):Stream::Audio::Base(stream_id, AAC_DEFAULT_ENCODER) {}
+Stream::Audio::AAC::AAC(unsigned short stream_id):Stream::Audio::Base(stream_id, AAC_DEFAULT_ENCODER, Database::Data::AUDIO_AAC) {}
 
 Stream::Audio::AAC::AAC(const AAC& aac):Stream::Audio::Base(aac) {}
 

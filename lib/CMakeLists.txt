@@ -1,16 +1,10 @@
-add_library(StormByte-videoconvert-library SHARED
+list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	database/sqlite3.cxx
-    ffmpeg/stream/base.cxx
+	ffmpeg/stream/base.cxx
 	ffmpeg/stream/audio/base.cxx
-	ffmpeg/stream/audio/aac.cxx
-	ffmpeg/stream/audio/fdk_aac.cxx
-	ffmpeg/stream/audio/ac3.cxx
-	ffmpeg/stream/audio/eac3.cxx
-	ffmpeg/stream/audio/opus.cxx
 	ffmpeg/stream/audio/copy.cxx
 	ffmpeg/stream/video/base.cxx
 	ffmpeg/stream/video/copy.cxx
-	ffmpeg/stream/video/hevc.cxx
 	ffmpeg/stream/subtitle/base.cxx
 	ffmpeg/stream/subtitle/copy.cxx
 	ffmpeg/ffmpeg.cxx
@@ -18,6 +12,32 @@ add_library(StormByte-videoconvert-library SHARED
 	utils/filesystem.cxx
 	utils/input.cxx
 )
+
+if (ENABLE_HEVC)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/video/hevc.cxx)
+endif()
+
+if (ENABLE_AAC)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/aac.cxx)
+endif()
+
+if (ENABLE_FDKAAC)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/fdk_aac.cxx)
+endif()
+
+if (ENABLE_AC3)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/ac3.cxx)
+endif()
+
+if (ENABLE_EAC3)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/eac3.cxx)
+endif()
+
+if (ENABLE_OPUS)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/opus.cxx)
+endif()
+
+add_library(StormByte-videoconvert-library SHARED ${VIDEOCONVERT_LIBRARY_FILES})
 
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)

@@ -14,6 +14,31 @@ using namespace StormByte::VideoConvert;
 const std::filesystem::path Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
 const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS		= 60;
 
+const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
+	#ifdef ENABLE_HEVC
+	Database::Data::VIDEO_HEVC,
+	#endif
+	#ifdef ENABLE_AAC
+	Database::Data::AUDIO_AAC,
+	#endif
+	#ifdef ENABLE_FDKAAC
+	Database::Data::AUDIO_FDKAAC,
+	#endif
+	#ifdef ENABLE_AC3
+	Database::Data::AUDIO_AC3,
+	#endif
+	#ifdef ENABLE_EAC3
+	Database::Data::AUDIO_EAC3,
+	#endif
+	#ifdef ENABLE_OPUS
+	Database::Data::AUDIO_OPUS,
+	#endif
+	
+	Database::Data::VIDEO_COPY,
+	Database::Data::AUDIO_COPY,
+	Database::Data::SUBTITLE_COPY
+};
+
 Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
 	signal(SIGINT, Application::signal_handler);
@@ -270,14 +295,14 @@ int Application::daemon() {
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
 	do {
-		m_logger->message_part_begin(Utils::Logger::LEVEL_INFO, "Checking for films to convert...");
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Checking for films to convert...");
 		auto film = m_database->get_film_for_process();
 		if (film) {
-			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " film " + film.value().get_input_file().string());
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film.value().get_input_file().string() + " found");
 			execute_ffmpeg(film.value());
 		}
 		else {
-			m_logger->message_part_end(Utils::Logger::LEVEL_INFO, " no films found");
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "No films found");
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
 			sleep(m_sleep_idle_seconds);
 		}
@@ -319,8 +344,8 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + input_file.string() + " failed or interrupted!");
 		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting temporary unfinished file " + work_file.string());
 		std::filesystem::remove(work_file);
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as not being processed in database");
-		m_database->set_film_processing_status(ffmpeg.get_film_id(), false);
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as unsupported in database");
+		m_database->set_film_unsupported_status(ffmpeg.get_film_id(), false);
 	}
 }
 
@@ -337,12 +362,14 @@ int Application::interactive() {
 
 	/* Film source file */
 	do {
+		buffer_str = "";
 		std::cout << "Enter full film path: ";
 		std::getline(std::cin, buffer_str);
-		film.file = std::move(buffer_str);
-	} while(!Utils::Filesystem::exists_file(m_input_path.value() /= film.file, true));
+		film.file = buffer_str;
+	} while(!Utils::Filesystem::exists_file(m_input_path.value() / film.file, true));
 
 	do {
+		buffer_str = "";
 		std::cout << "Which priority? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
 		std::getline(std::cin, buffer_str);
 	} while (!Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
@@ -353,6 +380,7 @@ int Application::interactive() {
 	do {
 		streams.push_back(ask_stream());
 		do {
+			buffer_str = "";
 			std::cout << "Add another stream? [y/n]: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
@@ -392,12 +420,14 @@ Database::Data::stream Application::ask_stream() const {
 	int buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "Select stream type; video(v), audio(a) or subtitles(s): ";
 		std::getline(std::cin, buffer_str);
 	} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
 	char codec_type = buffer_str[0];
 
 	do {
+		buffer_str = "";
 		std::cout << "Input stream(" << codec_type << ") ID: ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
@@ -405,21 +435,27 @@ Database::Data::stream Application::ask_stream() const {
 
 	if (codec_type == 'v' || codec_type == 'V') {
 		do {
+			buffer_str = "";
 			std::cout << "Select video codec:" << std::endl;
 			std::cout << "\tcopy(" << Database::Data::VIDEO_COPY << ")" << std::endl;
+			#ifdef ENABLE_HEVC
 			std::cout << "\tHEVC(" << Database::Data::VIDEO_HEVC << ")" << std::endl;
+			#endif
 			std::cout << "Which codec to use?: ";
 			std::getline(std::cin, buffer_str);
 		} while (!Utils::Input::to_int(buffer_str, buffer_int, true) || !Utils::Input::in_options(
 			buffer_str,
 			{
-				std::to_string(Database::Data::VIDEO_COPY),
-				std::to_string(Database::Data::VIDEO_HEVC)
+				#ifdef ENABLE_HEVC
+				std::to_string(Database::Data::VIDEO_HEVC),
+				#endif
+				std::to_string(Database::Data::VIDEO_COPY)
 			},
 			true
 		));
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
 	
+		#ifdef ENABLE_HEVC
 		if (stream.codec == Database::Data::VIDEO_HEVC) {
 			do {
 				std::cout << "Does it have HDR? [y/n]: ";
@@ -431,27 +467,49 @@ Database::Data::stream Application::ask_stream() const {
 			if (buffer_str == "y" || buffer_str == "Y")
 				stream.HDR = ask_stream_hdr();
 		}
+		#endif
 	}
 	else if (codec_type == 'a' || codec_type == 'A') {
 		do {
+			buffer_str = "";
 			std::cout << "Select audio codec:" << std::endl;
-			std::cout << "\tcopy(" << Database::Data::AUDIO_COPY << ")" << std::endl;
+			#ifdef ENABLE_AAC
 			std::cout << "\tAAC(" << Database::Data::AUDIO_AAC << ")" << std::endl;
+			#endif
+			#ifdef ENABLE_FDKAAC
 			std::cout << "\tFDKAAC(" << Database::Data::AUDIO_FDKAAC << ")" << std::endl;
+			#endif
+			#ifdef ENABLE_AC3
 			std::cout << "\tAC-3(" << Database::Data::AUDIO_AC3 << ")" << std::endl;
+			#endif
+			#ifdef ENABLE_EAC3
 			std::cout << "\tE-AC3(" << Database::Data::AUDIO_EAC3 << ")" << std::endl;
+			#endif
+			#ifdef ENABLE_OPUS
 			std::cout << "\tOpus(" << Database::Data::AUDIO_OPUS << ")" << std::endl;
+			#endif
+			std::cout << "\tcopy(" << Database::Data::AUDIO_COPY << ")" << std::endl;
 			std::cout << "Which codec to use?: ";
 			std::getline(std::cin, buffer_str);
 		} while (!Utils::Input::to_int(buffer_str, buffer_int, true) || !Utils::Input::in_options(
 			buffer_str,
 			{
-				std::to_string(Database::Data::AUDIO_COPY),
+				#ifdef ENABLE_AAC
 				std::to_string(Database::Data::AUDIO_AAC),
+				#endif
+				#ifdef ENABLE_AC3
 				std::to_string(Database::Data::AUDIO_AC3),
+				#endif
+				#ifdef ENABLE_EAC3
 				std::to_string(Database::Data::AUDIO_EAC3),
+				#endif
+				#ifdef ENABLE_OPUS
 				std::to_string(Database::Data::AUDIO_OPUS),
+				#endif
+				#ifdef ENABLE_FDKAAC
 				std::to_string(Database::Data::AUDIO_FDKAAC),
+				#endif
+				std::to_string(Database::Data::AUDIO_COPY),
 			},
 			true
 		));
@@ -465,6 +523,7 @@ Database::Data::stream Application::ask_stream() const {
 	return stream;
 }
 
+#ifdef ENABLE_HEVC
 Database::Data::hdr Application::ask_stream_hdr() const {
 	Database::Data::hdr HDR;
 	std::string buffer_str;
@@ -473,78 +532,91 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 	std::cout << "Input HDR parameters (leave empty to use default value):" << std::endl;
 
 	do {
+		buffer_str = "";
 		std::cout << "red x (" << Stream::Video::HEVC::HDR::DEFAULT_REDX << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.red_x = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_REDX : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "red y (" << Stream::Video::HEVC::HDR::DEFAULT_REDY << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.red_y = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_REDY : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "green x (" << Stream::Video::HEVC::HDR::DEFAULT_GREENX << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.green_x = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_GREENX : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "green y (" << Stream::Video::HEVC::HDR::DEFAULT_GREENY << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.green_y = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_GREENY : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "blue x (" << Stream::Video::HEVC::HDR::DEFAULT_BLUEX << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.blue_x = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_BLUEX : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "blue y (" << Stream::Video::HEVC::HDR::DEFAULT_BLUEY << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.blue_y = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_BLUEY : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "white point x (" << Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTX << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.white_point_x = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTX : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "white point y (" << Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTY << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.white_point_y = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTY : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "luminance min (" << Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMIN << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.luminance_min = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMIN : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "luminance max (" << Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMAX << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(buffer_str != "" && !Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 	HDR.luminance_max = (buffer_str == "") ? Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMAX : buffer_int;
 
 	do {
+		buffer_str = "";
 		std::cout << "Does it have light level data? [y/n]: ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }, true));
 
 	if (buffer_str == "y" || buffer_str == "Y") {
 		do {
+			buffer_str = "";
 			std::cout << "light level average: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
 		HDR.light_level_average = buffer_int;
 
 		do {
+			buffer_str = "";
 			std::cout << "light level max: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
@@ -553,3 +625,4 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 
 	return HDR;
 }
+#endif

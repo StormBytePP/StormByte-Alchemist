@@ -34,6 +34,7 @@ namespace StormByte::VideoConvert::Database::Data {
 		std::optional<int> light_level_average;
 	};
 
+	/* Since these define their values on database they will all be defined even if not enabled */
 	enum stream_codec: int {
 		VIDEO_HEVC = 0,
 		VIDEO_COPY,
@@ -48,13 +49,13 @@ namespace StormByte::VideoConvert::Database::Data {
 	};
 
 	static const std::map<stream_codec, std::string> codec_string {
-		{ VIDEO_HEVC, 	"HEVC" },
+		{ VIDEO_HEVC, 	"HEVC/H.265" },
 		{ VIDEO_COPY, 	"Video Copy" },
 		{ AUDIO_AAC, 	"AAC" },
-		{ AUDIO_FDKAAC, "FDKAAC" },
-		{ AUDIO_AC3, 	"AC-3" },
+		{ AUDIO_FDKAAC, "Fraunhoffer AAC" },
+		{ AUDIO_AC3, 	"Dolby AC-3" },
 		{ AUDIO_COPY,	"Audio Copy" },
-		{ AUDIO_EAC3, 	"E-AC3" },
+		{ AUDIO_EAC3, 	"Dolby Enhanced AC-3" },
 		{ AUDIO_OPUS,	"Opus" },
 		{ SUBTITLE_COPY,"Subtitle Copy" }
 	};

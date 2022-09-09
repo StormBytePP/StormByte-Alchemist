@@ -25,6 +25,8 @@ namespace StormByte::VideoConvert {
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			static const std::string FFMPEG_EXECUTABLE;
 
+			static const std::list<Database::Data::stream_codec> SUPPORTED_CODECS;
+
 		private:
 			/* Config data */
 			std::optional<std::filesystem::path> m_database_file, m_input_path, m_output_path, m_work_path, m_logfile;
@@ -32,7 +34,7 @@ namespace StormByte::VideoConvert {
 			int m_sleep_idle_seconds;
 
 			bool m_daemon_mode;
-			std::shared_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
+			std::unique_ptr<StormByte::VideoConvert::Database::SQLite3> m_database;
 			std::shared_ptr<StormByte::VideoConvert::Utils::Logger> m_logger;
 			std::optional<pid_t> m_worker;
 			volatile bool m_must_terminate;
@@ -56,6 +58,8 @@ namespace StormByte::VideoConvert {
 			void execute_ffmpeg(const FFmpeg& ffmpeg);
 			int interactive();
 			Database::Data::stream ask_stream() const;
+			#ifdef ENABLE_HEVC // HDR is only available if HEVC/H265 is supported
 			Database::Data::hdr ask_stream_hdr() const;
+			#endif
 	};
 }

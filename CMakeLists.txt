@@ -17,6 +17,38 @@ endif()
 find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
 
+# Encoder support
+option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)
+option(ENABLE_AAC 		"Enable AAC encoder" 				ON)
+option(ENABLE_FDKAAC 	"Enable Fraunhoffer AAC encoder" 	OFF)
+option(ENABLE_AC3 		"Enable AC3 encoder" 				ON)
+option(ENABLE_EAC3 		"Enable Enhanced AC3 encoder" 		ON)
+option(ENABLE_OPUS 		"Enable Opus encoder"				ON)
+
+if (ENABLE_HEVC)
+	add_compile_definitions("ENABLE_HEVC")
+endif()
+
+if (ENABLE_AAC)
+	add_compile_definitions("ENABLE_AAC")
+endif()
+
+if (ENABLE_FDKAAC)
+	add_compile_definitions("ENABLE_FDKAAC")
+endif()
+
+if (ENABLE_AC3)
+	add_compile_definitions("ENABLE_AC3")
+endif()
+
+if (ENABLE_EAC3)
+	add_compile_definitions("ENABLE_EAC3")
+endif()
+
+if (ENABLE_OPUS)
+	add_compile_definitions("ENABLE_OPUS")
+endif()
+
 include_directories(lib)
 include_directories(frontend)
 add_subdirectory(lib)

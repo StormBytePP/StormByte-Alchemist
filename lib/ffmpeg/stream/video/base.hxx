@@ -5,7 +5,7 @@
 namespace StormByte::VideoConvert::Stream::Video {
 	class Base: public StormByte::VideoConvert::Stream::Base {
 		public:
-			Base(unsigned short stream_id, const std::string& encoder);
+			Base(unsigned short stream_id, const std::string& encoder, Database::Data::stream_codec codec);
 			Base(const Base& base);
 			Base(Base&& base) noexcept;
 			Base& operator=(const Base& base);
