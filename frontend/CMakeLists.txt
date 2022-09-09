@@ -39,3 +39,4 @@ set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD_REQUIRED ON)
 
 install(TARGETS StormByte-videoconvert DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES config/StormByte-videoconvert.conf DESTINATION /etc/conf.d COMPONENT config)
+install(FILES init/StormByte-videoconvert DESTINATION /etc/init.d COMPONENT init)
