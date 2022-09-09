@@ -64,6 +64,7 @@ namespace StormByte::VideoConvert::Database::Data {
 		unsigned short id = 0;
 		int film_id = 0;
 		stream_codec codec;
+		bool is_animation = false;
 		std::optional<std::string> max_rate;
 		std::optional<std::string> bitrate;
 		std::optional<hdr> HDR;

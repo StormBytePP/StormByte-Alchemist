@@ -454,6 +454,14 @@ Database::Data::stream Application::ask_stream() const {
 			true
 		));
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
+
+		do {
+			buffer_str = "";
+			std::cout << "Is an animated movie? [y/n]: ";
+			std::getline(std::cin, buffer_str);
+		} while (!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+		if (buffer_str == "y" || buffer_str == "Y")
+			stream.is_animation = true;
 	
 		#ifdef ENABLE_HEVC
 		if (stream.codec == Database::Data::VIDEO_HEVC) {
