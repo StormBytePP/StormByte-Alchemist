@@ -1,6 +1,17 @@
 #include "hevc.hxx"
 
 /******************************* HDR ************************************/
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_REDX			= 34000;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_REDY			= 16000;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_GREENX		= 13250;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_GREENY		= 34500;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_BLUEX			= 7500;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_BLUEY			= 3000;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTX	= 15635;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_WHITEPOINTY	= 16450;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMIN	= 1;
+const unsigned int StormByte::VideoConvert::Stream::Video::HEVC::HDR::DEFAULT_LUMINANCEMAX	= 10000000;
+
 StormByte::VideoConvert::Stream::Video::HEVC::HDR::HDR(	unsigned int red_x, unsigned int red_y,
 														unsigned int green_x,			unsigned int green_y,
 														unsigned int blue_x,			unsigned int blue_y,
@@ -104,7 +115,7 @@ std::string StormByte::VideoConvert::Stream::Video::HEVC::HDR::ffmpeg_parameters
 const std::string StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_MAX_BITRATE 	= "6M";
 const std::string StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_BUFFSIZE 		= "200M";
 const std::string StormByte::VideoConvert::Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3:colorprim=bt2020:transfer=smpte2084:colormatrix=bt2020nc";
-const StormByte::VideoConvert::Stream::Video::HEVC::HDR StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_HDR = HDR(34000, 16000, 13250, 34500, 7500, 3000, 15635, 16450, 1, 10000000);
+const StormByte::VideoConvert::Stream::Video::HEVC::HDR StormByte::VideoConvert::Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMIN);
 
 StormByte::VideoConvert::Stream::Video::HEVC::HEVC(unsigned short stream_id):StormByte::VideoConvert::Stream::Video::Base(stream_id, "libx265") {
 	m_max_rate = DEFAULT_MAX_BITRATE;

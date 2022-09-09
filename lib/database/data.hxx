@@ -2,11 +2,20 @@
 
 #include <optional>
 #include <filesystem>
+#include <map>
 
 namespace StormByte::VideoConvert::Database::Data {
 	struct film {
+		enum priority: unsigned short {
+			LOW 		= 0,
+			NORMAL,
+			HIGH,
+			IMPORTANT,
+			MAX
+		};
+		unsigned int film_id;
 		std::filesystem::path file = "";
-		unsigned short prio = 0;
+		unsigned short prio = NORMAL;
 		bool processing = false;
 	};
 
@@ -36,6 +45,18 @@ namespace StormByte::VideoConvert::Database::Data {
 		AUDIO_OPUS,
 		SUBTITLE_COPY,
 		INVALID_CODEC = 666
+	};
+
+	static const std::map<stream_codec, std::string> codec_string {
+		{ VIDEO_HEVC, 	"HEVC" },
+		{ VIDEO_COPY, 	"Video Copy" },
+		{ AUDIO_AAC, 	"AAC" },
+		{ AUDIO_FDKAAC, "FDKAAC" },
+		{ AUDIO_AC3, 	"AC-3" },
+		{ AUDIO_COPY,	"Audio Copy" },
+		{ AUDIO_EAC3, 	"E-AC3" },
+		{ AUDIO_OPUS,	"Opus" },
+		{ SUBTITLE_COPY,"Subtitle Copy" }
 	};
 
 	struct stream {

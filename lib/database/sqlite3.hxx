@@ -17,6 +17,10 @@ namespace StormByte::VideoConvert::Database {
 			std::optional<FFmpeg> get_film_for_process(const std::filesystem::path& output_path);
 			void set_film_id_as_processing(int film_id);
 			void reset_processing_films();
+			
+			/* Insert data functions */
+			bool insert_film(Data::film& film);
+			void insert_stream(const Data::stream& stream);
 
 		private:
 			sqlite3* m_database;
@@ -37,9 +41,6 @@ namespace StormByte::VideoConvert::Database {
 			std::list<Data::stream> get_film_streams(int film_id);
 			bool has_film_stream_HDR(const Data::stream& stream);
 			Data::hdr get_film_stream_HDR(const Data::stream& stream);
-			int insert_film(const Data::film& film);
-			void insert_stream(const Data::stream& stream);
-			void insert_HDR(const Data::stream& stream, const Data::hdr& hdr);
-			
+			void insert_HDR(const Data::stream& stream);
 	};
 }

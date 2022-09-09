@@ -19,7 +19,7 @@ namespace StormByte::VideoConvert {
 		private:
 			/* Config data */
 			std::optional<std::filesystem::path> m_database_file, m_output_path, m_logfile;
-			std::optional<StormByte::VideoConvert::Utils::Logger::LEVEL> m_loglevel;
+			std::optional<short> m_loglevel; // To not confuse users if they set it in negative in config
 			int m_sleep_idle_seconds;
 
 			bool m_daemon_mode;
@@ -46,5 +46,7 @@ namespace StormByte::VideoConvert {
 
 			int daemon();
 			int interactive();
+			Database::Data::stream ask_stream() const;
+			Database::Data::hdr ask_stream_hdr() const;
 	};
 }

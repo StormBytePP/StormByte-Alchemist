@@ -1,8 +1,8 @@
 #include "application.hxx"
-#include "database/sqlite3.hxx"
 #include "utils/filesystem.hxx"
-#include "utils/numbers.hxx"
+#include "utils/input.hxx"
 #include "version.hxx"
+// #include "hevc.hxx" // For HDR defaults
 
 #include <libconfig.h++>
 #include <iostream>
@@ -62,10 +62,10 @@ bool StormByte::VideoConvert::Application::init_from_config() {
     	m_database_file			= cfg.lookup("database");
     	m_output_path			= cfg.lookup("output");
 		m_logfile				= cfg.lookup("logfile");
-		m_loglevel				= static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>((unsigned int)cfg.lookup("loglevel"));
+		m_loglevel				= static_cast<int>(cfg.lookup("loglevel"));
 		m_sleep_idle_seconds	= cfg.lookup("sleep");
   	}
-  	catch(const libconfig::SettingNotFoundException&) { /* ignore */ }
+  	catch(const std::exception&) { /* ignore */ }
 
 	return true;
 }
@@ -100,7 +100,7 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 			else if (argument == "-ll" || argument == "--loglevel") {
 				if (++counter < argc) {
 					int loglevel;
-					if (!StormByte::VideoConvert::Utils::Numbers::to_int(argv[counter++], loglevel) || loglevel < 0 || loglevel >= StormByte::VideoConvert::Utils::Logger::LEVEL_MAX)
+					if (!StormByte::VideoConvert::Utils::Input::to_int_in_range(argv[counter++], loglevel, 0, StormByte::VideoConvert::Utils::Logger::LEVEL_MAX - 1))
 						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(StormByte::VideoConvert::Utils::Logger::Logger::LEVEL_MAX - 1));
 					m_loglevel = static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>(loglevel);
 				}
@@ -110,7 +110,7 @@ StormByte::VideoConvert::Application::status StormByte::VideoConvert::Applicatio
 			else if (argument == "-s" || argument == "--sleep") {
 				if (++counter < argc) {
 					int sleep;
-					if (!StormByte::VideoConvert::Utils::Numbers::to_int(argv[counter++], sleep) || sleep < 0)
+					if (!StormByte::VideoConvert::Utils::Input::to_int(argv[counter++], sleep) || sleep < 0)
 						throw std::runtime_error("Sleep time is not recognized as integer or it has a negative value");
 					m_sleep_idle_seconds = sleep;
 				}
@@ -154,11 +154,15 @@ bool StormByte::VideoConvert::Application::init_application() {
 
 		if (!m_loglevel)
 			throw std::runtime_error("ERROR: Log level not set neither in config file either from command line.");
+		else {
+			if (!StormByte::VideoConvert::Utils::Input::in_range(m_loglevel.value(), 0, StormByte::VideoConvert::Utils::Logger::LEVEL_MAX - 1))
+				throw std::runtime_error("ERROR: Log level is not between 0 and " + std::to_string(StormByte::VideoConvert::Utils::Logger::LEVEL_MAX - 1));
+		}
 
 		if (!StormByte::VideoConvert::Utils::Filesystem::is_folder_writable(m_logfile.value().parent_path()))
 			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
 		else
-			m_logger.reset(new StormByte::VideoConvert::Utils::Logger(m_logfile.value(), m_loglevel.value()));
+			m_logger.reset(new StormByte::VideoConvert::Utils::Logger(m_logfile.value(), static_cast<StormByte::VideoConvert::Utils::Logger::LEVEL>(m_loglevel.value())));
 		
 		if (!m_output_path)
 			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
@@ -229,20 +233,56 @@ int StormByte::VideoConvert::Application::daemon() {
 
 int StormByte::VideoConvert::Application::interactive() {
 	/* Needed variables */
-	std::string buffer;
-	std::filesystem::path in;
+	std::string buffer_str;
+	int buffer_int;
+	StormByte::VideoConvert::Database::Data::film film;
+	std::list<StormByte::VideoConvert::Database::Data::stream> streams;
 	
 	header();
 	
-	// In file
+	/* Query required data */
+
+	/* Film source file */
 	do {
 		std::cout << "Enter full film path: ";
-		std::getline(std::cin, buffer);
-		in = std::move(buffer);
-	} while(!StormByte::VideoConvert::Utils::Filesystem::exists_file(in, true));
+		std::getline(std::cin, buffer_str);
+		film.file = std::move(buffer_str);
+	} while(!StormByte::VideoConvert::Utils::Filesystem::exists_file(film.file, true));
 
-	
+	do {
+		std::cout << "Which priority? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
+		std::getline(std::cin, buffer_str);
+	} while (!StormByte::VideoConvert::Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
+	film.prio = buffer_int;
 
+	std::cout << "Film stream addition:" << std::endl;
+	bool add_new_stream = true;
+	do {
+		streams.push_back(ask_stream());
+		do {
+			std::cout << "Add another stream? [y/n]: ";
+			std::getline(std::cin, buffer_str);
+		} while(!StormByte::VideoConvert::Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+
+		add_new_stream = buffer_str == "y" || buffer_str == "Y";
+	} while(add_new_stream);
+
+	try {
+		if (!m_database->insert_film(film))
+			throw std::runtime_error("ERROR: Can not insert film with file " + film.file.string());
+		else
+			std::cout << "Film " << film.file << " added to database with ID " << film.film_id << std::endl;
+
+		for (auto it = streams.begin(); it != streams.end(); it++) {
+			// First is to assign film ID
+			it->film_id = film.film_id;
+			m_database->insert_stream(*it);
+		}
+	}
+	catch(const std::runtime_error& error) {
+		std::cerr << error.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }
 
@@ -251,4 +291,174 @@ void StormByte::VideoConvert::Application::signal_handler(int) {
 	Application::get_instance().m_must_terminate = true;
 	if (Application::get_instance().m_worker)
 		kill(Application::get_instance().m_worker.value(), SIGTERM);
+}
+
+StormByte::VideoConvert::Database::Data::stream StormByte::VideoConvert::Application::ask_stream() const {
+	Database::Data::stream stream;
+	std::string buffer_str;
+	int buffer_int;
+
+	do {
+		std::cout << "Select stream type; video(v), audio(a) or subtitles(s): ";
+		std::getline(std::cin, buffer_str);
+	} while (!StormByte::VideoConvert::Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
+	char codec_type = buffer_str[0];
+
+	do {
+		std::cout << "Input stream(" << codec_type << ") ID: ";
+		std::getline(std::cin, buffer_str);
+	} while(!StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	stream.id = buffer_int;
+
+	if (codec_type == 'v' || codec_type == 'V') {
+		do {
+			std::cout << "Select video codec:" << std::endl;
+			std::cout << "\tcopy(" << StormByte::VideoConvert::Database::Data::VIDEO_COPY << ")" << std::endl;
+			std::cout << "\tHEVC(" << StormByte::VideoConvert::Database::Data::VIDEO_HEVC << ")" << std::endl;
+			std::cout << "Which codec to use?: ";
+			std::getline(std::cin, buffer_str);
+		} while (!StormByte::VideoConvert::Utils::Input::to_int(buffer_str, buffer_int, true) || !StormByte::VideoConvert::Utils::Input::in_options(
+			buffer_str,
+			{
+				std::to_string(StormByte::VideoConvert::Database::Data::VIDEO_COPY),
+				std::to_string(StormByte::VideoConvert::Database::Data::VIDEO_HEVC)
+			},
+			true
+		));
+		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
+	
+		if (stream.codec == Database::Data::VIDEO_HEVC) {
+			do {
+				std::cout << "Does it have HDR? [y/n]: ";
+				std::getline(std::cin, buffer_str);
+			} while(!StormByte::VideoConvert::Utils::Input::in_options(
+				buffer_str,
+				{ "y", "Y", "n", "N" }
+			));
+			if (buffer_str == "y" || buffer_str == "Y")
+				stream.HDR = ask_stream_hdr();
+		}
+	}
+	else if (codec_type == 'a' || codec_type == 'A') {
+		do {
+			std::cout << "Select audio codec:" << std::endl;
+			std::cout << "\tcopy(" << StormByte::VideoConvert::Database::Data::AUDIO_COPY << ")" << std::endl;
+			std::cout << "\tAAC(" << StormByte::VideoConvert::Database::Data::AUDIO_AAC << ")" << std::endl;
+			std::cout << "\tFDKAAC(" << StormByte::VideoConvert::Database::Data::AUDIO_FDKAAC << ")" << std::endl;
+			std::cout << "\tAC-3(" << StormByte::VideoConvert::Database::Data::AUDIO_AC3 << ")" << std::endl;
+			std::cout << "\tE-AC3(" << StormByte::VideoConvert::Database::Data::AUDIO_EAC3 << ")" << std::endl;
+			std::cout << "\tOpus(" << StormByte::VideoConvert::Database::Data::AUDIO_OPUS << ")" << std::endl;
+			std::cout << "Which codec to use?: ";
+			std::getline(std::cin, buffer_str);
+		} while (!StormByte::VideoConvert::Utils::Input::to_int(buffer_str, buffer_int, true) || !StormByte::VideoConvert::Utils::Input::in_options(
+			buffer_str,
+			{
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_COPY),
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_AAC),
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_AC3),
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_EAC3),
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_OPUS),
+				std::to_string(StormByte::VideoConvert::Database::Data::AUDIO_FDKAAC),
+			},
+			true
+		));
+		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
+	}
+	else {
+		std::cout << "Subtitles have only copy codec so it is being autoselected";
+		stream.codec = Database::Data::SUBTITLE_COPY;
+	}
+
+	return stream;
+}
+
+StormByte::VideoConvert::Database::Data::hdr StormByte::VideoConvert::Application::ask_stream_hdr() const {
+	using namespace StormByte::VideoConvert::Stream::Video;
+
+	Database::Data::hdr HDR;
+	std::string buffer_str;
+	int buffer_int;
+
+	std::cout << "Input HDR parameters (leave empty to use default value):" << std::endl;
+
+	do {
+		std::cout << "red x (" << HEVC::HDR::DEFAULT_REDX << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.red_x = (buffer_str == "") ? HEVC::HDR::DEFAULT_REDX : buffer_int;
+
+	do {
+		std::cout << "red y (" << HEVC::HDR::DEFAULT_REDY << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.red_y = (buffer_str == "") ? HEVC::HDR::DEFAULT_REDY : buffer_int;
+
+	do {
+		std::cout << "green x (" << HEVC::HDR::DEFAULT_GREENX << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.green_x = (buffer_str == "") ? HEVC::HDR::DEFAULT_GREENX : buffer_int;
+
+	do {
+		std::cout << "green y (" << HEVC::HDR::DEFAULT_GREENY << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.green_y = (buffer_str == "") ? HEVC::HDR::DEFAULT_GREENY : buffer_int;
+
+	do {
+		std::cout << "blue x (" << HEVC::HDR::DEFAULT_BLUEX << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.blue_x = (buffer_str == "") ? HEVC::HDR::DEFAULT_BLUEX : buffer_int;
+
+	do {
+		std::cout << "blue y (" << HEVC::HDR::DEFAULT_BLUEY << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.blue_y = (buffer_str == "") ? HEVC::HDR::DEFAULT_BLUEY : buffer_int;
+
+	do {
+		std::cout << "white point x (" << HEVC::HDR::DEFAULT_WHITEPOINTX << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.white_point_x = (buffer_str == "") ? HEVC::HDR::DEFAULT_WHITEPOINTX : buffer_int;
+
+	do {
+		std::cout << "white point y (" << HEVC::HDR::DEFAULT_WHITEPOINTY << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.white_point_y = (buffer_str == "") ? HEVC::HDR::DEFAULT_WHITEPOINTY : buffer_int;
+
+	do {
+		std::cout << "luminance min (" << HEVC::HDR::DEFAULT_LUMINANCEMIN << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.luminance_min = (buffer_str == "") ? HEVC::HDR::DEFAULT_LUMINANCEMIN : buffer_int;
+
+	do {
+		std::cout << "luminance max (" << HEVC::HDR::DEFAULT_LUMINANCEMAX << "): ";
+		std::getline(std::cin, buffer_str);
+	} while(buffer_str != "" && !StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	HDR.luminance_max = (buffer_str == "") ? HEVC::HDR::DEFAULT_LUMINANCEMAX : buffer_int;
+
+	do {
+		std::cout << "Does it have light level data? [y/n]: ";
+		std::getline(std::cin, buffer_str);
+	} while(!StormByte::VideoConvert::Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }, true));
+
+	if (buffer_str == "y" || buffer_str == "Y") {
+		do {
+			std::cout << "light level average: ";
+			std::getline(std::cin, buffer_str);
+		} while(!StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+		HDR.light_level_average = buffer_int;
+
+		do {
+			std::cout << "light level max: ";
+			std::getline(std::cin, buffer_str);
+		} while(!StormByte::VideoConvert::Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+		HDR.light_level_max = buffer_int;
+	}
+
+	return HDR;
 }

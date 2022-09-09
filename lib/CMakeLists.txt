@@ -16,7 +16,7 @@ add_library(StormByte-videoconvert-library SHARED
 	ffmpeg/ffmpeg.cxx
 	utils/logger.cxx
 	utils/filesystem.cxx
-	utils/numbers.cxx
+	utils/input.cxx
 )
 
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)

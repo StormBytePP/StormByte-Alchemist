@@ -25,6 +25,8 @@ namespace StormByte::VideoConvert::Stream::Video {
 					~HDR() = default;
 					void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
 					std::string ffmpeg_parameters() const;
+
+					static const unsigned int DEFAULT_REDX, DEFAULT_REDY, DEFAULT_GREENX, DEFAULT_GREENY, DEFAULT_BLUEX, DEFAULT_BLUEY, DEFAULT_WHITEPOINTX, DEFAULT_WHITEPOINTY, DEFAULT_LUMINANCEMIN, DEFAULT_LUMINANCEMAX;
 			
 				private:
 					std::pair<std::string, std::string> m_red, m_green, m_blue, m_white_point, m_luminance;
