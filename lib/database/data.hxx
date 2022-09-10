@@ -62,7 +62,7 @@ namespace StormByte::VideoConvert::Database::Data {
 	};
 
 	struct stream {
-		unsigned short id = 0;
+		short id = 0; // Negative value means all
 		int film_id = 0;
 		stream_codec codec;
 		bool is_animation = false;

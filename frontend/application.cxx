@@ -374,6 +374,10 @@ int Application::interactive() {
 	int buffer_int;
 	Database::Data::film film;
 	std::list<Database::Data::stream> streams;
+	bool continue_asking;
+
+	// Those are only used here, so they are only initialized here also
+	m_interactive_all_video = m_interactive_all_audio = m_interactive_all_subtitle = false;
 	
 	header();
 	
@@ -395,15 +399,20 @@ int Application::interactive() {
 	std::cout << "Film stream addition:" << std::endl;
 	bool add_new_stream = true;
 	do {
-		streams.push_back(ask_stream());
-		do {
-			buffer_str = "";
-			std::cout << "Add another stream? [y/n]: ";
-			std::getline(std::cin, buffer_str);
-		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+		auto stream = ask_stream();
+		if (stream.has_value()) streams.push_back(*stream);
+		continue_asking = !(m_interactive_all_video && m_interactive_all_audio && m_interactive_all_subtitle);
+		if (continue_asking)
+			do {
+				buffer_str = "";
+				std::cout << "Add another stream? [y/n]: ";
+				std::getline(std::cin, buffer_str);
+			} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+		else
+			std::cout << "There are no more streams to add" << std::endl;
 
 		add_new_stream = buffer_str == "y" || buffer_str == "Y";
-	} while(add_new_stream);
+	} while(add_new_stream && continue_asking);
 
 	try {
 		if (!m_database->insert_film(film))
@@ -431,7 +440,7 @@ void Application::signal_handler(int) {
 		kill(Application::get_instance().m_worker.value(), SIGTERM);
 }
 
-Database::Data::stream Application::ask_stream() const {
+std::optional<Database::Data::stream> Application::ask_stream() const {
 	Database::Data::stream stream;
 	std::string buffer_str;
 	int buffer_int;
@@ -443,14 +452,25 @@ Database::Data::stream Application::ask_stream() const {
 	} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
 	char codec_type = buffer_str[0];
 
+	// Here we check if we selected an stream type which was already covered by "all" selection
+	if (
+		((codec_type == 'v' || codec_type == 'V') && m_interactive_all_video) ||
+		((codec_type == 'a' || codec_type == 'A') && m_interactive_all_audio) ||
+		((codec_type == 's' || codec_type == 'S') && m_interactive_all_subtitle)
+	) {
+		std::cerr << "All streams were already selected for type " << codec_type << std::endl;
+		return std::optional<Database::Data::stream>(); // We return empty stream
+	}
+
 	do {
 		buffer_str = "";
-		std::cout << "Input stream(" << codec_type << ") ID: ";
+		std::cout << "Input stream(" << codec_type << ") FFmpeg ID (-1 to select all streams for type " << codec_type << "): ";
 		std::getline(std::cin, buffer_str);
-	} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
+	} while(!Utils::Input::to_int_minimum(buffer_str, buffer_int, -1, true));
 	stream.id = buffer_int;
 
 	if (codec_type == 'v' || codec_type == 'V') {
+		if (buffer_int < 0) m_interactive_all_video = true;
 		do {
 			buffer_str = "";
 			std::cout << "Select video codec:" << std::endl;
@@ -472,13 +492,16 @@ Database::Data::stream Application::ask_stream() const {
 		));
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
 
-		do {
-			buffer_str = "";
-			std::cout << "Is an animated movie? [y/n]: ";
-			std::getline(std::cin, buffer_str);
-		} while (!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
-		if (buffer_str == "y" || buffer_str == "Y")
-			stream.is_animation = true;
+		// Only certain codecs supports animation, TODO: Make it better
+		if (stream.codec == Database::Data::VIDEO_HEVC) {
+			do {
+				buffer_str = "";
+				std::cout << "Is an animated movie? [y/n]: ";
+				std::getline(std::cin, buffer_str);
+			} while (!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+			if (buffer_str == "y" || buffer_str == "Y")
+				stream.is_animation = true;
+		}
 	
 		#ifdef ENABLE_HEVC
 		if (stream.codec == Database::Data::VIDEO_HEVC) {
@@ -495,6 +518,7 @@ Database::Data::stream Application::ask_stream() const {
 		#endif
 	}
 	else if (codec_type == 'a' || codec_type == 'A') {
+		if (buffer_int < 0) m_interactive_all_audio = true;
 		do {
 			buffer_str = "";
 			std::cout << "Select audio codec:" << std::endl;
@@ -541,6 +565,7 @@ Database::Data::stream Application::ask_stream() const {
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
 	}
 	else {
+		if (buffer_int < 0) m_interactive_all_subtitle = true;
 		std::cout << "Subtitles have only copy codec so it is being autoselected" << std::endl;
 		stream.codec = Database::Data::SUBTITLE_COPY;
 	}

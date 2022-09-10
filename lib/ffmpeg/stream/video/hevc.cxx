@@ -159,13 +159,13 @@ std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	else
 		x265_params = X265_PARAMS;
 
-	result.push_back("-profile:v:" + std::to_string(m_stream_id));		result.push_back("main10");
-	result.push_back("-level:v:" + std::to_string(m_stream_id));		result.push_back("5.1");
-	result.push_back("-x265-params:v:" + std::to_string(m_stream_id));	result.push_back(x265_params);
-	result.push_back("-pix_fmt:v:" + std::to_string(m_stream_id));		result.push_back("yuv420p10le");
-	result.push_back("-bufsize:v:" + std::to_string(m_stream_id));		result.push_back(DEFAULT_BUFFSIZE);
+	result.push_back("-profile:" + ffmpeg_stream_id());					result.push_back("main10");
+	result.push_back("-level:" + ffmpeg_stream_id());					result.push_back("5.1");
+	result.push_back("-x265-params:" + ffmpeg_stream_id());				result.push_back(x265_params);
+	result.push_back("-pix_fmt:" + ffmpeg_stream_id());					result.push_back("yuv420p10le");
+	result.push_back("-bufsize:" + ffmpeg_stream_id());					result.push_back(DEFAULT_BUFFSIZE);
 	if (m_is_animation) {
-		result.push_back("-tune:v:" + std::to_string(m_stream_id));		result.push_back("animation");
+		result.push_back("-tune:" + ffmpeg_stream_id());				result.push_back("animation");
 	}
 
 	return result;

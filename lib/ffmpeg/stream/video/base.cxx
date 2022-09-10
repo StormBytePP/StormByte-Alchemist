@@ -34,7 +34,7 @@ std::list<std::string> Stream::Video::Base::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Base::ffmpeg_parameters();
 
 	if (m_max_rate.has_value()) {
-		result.push_back("-maxrate:v:" + std::to_string(m_stream_id));	result.push_back(m_max_rate.value());
+		result.push_back("-maxrate:" + ffmpeg_stream_id());		result.push_back(m_max_rate.value());
 	}
 
 	return result;

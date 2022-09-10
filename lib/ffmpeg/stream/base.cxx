@@ -2,7 +2,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Base::Base(unsigned short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type):m_stream_id(stream_id), m_encoder(encoder), m_codec(codec), m_type(type) {}
+Stream::Base::Base(short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type):m_stream_id(stream_id), m_encoder(encoder), m_codec(codec), m_type(type) {}
 
 Stream::Base::Base(const Base& codec):m_stream_id(codec.m_stream_id), m_encoder(codec.m_encoder), m_codec(codec.m_codec), m_type(codec.m_type), m_bitrate(codec.m_bitrate) {}
 
@@ -47,5 +47,9 @@ std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 }
 
 std::string Stream::Base::ffmpeg_stream_id() const {
-	return m_type + std::string(":") + std::to_string(m_stream_id);
+	std::string type_str = std::string(1, m_type); // As m_type is a const char as this function member is const
+	if (m_stream_id >= 0)
+		type_str += std::string(":") + std::to_string(m_stream_id);
+
+	return type_str;
 }

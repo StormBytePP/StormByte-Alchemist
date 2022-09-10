@@ -58,9 +58,10 @@ namespace StormByte::VideoConvert {
 			int daemon();
 			void execute_ffmpeg(const FFmpeg& ffmpeg);
 			int interactive();
-			Database::Data::stream ask_stream() const;
+			std::optional<Database::Data::stream> ask_stream() const;
 			#ifdef ENABLE_HEVC // HDR is only available if HEVC/H265 is supported
 			Database::Data::hdr ask_stream_hdr() const;
 			#endif
+			mutable bool m_interactive_all_video, m_interactive_all_audio, m_interactive_all_subtitle;
 	};
 }

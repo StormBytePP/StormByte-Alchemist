@@ -10,7 +10,7 @@
 namespace StormByte::VideoConvert::Stream {
 	class Base {
 		public:
-			Base(unsigned short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type);
+			Base(short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type);
 			Base(const Base& codec_base);
 			Base(Base&&) noexcept;
 			Base& operator=(const Base& codec_base);
@@ -26,7 +26,7 @@ namespace StormByte::VideoConvert::Stream {
 			inline char get_type() const { return m_type; }
 
 		protected:
-			unsigned short m_stream_id;
+			short m_stream_id;
 			std::string m_encoder;
 			Database::Data::stream_codec m_codec;
 			char m_type;
