@@ -314,15 +314,15 @@ int Application::daemon() {
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
 	do {
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Checking for films to convert...");
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Checking for films to convert...");
 		auto film = m_database->get_film_for_process();
 		if (film) {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film.value().get_input_file().string() + " found");
 			execute_ffmpeg(film.value());
 		}
 		else {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "No films found");
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "No films found");
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
 			sleep(m_sleep_idle_seconds);
 		}
 	} while(!m_must_terminate);
