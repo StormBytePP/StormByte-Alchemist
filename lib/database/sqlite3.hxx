@@ -19,6 +19,7 @@ namespace StormByte::VideoConvert::Database {
 			void set_film_unsupported_status(int film_id, bool status);
 			void reset_processing_films();
 			void delete_film(int film_id);
+			bool is_film_in_database(const std::filesystem::path& film);
 			
 			/* Insert data functions */
 			bool insert_film(Data::film& film);

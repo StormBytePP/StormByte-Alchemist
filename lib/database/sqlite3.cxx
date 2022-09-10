@@ -59,7 +59,8 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE, unsupported = FALSE"},
 	{"deleteFilm",					"DELETE FROM films WHERE id = ?"},
 	{"deleteFilmStream",			"DELETE FROM streams WHERE film_id = ?"},
-	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"}
+	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
+	{"isFilmAlreadyInDatabase?",	"SELECT COUNT(*)>0 FROM films WHERE file = ?"}
 };
 
 Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -415,4 +416,15 @@ void Database::SQLite3::delete_film_stream_HDR(int film_id) {
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
+}
+
+bool Database::SQLite3::is_film_in_database(const std::filesystem::path& film) {
+	bool result = false;
+	auto stmt = m_prepared["isFilmAlreadyInDatabase?"];
+	sqlite3_bind_text(stmt, 1, film.c_str(), -1, SQLITE_STATIC);
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		result = sqlite3_column_int(stmt, 0);
+	}
+	reset_stmt(stmt);
+	return result;
 }

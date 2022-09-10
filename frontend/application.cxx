@@ -386,6 +386,10 @@ int Application::interactive() {
 	/* Film source file */
 	if (!Utils::Filesystem::exists_file(m_input_path.value() / m_add_film_path.value(), true))
 		return 1;
+	else if (m_database->is_film_in_database(*m_add_film_path)) {
+		std::cerr << "Film " << *m_add_film_path << " is already in database!" << std::endl;
+		return 1;
+	}
 	else
 		film.file = m_add_film_path.value();
 
