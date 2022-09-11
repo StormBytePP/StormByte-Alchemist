@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 # set the project name and version
 project("StormByte Video Converter"
-	VERSION 1.1.0
+	VERSION 1.2.0
 	DESCRIPTION "This is a program to handle automatic ffmpeg conversions between downloaded videos in order to format them to be properly stored"
 	HOMEPAGE_URL "David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>"
 )
