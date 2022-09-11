@@ -401,18 +401,20 @@ int Application::interactive(const std::filesystem::path& film_file_or_path) {
 	
 	/* Query required data */
 	auto films = std::move(ask_film_data(film_file_or_path));
+	if (!films) return 1;
 	auto streams = std::move(ask_streams());
 
-	if (add_films_to_database(std::move(films), std::move(streams)))
+	if (add_films_to_database(std::move(*films), std::move(streams)))
 		return 0;
 	else
 		return 1;
 }
 
-std::list<Database::Data::film> Application::ask_film_data(const std::filesystem::path& file_or_path) const {
+std::optional<std::list<Database::Data::film>> Application::ask_film_data(const std::filesystem::path& file_or_path) const {
 	std::string buffer_str;
 	int buffer_int;
 	std::list<Database::Data::film> films;
+	std::list<std::filesystem::path> unsupported_films;
 	Database::Data::film film;
 	do {
 		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
@@ -432,7 +434,7 @@ std::list<Database::Data::film> Application::ask_film_data(const std::filesystem
 					films.push_back(film);
 				}
 				else {
-					std::cerr << i->path() << ": Unsupported file format" << std::endl;
+					unsupported_films.push_back(std::filesystem::relative(i->path(), *m_input_path));
 				}
 			}
 	}
@@ -440,6 +442,18 @@ std::list<Database::Data::film> Application::ask_film_data(const std::filesystem
 		// Single file
 		film.file = std::move(file_or_path);
 		films.push_back(film);
+	}
+
+	if (!unsupported_films.empty()) {
+		std::cout << "Found " << std::to_string(unsupported_films.size()) << " unsupported films:\n";
+		for (auto it = unsupported_films.begin(); it != unsupported_films.end(); it++)
+			std::cout << "\t* " << (*it) << "\n";
+		std::cout << "\n";
+		do {
+			std::cout << "Do you wish to continue? [y/n]: " << std::endl;
+			std::getline(std::cin, buffer_str);
+		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+		if (buffer_str == "y" || buffer_str == "n") return std::optional<std::list<Database::Data::film>>();
 	}
 
 	return films;

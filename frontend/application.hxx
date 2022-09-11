@@ -59,7 +59,7 @@ namespace StormByte::VideoConvert {
 			int daemon();
 			void execute_ffmpeg(const FFmpeg& ffmpeg);
 			int interactive(const std::filesystem::path& film_file_or_path);
-			std::list<Database::Data::film> ask_film_data(const std::filesystem::path& file_or_path) const;
+			std::optional<std::list<Database::Data::film>> ask_film_data(const std::filesystem::path& file_or_path) const;
 			std::list<Database::Data::stream> ask_streams();
 			Database::Data::stream ask_stream(const char& codec_type) const;
 			bool add_films_to_database(const std::list<Database::Data::film>& films, std::list<Database::Data::stream>&& streams);
