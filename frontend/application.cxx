@@ -333,46 +333,46 @@ int Application::daemon() {
 
 void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	std::filesystem::path input_file = ffmpeg.get_full_input_file();
-	std::filesystem::path work_file = ffmpeg.get_full_work_file();
-	std::filesystem::path output_path = ffmpeg.get_full_output_path();
-	std::filesystem::path output_file = ffmpeg.get_full_output_file();
+	const std::filesystem::path full_input_file = *m_config.get_input_folder() / ffmpeg.get_input_file();
+	const std::filesystem::path full_work_file = *m_config.get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
+	const std::filesystem::path full_output_file = *m_config.get_output_folder() / ffmpeg.get_output_file();
 
-	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as being processed in database");
+
+	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + ffmpeg.get_input_file().string() + " as being processed in database");
 	m_database->set_film_processing_status(ffmpeg.get_film_id(), true);
-	m_worker = ffmpeg.exec();
+	m_worker = ffmpeg.exec(*m_config.get_input_folder(), *m_config.get_work_folder());
 	int status;
 	wait(&status);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	m_worker.reset(); // Worker has finished
 	if (status == 0) {
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + input_file.string() + " finished in " + elapsed_time(begin, end));
-		if (!std::filesystem::exists(output_path)) {
-			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Creating output path " + output_path.string());
-			std::filesystem::create_directories(output_path);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + elapsed_time(begin, end));
+		if (!std::filesystem::exists(full_output_file.parent_path())) {
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
+			std::filesystem::create_directories(full_output_file.parent_path());
 		}
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copying file " + work_file.string() + " to " + output_file.string());
-		std::filesystem::copy_file(work_file, output_file);
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting original input file " + input_file.string());
-		std::filesystem::remove(input_file);
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting original work file " + work_file.string());
-		std::filesystem::remove(work_file);
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting film from database");
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
+		std::filesystem::copy_file(full_work_file, full_output_file);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
+		std::filesystem::remove(full_input_file);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
+		std::filesystem::remove(full_work_file);
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete film from database");
 		m_database->delete_film(ffmpeg.get_film_id());
 		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting folder " + (*m_config.get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*m_config.get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
 			std::filesystem::remove_all(*m_config.get_input_folder() / ffmpeg.get_group()->folder);
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting folder " + (*m_config.get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group work folder: " + (*m_config.get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
 			std::filesystem::remove_all(*m_config.get_work_folder() / ffmpeg.get_group()->folder);
-			m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting group from database");
+			m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete group from database");
 			m_database->delete_group(ffmpeg.get_group()->id);
 		}
 	}
 	else {
-		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + input_file.string() + " failed or interrupted!");
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting temporary unfinished file " + work_file.string());
-		std::filesystem::remove(work_file);
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + input_file.string() + " as unsupported in database");
+		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + ffmpeg.get_input_file().string() + " failed or interrupted!");
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting work file: " + full_work_file.string());
+		std::filesystem::remove(full_work_file);
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + full_work_file.string() + " as unsupported in database");
 		m_database->set_film_unsupported_status(ffmpeg.get_film_id(), false);
 	}
 }
