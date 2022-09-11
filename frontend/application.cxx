@@ -365,8 +365,6 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 		if (m_config.get_onfinish() == "copy") {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
 			std::filesystem::copy_file(full_work_file, full_output_file);
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
-			std::filesystem::remove(full_input_file);
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
 			std::filesystem::remove(full_work_file);
 		}
@@ -374,6 +372,8 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Move: " + full_work_file.string() + " -> " + full_output_file.string());
 			std::filesystem::rename(full_work_file, full_output_file);
 		}
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
+			std::filesystem::remove(full_input_file);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete film from database");
 		m_database->delete_film(ffmpeg.get_film_id());
 		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {
