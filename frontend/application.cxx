@@ -115,14 +115,10 @@ bool Application::init_from_config() {
 		m_work_path				= cfg.lookup("work");
 	if (cfg.exists("logfile"))
 		m_logfile				= cfg.lookup("logfile");
-	try {
+	if (cfg.exists("loglevel") && cfg.lookup("loglevel").isNumber())
 		m_loglevel				= static_cast<int>(cfg.lookup("loglevel"));
-	}
-	catch(const std::exception&) { /* ignore */ }
-	try {
+	if (cfg.exists("sleep") && cfg.lookup("sleep").isNumber())
 		m_sleep_idle_seconds	= static_cast<int>(cfg.lookup("sleep"));
-  	}
-  	catch(const std::exception&) { /* ignore */ }
 
 	return true;
 }
