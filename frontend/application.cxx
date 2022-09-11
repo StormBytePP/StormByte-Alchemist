@@ -426,9 +426,9 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data(const 
 	std::list<std::filesystem::path> unsupported_films;
 	Database::Data::film film;
 	do {
-		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
+		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(2), IMPORTANT(3): ";
 		std::getline(std::cin, buffer_str);
-	} while (buffer_str != "" && !Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
+	} while (buffer_str != "" && !Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 3, true));
 	film.prio = (buffer_str == "") ? 1 : buffer_int;
 
 	// Now we look if a single film was specified or if it was a folder
