@@ -101,10 +101,13 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 
 	if (film_id != -1) {
 		Data::film film_data = get_film_data(film_id);
-		std::filesystem::path input_path	= Application::get_instance().get_input_folder();
-		std::filesystem::path output_path	= Application::get_instance().get_output_folder();
-		std::filesystem::path work_path		= Application::get_instance().get_work_folder();
-		FFmpeg film(film_id, input_path, film_data.file, work_path, output_path);
+		FFmpeg film(
+			film_id,
+			*Application::get_instance().get_config().get_input_folder(),
+			film_data.file,
+			*Application::get_instance().get_config().get_output_folder(),
+			*Application::get_instance().get_config().get_work_folder()
+		);
 		film.set_group(film_data.group);
 		auto streams = get_film_streams(film_id);
 		std::list<Data::stream_codec> unsupported_codecs;

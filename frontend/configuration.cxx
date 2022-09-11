@@ -1,0 +1,127 @@
+#include "configuration.hxx"
+#include "application.hxx"
+#include "utils/filesystem.hxx"
+
+#include <iostream>
+
+using namespace StormByte::VideoConvert;
+
+const std::filesystem::path Configuration::DEFAULT_CONFIG_FILE	= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
+const unsigned int Configuration::DEFAULT_SLEEP_TIME			= 3600; // 1 hour
+
+Configuration::Configuration() {}
+
+Configuration::Configuration(const Configuration& config): m_database(config.m_database), m_input(config.m_input), m_output(config.m_output), m_work(config.m_work), m_configfile(config.m_configfile), m_logfile(config.m_logfile), m_loglevel(config.m_loglevel), m_sleep(config.m_sleep), m_interactive_parameter(config.m_interactive_parameter) {}
+
+Configuration::Configuration(Configuration&& config) noexcept: m_database(std::move(config.m_database)), m_input(std::move(config.m_input)), m_output(std::move(config.m_output)), m_work(std::move(config.m_work)), m_configfile(std::move(config.m_configfile)), m_logfile(std::move(config.m_logfile)), m_loglevel(std::move(config.m_loglevel)), m_sleep(std::move(config.m_sleep)), m_interactive_parameter(std::move(config.m_interactive_parameter)) {}
+
+Configuration& Configuration::operator=(const Configuration& config) {
+	if (&config != this) {
+		m_database				= config.m_database; 
+		m_input					= config.m_input;
+		m_output				= config.m_output;
+		m_work					= config.m_work;
+		m_configfile			= config.m_configfile;
+		m_logfile				= config.m_logfile;
+		m_loglevel				= config.m_loglevel;
+		m_sleep					= config.m_sleep;
+		m_interactive_parameter	= config.m_interactive_parameter;
+	}
+
+	return *this;
+}
+
+Configuration& Configuration::operator=(Configuration&& config) noexcept {
+	if (&config != this) {
+		m_database				= std::move(config.m_database); 
+		m_input					= std::move(config.m_input);
+		m_output				= std::move(config.m_output);
+		m_work					= std::move(config.m_work);
+		m_configfile			= std::move(config.m_configfile);
+		m_logfile				= std::move(config.m_logfile);
+		m_loglevel				= std::move(config.m_loglevel);
+		m_sleep					= std::move(config.m_sleep);
+		m_interactive_parameter = std::move(config.m_interactive_parameter);
+	}
+
+	return *this;
+}
+
+Configuration::~Configuration() {}
+
+void Configuration::merge(const Configuration& config) {
+	if (config.m_database) m_database 							= config.m_database;
+	if (config.m_input) m_input 								= config.m_input;
+	if (config.m_output) m_output 								= config.m_output;
+	if (config.m_work) m_work 									= config.m_work;
+	if (config.m_configfile) m_configfile 						= config.m_configfile;
+	if (config.m_logfile) m_logfile 							= config.m_logfile;
+	if (config.m_loglevel) m_loglevel							= config.m_loglevel;
+	if (config.m_sleep) m_sleep 								= config.m_sleep;
+
+	if (config.m_interactive_parameter) m_interactive_parameter	= config.m_interactive_parameter;
+}
+
+void Configuration::merge(Configuration&& config) noexcept {
+	if (config.m_database) m_database							= std::move(config.m_database);
+	if (config.m_input) m_input									= std::move(config.m_input);
+	if (config.m_output) m_output								= std::move(config.m_output);
+	if (config.m_work) m_work									= std::move(config.m_work);
+	if (config.m_configfile) m_configfile						= std::move(config.m_configfile);
+	if (config.m_logfile) m_logfile								= std::move(config.m_logfile);
+	if (config.m_loglevel) m_loglevel							= std::move(config.m_loglevel);
+	if (config.m_sleep) m_sleep									= std::move(config.m_sleep);
+
+	if (config.m_interactive_parameter) m_interactive_parameter	= std::move(config.m_interactive_parameter);
+}
+
+bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
+	std::list<std::string> errors;
+
+	if (!m_database)
+		errors.push_back("Database file have not being stablished");
+	else if (!Utils::Filesystem::is_folder_readable_and_writable(m_database->parent_path()))
+		errors.push_back("Database folder is not readable and writable");
+
+	if (!m_input)
+		errors.push_back("Input folder have not being stablished");
+	else if (!Utils::Filesystem::is_folder_readable_and_writable(*m_input))
+		errors.push_back("Input folder is not readable and writable");
+
+	if (!m_output)
+		errors.push_back("Output folder have not being stablished");
+	else if (!Utils::Filesystem::is_folder_readable_and_writable(*m_output))
+		errors.push_back("Output folder is not readable and writable");
+
+	if (!m_work)
+		errors.push_back("Work folder have not being stablished");
+	else if (!Utils::Filesystem::is_folder_readable_and_writable(*m_work))
+		errors.push_back("Work folder is not readable and writable");
+
+	if (!m_logfile)
+		errors.push_back("Log file have not being stablished");
+	else if (!Utils::Filesystem::is_folder_writable(m_logfile->parent_path()))
+		errors.push_back("Log file folder is not writable");
+
+	if(!m_loglevel)
+		errors.push_back("Log level have not being stablished");
+	else if (*m_loglevel >= Utils::Logger::LEVEL_MAX)
+		errors.push_back("Log level can not have a value greater than " + std::to_string(Utils::Logger::LEVEL_MAX - 1));
+
+	if (!errors.empty()) {
+		errors.push_front("Found " + std::to_string(errors.size()) + " errors in configuration:");
+		for (auto it = errors.begin(); it != errors.end(); it++) {
+			switch(output_mode) {
+				case OUTPUT_CERR:
+					std::cerr << (*it) << std::endl;
+					break;
+
+				case OUTPUT_LOGGER:
+					Application::get_instance().get_logger()->message_line(Utils::Logger::LEVEL_ERROR, "\t*" + (*it));
+					break;
+			}
+		}
+	}
+
+	return errors.empty();
+}

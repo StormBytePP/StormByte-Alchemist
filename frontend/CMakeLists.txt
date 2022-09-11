@@ -1,6 +1,7 @@
 add_executable(StormByte-videoconvert
 	application.cxx
 	main.cxx
+	configuration.cxx
 	version.hxx
 )
 

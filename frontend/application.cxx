@@ -14,8 +14,6 @@
 
 using namespace StormByte::VideoConvert;
 
-const std::filesystem::path Application::DEFAULT_CONFIG_FILE 				= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
-const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS					= 3600; // 1h
 const std::list<std::string> Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
 	".asf", ".asx", ".avi", ".wav", ".wma", ".wax", ".wm", ".wmv", ".wvx",
 	".ra", ".ram", ".rm", ".rmm",
@@ -54,7 +52,7 @@ const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
 	Database::Data::SUBTITLE_COPY
 };
 
-Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_pretend_run(false), m_must_terminate(false) {
+Application::Application(): m_status(HALT_ERROR) {
 	signal(SIGTERM, Application::signal_handler);
 	signal(SIGUSR1, Application::signal_handler); // Reload config and continue working
 	signal(SIGUSR2, Application::signal_handler); // Force database scan by awakening process
@@ -66,104 +64,97 @@ Application& Application::get_instance() {
 }
 
 int Application::run(int argc, char** argv) noexcept {
-	if (!init_from_config()) return 1;
+	Configuration cli_conf = read_cli(argc, argv); // This updates status flags so needs to be done first
 	
-	auto main_action = init_from_cli(argc, argv);
+	if (m_status != HALT_OK && m_status != HALT_ERROR)
+		init(std::move(cli_conf));
 
-	if (main_action == HALT_OK)
-		return 0;
-	else if (main_action == CONTINUE) {
-		if (!init_application()) return 1;
-		
-		if (m_daemon_mode) {
-			if (m_pretend_run) // Do not execute but if it reached here it means config was ok
-				return 0;
-			else
-				return daemon();
-		}
-		else {
-			return interactive(*m_add_film_path);
-		}
-		return 0;
+	switch(m_status) {
+		case RUN_DAEMON:
+			return daemon();
+
+		case RUN_INTERACTIVE:
+			return interactive();
+
+		case RUN_TEST: // Init was already successful so nothing more to be done
+		case HALT_OK:
+			return 0;
+
+		case HALT_ERROR:
+		default:
+			return 1;
 	}
-	else
-		return 1;
 }
 
-bool Application::init_from_config() {
-	libconfig::Config cfg;
+void Application::init(Configuration&& cli_config) {
+	// First we store config file values then we overwrite with CLI values
+	m_config = std::move(read_config(cli_config.get_config_file()));
+	m_config.merge(std::move(cli_config));
 	
-	try {
-    	cfg.readFile(DEFAULT_CONFIG_FILE.c_str());
-	}
-	catch(const libconfig::FileIOException &fioex) {
-		std::cerr << "Can not open configuration file " << DEFAULT_CONFIG_FILE << std::endl;
-		return false;
-	}
-	catch(const libconfig::ParseException &pex) {
-		std::cerr << "Parse error reading configuration file " << DEFAULT_CONFIG_FILE << " at line " << std::to_string(pex.getLine()) << std::endl;
-		return false;
-	}
 
-	if (cfg.exists("database"))
-		m_database_file			= cfg.lookup("database");
-	if (cfg.exists("input"))
-		m_input_path			= cfg.lookup("input");
-	if (cfg.exists("output"))
-		m_output_path			= cfg.lookup("output");
-	if (cfg.exists("work"))
-		m_work_path				= cfg.lookup("work");
-	if (cfg.exists("logfile"))
-		m_logfile				= cfg.lookup("logfile");
-	if (cfg.exists("loglevel") && cfg.lookup("loglevel").isNumber())
-		m_loglevel				= static_cast<int>(cfg.lookup("loglevel"));
-	if (cfg.exists("sleep") && cfg.lookup("sleep").isNumber())
-		m_sleep_idle_seconds	= static_cast<int>(cfg.lookup("sleep"));
-
-	return true;
+	if (!m_config.check(Configuration::OUTPUT_CERR))
+		m_status = HALT_ERROR;
+	else {
+		try {
+			m_logger.reset(new Utils::Logger(*m_config.get_log_file(), static_cast<Utils::Logger::LEVEL>(*m_config.get_log_level())));
+			m_database.reset(new Database::SQLite3(*m_config.get_database_file()));
+		}
+		catch(const std::exception& e) {
+			header();
+			std::cerr << e.what() << std::endl << std::endl;
+			help();
+			m_status = HALT_ERROR;
+		}
+	}
 }
 
-Application::status Application::init_from_cli(int argc, char** argv) {
+Configuration Application::read_cli(int argc, char** argv) {
+	Configuration config;
 	int counter = 1; // Because first item or "argv is always the executable name
 	try {
 		while (counter < argc) {
-			std::string argument = argv[counter];
-			if (argument == "-c" || argument == "--check") {
-				m_pretend_run = true;
-				m_daemon_mode = true;
+			const std::string argument = argv[counter];
+			if (argument == "-t" || argument == "--test") {
+				m_status = RUN_TEST;
 				counter++;
 			}
 			else if (argument == "-d" || argument == "--daemon") {
-				m_daemon_mode = true;
+				m_status = RUN_DAEMON;
 				counter++;
+			}
+			else if (argument == "-c" || argument == "--config") {
+				if (++counter < argc)
+					config.set_config_file(argv[counter++]);
+				else
+					throw std::runtime_error("Config specified without argument, correct usage:");
 			}
 			else if (argument == "-db" || argument == "--database") {
 				if (++counter < argc)
-					m_database_file = argv[counter++];
+					config.set_database_file(argv[counter++]);
 				else
 					throw std::runtime_error("Database specified without argument, correct usage:");
 			}
 			else if (argument == "-i" || argument == "--input") {
 				if (++counter < argc)
-					m_output_path = argv[counter++];
+					config.set_input_folder(argv[counter++]);
 				else
 					throw std::runtime_error("Input path specified without argument, correct usage:");
 			}
 			else if (argument == "-o" || argument == "--output") {
 				if (++counter < argc)
-					m_output_path = argv[counter++];
+					config.set_output_folder(argv[counter++]);
 				else
 					throw std::runtime_error("Output path specified without argument, correct usage:");
 			}
 			else if (argument == "-w" || argument == "--work") {
 				if (++counter < argc)
-					m_work_path = argv[counter++];
+					config.set_work_folder(argv[counter++]);
 				else
 					throw std::runtime_error("Work path specified without argument, correct usage:");
 			}
 			else if (argument == "-l" || argument == "--logfile") {
 				if (++counter < argc)
-					m_logfile = argv[counter++];
+					config.set_log_file(argv[counter++]);
 				else
 					throw std::runtime_error("Logfile specified without argument, correct usage:");
 			}
@@ -172,7 +163,7 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 					int loglevel;
 					if (!Utils::Input::to_int_in_range(argv[counter++], loglevel, 0, Utils::Logger::LEVEL_MAX - 1))
 						throw std::runtime_error("Loglevel is not recognized as integer or it has a value not between o and " + std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1));
-					m_loglevel = static_cast<Utils::Logger::LEVEL>(loglevel);
+					config.set_log_level(loglevel);
 				}
 				else
 					throw std::runtime_error("Logfile specified without argument, correct usage:");
@@ -180,9 +171,9 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 			else if (argument == "-s" || argument == "--sleep") {
 				if (++counter < argc) {
 					int sleep;
-					if (!Utils::Input::to_int(argv[counter++], sleep) || sleep < 0)
+					if (Utils::Input::to_int_positive(argv[counter++], sleep) || sleep < 0)
 						throw std::runtime_error("Sleep time is not recognized as integer or it has a negative value");
-					m_sleep_idle_seconds = sleep;
+					config.set_sleep_time(sleep);
 				}
 				else
 					throw std::runtime_error("Sleep time specified without argument, correct usage:");
@@ -190,87 +181,73 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 			else if (argument == "-a" || argument == "--add") {
 				if (++counter < argc) {
 					// We do here a very basic unscape for bash scaped characters
-					m_add_film_path = boost::erase_all_copy(std::string(argv[counter++]), "\\");
+					config.set_interactive_parameter(boost::erase_all_copy(std::string(argv[counter++]), "\\"));
+					m_status = RUN_INTERACTIVE;
 				}
 				else
 					throw std::runtime_error("Add film specified without argument, correct usage:");
 			}
 			else if (argument == "-v" || argument == "--version") {
 				version();
-				return HALT_OK;
+				m_status = HALT_OK;
+				counter++; // To keep parsing CLI
 			}
 			else if (argument == "-h" || argument == "--help") {
 				header();
 				help();
-				return HALT_OK;
+				m_status = HALT_OK;
+				counter++; // To keep parsinc CLI
 			}
 			else
-				throw std::runtime_error("Unknown argument: " + argument + ", correct usage");
+				throw std::runtime_error("Unknown argument: " + argument + ", correct usage:");
 
 		}
-		if(!m_daemon_mode && !m_add_film_path.has_value())
-			throw std::runtime_error("Either --add(-a) neither --daemon(-d) mode have been provided as argument");
+		if(m_status == HALT_ERROR) // If no action specified the default is HALT_ERROR
+			throw std::runtime_error("No action specified, select --add(-a), --daemon(-d) or --test(-t) to execute the program");
 	}
 	catch(const std::runtime_error& exception) {
 		header();
 		std::cerr << exception.what() << std::endl << std::endl;
 		help();
-		return ERROR;
+		m_status = HALT_ERROR;
 	}
-	return CONTINUE;
+	return config;
 }
 
-bool Application::init_application() {
+Configuration Application::read_config(const std::filesystem::path& config_file) {
+	Configuration config;
+	libconfig::Config cfg;
+	
 	try {
-		// Logger is the first thing to initialize in case we need early logs
-		if (!m_logfile)
-			throw std::runtime_error("ERROR: Log file not set neither in config file either from command line.");
-
-		if (!m_loglevel)
-			throw std::runtime_error("ERROR: Log level not set neither in config file either from command line.");
-		else {
-			if (!Utils::Input::in_range(m_loglevel.value(), 0, Utils::Logger::LEVEL_MAX - 1))
-				throw std::runtime_error("ERROR: Log level is not between 0 and " + std::to_string(Utils::Logger::LEVEL_MAX - 1));
-		}
-
-		if (!Utils::Filesystem::is_folder_writable(m_logfile.value().parent_path()))
-			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
-		else
-			m_logger.reset(new Utils::Logger(m_logfile.value(), static_cast<Utils::Logger::LEVEL>(m_loglevel.value())));
-
-		if (m_database_file) {
-			if (!Utils::Filesystem::is_folder_writable(m_database_file.value().parent_path()))
-				throw std::runtime_error("Error: Database folder " + m_database_file.value().parent_path().string() + " is not writable!");
-			m_database.reset(new Database::SQLite3(m_database_file.value()));
-		}
-		else
-			throw std::runtime_error("ERROR: Database file not set neither in config file either from command line.");
-		
-		if (!m_input_path)
-			throw std::runtime_error("ERROR: Input folder not set neither in config file either from command line.");
-		else if (!Utils::Filesystem::is_folder_readable_and_writable(m_output_path.value()))
-			throw std::runtime_error("ERROR: Input folder " + m_output_path.value().string() + " is not readable!");
-
-		if (!m_output_path)
-			throw std::runtime_error("ERROR: Output folder not set neither in config file either from command line.");
-		else if (!Utils::Filesystem::is_folder_writable(m_output_path.value()))
-			throw std::runtime_error("ERROR: Output folder " + m_output_path.value().string() + " is not writable!");
-
-		if (!m_work_path)
-			throw std::runtime_error("ERROR: Working folder not set neither in config file either from command line.");
-		else if (!Utils::Filesystem::is_folder_writable(m_work_path.value()))
-			throw std::runtime_error("ERROR: Working folder " + m_work_path.value().string() + " is not writable!");
-
-		if (m_sleep_idle_seconds < 0)
-			throw std::runtime_error("ERROR: Sleep idle time is negative!");
+    	cfg.readFile(config_file.c_str());
 	}
-	catch(const std::runtime_error& e) {
-		header();
-		std::cerr << e.what() << std::endl << std::endl;
-		help();
-		return false;
+	catch(const libconfig::FileIOException &fioex) {
+		std::cerr << "Can not open configuration file " << config_file << std::endl;
+		m_status = HALT_ERROR;
+		return config;
 	}
-	return true;
+	catch(const libconfig::ParseException &pex) {
+		std::cerr << "Parse error reading configuration file " << config_file << " at line " << std::to_string(pex.getLine()) << std::endl;
+		m_status = HALT_ERROR;
+		return config;
+	}
+
+	if (cfg.exists("database"))
+		config.set_database_file(std::string(cfg.lookup("database")));
+	if (cfg.exists("input"))
+		config.set_input_folder(std::string(cfg.lookup("input")));
+	if (cfg.exists("output"))
+		config.set_output_folder(std::string(cfg.lookup("output")));
+	if (cfg.exists("work"))
+		config.set_work_folder(std::string(cfg.lookup("work")));
+	if (cfg.exists("logfile"))
+		config.set_log_file(std::string(cfg.lookup("logfile")));
+	if (cfg.exists("loglevel") && cfg.lookup("loglevel").isNumber())
+		config.set_log_level(static_cast<int>(cfg.lookup("loglevel")));
+	if (cfg.exists("sleep") && cfg.lookup("sleep").isNumber())
+		config.set_sleep_time(static_cast<int>(cfg.lookup("sleep")));
+
+	return config;
 }
 
 void Application::header() const {
@@ -281,9 +258,10 @@ void Application::header() const {
 }
 
 void Application::help() const {
-	std::cout << "This is the list of options which will override settings found in " << DEFAULT_CONFIG_FILE << std::endl;
-	std::cout << "\t-c,  --check\t\tCheck for config validity without running daemon" << std::endl;
+	std::cout << "This is the list of available options:" << std::endl;
+	std::cout << "\t-t,  --test\t\tTest if program can be run without any other action" << std::endl;
 	std::cout << "\t-d,  --daemon\t\tRun daemon reading database items to keep converting files" << std::endl;
+	std::cout << "\t-c,  --config <file>\tSpecifies a config file instead of the default " << Configuration::DEFAULT_CONFIG_FILE << std::endl;
 	std::cout << "\t-a,  --add <file>\tInteractivelly add a new film to database files" << std::endl;
 	std::cout << "\t-db, --database <file>\tSpecify SQLite database file to be used" << std::endl;
 	std::cout << "\t-i,  --input <folder>\tSpecify input folder to read films from" << std::endl;
@@ -337,12 +315,13 @@ int Application::daemon() {
 		}
 		else {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "No films found");
-			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sleeping " + std::to_string(m_sleep_idle_seconds) + " seconds before retrying");
-			sleep(m_sleep_idle_seconds);
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sleeping " + std::to_string(m_config.get_sleep_time()) + " seconds before retrying");
+			sleep(m_config.get_sleep_time());
 		}
-	} while(!m_must_terminate);
+	} while(m_status != HALT_OK && m_status != HALT_ERROR);
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Stopping daemon...");
-	return 0;
+
+	return (m_status == HALT_OK) ? 0 : 1;
 }
 
 void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
@@ -374,10 +353,10 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting film from database");
 		m_database->delete_film(ffmpeg.get_film_id());
 		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {
-			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_input_path / ffmpeg.get_group()->folder).string() + " recursivelly");
-			std::filesystem::remove_all(*m_input_path / ffmpeg.get_group()->folder);
-			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_work_path / ffmpeg.get_group()->folder).string() + " recursivelly");
-			std::filesystem::remove_all(*m_work_path / ffmpeg.get_group()->folder);
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_config.get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+			std::filesystem::remove_all(*m_config.get_input_folder() / ffmpeg.get_group()->folder);
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_config.get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+			std::filesystem::remove_all(*m_config.get_work_folder() / ffmpeg.get_group()->folder);
 			m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting group from database");
 			m_database->delete_group(ffmpeg.get_group()->id);
 		}
@@ -391,25 +370,25 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 	}
 }
 
-int Application::interactive(const std::filesystem::path& film_file_or_path) {	
+int Application::interactive() {	
 	header();
-	std::filesystem::path full_path = *m_input_path / film_file_or_path;
+	const std::filesystem::path full_path = *m_config.get_input_folder() / *m_config.get_interactive_parameter();
 
 	if (!std::filesystem::exists(full_path)) {
 		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
 		return 1;
 	}
-	else if (m_database->is_film_in_database(film_file_or_path)) {
-		std::cerr << "Film " << film_file_or_path << " is already in database!" << std::endl;
+	else if (m_database->is_film_in_database(*m_config.get_interactive_parameter())) {
+		std::cerr << "Film " << *m_config.get_interactive_parameter() << " is already in database!" << std::endl;
 		return 1;
 	}
-	else if (std::filesystem::is_directory(full_path) && m_database->is_group_in_database(film_file_or_path)) {
-		std::cerr << "Film group (folder) " << film_file_or_path << " is already in database" << std::endl;
+	else if (std::filesystem::is_directory(full_path) && m_database->is_group_in_database(*m_config.get_interactive_parameter())) {
+		std::cerr << "Film group (folder) " << *m_config.get_interactive_parameter() << " is already in database" << std::endl;
 		return 1;
 	}
 	
 	/* Query required data */
-	auto films = std::move(ask_film_data(film_file_or_path));
+	auto films = std::move(ask_film_data());
 	if (!films) return 1;
 	auto streams = std::move(ask_streams());
 
@@ -419,7 +398,7 @@ int Application::interactive(const std::filesystem::path& film_file_or_path) {
 		return 1;
 }
 
-std::optional<std::list<Database::Data::film>> Application::ask_film_data(const std::filesystem::path& file_or_path) const {
+std::optional<std::list<Database::Data::film>> Application::ask_film_data() const {
 	std::string buffer_str;
 	int buffer_int;
 	std::list<Database::Data::film> films;
@@ -432,26 +411,27 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data(const 
 	film.prio = (buffer_str == "") ? 1 : buffer_int;
 
 	// Now we look if a single film was specified or if it was a folder
-	std::filesystem::path full_path = *m_input_path / file_or_path;
+	const std::filesystem::path full_path = *m_config.get_input_folder() / *m_config.get_interactive_parameter();
+	const std::filesystem::path input_folder = *m_config.get_input_folder();
 	if (std::filesystem::is_directory(full_path)) {
-		film.group = m_database->insert_group(file_or_path);
+		film.group = m_database->insert_group(*m_config.get_interactive_parameter());
 
 		// Look for all supported films in directory
 		for (std::filesystem::recursive_directory_iterator i(full_path), end; i != end; ++i) 
 			if (!std::filesystem::is_directory(i->path())) {
 				std::string extension = boost::to_lower_copy(i->path().extension().string());
 				if (std::find(SUPPORTED_MULTIMEDIA_EXTENSIONS.begin(), SUPPORTED_MULTIMEDIA_EXTENSIONS.end(), extension) != SUPPORTED_MULTIMEDIA_EXTENSIONS.end()) {
-					film.file = std::filesystem::relative(i->path(), *m_input_path);
+					film.file = std::filesystem::relative(i->path(), input_folder);
 					films.push_back(film);
 				}
 				else {
-					unsupported_films.push_back(std::filesystem::relative(i->path(), *m_input_path));
+					unsupported_films.push_back(std::filesystem::relative(i->path(), input_folder));
 				}
 			}
 	}
 	else {
 		// Single file
-		film.file = std::move(file_or_path);
+		film.file = *m_config.get_interactive_parameter();
 		films.push_back(film);
 	}
 
@@ -762,20 +742,49 @@ void Application::signal_handler(int signal) {
 
 	switch(signal) {
 		case SIGTERM:
-			app_instance.m_must_terminate = true;
+			app_instance.m_status = HALT_OK;
 			if (app_instance.m_worker)
 				kill(*app_instance.m_worker, SIGTERM);
 			break;
 
-		case SIGUSR1:
-			if (app_instance.init_from_config()) {
-				app_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Config reload successful, using new values from now on ifnoring CLI provided values");
-			}
-			else {
-				app_instance.m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Error reloading config, terminating now");
-				app_instance.m_must_terminate = true;
+		case SIGUSR1: {
+			app_instance.m_logger->message_line(Utils::Logger::LEVEL_INFO, "Reloading config");
+
+			std::list<std::string> errors;
+
+			// Only loglevel and sleep time are allowed to change while running so we need to check if we have to stop otherwise
+			auto old_db_value 		= app_instance.m_config.get_database_file();
+			auto old_input_value 	= app_instance.m_config.get_input_folder();
+			auto old_output_value 	= app_instance.m_config.get_output_folder();
+			auto old_work_value 	= app_instance.m_config.get_work_folder();
+			auto old_logfile_value 	= app_instance.m_config.get_log_file();
+
+			app_instance.m_config.merge(app_instance.read_config(app_instance.m_config.get_config_file()));
+
+			if (old_db_value != app_instance.m_config.get_database_file())
+				errors.push_back("Database file");
+
+			if (old_input_value != app_instance.m_config.get_input_folder())
+				errors.push_back("Input folder");
+
+			if (old_output_value != app_instance.m_config.get_output_folder())
+				errors.push_back("Output folder");
+
+			if (old_work_value != app_instance.m_config.get_work_folder())
+				errors.push_back("Work folder");
+
+			if (old_logfile_value != app_instance.m_config.get_log_file())
+				errors.push_back("Log file");
+
+			if (!errors.empty()) {
+				errors.push_front("Config reloading error: The following " + std::to_string(errors.size()) + " items have changed which are not permitted while daemon is running!");
+				for (auto it = errors.begin(); it != errors.end(); it++) {
+					app_instance.m_logger->message_line(Utils::Logger::LEVEL_ERROR, *it);
+				}
+				app_instance.m_status = HALT_ERROR;
 			}
 			break;
+		}
 
 		case SIGUSR2:
 		default:
