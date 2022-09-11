@@ -53,6 +53,7 @@ const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
 };
 
 Application::Application(): m_status(HALT_ERROR) {
+	signal(SIGINT, Application::signal_handler);
 	signal(SIGTERM, Application::signal_handler);
 	signal(SIGUSR1, Application::signal_handler); // Reload config and continue working
 	signal(SIGUSR2, Application::signal_handler); // Force database scan by awakening process
@@ -376,7 +377,8 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 	}
 }
 
-int Application::interactive() {	
+int Application::interactive() {
+	signal(SIGINT, SIG_DFL); // Disabling SIGINT handler so user can hit CTRL+C to interrupt film adition
 	header();
 	const std::filesystem::path full_path = *m_config.get_input_folder() / *m_config.get_interactive_parameter();
 
@@ -747,6 +749,7 @@ void Application::signal_handler(int signal) {
 	app_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal " + std::to_string(signal) + " received!");
 
 	switch(signal) {
+		case SIGINT:
 		case SIGTERM:
 			app_instance.m_status = HALT_OK;
 			if (app_instance.m_worker)
