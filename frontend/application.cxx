@@ -15,7 +15,7 @@
 using namespace StormByte::VideoConvert;
 
 const std::filesystem::path Application::DEFAULT_CONFIG_FILE 				= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
-const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS					= 60;
+const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS					= 180;
 const std::list<std::string> Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
 	".asf", ".asx", ".avi", ".wav", ".wma", ".wax", ".wm", ".wmv", ".wvx",
 	".ra", ".ram", ".rm", ".rmm",
