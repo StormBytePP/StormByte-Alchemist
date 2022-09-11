@@ -56,7 +56,8 @@ const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
 
 Application::Application(): m_sleep_idle_seconds(DEFAULT_SLEEP_IDLE_SECONDS), m_daemon_mode(false), m_pretend_run(false), m_must_terminate(false) {
 	signal(SIGTERM, Application::signal_handler);
-	signal(SIGINT, Application::signal_handler);
+	signal(SIGUSR1, Application::signal_handler); // Reload config and continue working
+	signal(SIGUSR2, Application::signal_handler); // Force database scan by awakening process
 }
 
 Application& Application::get_instance() {
@@ -730,9 +731,30 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 }
 #endif
 
-void Application::signal_handler(int) {
-	Application::get_instance().m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal received!");
-	Application::get_instance().m_must_terminate = true;
-	if (Application::get_instance().m_worker)
-		kill(Application::get_instance().m_worker.value(), SIGTERM);
+void Application::signal_handler(int signal) {
+	auto& app_instance = Application::get_instance();
+	app_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal " + std::to_string(signal) + " received!");
+
+	switch(signal) {
+		case SIGTERM:
+			app_instance.m_must_terminate = true;
+			if (app_instance.m_worker)
+				kill(*app_instance.m_worker, SIGTERM);
+			break;
+
+		case SIGUSR1:
+			if (app_instance.init_from_config()) {
+				app_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Config reload successful, using new values from now on ifnoring CLI provided values");
+			}
+			else {
+				app_instance.m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Error reloading config, terminating now");
+				app_instance.m_must_terminate = true;
+			}
+			break;
+
+		case SIGUSR2:
+		default:
+			// No action as this will only wake up from sleep
+			break;
+	}
 }
