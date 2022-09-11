@@ -27,6 +27,8 @@ namespace StormByte::VideoConvert {
 			inline const std::optional<std::filesystem::path>& get_log_file() const { return m_logfile; }
 			inline const std::optional<unsigned int>& get_log_level() const { return m_loglevel; }
 			inline const unsigned int& get_sleep_time() const { return m_sleep ? *m_sleep : DEFAULT_SLEEP_TIME; }
+
+			/* Action getters */
 			inline const std::optional<std::filesystem::path>& get_interactive_parameter() const { return m_interactive_parameter; }
 
 			/* Setters */
@@ -44,6 +46,8 @@ namespace StormByte::VideoConvert {
 			inline void set_log_file(std::filesystem::path&& logfile) { m_logfile = std::move(logfile); }
 			inline void set_log_level(const unsigned int& loglevel) { m_loglevel = loglevel; }
 			inline void set_sleep_time(const unsigned int& sleep_time) { m_sleep = sleep_time; }
+
+			/* Action setters */
 			inline void set_interactive_parameter(const std::optional<std::filesystem::path>& file_or_folder) { m_interactive_parameter = file_or_folder; }
 
 			/* Functions */
