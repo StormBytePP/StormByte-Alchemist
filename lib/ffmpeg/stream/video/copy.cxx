@@ -12,12 +12,12 @@ std::list<std::string> Stream::Video::Copy::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
 
 	/* Since copy has no bitrate at all we need to remove those if present */
-	if (m_bitrate.has_value()) {
+	if (m_bitrate) {
 		result.pop_back();
 		result.pop_back();
 	}
 
-	if (m_max_rate.has_value()) {
+	if (m_max_rate) {
 		result.pop_back();
 		result.pop_back();
 	}

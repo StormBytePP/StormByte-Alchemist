@@ -12,9 +12,9 @@ std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 		m_encoder
 	};
 
-	if (m_bitrate.has_value()) {
+	if (m_bitrate) {
 		result.push_back("-b:" + ffmpeg_stream_id());
-		result.push_back(m_bitrate.value());
+		result.push_back(*m_bitrate);
 	}
 
 	return result;

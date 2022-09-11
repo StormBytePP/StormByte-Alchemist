@@ -310,8 +310,8 @@ int Application::daemon() {
 		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Checking for films to convert...");
 		auto film = m_database->get_film_for_process();
 		if (film) {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film.value().get_input_file().string() + " found");
-			execute_ffmpeg(film.value());
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film->get_input_file().string() + " found");
+			execute_ffmpeg(*film);
 		}
 		else {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "No films found");
@@ -612,7 +612,7 @@ bool Application::add_films_to_database(const std::list<Database::Data::film>& f
 			else
 				filmID = m_database->insert_film(*film);
 
-			if (!filmID.has_value())
+			if (!filmID)
 				throw std::runtime_error("ERROR: Film " + film->file.string() + " could not be inserted in database");
 
 			for (auto stream = streams.begin(); stream != streams.end(); stream++) {

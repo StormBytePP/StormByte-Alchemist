@@ -59,7 +59,7 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 	result += "WP(" + m_white_point.first + "," + m_white_point.second + ")";
 	result += "L(" + m_luminance.second + "," + m_luminance.first + ")";
 
-	if (m_light_level.has_value())
+	if (m_light_level)
 		result += ":max-cll=" + m_light_level->first + "," + m_light_level->second;
 
 	result += ":hdr10=1";
@@ -92,8 +92,8 @@ void Stream::Video::HEVC::set_HDR(const HDR& hdr) {
 std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
 	std::string x265_params;
-	if (m_hdr.has_value())
-		x265_params = (X265_PARAMS + ":" + m_hdr.value().ffmpeg_parameters());
+	if (m_hdr)
+		x265_params = (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters());
 	else
 		x265_params = X265_PARAMS;
 

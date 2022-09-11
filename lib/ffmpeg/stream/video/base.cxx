@@ -9,8 +9,8 @@ Stream::Video::Base::Base(unsigned short stream_id, const std::string& encoder, 
 std::list<std::string> Stream::Video::Base::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Base::ffmpeg_parameters();
 
-	if (m_max_rate.has_value()) {
-		result.push_back("-maxrate:" + ffmpeg_stream_id());		result.push_back(m_max_rate.value());
+	if (m_max_rate) {
+		result.push_back("-maxrate:" + ffmpeg_stream_id());		result.push_back(*m_max_rate);
 	}
 
 	return result;

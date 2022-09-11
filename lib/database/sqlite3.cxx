@@ -117,15 +117,15 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 				case Data::VIDEO_HEVC: {
 					#ifdef ENABLE_HEVC
 					auto codec = Stream::Video::HEVC(it->id);
-					if (it->HDR.has_value()) {
-						auto hdr_data = it->HDR.value();
+					if (it->HDR) {
+						auto hdr_data = *it->HDR;
 						Stream::Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
 												hdr_data.green_x, hdr_data.green_y,
 												hdr_data.blue_x, hdr_data.blue_y,
 												hdr_data.white_point_x, hdr_data.white_point_y,
 												hdr_data.luminance_min, hdr_data.luminance_max);
-						if (hdr_data.light_level_max.has_value() && hdr_data.light_level_average.has_value()) {
-							hdr.set_light_level(hdr_data.light_level_max.value(), hdr_data.light_level_average.value());
+						if (hdr_data.light_level_max && hdr_data.light_level_average) {
+							hdr.set_light_level(*hdr_data.light_level_max, *hdr_data.light_level_average);
 						}
 						codec.set_HDR(hdr);
 					}
@@ -395,18 +395,18 @@ void Database::SQLite3::insert_stream(const Data::stream& stream) {
 	sqlite3_bind_int(stmt, 2, stream.film_id);
 	sqlite3_bind_int(stmt, 3, stream.codec);
 	sqlite3_bind_int(stmt, 4, stream.is_animation);
-	if (stream.max_rate.has_value())
-		sqlite3_bind_text(stmt, 5, stream.max_rate.value().c_str(), -1, SQLITE_STATIC);
+	if (stream.max_rate)
+		sqlite3_bind_text(stmt, 5, stream.max_rate->c_str(), -1, SQLITE_STATIC);
 	else
 		sqlite3_bind_null(stmt, 5);
-	if (stream.bitrate.has_value())
-		sqlite3_bind_text(stmt, 6, stream.bitrate.value().c_str(), -1, SQLITE_STATIC);
+	if (stream.bitrate)
+		sqlite3_bind_text(stmt, 6, stream.bitrate->c_str(), -1, SQLITE_STATIC);
 	else
 		sqlite3_bind_null(stmt, 6);
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 
-	if (stream.HDR.has_value()) insert_HDR(stream);
+	if (stream.HDR) insert_HDR(stream);
 }
 
 void Database::SQLite3::insert_HDR(const Data::stream& stream) {
@@ -414,22 +414,22 @@ void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 	sqlite3_bind_int(stmt, 1, stream.film_id);
 	sqlite3_bind_int(stmt, 2, stream.id);
 	sqlite3_bind_int(stmt, 3, stream.codec);
-	sqlite3_bind_int(stmt, 4, stream.HDR.value().red_x);
-	sqlite3_bind_int(stmt, 5, stream.HDR.value().red_y);
-	sqlite3_bind_int(stmt, 6, stream.HDR.value().green_x);
-	sqlite3_bind_int(stmt, 7, stream.HDR.value().green_y);
-	sqlite3_bind_int(stmt, 8, stream.HDR.value().blue_x);
-	sqlite3_bind_int(stmt, 9, stream.HDR.value().blue_y);
-	sqlite3_bind_int(stmt, 10, stream.HDR.value().white_point_x);
-	sqlite3_bind_int(stmt, 11, stream.HDR.value().white_point_y);
-	sqlite3_bind_int(stmt, 12, stream.HDR.value().luminance_min);
-	sqlite3_bind_int(stmt, 13, stream.HDR.value().luminance_max);
-	if (stream.HDR.value().light_level_max.has_value())
-		sqlite3_bind_int(stmt, 14, stream.HDR.value().light_level_max.value());
+	sqlite3_bind_int(stmt, 4, stream.HDR->red_x);
+	sqlite3_bind_int(stmt, 5, stream.HDR->red_y);
+	sqlite3_bind_int(stmt, 6, stream.HDR->green_x);
+	sqlite3_bind_int(stmt, 7, stream.HDR->green_y);
+	sqlite3_bind_int(stmt, 8, stream.HDR->blue_x);
+	sqlite3_bind_int(stmt, 9, stream.HDR->blue_y);
+	sqlite3_bind_int(stmt, 10, stream.HDR->white_point_x);
+	sqlite3_bind_int(stmt, 11, stream.HDR->white_point_y);
+	sqlite3_bind_int(stmt, 12, stream.HDR->luminance_min);
+	sqlite3_bind_int(stmt, 13, stream.HDR->luminance_max);
+	if (stream.HDR->light_level_max)
+		sqlite3_bind_int(stmt, 14, *stream.HDR->light_level_max);
 	else
 		sqlite3_bind_null(stmt, 14);
-	if (stream.HDR.value().light_level_average.has_value())
-		sqlite3_bind_int(stmt, 15, stream.HDR.value().light_level_average.value());
+	if (stream.HDR->light_level_average)
+		sqlite3_bind_int(stmt, 15, *stream.HDR->light_level_average);
 	else
 		sqlite3_bind_null(stmt, 15);
 	sqlite3_step(stmt); // No result
