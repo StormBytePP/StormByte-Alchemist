@@ -34,10 +34,10 @@ namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
 			FFmpeg(unsigned int film_id, const std::filesystem::path& input_path, const std::filesystem::path& input_file, const std::filesystem::path& work_path, const std::filesystem::path& output_path);
-			FFmpeg(const FFmpeg& ffmpeg);
-			FFmpeg(FFmpeg&& ffmpeg) noexcept;
-			FFmpeg& operator=(const FFmpeg& ffmpeg);
-			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept;
+			FFmpeg(const FFmpeg& ffmpeg) = default;
+			FFmpeg(FFmpeg&& ffmpeg) noexcept = default;
+			FFmpeg& operator=(const FFmpeg& ffmpeg) = default;
+			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept = default;
 			~FFmpeg() = default;
 
 			void add_stream(const StormByte::VideoConvert::Stream::Base&);

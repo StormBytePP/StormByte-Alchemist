@@ -7,26 +7,6 @@ const std::string Stream::Audio::FDKAAC::FDKAAC_DEFAULT_PROFILE	= "aac_he";
 
 Stream::Audio::FDKAAC::FDKAAC(unsigned short stream_id):Stream::Audio::Base(stream_id, FDKAAC_DEFAULT_ENCODER, Database::Data::AUDIO_FDKAAC), m_profile(FDKAAC_DEFAULT_PROFILE) {}
 
-Stream::Audio::FDKAAC::FDKAAC(const FDKAAC& fdkaac):Stream::Audio::Base(fdkaac), m_profile(fdkaac.m_profile) {}
-
-Stream::Audio::FDKAAC::FDKAAC(FDKAAC&& fdkaac) noexcept :Stream::Audio::Base(fdkaac), m_profile(fdkaac.m_profile) {}
-
-Stream::Audio::FDKAAC& Stream::Audio::FDKAAC::operator=(const FDKAAC& fdkaac) {
-	if (&fdkaac != this) {
-		Stream::Audio::Base::operator=(fdkaac);
-		m_profile = fdkaac.m_profile;
-	}
-	return *this;
-}
-
-Stream::Audio::FDKAAC& Stream::Audio::FDKAAC::operator=(FDKAAC&& fdkaac) noexcept {
-	if (&fdkaac != this) {
-		Stream::Audio::Base::operator=(fdkaac);
-		m_profile = fdkaac.m_profile;
-	}
-	return *this;
-}
-
 Stream::Audio::FDKAAC* Stream::Audio::FDKAAC::copy() const {
 	return new FDKAAC(*this);
 }

@@ -6,10 +6,10 @@ namespace StormByte::VideoConvert::Stream::Audio {
 	class EAC3: public Base {
 		public:
 			EAC3(unsigned short stream_id);
-			EAC3(const EAC3& eac3);
-			EAC3(EAC3&& eac3) noexcept;
-			EAC3& operator=(const EAC3& eac3);
-			EAC3& operator=(EAC3&& eac3) noexcept;
+			EAC3(const EAC3& eac3) = default;
+			EAC3(EAC3&& eac3) noexcept = default;
+			EAC3& operator=(const EAC3& eac3) = default;
+			EAC3& operator=(EAC3&& eac3) noexcept = default;
 			~EAC3() = default;
 
 		private:

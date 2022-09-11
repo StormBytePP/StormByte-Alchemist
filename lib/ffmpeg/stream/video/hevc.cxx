@@ -42,48 +42,6 @@ Stream::Video::HEVC::HDR::HDR(	unsigned int red_x,				unsigned int red_y,
 	m_light_level 	= std::make_pair(std::to_string(light_level_max), std::to_string(light_level_average));
 }
 
-Stream::Video::HEVC::HDR::HDR(const HDR& hdr) {
-	m_red 			= hdr.m_red;
-	m_green 		= hdr.m_green;
-	m_blue			= hdr.m_blue;
-	m_white_point 	= hdr.m_white_point;
-	m_luminance		= hdr.m_luminance;
-	m_light_level	= hdr.m_light_level;
-}
-
-Stream::Video::HEVC::HDR::HDR(HDR&& hdr) noexcept {
-	m_red 			= hdr.m_red;
-	m_green 		= hdr.m_green;
-	m_blue			= hdr.m_blue;
-	m_white_point 	= hdr.m_white_point;
-	m_luminance		= hdr.m_luminance;
-	m_light_level	= hdr.m_light_level;
-}
-
-Stream::Video::HEVC::HDR& Stream::Video::HEVC::HDR::operator=(const HDR& hdr) {
-	if (&hdr != this) {
-		m_red 			= hdr.m_red;
-		m_green 		= hdr.m_green;
-		m_blue			= hdr.m_blue;
-		m_white_point 	= hdr.m_white_point;
-		m_luminance		= hdr.m_luminance;
-		m_light_level	= hdr.m_light_level;
-	}
-	return *this;
-}
-
-Stream::Video::HEVC::HDR& Stream::Video::HEVC::HDR::operator=(HDR&& hdr) noexcept {
-	if (&hdr != this) {
-		m_red 			= hdr.m_red;
-		m_green 		= hdr.m_green;
-		m_blue			= hdr.m_blue;
-		m_white_point 	= hdr.m_white_point;
-		m_luminance		= hdr.m_luminance;
-		m_light_level	= hdr.m_light_level;
-	}
-	return *this;
-}
-
 void Stream::Video::HEVC::HDR::set_light_level(unsigned int light_level_max, unsigned int light_level_average) {
 	m_light_level = std::make_pair(std::to_string(light_level_max), std::to_string(light_level_average));
 }
@@ -121,26 +79,6 @@ const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAU
 
 Stream::Video::HEVC::HEVC(unsigned short stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::VIDEO_HEVC) {
 	m_max_rate = DEFAULT_MAX_BITRATE;
-}
-
-Stream::Video::HEVC::HEVC(const HEVC& hevc):Stream::Video::Base(hevc),m_hdr(hevc.m_hdr) { }
-
-Stream::Video::HEVC::HEVC(HEVC&& hevc) noexcept :Stream::Video::Base(hevc),m_hdr(hevc.m_hdr) { }
-
-Stream::Video::HEVC& Stream::Video::HEVC::operator=(const HEVC& hevc) {
-	if (&hevc != this) {
-		Stream::Video::Base::operator=(hevc);
-		m_hdr = hevc.m_hdr;
-	}
-	return *this;
-}
-
-Stream::Video::HEVC& Stream::Video::HEVC::operator=(HEVC&& hevc) noexcept {
-	if (&hevc != this) {
-		Stream::Video::Base::operator=(hevc);
-		m_hdr = hevc.m_hdr;
-	}
-	return *this;
 }
 
 Stream::Video::HEVC* Stream::Video::HEVC::copy() const {

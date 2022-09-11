@@ -10,7 +10,9 @@ namespace StormByte::VideoConvert {
 	class Application {
 		public:
 			Application(const Application&) = delete;
+			Application(Application&&) = delete;
 			Application& operator=(const Application&) = delete;
+			Application& operator=(Application&&) = delete;
 			~Application() = default;
 
 			static Application& get_instance();

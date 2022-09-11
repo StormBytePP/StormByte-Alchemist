@@ -9,46 +9,6 @@ using namespace StormByte::VideoConvert;
 const std::filesystem::path Configuration::DEFAULT_CONFIG_FILE	= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
 const unsigned int Configuration::DEFAULT_SLEEP_TIME			= 3600; // 1 hour
 
-Configuration::Configuration() {}
-
-Configuration::Configuration(const Configuration& config): m_database(config.m_database), m_input(config.m_input), m_output(config.m_output), m_work(config.m_work), m_configfile(config.m_configfile), m_logfile(config.m_logfile), m_loglevel(config.m_loglevel), m_sleep(config.m_sleep), m_interactive_parameter(config.m_interactive_parameter) {}
-
-Configuration::Configuration(Configuration&& config) noexcept: m_database(std::move(config.m_database)), m_input(std::move(config.m_input)), m_output(std::move(config.m_output)), m_work(std::move(config.m_work)), m_configfile(std::move(config.m_configfile)), m_logfile(std::move(config.m_logfile)), m_loglevel(std::move(config.m_loglevel)), m_sleep(std::move(config.m_sleep)), m_interactive_parameter(std::move(config.m_interactive_parameter)) {}
-
-Configuration& Configuration::operator=(const Configuration& config) {
-	if (&config != this) {
-		m_database				= config.m_database; 
-		m_input					= config.m_input;
-		m_output				= config.m_output;
-		m_work					= config.m_work;
-		m_configfile			= config.m_configfile;
-		m_logfile				= config.m_logfile;
-		m_loglevel				= config.m_loglevel;
-		m_sleep					= config.m_sleep;
-		m_interactive_parameter	= config.m_interactive_parameter;
-	}
-
-	return *this;
-}
-
-Configuration& Configuration::operator=(Configuration&& config) noexcept {
-	if (&config != this) {
-		m_database				= std::move(config.m_database); 
-		m_input					= std::move(config.m_input);
-		m_output				= std::move(config.m_output);
-		m_work					= std::move(config.m_work);
-		m_configfile			= std::move(config.m_configfile);
-		m_logfile				= std::move(config.m_logfile);
-		m_loglevel				= std::move(config.m_loglevel);
-		m_sleep					= std::move(config.m_sleep);
-		m_interactive_parameter = std::move(config.m_interactive_parameter);
-	}
-
-	return *this;
-}
-
-Configuration::~Configuration() {}
-
 void Configuration::merge(const Configuration& config) {
 	if (config.m_database) m_database 							= config.m_database;
 	if (config.m_input) m_input 								= config.m_input;

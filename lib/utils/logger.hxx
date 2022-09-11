@@ -17,7 +17,9 @@ namespace StormByte::VideoConvert::Utils {
 			};
 			Logger(const std::filesystem::path& logfile, LEVEL display_level);
 			Logger(const Logger&) = delete;
+			Logger(Logger&&) = delete;
 			Logger& operator=(const Logger&) = delete;
+			Logger& operator=(Logger&&) = delete;
 			~Logger();
 			
 			void message_part_begin(const LEVEL& level, const std::string& msg);

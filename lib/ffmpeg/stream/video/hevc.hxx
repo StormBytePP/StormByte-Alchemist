@@ -18,10 +18,10 @@ namespace StormByte::VideoConvert::Stream::Video {
 						unsigned int white_point_x,		unsigned int white_point_y,
 						unsigned int luminance_min,		unsigned int luminance_max,
 						unsigned int light_level_max,	unsigned int light_level_average);
-					HDR(const HDR& hdr);
-					HDR(HDR&&) noexcept;
-					HDR& operator=(const HDR& hdr);
-					HDR& operator=(HDR&& hdr) noexcept;
+					HDR(const HDR& hdr) = default;
+					HDR(HDR&&) noexcept = default;
+					HDR& operator=(const HDR& hdr) = default;
+					HDR& operator=(HDR&& hdr) noexcept = default;
 					~HDR() = default;
 					void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
 					std::string ffmpeg_parameters() const;
@@ -34,10 +34,10 @@ namespace StormByte::VideoConvert::Stream::Video {
 			};
 
 			HEVC(unsigned short stream_id);
-			HEVC(const HEVC& hevc);
-			HEVC(HEVC&& hevc) noexcept;
-			HEVC& operator=(const HEVC& hevc);
-			HEVC& operator=(HEVC&& hevc) noexcept;
+			HEVC(const HEVC& hevc) = default;
+			HEVC(HEVC&& hevc) noexcept = default;
+			HEVC& operator=(const HEVC& hevc) = default;
+			HEVC& operator=(HEVC&& hevc) noexcept = default;
 			~HEVC() = default;
 
 			void set_HDR(const HDR& hdr);

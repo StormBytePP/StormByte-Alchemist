@@ -6,10 +6,10 @@ namespace StormByte::VideoConvert::Stream::Audio {
 	class Copy: public Base {
 		public:
 			Copy(unsigned short stream_id);
-			Copy(const Copy& copy);
-			Copy(Copy&& copy) noexcept;
-			Copy& operator=(const Copy& copy);
-			Copy& operator=(Copy&& copy) noexcept;
+			Copy(const Copy& copy) = default;
+			Copy(Copy&& copy) noexcept = default;
+			Copy& operator=(const Copy& copy) = default;
+			Copy& operator=(Copy&& copy) noexcept = default;
 			~Copy() = default;
 
 		private:

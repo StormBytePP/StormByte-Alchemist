@@ -6,12 +6,12 @@
 namespace StormByte::VideoConvert {
 	class Configuration {
 		public:
-			Configuration();
-			Configuration(const Configuration& config);
-			Configuration(Configuration&& config) noexcept;
-			Configuration& operator=(const Configuration& config);
-			Configuration& operator=(Configuration&& config) noexcept;
-			~Configuration();
+			Configuration() = default;
+			Configuration(const Configuration& config) = default;
+			Configuration(Configuration&& config) noexcept = default;
+			Configuration& operator=(const Configuration& config) = default;
+			Configuration& operator=(Configuration&& config) noexcept = default;
+			~Configuration() = default;
 
 			enum OUTPUT_MODE { OUTPUT_CERR, OUTPUT_LOGGER };
 

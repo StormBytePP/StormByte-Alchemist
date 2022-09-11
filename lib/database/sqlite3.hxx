@@ -12,8 +12,10 @@ namespace StormByte::VideoConvert::Database {
 		public:
 			SQLite3(const std::filesystem::path& dbfile);
 			SQLite3(const SQLite3& db) = delete;
-			~SQLite3();
+			SQLite3(SQLite3&& db) = delete;
 			SQLite3& operator=(const SQLite3& db) = delete;
+			SQLite3& operator=(SQLite3&& db) = delete;
+			~SQLite3();
 
 			void begin_transaction();
 			void commit_transaction();

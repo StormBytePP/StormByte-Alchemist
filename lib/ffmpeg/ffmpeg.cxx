@@ -11,46 +11,6 @@ const std::list<const char*> FFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*
 
 FFmpeg::FFmpeg(unsigned int film_id, const std::filesystem::path& input_path, const std::filesystem::path& input_file, const std::filesystem::path& work_path, const std::filesystem::path& output_path): m_film_id(film_id), m_input_path(input_path), m_input_file(input_file), m_work_path(work_path), m_output_path(output_path) {}
 
-FFmpeg::FFmpeg(const FFmpeg& ffmpeg):m_film_id(ffmpeg.m_film_id), m_group(ffmpeg.m_group), m_input_path(ffmpeg.m_input_path), m_input_file(ffmpeg.m_input_file), m_work_path(ffmpeg.m_work_path), m_output_path(ffmpeg.m_output_path) {
-	for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
-		m_streams.push_back(it->get()->clone());
-}
-
-FFmpeg::FFmpeg(FFmpeg&& ffmpeg) noexcept :m_film_id(ffmpeg.m_film_id), m_group(std::move(ffmpeg.m_group)), m_input_path(std::move(ffmpeg.m_input_path)), m_input_file(std::move(ffmpeg.m_input_file)), m_work_path(std::move(ffmpeg.m_work_path)), m_output_path(std::move(ffmpeg.m_output_path)), m_streams(std::move(ffmpeg.m_streams)) {}
-
-FFmpeg& FFmpeg::operator=(const FFmpeg& ffmpeg) {
-	if (&ffmpeg != this) {
-		m_streams.clear();
-
-		m_film_id 		= ffmpeg.m_film_id;
-		m_group			= ffmpeg.m_group;
-		m_input_path	= ffmpeg.m_input_path;
-		m_input_file	= ffmpeg.m_input_file;
-		m_output_path	= ffmpeg.m_output_path;
-		m_work_path		= ffmpeg.m_work_path;
-		for (auto it = ffmpeg.m_streams.begin(); it != ffmpeg.m_streams.end(); it++)
-			m_streams.push_back(it->get()->clone());
-	}
-
-	return *this;
-}
-
-FFmpeg& FFmpeg::operator=(FFmpeg&& ffmpeg) noexcept {
-	if (&ffmpeg != this) {
-		m_streams.clear();
-
-		m_film_id		= ffmpeg.m_film_id;
-		m_group			= std::move(ffmpeg.m_group);
-		m_input_path	= std::move(ffmpeg.m_input_path);
-		m_input_file	= std::move(ffmpeg.m_input_file);
-		m_output_path	= std::move(ffmpeg.m_output_path);
-		m_work_path		= std::move(ffmpeg.m_work_path);
-		m_streams		= std::move(ffmpeg.m_streams);
-	}
-
-	return *this;
-}
-
 void FFmpeg::add_stream(const Stream::Base& stream) {
 	m_streams.push_back(stream.clone());
 }

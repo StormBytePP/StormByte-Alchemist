@@ -11,10 +11,10 @@ namespace StormByte::VideoConvert::Stream {
 	class Base {
 		public:
 			Base(short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type);
-			Base(const Base& codec_base);
-			Base(Base&&) noexcept;
-			Base& operator=(const Base& codec_base);
-			Base& operator=(Base&& codec_base) noexcept;
+			Base(const Base& codec_base) = default;
+			Base(Base&&) noexcept = default;
+			Base& operator=(const Base& codec_base) = default;
+			Base& operator=(Base&& codec_base) noexcept = default;
 			virtual ~Base() = default;
 			inline std::unique_ptr<Base> clone() const { return std::unique_ptr<Base>(copy()); }
 

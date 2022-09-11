@@ -6,10 +6,10 @@ namespace StormByte::VideoConvert::Stream::Audio {
 	class FDKAAC: public Base {
 		public:
 			FDKAAC(unsigned short stream_id);
-			FDKAAC(const FDKAAC& fdkaac);
-			FDKAAC(FDKAAC&& fdkaac) noexcept;
-			FDKAAC& operator=(const FDKAAC& fdkaac);
-			FDKAAC& operator=(FDKAAC&& fdkaac) noexcept;
+			FDKAAC(const FDKAAC& fdkaac) = default;
+			FDKAAC(FDKAAC&& fdkaac) noexcept = default;
+			FDKAAC& operator=(const FDKAAC& fdkaac) = default;
+			FDKAAC& operator=(FDKAAC&& fdkaac) noexcept = default;
 			~FDKAAC() = default;
 
 			std::list<std::string> ffmpeg_parameters() const override;
