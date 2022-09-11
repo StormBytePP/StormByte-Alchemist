@@ -186,6 +186,17 @@ Configuration Application::read_cli(int argc, char** argv) {
 				else
 					throw std::runtime_error("Sleep time specified without argument, correct usage:");
 			}
+			else if (argument == "-of" || argument == "--onfinish") {
+				if (++counter < argc) {
+					std::string onfinish = argv[counter++];
+					if (onfinish != "copy" && onfinish != "move")
+						throw std::runtime_error("Onfinish specified action " + onfinish + " is not recognized; accepted values are copy and move. Correct usage:");
+					else
+						config.set_onfinish(std::move(onfinish));
+				}
+				else
+					throw std::runtime_error("Onfinish action specified without argument, correct usage:");
+			}
 			else if (argument == "-a" || argument == "--add") {
 				if (++counter < argc) {
 					// We do here a very basic unscape for bash scaped characters
@@ -255,6 +266,11 @@ Configuration Application::read_config(const std::filesystem::path& config_file)
 		config.set_log_level(static_cast<int>(cfg.lookup("loglevel")));
 	if (cfg.exists("sleep") && cfg.lookup("sleep").isNumber())
 		config.set_sleep_time(static_cast<int>(cfg.lookup("sleep")));
+	if (cfg.exists("onfinish")) {
+		std::string onfinish = cfg.lookup("onfinish");
+		if (onfinish == "copy" || onfinish == "move")
+			config.set_onfinish(std::move(onfinish));
+	}
 
 	return config;
 }
@@ -279,6 +295,7 @@ void Application::help() const {
 	std::cout << "\t-l,  --logfile <file>\tSpecify a file for storing logs" << std::endl;
 	std::cout << "\t-ll, --loglevel <level>\tSpecify which loglevel to display (Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << ")" << std::endl; 
 	std::cout << "\t-s,  --sleep <seconds>\tSpecify the time to sleep in main loop. Of course should be positive integer unless you are my boyfriend and have that ability ;)" << std::endl;
+	std::cout << "\t-of, --onfinish <action>\tSpecify action to take once film is converted. Accepted values are copy and move" << std::endl;
 	std::cout << "\t-v,  --version\t\tShow version and compile information" << std::endl;
 	std::cout << "\t-h,  --help\t\tShow this message" << std::endl;
 	std::cout << std::endl;
@@ -352,12 +369,18 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
 			std::filesystem::create_directories(full_output_file.parent_path());
 		}
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
-		std::filesystem::copy_file(full_work_file, full_output_file);
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
-		std::filesystem::remove(full_input_file);
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
-		std::filesystem::remove(full_work_file);
+		if (m_config.get_onfinish() == "copy") {
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
+			std::filesystem::copy_file(full_work_file, full_output_file);
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
+			std::filesystem::remove(full_input_file);
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
+			std::filesystem::remove(full_work_file);
+		}
+		else {
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Move: " + full_work_file.string() + " -> " + full_output_file.string());
+			std::filesystem::rename(full_work_file, full_output_file);
+		}
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete film from database");
 		m_database->delete_film(ffmpeg.get_film_id());
 		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {

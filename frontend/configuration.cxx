@@ -8,6 +8,7 @@ using namespace StormByte::VideoConvert;
 
 const std::filesystem::path Configuration::DEFAULT_CONFIG_FILE	= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
 const unsigned int Configuration::DEFAULT_SLEEP_TIME			= 3600; // 1 hour
+const std::string Configuration::DEFAULT_ONFINISH				= "move";
 
 void Configuration::merge(const Configuration& config) {
 	if (config.m_database) m_database 							= config.m_database;
@@ -18,6 +19,7 @@ void Configuration::merge(const Configuration& config) {
 	if (config.m_logfile) m_logfile 							= config.m_logfile;
 	if (config.m_loglevel) m_loglevel							= config.m_loglevel;
 	if (config.m_sleep) m_sleep 								= config.m_sleep;
+	if (config.m_onfinish) m_onfinish 								= config.m_onfinish;
 
 	if (config.m_interactive_parameter) m_interactive_parameter	= config.m_interactive_parameter;
 }
@@ -31,6 +33,7 @@ void Configuration::merge(Configuration&& config) noexcept {
 	if (config.m_logfile) m_logfile								= std::move(config.m_logfile);
 	if (config.m_loglevel) m_loglevel							= std::move(config.m_loglevel);
 	if (config.m_sleep) m_sleep									= std::move(config.m_sleep);
+	if (config.m_onfinish) m_onfinish							= std::move(config.m_onfinish);
 
 	if (config.m_interactive_parameter) m_interactive_parameter	= std::move(config.m_interactive_parameter);
 }
@@ -88,7 +91,7 @@ bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
 
 #ifdef DEBUG
 const std::list<std::pair<std::string, std::string>> Configuration::items() const {
-	return std::list<std::pair<std::string, std::string>> {
+	return std::move(std::list<std::pair<std::string, std::string>> {
 		std::make_pair("database", m_database.value_or("")),
 		std::make_pair("input", m_input.value_or("")),
 		std::make_pair("output", m_output.value_or("")),
@@ -96,7 +99,8 @@ const std::list<std::pair<std::string, std::string>> Configuration::items() cons
 		std::make_pair("configfile", m_configfile.value_or("")),
 		std::make_pair("logfile", m_logfile.value_or("")),
 		std::make_pair("loglevel", m_loglevel ? std::to_string(*m_loglevel) : ""),
-		std::make_pair("sleep", m_sleep ? std::to_string(*m_sleep) : "")
-	};
+		std::make_pair("sleep", m_sleep ? std::to_string(*m_sleep) : ""),
+		std::make_pair("onfinish", m_onfinish.value_or(""))
+	});
 }
 #endif
