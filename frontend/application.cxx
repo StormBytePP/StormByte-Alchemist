@@ -445,9 +445,9 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data(const 
 		std::cout << "Found " << std::to_string(unsupported_films.size()) << " unsupported films:\n";
 		for (auto it = unsupported_films.begin(); it != unsupported_films.end(); it++)
 			std::cout << "\t* " << (*it) << "\n";
-		std::cout << "\n";
+		std::cout << std::endl;
 		do {
-			std::cout << "Do you wish to continue? [y/n]: " << std::endl;
+			std::cout << "Do you wish to continue? [y/n]: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
 		if (buffer_str == "y" || buffer_str == "n") return std::optional<std::list<Database::Data::film>>();
