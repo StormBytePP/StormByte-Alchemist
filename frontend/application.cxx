@@ -191,8 +191,10 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 					throw std::runtime_error("Sleep time specified without argument, correct usage:");
 			}
 			else if (argument == "-a" || argument == "--add") {
-				if (++counter < argc)
-					m_add_film_path = argv[counter++];
+				if (++counter < argc) {
+					// We do here a very basic unscape for bash scaped characters
+					m_add_film_path = boost::erase_all_copy(std::string(argv[counter++]), "\\");
+				}
 				else
 					throw std::runtime_error("Add film specified without argument, correct usage:");
 			}
