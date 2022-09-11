@@ -35,7 +35,7 @@ else()
 endif()
 
 target_link_libraries(StormByte-videoconvert StormByte-videoconvert-library)
-set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD 17)
+set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD_REQUIRED ON)
 
 install(TARGETS StormByte-videoconvert DESTINATION ${CMAKE_INSTALL_BINDIR})

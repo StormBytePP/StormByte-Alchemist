@@ -38,7 +38,7 @@ if (ENABLE_OPUS)
 endif()
 
 add_library(StormByte-videoconvert-library SHARED ${VIDEOCONVERT_LIBRARY_FILES})
-set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 17)
+set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormByte-videoconvert")
 target_link_libraries(StormByte-videoconvert-library sqlite3)

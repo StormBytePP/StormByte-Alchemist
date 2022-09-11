@@ -286,20 +286,19 @@ void Application::compiler_info() const {
 }
 
 std::string Application::elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const {
+	/* NOTE: Until C++20's <format> support is complete, I just use this aproach */
 	std::string result = "";
-	auto hours = std::chrono::duration_cast<std::chrono::hours>(end - begin).count();
-	auto minutes = std::chrono::duration_cast<std::chrono::minutes>(end - begin).count();
-	auto seconds = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();
 
-	result += std::to_string(hours);
-	result += ":";
-	if ((minutes % 60) < 10) result += "0";
-	result += std::to_string(minutes % 60);
-	result += ":";
-	if ((seconds % 3600) < 10) result += "0";
-	result += std::to_string(seconds % 3600);
+	auto elapsed = std::chrono::hh_mm_ss(end - begin);
+	auto h = elapsed.hours().count(), m = elapsed.minutes().count(), s = elapsed.seconds().count();
 
-	return result;
+	result += std::to_string(h) + ":";
+	if (m < 10) result += "0";
+	result += std::to_string(m) + ":";
+	if (s < 10) result += "0";
+	result += std::to_string(s);
+
+	return result;;
 }
 
 int Application::daemon() {
