@@ -52,7 +52,7 @@ void Utils::Logger::timestamp() {
 	auto t = std::time(nullptr);
 	auto tm = *std::localtime(&t);
 
-	m_logfile << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << ": ";
+	m_logfile << std::put_time(&tm, "%d-%m-%Y %H:%M:%S") << ": ";
 }
 
 void Utils::Logger::loglevel_display(const LEVEL& level) {
