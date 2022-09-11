@@ -7,12 +7,18 @@
 using namespace StormByte::VideoConvert;
 
 const std::string Database::SQLite3::DATABASE_CREATE_SQL =
+	"CREATE TABLE groups("
+		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+		"folder VARCHAR NOT NULL"
+	");"
 	"CREATE TABLE films("
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
 		"prio TINYINT,"
 		"processing BOOL DEFAULT FALSE,"
-		"unsupported BOOL DEFAULT FALSE"
+		"unsupported BOOL DEFAULT FALSE,"
+		"group_id INTEGER DEFAULT NULL,"
+		"FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE"
 	");"
 	"CREATE TABLE streams("
 		"id INTEGER,"
@@ -49,18 +55,23 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = ? WHERE id = ?"},
 	{"setUnsupportedStatusForFilm",	"UPDATE films SET unsupported = ? WHERE id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
-	{"getFilmBasicData",			"SELECT file, prio, processing FROM films WHERE id = ?"},
+	{"getFilmData",					"SELECT file, prio, processing, unsupported, group_id FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, is_animation, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
-	{"insertFilm",					"INSERT INTO films(file, prio) VALUES (?, ?) RETURNING id"},
+	{"getGroupData",				"SELECT folder FROM groups WHERE id = ?"},
+	{"insertFilm",					"INSERT INTO films(file, prio, group_id) VALUES (?, ?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, is_animation, max_rate, bitrate) VALUES (?, ?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
+	{"insertGroup",					"INSERT INTO groups(folder) VALUES (?) RETURNING id"},
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE, unsupported = FALSE"},
 	{"deleteFilm",					"DELETE FROM films WHERE id = ?"},
 	{"deleteFilmStream",			"DELETE FROM streams WHERE film_id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
-	{"isFilmAlreadyInDatabase?",	"SELECT COUNT(*)>0 FROM films WHERE file = ?"}
+	{"isFilmAlreadyInDatabase?",	"SELECT COUNT(*)>0 FROM films WHERE file = ?"},
+	{"doGroupExist?",				"SELECT COUNT(*)>0 FROM groups WHERE folder = ?"},
+	{"isGroupEmpty?",				"SELECT COUNT(*)=0 FROM films WHERE group_id = ?"},
+	{"deleteGroup",					"DELETE FROM groups WHERE id = ?"}
 };
 
 Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -89,11 +100,12 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 	auto logger = Application::get_instance().get_logger();
 
 	if (film_id != -1) {
-		Data::film film_data = get_film_basic_data(film_id);
+		Data::film film_data = get_film_data(film_id);
 		std::filesystem::path input_path	= Application::get_instance().get_input_folder();
 		std::filesystem::path output_path	= Application::get_instance().get_output_folder();
-		std::filesystem::path work_path	= Application::get_instance().get_work_folder();
+		std::filesystem::path work_path		= Application::get_instance().get_work_folder();
 		FFmpeg film(film_id, input_path, film_data.file, work_path, output_path);
+		film.set_group(film_data.group);
 		auto streams = get_film_streams(film_id);
 		std::list<Data::stream_codec> unsupported_codecs;
 
@@ -271,14 +283,17 @@ void Database::SQLite3::set_film_unsupported_status(int film_id, bool status) {
 	reset_stmt(stmt);
 }
 
-Database::Data::film Database::SQLite3::get_film_basic_data(int film_id) {
+Database::Data::film Database::SQLite3::get_film_data(int film_id) {
 	Data::film result;
-	auto stmt = m_prepared["getFilmBasicData"];
+	auto stmt = m_prepared["getFilmData"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		result.file 		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
 		result.prio 		= sqlite3_column_int(stmt, 1);
 		result.processing	= sqlite3_column_int(stmt, 2);
+		result.unsupported	= sqlite3_column_int(stmt, 3);
+		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL)
+			result.group	= get_group_data(sqlite3_column_int(stmt, 4));
 	}
 	reset_stmt(stmt);
 	return result;
@@ -342,11 +357,29 @@ Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& s
 	return result;
 }
 
+std::optional<Database::Data::group> Database::SQLite3::get_group_data(unsigned int group_id) {
+	std::optional<Data::group> result;
+	auto stmt = m_prepared["getGroupData"];
+	sqlite3_bind_int(stmt, 1, group_id);
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		result = {
+			group_id,
+			reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0))
+		};
+	}
+	reset_stmt(stmt);
+	return result;
+}
+
 std::optional<int> Database::SQLite3::insert_film(const Data::film& film) {
 	std::optional<int> result;
 	auto stmt = m_prepared["insertFilm"];
 	sqlite3_bind_text(stmt, 1, film.file.c_str(), -1, SQLITE_STATIC);
 	sqlite3_bind_int(stmt, 2, film.prio);
+	if (film.group)
+		sqlite3_bind_int(stmt, 3, film.group->id);
+	else
+		sqlite3_bind_null(stmt, 3);
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 		result = sqlite3_column_int(stmt, 0);
 	reset_stmt(stmt);
@@ -400,13 +433,25 @@ void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 	reset_stmt(stmt);
 }
 
+std::optional<Database::Data::group> Database::SQLite3::insert_group(const std::filesystem::path& folder) {
+	std::optional<Database::Data::group> result;
+	if (!is_group_in_database(folder)) {
+		auto stmt = m_prepared["insertGroup"];
+		sqlite3_bind_text(stmt, 1, folder.c_str(), -1, SQLITE_STATIC);
+		if (sqlite3_step(stmt) == SQLITE_ROW)
+			result = get_group_data(sqlite3_column_int(stmt, 0));
+		reset_stmt(stmt);
+	}
+	return result;
+}
+
 void Database::SQLite3::reset_processing_films() {
 	auto stmt = m_prepared["resetProcessingFilms"];
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::delete_film(int film_id) {
+void Database::SQLite3::delete_film(unsigned int film_id) {
 	auto stmt = m_prepared["deleteFilm"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
@@ -429,10 +474,39 @@ void Database::SQLite3::delete_film_stream_HDR(int film_id) {
 	reset_stmt(stmt);
 }
 
+void Database::SQLite3::delete_group(unsigned int group_id) {
+	auto stmt = m_prepared["deleteGroup"];
+	sqlite3_bind_int(stmt, 1, group_id);
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+}
+
 bool Database::SQLite3::is_film_in_database(const std::filesystem::path& file) {
 	bool result = false;
 	auto stmt = m_prepared["isFilmAlreadyInDatabase?"];
 	sqlite3_bind_text(stmt, 1, file.c_str(), -1, SQLITE_STATIC);
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		result = sqlite3_column_int(stmt, 0);
+	}
+	reset_stmt(stmt);
+	return result;
+}
+
+bool Database::SQLite3::is_group_in_database(const std::filesystem::path& path) {
+	bool result = false;
+	auto stmt = m_prepared["doGroupExist?"];
+	sqlite3_bind_text(stmt, 1, path.c_str(), -1, SQLITE_STATIC);
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		result = sqlite3_column_int(stmt, 0);
+	}
+	reset_stmt(stmt);
+	return result;
+}
+
+bool Database::SQLite3::is_group_empty(unsigned int& group_id) {
+	bool result = false;
+	auto stmt = m_prepared["isGroupEmpty?"];
+	sqlite3_bind_int(stmt, 1, group_id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		result = sqlite3_column_int(stmt, 0);
 	}

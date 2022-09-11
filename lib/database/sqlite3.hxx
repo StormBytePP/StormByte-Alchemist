@@ -23,13 +23,17 @@ namespace StormByte::VideoConvert::Database {
 			void set_film_processing_status(int film_id, bool status);
 			void set_film_unsupported_status(int film_id, bool status);
 			void reset_processing_films();
-			void delete_film(int film_id);
+			void delete_film(unsigned int film_id);
+			void delete_group(unsigned int group_id);
 			inline bool is_film_in_database(const Data::film& film) { return is_film_in_database(film.file); }
 			bool is_film_in_database(const std::filesystem::path& file);
+			bool is_group_in_database(const std::filesystem::path& path);
+			bool is_group_empty(unsigned int& group_id);
 			
 			/* Insert data functions */
 			std::optional<int> insert_film(const Data::film& film);
 			void insert_stream(const Data::stream& stream);
+			std::optional<Data::group> insert_group(const std::filesystem::path& folder);
 
 		private:
 			sqlite3* m_database;
@@ -46,7 +50,8 @@ namespace StormByte::VideoConvert::Database {
 
 			/* Data managing internal functions */
 			int get_film_id_for_process();
-			Data::film get_film_basic_data(int film_id);
+			Data::film get_film_data(int film_id);
+			std::optional<Data::group> get_group_data(unsigned int group_id);
 			std::list<Data::stream> get_film_streams(int film_id);
 			bool has_film_stream_HDR(const Data::stream& stream);
 			Data::hdr get_film_stream_HDR(const Data::stream& stream);

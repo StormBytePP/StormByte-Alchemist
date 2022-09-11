@@ -373,6 +373,14 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 		std::filesystem::remove(work_file);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting film from database");
 		m_database->delete_film(ffmpeg.get_film_id());
+		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_input_path / ffmpeg.get_group()->folder).string() + " recursivelly");
+			std::filesystem::remove_all(*m_input_path / ffmpeg.get_group()->folder);
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Deleting folder " + (*m_work_path / ffmpeg.get_group()->folder).string() + " recursivelly");
+			std::filesystem::remove_all(*m_work_path / ffmpeg.get_group()->folder);
+			m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Deleting group from database");
+			m_database->delete_group(ffmpeg.get_group()->id);
+		}
 	}
 	else {
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + input_file.string() + " failed or interrupted!");
@@ -393,6 +401,10 @@ int Application::interactive(const std::filesystem::path& film_file_or_path) {
 	}
 	else if (m_database->is_film_in_database(film_file_or_path)) {
 		std::cerr << "Film " << film_file_or_path << " is already in database!" << std::endl;
+		return 1;
+	}
+	else if (std::filesystem::is_directory(full_path) && m_database->is_group_in_database(film_file_or_path)) {
+		std::cerr << "Film group (folder) " << film_file_or_path << " is already in database" << std::endl;
 		return 1;
 	}
 	
@@ -422,6 +434,8 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data(const 
 	// Now we look if a single film was specified or if it was a folder
 	std::filesystem::path full_path = *m_input_path / file_or_path;
 	if (std::filesystem::is_directory(full_path)) {
+		film.group = m_database->insert_group(file_or_path);
+
 		// Look for all supported films in directory
 		for (std::filesystem::recursive_directory_iterator i(full_path), end; i != end; ++i) 
 			if (!std::filesystem::is_directory(i->path())) {

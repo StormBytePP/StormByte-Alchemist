@@ -5,6 +5,11 @@
 #include <map>
 
 namespace StormByte::VideoConvert::Database::Data {
+	struct group {
+		unsigned int id;
+		std::filesystem::path folder;
+	};
+
 	struct film {
 		enum priority: unsigned short {
 			LOW 		= 0,
@@ -17,6 +22,8 @@ namespace StormByte::VideoConvert::Database::Data {
 		std::filesystem::path file = "";
 		unsigned short prio = NORMAL;
 		bool processing = false;
+		bool unsupported = false;
+		std::optional<Data::group> group;
 	};
 
 	struct hdr {
