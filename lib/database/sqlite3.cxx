@@ -51,7 +51,7 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 	");";
 
 const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SENTENCES = {
-	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND unsupported = FALSE ORDER BY prio ASC LIMIT 1"},
+	{"getFilmIDForProcess", 		"SELECT id FROM films WHERE processing = FALSE AND unsupported = FALSE ORDER BY prio DESC LIMIT 1"},
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = ? WHERE id = ?"},
 	{"setUnsupportedStatusForFilm",	"UPDATE films SET unsupported = ? WHERE id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
