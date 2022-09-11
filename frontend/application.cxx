@@ -328,7 +328,7 @@ std::string Application::elapsed_time(const std::chrono::steady_clock::time_poin
 }
 
 int Application::daemon() {
-	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon...");
+	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon version " + PROGRAM_VERSION);
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
 	do {

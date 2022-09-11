@@ -204,6 +204,7 @@ bool Database::SQLite3::check_database() {
 }
 
 void Database::SQLite3::init_database() {
+	Application::get_instance().get_logger()->message_line(Utils::Logger::LEVEL_INFO, "Constructing database");
 	char* err_msg = NULL;
 	int rc = sqlite3_exec(m_database, DATABASE_CREATE_SQL.c_str(), 0, 0, &err_msg);
 	if (rc != SQLITE_OK) throw_error(err_msg);
