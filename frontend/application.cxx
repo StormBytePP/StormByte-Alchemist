@@ -391,7 +391,7 @@ int Application::interactive(const std::filesystem::path& film_file_or_path) {
 		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
 		return 1;
 	}
-	else if (m_database->is_film_in_database(full_path)) {
+	else if (m_database->is_film_in_database(film_file_or_path)) {
 		std::cerr << "Film " << film_file_or_path << " is already in database!" << std::endl;
 		return 1;
 	}
@@ -450,7 +450,7 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data(const 
 			std::cout << "Do you wish to continue? [y/n]: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
-		if (buffer_str == "y" || buffer_str == "n") return std::optional<std::list<Database::Data::film>>();
+		if (buffer_str == "n" || buffer_str == "N") return std::optional<std::list<Database::Data::film>>();
 	}
 
 	return films;
