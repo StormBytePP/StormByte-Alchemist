@@ -220,6 +220,21 @@ void Database::SQLite3::reset_stmt(sqlite3_stmt* stmt) {
 	sqlite3_reset(stmt);
 }
 
+void Database::SQLite3::begin_transaction() {
+	char* err_msg = nullptr;
+	sqlite3_exec(m_database, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
+}
+
+void Database::SQLite3::commit_transaction() {
+	char* err_msg = nullptr;
+	sqlite3_exec(m_database, "COMMIT;", nullptr, nullptr, &err_msg);
+}
+
+void Database::SQLite3::rollback_transaction() {
+	char* err_msg = nullptr;
+	sqlite3_exec(m_database, "ROLLBACK;", nullptr, nullptr, &err_msg);
+}
+
 void Database::SQLite3::prepare_sentences() {
 	for (auto it = DATABASE_PREPARED_SENTENCES.begin(); it != DATABASE_PREPARED_SENTENCES.end(); it++) {
 		m_prepared[it->first] = nullptr;
@@ -326,20 +341,15 @@ Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& s
 	return result;
 }
 
-bool Database::SQLite3::insert_film(Data::film& film) {
-	int result = -1;
+std::optional<int> Database::SQLite3::insert_film(const Data::film& film) {
+	std::optional<int> result;
 	auto stmt = m_prepared["insertFilm"];
 	sqlite3_bind_text(stmt, 1, film.file.c_str(), -1, SQLITE_STATIC);
 	sqlite3_bind_int(stmt, 2, film.prio);
 	if (sqlite3_step(stmt) == SQLITE_ROW)
 		result = sqlite3_column_int(stmt, 0);
 	reset_stmt(stmt);
-	if (result>=0) {
-		film.film_id = result;
-		return true;
-	}
-	else
-		return false;
+	return result;
 }
 
 void Database::SQLite3::insert_stream(const Data::stream& stream) {
@@ -418,10 +428,10 @@ void Database::SQLite3::delete_film_stream_HDR(int film_id) {
 	reset_stmt(stmt);
 }
 
-bool Database::SQLite3::is_film_in_database(const std::filesystem::path& film) {
+bool Database::SQLite3::is_film_in_database(const std::filesystem::path& file) {
 	bool result = false;
 	auto stmt = m_prepared["isFilmAlreadyInDatabase?"];
-	sqlite3_bind_text(stmt, 1, film.c_str(), -1, SQLITE_STATIC);
+	sqlite3_bind_text(stmt, 1, file.c_str(), -1, SQLITE_STATIC);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		result = sqlite3_column_int(stmt, 0);
 	}

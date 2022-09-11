@@ -16,6 +16,7 @@ endif()
 
 find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
+find_package (Boost REQUIRED)
 
 # Encoder support
 option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)

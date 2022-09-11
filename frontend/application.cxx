@@ -8,11 +8,26 @@
 #include <sys/wait.h>
 #include <csignal>
 #include <chrono>
+#include <ctype.h>
+
+#include <boost/algorithm/string.hpp> // For string lowercase
 
 using namespace StormByte::VideoConvert;
 
-const std::filesystem::path Application::DEFAULT_CONFIG_FILE 	= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
-const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS		= 60;
+const std::filesystem::path Application::DEFAULT_CONFIG_FILE 				= "/etc/conf.d/" + PROGRAM_NAME + ".conf";
+const unsigned int Application::DEFAULT_SLEEP_IDLE_SECONDS					= 60;
+const std::list<std::string> Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
+	".asf", ".asx", ".avi", ".wav", ".wma", ".wax", ".wm", ".wmv", ".wvx",
+	".ra", ".ram", ".rm", ".rmm",
+	".m3u", ".mp2v", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa",
+	".vob",
+	"-aif", ".aifc", "-aiff",
+	".au", ".snd",
+	".ivf",
+	".mov", ".qt",
+	".flv",
+	".mkv", ".mp4" 
+};
 
 const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
 	#ifdef ENABLE_HEVC
@@ -66,7 +81,7 @@ int Application::run(int argc, char** argv) noexcept {
 				return daemon();
 		}
 		else {
-			return interactive();
+			return interactive(*m_add_film_path);
 		}
 		return 0;
 	}
@@ -368,115 +383,120 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 	}
 }
 
-int Application::interactive() {
-	/* Needed variables */
-	std::string buffer_str;
-	int buffer_int;
-	Database::Data::film film;
-	std::list<Database::Data::stream> streams;
-	bool continue_asking;
-
-	// Those are only used here, so they are only initialized here also
-	m_interactive_all_video = m_interactive_all_audio = m_interactive_all_subtitle = false;
-	
+int Application::interactive(const std::filesystem::path& film_file_or_path) {	
 	header();
-	
-	/* Query required data */
+	std::filesystem::path full_path = *m_input_path / film_file_or_path;
 
-	/* Film source file */
-	if (!Utils::Filesystem::exists_file(m_input_path.value() / m_add_film_path.value(), true))
-		return 1;
-	else if (m_database->is_film_in_database(*m_add_film_path)) {
-		std::cerr << "Film " << *m_add_film_path << " is already in database!" << std::endl;
+	if (!std::filesystem::exists(full_path)) {
+		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
 		return 1;
 	}
-	else
-		film.file = m_add_film_path.value();
+	else if (m_database->is_film_in_database(full_path)) {
+		std::cerr << "Film " << film_file_or_path << " is already in database!" << std::endl;
+		return 1;
+	}
+	
+	/* Query required data */
+	auto films = std::move(ask_film_data(film_file_or_path));
+	auto streams = std::move(ask_streams());
 
+	if (add_films_to_database(std::move(films), std::move(streams)))
+		return 0;
+	else
+		return 1;
+}
+
+std::list<Database::Data::film> Application::ask_film_data(const std::filesystem::path& file_or_path) const {
+	std::string buffer_str;
+	int buffer_int;
+	std::list<Database::Data::film> films;
+	Database::Data::film film;
 	do {
-		buffer_str = "";
 		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(1), IMPORTANT(2): ";
 		std::getline(std::cin, buffer_str);
 	} while (buffer_str != "" && !Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 2, true));
 	film.prio = (buffer_str == "") ? 1 : buffer_int;
 
-	std::cout << "Film stream addition:" << std::endl;
-	bool add_new_stream = true;
+	// Now we look if a single film was specified or if it was a folder
+	std::filesystem::path full_path = *m_input_path / file_or_path;
+	if (std::filesystem::is_directory(full_path)) {
+		// Look for all supported films in directory
+		for (std::filesystem::recursive_directory_iterator i(full_path), end; i != end; ++i) 
+			if (!std::filesystem::is_directory(i->path())) {
+				std::string extension = boost::to_lower_copy(i->path().extension().string());
+				if (std::find(SUPPORTED_MULTIMEDIA_EXTENSIONS.begin(), SUPPORTED_MULTIMEDIA_EXTENSIONS.end(), extension) != SUPPORTED_MULTIMEDIA_EXTENSIONS.end()) {
+					film.file = std::filesystem::relative(i->path(), *m_input_path);
+					films.push_back(film);
+				}
+				else {
+					std::cerr << i->path() << ": Unsupported file format" << std::endl;
+				}
+			}
+	}
+	else {
+		// Single file
+		film.file = std::move(file_or_path);
+		films.push_back(film);
+	}
+
+	return films;
+}
+
+std::list<Database::Data::stream> Application::ask_streams() {
+	std::map<char, bool> continue_asking {
+		{ 'v', true },
+		{ 'a', true },
+		{ 's', true }
+	};
+	std::list<Database::Data::stream> streams;
+	bool add_new_stream, continue_asking_any;
+
 	do {
-		auto stream = ask_stream();
-		if (stream.has_value()) streams.push_back(*stream);
-		continue_asking = !(m_interactive_all_video && m_interactive_all_audio && m_interactive_all_subtitle);
-		if (continue_asking)
-			do {
-				buffer_str = "";
-				std::cout << "Add another stream? [y/n]: ";
-				std::getline(std::cin, buffer_str);
-			} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
-		else
-			std::cout << "There are no more streams to add" << std::endl;
+		std::string buffer_str;		
+		do {
+			std::cout << "Select stream type; video(v), audio(a) or subtitles(s): ";
+			std::getline(std::cin, buffer_str);
+		} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
+		char codec_type = tolower(buffer_str[0]);
 
-		add_new_stream = buffer_str == "y" || buffer_str == "Y";
-	} while(add_new_stream && continue_asking);
-
-	try {
-		if (!m_database->insert_film(film))
-			throw std::runtime_error("ERROR: Can not insert film with file " + film.file.string());
-		else
-			std::cout << "Film " << film.file << " added to database with ID " << film.film_id << std::endl;
-
-		for (auto it = streams.begin(); it != streams.end(); it++) {
-			// First is to assign film ID
-			it->film_id = film.film_id;
-			m_database->insert_stream(*it);
+		if (!continue_asking[codec_type]) {
+			std::cerr << "Selected stream type " << codec_type << " has been already fully defined" << std::endl;
 		}
-	}
-	catch(const std::runtime_error& error) {
-		std::cerr << error.what() << std::endl;
-		return 1;
-	}
-	return 0;
+		else {
+			auto stream = std::move(ask_stream(codec_type));
+			continue_asking[codec_type] = stream.id >= 0; // If negative, means all streams have been covered
+			streams.push_back(std::move(stream));
+			continue_asking_any = continue_asking['v'] || continue_asking['a'] || continue_asking['s'];
+
+			if (continue_asking_any)
+				do {
+					buffer_str = "";
+					std::cout << "Add another stream? [y/n]: ";
+					std::getline(std::cin, buffer_str);
+				} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+			else
+				std::cout << "There are no more streams to add" << std::endl;
+
+			add_new_stream = buffer_str == "y" || buffer_str == "Y";
+		}
+	} while(add_new_stream && continue_asking_any);
+
+	return streams;
 }
 
-void Application::signal_handler(int) {
-	Application::get_instance().m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal received!");
-	Application::get_instance().m_must_terminate = true;
-	if (Application::get_instance().m_worker)
-		kill(Application::get_instance().m_worker.value(), SIGTERM);
-}
-
-std::optional<Database::Data::stream> Application::ask_stream() const {
+Database::Data::stream Application::ask_stream(const char& codec_type) const {
 	Database::Data::stream stream;
 	std::string buffer_str;
 	int buffer_int;
 
 	do {
-		buffer_str = "";
-		std::cout << "Select stream type; video(v), audio(a) or subtitles(s): ";
-		std::getline(std::cin, buffer_str);
-	} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
-	char codec_type = buffer_str[0];
-
-	// Here we check if we selected an stream type which was already covered by "all" selection
-	if (
-		((codec_type == 'v' || codec_type == 'V') && m_interactive_all_video) ||
-		((codec_type == 'a' || codec_type == 'A') && m_interactive_all_audio) ||
-		((codec_type == 's' || codec_type == 'S') && m_interactive_all_subtitle)
-	) {
-		std::cerr << "All streams were already selected for type " << codec_type << std::endl;
-		return std::optional<Database::Data::stream>(); // We return empty stream
-	}
-
-	do {
-		buffer_str = "";
 		std::cout << "Input stream(" << codec_type << ") FFmpeg ID (-1 to select all streams for type " << codec_type << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::to_int_minimum(buffer_str, buffer_int, -1, true));
 	stream.id = buffer_int;
 
-	if (codec_type == 'v' || codec_type == 'V') {
-		if (buffer_int < 0) m_interactive_all_video = true;
+	if (codec_type == 'v') {
 		do {
-			buffer_str = "";
 			std::cout << "Select video codec:" << std::endl;
 			std::cout << "\tcopy(" << Database::Data::VIDEO_COPY << ")" << std::endl;
 			#ifdef ENABLE_HEVC
@@ -521,10 +541,8 @@ std::optional<Database::Data::stream> Application::ask_stream() const {
 		}
 		#endif
 	}
-	else if (codec_type == 'a' || codec_type == 'A') {
-		if (buffer_int < 0) m_interactive_all_audio = true;
+	else if (codec_type == 'a') {
 		do {
-			buffer_str = "";
 			std::cout << "Select audio codec:" << std::endl;
 			#ifdef ENABLE_AAC
 			std::cout << "\tAAC(" << Database::Data::AUDIO_AAC << ")" << std::endl;
@@ -569,12 +587,41 @@ std::optional<Database::Data::stream> Application::ask_stream() const {
 		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
 	}
 	else {
-		if (buffer_int < 0) m_interactive_all_subtitle = true;
 		std::cout << "Subtitles have only copy codec so it is being autoselected" << std::endl;
 		stream.codec = Database::Data::SUBTITLE_COPY;
 	}
 
 	return stream;
+}
+
+bool Application::add_films_to_database(const std::list<Database::Data::film>& films, std::list<Database::Data::stream>&& streams) {
+	try {
+		m_database->begin_transaction();
+		std::optional<int> filmID;
+		for (auto film = films.begin(); film != films.end(); film++) {
+			if (m_database->is_film_in_database(*film))
+				throw std::runtime_error("ERROR: Film " + film->file.string() + " is already in database");
+			else
+				filmID = m_database->insert_film(*film);
+
+			if (!filmID.has_value())
+				throw std::runtime_error("ERROR: Film " + film->file.string() + " could not be inserted in database");
+
+			for (auto stream = streams.begin(); stream != streams.end(); stream++) {
+				// First is to assign film ID to stream
+				stream->film_id = *filmID;
+				m_database->insert_stream(*stream);
+			}
+		}
+	}
+	catch(const std::runtime_error& error) {
+		m_database->rollback_transaction();
+		std::cerr << error.what() << std::endl;
+		return false;
+	}
+	m_database->commit_transaction();
+	std::cout << "Inserted " << std::to_string(films.size()) + " film(s) in database" << std::endl;
+	return true;
 }
 
 #ifdef ENABLE_HEVC
@@ -680,3 +727,10 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 	return HDR;
 }
 #endif
+
+void Application::signal_handler(int) {
+	Application::get_instance().m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Signal received!");
+	Application::get_instance().m_must_terminate = true;
+	if (Application::get_instance().m_worker)
+		kill(Application::get_instance().m_worker.value(), SIGTERM);
+}

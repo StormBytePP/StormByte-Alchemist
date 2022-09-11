@@ -14,15 +14,21 @@ namespace StormByte::VideoConvert::Database {
 			SQLite3(const SQLite3& db) = delete;
 			~SQLite3();
 			SQLite3& operator=(const SQLite3& db) = delete;
+
+			void begin_transaction();
+			void commit_transaction();
+			void rollback_transaction();
+
 			std::optional<FFmpeg> get_film_for_process();
 			void set_film_processing_status(int film_id, bool status);
 			void set_film_unsupported_status(int film_id, bool status);
 			void reset_processing_films();
 			void delete_film(int film_id);
-			bool is_film_in_database(const std::filesystem::path& film);
+			inline bool is_film_in_database(const Data::film& film) { return is_film_in_database(film.file); }
+			bool is_film_in_database(const std::filesystem::path& file);
 			
 			/* Insert data functions */
-			bool insert_film(Data::film& film);
+			std::optional<int> insert_film(const Data::film& film);
 			void insert_stream(const Data::stream& stream);
 
 		private:
