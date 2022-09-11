@@ -226,14 +226,7 @@ Application::status Application::init_from_cli(int argc, char** argv) {
 
 bool Application::init_application() {
 	try {
-		if (m_database_file) {
-			if (!Utils::Filesystem::is_folder_writable(m_database_file.value().parent_path()))
-				throw std::runtime_error("Error: Database folder " + m_database_file.value().parent_path().string() + " is not writable!");
-			m_database.reset(new Database::SQLite3(m_database_file.value()));
-		}
-		else
-			throw std::runtime_error("ERROR: Database file not set neither in config file either from command line.");
-		
+		// Logger is the first thing to initialize in case we need early logs
 		if (!m_logfile)
 			throw std::runtime_error("ERROR: Log file not set neither in config file either from command line.");
 
@@ -248,6 +241,14 @@ bool Application::init_application() {
 			throw std::runtime_error("ERROR: Logfile folder " + m_logfile.value().parent_path().string() + " is not writable!");
 		else
 			m_logger.reset(new Utils::Logger(m_logfile.value(), static_cast<Utils::Logger::LEVEL>(m_loglevel.value())));
+
+		if (m_database_file) {
+			if (!Utils::Filesystem::is_folder_writable(m_database_file.value().parent_path()))
+				throw std::runtime_error("Error: Database folder " + m_database_file.value().parent_path().string() + " is not writable!");
+			m_database.reset(new Database::SQLite3(m_database_file.value()));
+		}
+		else
+			throw std::runtime_error("ERROR: Database file not set neither in config file either from command line.");
 		
 		if (!m_input_path)
 			throw std::runtime_error("ERROR: Input folder not set neither in config file either from command line.");
