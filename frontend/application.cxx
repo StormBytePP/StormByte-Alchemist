@@ -69,6 +69,13 @@ int Application::run(int argc, char** argv) noexcept {
 	if (m_status != HALT_OK && m_status != HALT_ERROR)
 		init(std::move(cli_conf));
 
+	#ifdef DEBUG
+	auto cfg_items = m_config.items();
+	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Using config items:");
+	for (auto it = cfg_items.begin(); it != cfg_items.end(); it++)
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "\t*" + it->first + ": " + it->second);
+	#endif
+
 	switch(m_status) {
 		case RUN_DAEMON:
 			return daemon();

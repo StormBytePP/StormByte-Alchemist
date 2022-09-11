@@ -2,6 +2,9 @@
 
 #include <optional>
 #include <filesystem>
+#ifdef DEBUG
+#include <list>
+#endif
 
 namespace StormByte::VideoConvert {
 	class Configuration {
@@ -47,11 +50,14 @@ namespace StormByte::VideoConvert {
 			void merge(const Configuration& config);
 			void merge(Configuration&& config) noexcept;
 			bool check(const OUTPUT_MODE& output_mode) const;
-			void debug(const std::string& title = "") const;
 
 			/* Constants */
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
 			static const unsigned int DEFAULT_SLEEP_TIME;
+
+			#ifdef DEBUG
+			const std::list<std::pair<std::string, std::string>> items() const;
+			#endif
 
 		private:
 			std::optional<std::filesystem::path> m_database, m_input, m_output, m_work, m_configfile, m_logfile;

@@ -85,3 +85,18 @@ bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
 
 	return errors.empty();
 }
+
+#ifdef DEBUG
+const std::list<std::pair<std::string, std::string>> Configuration::items() const {
+	return std::list<std::pair<std::string, std::string>> {
+		std::make_pair("database", m_database.value_or("")),
+		std::make_pair("input", m_input.value_or("")),
+		std::make_pair("output", m_output.value_or("")),
+		std::make_pair("work", m_work.value_or("")),
+		std::make_pair("configfile", m_configfile.value_or("")),
+		std::make_pair("logfile", m_logfile.value_or("")),
+		std::make_pair("loglevel", m_loglevel ? std::to_string(*m_loglevel) : ""),
+		std::make_pair("sleep", m_sleep ? std::to_string(*m_sleep) : "")
+	};
+}
+#endif
