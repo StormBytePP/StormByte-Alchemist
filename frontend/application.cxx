@@ -225,7 +225,7 @@ Configuration Application::read_cli(int argc, char** argv) {
 Configuration Application::read_config(const std::filesystem::path& config_file) {
 	Configuration config;
 	libconfig::Config cfg;
-	
+
 	try {
     	cfg.readFile(config_file.c_str());
 	}
@@ -239,7 +239,8 @@ Configuration Application::read_config(const std::filesystem::path& config_file)
 		m_status = HALT_ERROR;
 		return config;
 	}
-
+	
+	config.set_config_file(std::move(config_file));
 	if (cfg.exists("database"))
 		config.set_database_file(std::string(cfg.lookup("database")));
 	if (cfg.exists("input"))
