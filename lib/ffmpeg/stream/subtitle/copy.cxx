@@ -2,8 +2,6 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Subtitle::Copy::Copy(unsigned short stream_id):Stream::Subtitle::Base(stream_id, "copy", Database::Data::SUBTITLE_COPY) {}
+Stream::Subtitle::Copy::Copy(const unsigned short& stream_id):Stream::Subtitle::Base(stream_id, "copy", Database::Data::SUBTITLE_COPY) {}
 
-Stream::Subtitle::Copy* Stream::Subtitle::Copy::copy() const {
-	return new Copy(*this);
-}
+Stream::Subtitle::Copy::Copy(unsigned short&& stream_id):Stream::Subtitle::Base(std::move(stream_id), "copy", Database::Data::SUBTITLE_COPY) {}

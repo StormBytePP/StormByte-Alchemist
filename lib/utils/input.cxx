@@ -6,7 +6,7 @@
 
 using namespace StormByte::VideoConvert;
 
-bool Utils::Input::to_int(const std::string& possible_number, int& store, bool use_cerr) {
+bool Utils::Input::to_int(const std::string& possible_number, int& store, const bool& use_cerr) {
 	char *endptr;
 	store = strtol(possible_number.c_str(), &endptr, 10);
 
@@ -19,11 +19,11 @@ bool Utils::Input::to_int(const std::string& possible_number, int& store, bool u
 	}
 }
 
-bool Utils::Input::to_int_positive(const std::string& possible_number, int& store, bool use_cerr) {
+bool Utils::Input::to_int_positive(const std::string& possible_number, int& store, const bool& use_cerr) {
 	return to_int_minimum(possible_number, store, 0, use_cerr);
 }
 
-bool Utils::Input::to_int_minimum(const std::string& possible_number, int& store, int minimum, bool use_cerr) {
+bool Utils::Input::to_int_minimum(const std::string& possible_number, int& store, const int& minimum, const bool& use_cerr) {
 	if (to_int(possible_number, store, use_cerr)) {
 		if (store < minimum) {
 			if (use_cerr) std::cerr << "Introduced number is lesser than minimum value " << minimum << " required" << std::endl;
@@ -38,11 +38,11 @@ bool Utils::Input::to_int_minimum(const std::string& possible_number, int& store
 	}
 }
 
-bool Utils::Input::to_int_in_range(const std::string& possible_number, int& store, int min, int max, bool use_cerr) {
+bool Utils::Input::to_int_in_range(const std::string& possible_number, int& store, const int& min, const int& max, const bool& use_cerr) {
 	return to_int(possible_number, store, use_cerr) && in_range(store, min, max, use_cerr);
 }
 
-bool Utils::Input::in_range(int number, int min, int max, bool use_cerr) {
+bool Utils::Input::in_range(const int& number, const int& min, const int& max, const bool& use_cerr) {
 	if (number>=min && number<=max)
 		return true;
 	else {
@@ -51,7 +51,7 @@ bool Utils::Input::in_range(int number, int min, int max, bool use_cerr) {
 	}
 }
 
-bool Utils::Input::in_options(const std::string& input, const std::list<std::string>& options, bool use_cerr) {
+bool Utils::Input::in_options(const std::string& input, const std::list<std::string>& options, const bool& use_cerr) {
 	if (std::find(options.begin(), options.end(), input) == options.end()) {
 		if (use_cerr) {
 			std::cerr << "Selected option " << input << " not found in " << list_to_string(options) << std::endl;

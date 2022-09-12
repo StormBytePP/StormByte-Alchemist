@@ -33,14 +33,15 @@ namespace StormByte::VideoConvert::Utils { class Logger; }
 namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
-			FFmpeg(unsigned int film_id, const std::filesystem::path& input_file, std::optional<Database::Data::group> group = std::optional<Database::Data::group>());
+			FFmpeg(const unsigned int& film_id, const std::filesystem::path& input_file, const std::optional<Database::Data::group>& group = std::optional<Database::Data::group>());
+			FFmpeg(unsigned int&& film_id, std::filesystem::path&& input_file, std::optional<Database::Data::group>&& group = std::optional<Database::Data::group>());
 			FFmpeg(const FFmpeg& ffmpeg) = default;
 			FFmpeg(FFmpeg&& ffmpeg) noexcept = default;
 			FFmpeg& operator=(const FFmpeg& ffmpeg) = default;
 			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept = default;
 			~FFmpeg() = default;
 
-			void add_stream(const StormByte::VideoConvert::Stream::Base&);
+			void add_stream(const Stream::Base&);
 			pid_t exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base) const;
 
 			/* Getters */

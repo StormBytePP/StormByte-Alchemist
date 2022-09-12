@@ -10,7 +10,8 @@
 namespace StormByte::VideoConvert::Stream {
 	class Base {
 		public:
-			Base(short stream_id, const std::string& encoder, Database::Data::stream_codec codec, char type);
+			Base(const short& stream_id, const std::string& encoder, const Database::Data::stream_codec& codec, const char& type);
+			Base(short&& stream_id, std::string&& encoder, Database::Data::stream_codec&& codec, char&& type);
 			Base(const Base& codec_base) = default;
 			Base(Base&&) noexcept = default;
 			Base& operator=(const Base& codec_base) = default;

@@ -5,7 +5,8 @@
 namespace StormByte::VideoConvert::Stream::Audio {
 	class EAC3: public Base {
 		public:
-			EAC3(unsigned short stream_id);
+			EAC3(const unsigned short& stream_id);
+			EAC3(unsigned short&& stream_id);
 			EAC3(const EAC3& eac3) = default;
 			EAC3(EAC3&& eac3) noexcept = default;
 			EAC3& operator=(const EAC3& eac3) = default;
@@ -15,6 +16,6 @@ namespace StormByte::VideoConvert::Stream::Audio {
 		private:
 			static const std::string EAC3_DEFAULT_ENCODER;
 
-			EAC3* copy() const override;
+			inline EAC3* copy() const override { return new EAC3(*this); }
 	};
 }

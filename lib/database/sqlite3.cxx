@@ -111,16 +111,7 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 					#ifdef ENABLE_HEVC
 					auto codec = Stream::Video::HEVC(it->id);
 					if (it->HDR) {
-						auto hdr_data = *it->HDR;
-						Stream::Video::HEVC::HDR hdr(	hdr_data.red_x, hdr_data.red_y,
-												hdr_data.green_x, hdr_data.green_y,
-												hdr_data.blue_x, hdr_data.blue_y,
-												hdr_data.white_point_x, hdr_data.white_point_y,
-												hdr_data.luminance_min, hdr_data.luminance_max);
-						if (hdr_data.light_level_content && hdr_data.light_level_average) {
-							hdr.set_light_level(*hdr_data.light_level_content, *hdr_data.light_level_average);
-						}
-						codec.set_HDR(hdr);
+						codec.set_HDR(std::move(*it->HDR));
 					}
 					if (it->is_animation) codec.set_tune_animation();
 					film.add_stream(codec);
@@ -263,7 +254,7 @@ int Database::SQLite3::get_film_id_for_process() {
 	return result;
 }
 
-void Database::SQLite3::set_film_processing_status(int film_id, bool status) {
+void Database::SQLite3::set_film_processing_status(const unsigned int& film_id, const bool& status) {
 	auto stmt = m_prepared["setProcessingStatusForFilm"];
 	sqlite3_bind_int(stmt, 1, status);
 	sqlite3_bind_int(stmt, 2, film_id);
@@ -271,7 +262,7 @@ void Database::SQLite3::set_film_processing_status(int film_id, bool status) {
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::set_film_unsupported_status(int film_id, bool status) {
+void Database::SQLite3::set_film_unsupported_status(const unsigned int& film_id, const bool& status) {
 	auto stmt = m_prepared["setUnsupportedStatusForFilm"];
 	sqlite3_bind_int(stmt, 1, status);
 	sqlite3_bind_int(stmt, 2, film_id);
@@ -279,7 +270,7 @@ void Database::SQLite3::set_film_unsupported_status(int film_id, bool status) {
 	reset_stmt(stmt);
 }
 
-Database::Data::film Database::SQLite3::get_film_data(int film_id) {
+Database::Data::film Database::SQLite3::get_film_data(const unsigned int& film_id) {
 	Data::film result;
 	auto stmt = m_prepared["getFilmData"];
 	sqlite3_bind_int(stmt, 1, film_id);
@@ -295,7 +286,7 @@ Database::Data::film Database::SQLite3::get_film_data(int film_id) {
 	return result;
 }
 
-std::list<Database::Data::stream> Database::SQLite3::get_film_streams(int film_id) {
+std::list<Database::Data::stream> Database::SQLite3::get_film_streams(const unsigned int& film_id) {
 	std::list<Data::stream> result;
 	auto stmt = m_prepared["getFilmStreams"];
 	sqlite3_bind_int(stmt, 1, film_id);
@@ -346,14 +337,14 @@ Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& s
 		result.white_point_y	= sqlite3_column_int(stmt, 7);
 		result.luminance_min	= sqlite3_column_int(stmt, 8);
 		result.luminance_max	= sqlite3_column_int(stmt, 9);
-		if (sqlite3_column_type(stmt, 10) != SQLITE_NULL) result.light_level_content	= sqlite3_column_int(stmt, 10);
-		if (sqlite3_column_type(stmt, 11) != SQLITE_NULL) result.light_level_average	= sqlite3_column_int(stmt, 11);
+		if (sqlite3_column_type(stmt, 10) != SQLITE_NULL && sqlite3_column_type(stmt, 11) != SQLITE_NULL)
+			result.light_level = std::make_pair(sqlite3_column_int(stmt, 10), sqlite3_column_int(stmt, 10));
 	}
 	reset_stmt(stmt);
 	return result;
 }
 
-std::optional<Database::Data::group> Database::SQLite3::get_group_data(unsigned int group_id) {
+std::optional<Database::Data::group> Database::SQLite3::get_group_data(const unsigned int& group_id) {
 	std::optional<Data::group> result;
 	auto stmt = m_prepared["getGroupData"];
 	sqlite3_bind_int(stmt, 1, group_id);
@@ -417,14 +408,14 @@ void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 	sqlite3_bind_int(stmt, 11, stream.HDR->white_point_y);
 	sqlite3_bind_int(stmt, 12, stream.HDR->luminance_min);
 	sqlite3_bind_int(stmt, 13, stream.HDR->luminance_max);
-	if (stream.HDR->light_level_content)
-		sqlite3_bind_int(stmt, 14, *stream.HDR->light_level_content);
-	else
+	if (stream.HDR->light_level) {
+		sqlite3_bind_int(stmt, 14, stream.HDR->light_level->first);
+		sqlite3_bind_int(stmt, 15, stream.HDR->light_level->second);
+	}
+	else {
 		sqlite3_bind_null(stmt, 14);
-	if (stream.HDR->light_level_average)
-		sqlite3_bind_int(stmt, 15, *stream.HDR->light_level_average);
-	else
 		sqlite3_bind_null(stmt, 15);
+	}	
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 }
@@ -447,7 +438,7 @@ void Database::SQLite3::reset_processing_films() {
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::delete_film(unsigned int film_id) {
+void Database::SQLite3::delete_film(const unsigned int& film_id) {
 	auto stmt = m_prepared["deleteFilm"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
@@ -456,21 +447,21 @@ void Database::SQLite3::delete_film(unsigned int film_id) {
 	delete_film_stream_HDR(film_id);
 }
 
-void Database::SQLite3::delete_film_stream(int film_id) {
+void Database::SQLite3::delete_film_stream(const unsigned int& film_id) {
 	auto stmt = m_prepared["deleteFilmStream"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::delete_film_stream_HDR(int film_id) {
+void Database::SQLite3::delete_film_stream_HDR(const unsigned int& film_id) {
 	auto stmt = m_prepared["deleteFilmStreamHDR"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::delete_group(unsigned int group_id) {
+void Database::SQLite3::delete_group(const unsigned int& group_id) {
 	auto stmt = m_prepared["deleteGroup"];
 	sqlite3_bind_int(stmt, 1, group_id);
 	sqlite3_step(stmt);
@@ -499,7 +490,7 @@ bool Database::SQLite3::is_group_in_database(const std::filesystem::path& path) 
 	return result;
 }
 
-bool Database::SQLite3::is_group_empty(unsigned int& group_id) {
+bool Database::SQLite3::is_group_empty(const unsigned int& group_id) {
 	bool result = false;
 	auto stmt = m_prepared["isGroupEmpty?"];
 	sqlite3_bind_int(stmt, 1, group_id);

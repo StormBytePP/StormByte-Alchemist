@@ -743,19 +743,20 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 	} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }, true));
 
 	if (buffer_str == "y" || buffer_str == "Y") {
+		int ll_content, ll_max;
 		do {
 			buffer_str = "";
 			std::cout << "light level content: ";
 			std::getline(std::cin, buffer_str);
-		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
-		HDR.light_level_content = buffer_int;
+		} while(!Utils::Input::to_int_positive(buffer_str, ll_content, true));
 
 		do {
 			buffer_str = "";
 			std::cout << "light level average: ";
 			std::getline(std::cin, buffer_str);
-		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
-		HDR.light_level_average = buffer_int;
+		} while(!Utils::Input::to_int_positive(buffer_str, ll_max, true));
+
+		HDR.light_level = std::make_pair(ll_content, ll_max);
 	}
 
 	return HDR;

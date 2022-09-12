@@ -2,11 +2,9 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Video::Copy::Copy(unsigned short stream_id): Stream::Video::Base(stream_id, "copy", Database::Data::VIDEO_COPY) {}
+Stream::Video::Copy::Copy(const unsigned short& stream_id): Stream::Video::Base(stream_id, "copy", Database::Data::VIDEO_COPY) {}
 
-Stream::Video::Copy* Stream::Video::Copy::copy() const {
-	return new Copy(*this);
-}
+Stream::Video::Copy::Copy(unsigned short&& stream_id): Stream::Video::Base(std::move(stream_id), "copy", Database::Data::VIDEO_COPY) {}
 
 std::list<std::string> Stream::Video::Copy::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();

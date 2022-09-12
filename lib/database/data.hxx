@@ -27,18 +27,17 @@ namespace StormByte::VideoConvert::Database::Data {
 	};
 
 	struct hdr {
-		int red_x;
-		int red_y;
-		int green_x;
-		int green_y;
-		int blue_x;
-		int blue_y;
-		int white_point_x;
-		int white_point_y;
-		int luminance_min;
-		int luminance_max;
-		std::optional<int> light_level_content;
-		std::optional<int> light_level_average;
+		unsigned int red_x;
+		unsigned int red_y;
+		unsigned int green_x;
+		unsigned int green_y;
+		unsigned int blue_x;
+		unsigned int blue_y;
+		unsigned int white_point_x;
+		unsigned int white_point_y;
+		unsigned int luminance_min;
+		unsigned int luminance_max;
+		std::optional<std::pair<unsigned int, unsigned int>> light_level;
 	};
 
 	/* Since these define their values on database they will all be defined even if not enabled */

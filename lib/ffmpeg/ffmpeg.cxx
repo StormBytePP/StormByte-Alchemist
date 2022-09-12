@@ -9,7 +9,9 @@ using namespace StormByte::VideoConvert;
 
 const std::list<const char*> FFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0" });
 
-FFmpeg::FFmpeg(unsigned int film_id, const std::filesystem::path& input_file, std::optional<Database::Data::group> group): m_film_id(film_id), m_input_file(input_file), m_group(group), m_container("mkv") {}
+FFmpeg::FFmpeg(const unsigned int& film_id, const std::filesystem::path& input_file, const std::optional<Database::Data::group>& group): m_film_id(film_id), m_input_file(input_file), m_group(group), m_container("mkv") {}
+
+FFmpeg::FFmpeg(unsigned int&& film_id, std::filesystem::path&& input_file, std::optional<Database::Data::group>&& group): m_film_id(film_id), m_input_file(std::move(input_file)), m_group(std::move(group)), m_container("mkv") {}
 
 void FFmpeg::add_stream(const Stream::Base& stream) {
 	m_streams.push_back(stream.clone());
