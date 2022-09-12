@@ -52,7 +52,7 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 		* Wrong order will cause libx265 to ignore HDR and not handling it!
 	*/
 
-	std::string result = "master-display=";
+	std::string result = "colorprim=bt2020:colormatrix=bt2020nc:transfer=smpte2084:master-display=";
 	result += "G(" + m_green.first + "," + m_green.second + ")";
 	result += "B(" + m_blue.first + "," + m_blue.second + ")";
 	result += "R(" + m_red.first + "," + m_red.second + ")";
@@ -74,7 +74,7 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 /********************************* HEVC *************************************/
 const std::string Stream::Video::HEVC::DEFAULT_MAX_BITRATE 	= "6M";
 const std::string Stream::Video::HEVC::DEFAULT_BUFFSIZE 	= "200M";
-const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3:colorprim=bt2020:colormatrix=bt2020nc";
+const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3";
 const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMIN);
 
 Stream::Video::HEVC::HEVC(unsigned short stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::VIDEO_HEVC) {
@@ -93,7 +93,7 @@ std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
 	std::string x265_params;
 	if (m_hdr)
-		x265_params = (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters() + ":transfer=smpte2084"); //Transfer only works with HDR it seems
+		x265_params = (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters());
 	else
 		x265_params = X265_PARAMS;
 

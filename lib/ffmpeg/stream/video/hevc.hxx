@@ -7,23 +7,23 @@ namespace StormByte::VideoConvert::Stream::Video {
 		public:
 			class HDR {
 				public:
-					HDR(unsigned int red_x,				unsigned int red_y,
-						unsigned int green_x,			unsigned int green_y,
-						unsigned int blue_x,			unsigned int blue_y,
-						unsigned int white_point_x,		unsigned int white_point_y,
-						unsigned int luminance_min,		unsigned int luminance_max);
-					HDR(unsigned int red_x,				unsigned int red_y,
-						unsigned int green_x,			unsigned int green_y,
-						unsigned int blue_x,			unsigned int blue_y,
-						unsigned int white_point_x,		unsigned int white_point_y,
-						unsigned int luminance_min,		unsigned int luminance_max,
-						unsigned int light_level_max,	unsigned int light_level_average);
+					HDR(unsigned int red_x,					unsigned int red_y,
+						unsigned int green_x,				unsigned int green_y,
+						unsigned int blue_x,				unsigned int blue_y,
+						unsigned int white_point_x,			unsigned int white_point_y,
+						unsigned int luminance_min,			unsigned int luminance_max);
+					HDR(unsigned int red_x,					unsigned int red_y,
+						unsigned int green_x,				unsigned int green_y,
+						unsigned int blue_x,				unsigned int blue_y,
+						unsigned int white_point_x,			unsigned int white_point_y,
+						unsigned int luminance_min,			unsigned int luminance_max,
+						unsigned int light_level_content,	unsigned int light_level_average);
 					HDR(const HDR& hdr) = default;
 					HDR(HDR&&) noexcept = default;
 					HDR& operator=(const HDR& hdr) = default;
 					HDR& operator=(HDR&& hdr) noexcept = default;
 					~HDR() = default;
-					void set_light_level(unsigned int light_level_max, unsigned int light_level_average);
+					void set_light_level(unsigned int light_level_content, unsigned int light_level_average);
 					std::string ffmpeg_parameters() const;
 
 					static const unsigned int DEFAULT_REDX, DEFAULT_REDY, DEFAULT_GREENX, DEFAULT_GREENY, DEFAULT_BLUEX, DEFAULT_BLUEY, DEFAULT_WHITEPOINTX, DEFAULT_WHITEPOINTY, DEFAULT_LUMINANCEMIN, DEFAULT_LUMINANCEMAX;

@@ -744,10 +744,10 @@ Database::Data::hdr Application::ask_stream_hdr() const {
 	if (buffer_str == "y" || buffer_str == "Y") {
 		do {
 			buffer_str = "";
-			std::cout << "light level max: ";
+			std::cout << "light level content: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::to_int_positive(buffer_str, buffer_int, true));
-		HDR.light_level_max = buffer_int;
+		HDR.light_level_content = buffer_int;
 
 		do {
 			buffer_str = "";

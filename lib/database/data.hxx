@@ -37,7 +37,7 @@ namespace StormByte::VideoConvert::Database::Data {
 		int white_point_y;
 		int luminance_min;
 		int luminance_max;
-		std::optional<int> light_level_max;
+		std::optional<int> light_level_content;
 		std::optional<int> light_level_average;
 	};
 

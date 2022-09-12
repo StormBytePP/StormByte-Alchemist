@@ -44,7 +44,7 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 		"white_point_y INTEGER NOT NULL,"
 		"luminance_min INTEGER NOT NULL,"
 		"luminance_max INTEGER NOT NULL,"
-		"light_level_max INTEGER,"
+		"light_level_content INTEGER,"
 		"light_level_average INTEGER,"
 		"PRIMARY KEY (film_id, stream_id, codec),"
 		"FOREIGN KEY (film_id, stream_id, codec) REFERENCES streams(id, film_id, codec) ON DELETE CASCADE"
@@ -58,11 +58,11 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"getFilmData",					"SELECT file, prio, processing, unsupported, group_id FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, is_animation, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
-	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
+	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getGroupData",				"SELECT folder FROM groups WHERE id = ?"},
 	{"insertFilm",					"INSERT INTO films(file, prio, group_id) VALUES (?, ?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, is_animation, max_rate, bitrate) VALUES (?, ?, ?, ?, ?, ?)"},
-	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_max, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
+	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
 	{"insertGroup",					"INSERT INTO groups(folder) VALUES (?) RETURNING id"},
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE, unsupported = FALSE"},
 	{"deleteFilm",					"DELETE FROM films WHERE id = ?"},
@@ -117,8 +117,8 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 												hdr_data.blue_x, hdr_data.blue_y,
 												hdr_data.white_point_x, hdr_data.white_point_y,
 												hdr_data.luminance_min, hdr_data.luminance_max);
-						if (hdr_data.light_level_max && hdr_data.light_level_average) {
-							hdr.set_light_level(*hdr_data.light_level_max, *hdr_data.light_level_average);
+						if (hdr_data.light_level_content && hdr_data.light_level_average) {
+							hdr.set_light_level(*hdr_data.light_level_content, *hdr_data.light_level_average);
 						}
 						codec.set_HDR(hdr);
 					}
@@ -346,7 +346,7 @@ Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& s
 		result.white_point_y	= sqlite3_column_int(stmt, 7);
 		result.luminance_min	= sqlite3_column_int(stmt, 8);
 		result.luminance_max	= sqlite3_column_int(stmt, 9);
-		if (sqlite3_column_type(stmt, 10) != SQLITE_NULL) result.light_level_max		= sqlite3_column_int(stmt, 10);
+		if (sqlite3_column_type(stmt, 10) != SQLITE_NULL) result.light_level_content	= sqlite3_column_int(stmt, 10);
 		if (sqlite3_column_type(stmt, 11) != SQLITE_NULL) result.light_level_average	= sqlite3_column_int(stmt, 11);
 	}
 	reset_stmt(stmt);
@@ -417,8 +417,8 @@ void Database::SQLite3::insert_HDR(const Data::stream& stream) {
 	sqlite3_bind_int(stmt, 11, stream.HDR->white_point_y);
 	sqlite3_bind_int(stmt, 12, stream.HDR->luminance_min);
 	sqlite3_bind_int(stmt, 13, stream.HDR->luminance_max);
-	if (stream.HDR->light_level_max)
-		sqlite3_bind_int(stmt, 14, *stream.HDR->light_level_max);
+	if (stream.HDR->light_level_content)
+		sqlite3_bind_int(stmt, 14, *stream.HDR->light_level_content);
 	else
 		sqlite3_bind_null(stmt, 14);
 	if (stream.HDR->light_level_average)
