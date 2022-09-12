@@ -57,6 +57,7 @@ namespace StormByte::VideoConvert {
 			void merge(const Configuration& config);
 			void merge(Configuration&& config) noexcept;
 			bool check(const OUTPUT_MODE& output_mode) const;
+			bool have_all_mandatory_values() const;
 
 			/* Constants */
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;

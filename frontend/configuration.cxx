@@ -89,6 +89,10 @@ bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
 	return errors.empty();
 }
 
+bool Configuration::have_all_mandatory_values() const {
+	return m_database && m_input && m_output && m_work && m_logfile && m_loglevel;
+}
+
 #ifdef DEBUG
 const std::list<std::pair<std::string, std::string>> Configuration::items() const {
 	return std::move(std::list<std::pair<std::string, std::string>> {

@@ -88,8 +88,9 @@ int Application::run(int argc, char** argv) noexcept {
 }
 
 void Application::init(Configuration&& cli_config) {
-	// First we store config file values then we overwrite with CLI values
-	m_config = std::move(read_config(cli_config.get_config_file()));
+	// If we have already all values in CLI we don't look further
+	if (!cli_config.have_all_mandatory_values())
+		m_config = std::move(read_config(cli_config.get_config_file()));
 	m_config.merge(std::move(cli_config));
 	
 
@@ -172,7 +173,7 @@ Configuration Application::read_cli(int argc, char** argv) {
 			else if (argument == "-s" || argument == "--sleep") {
 				if (++counter < argc) {
 					int sleep;
-					if (Utils::Input::to_int_positive(argv[counter++], sleep) || sleep < 0)
+					if (!Utils::Input::to_int_positive(argv[counter++], sleep))
 						throw std::runtime_error("Sleep time is not recognized as integer or it has a negative value");
 					config.set_sleep_time(sleep);
 				}
@@ -287,7 +288,7 @@ void Application::help() const {
 	std::cout << "\t-w, --work <folder>\tSpecify temprary working folder to store files while being converted" << std::endl;
 	std::cout << "\t-l, --logfile <file>\tSpecify a file for storing logs" << std::endl;
 	std::cout << "\t-ll,--loglevel <level>\tSpecify which loglevel to display (Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << ")" << std::endl; 
-	std::cout << "\t-s, --sleep <seconds>\tSpecify the time to sleep in main loop. Of course should be positive integer unless you are my boyfriend and have that ability ;)" << std::endl;
+	std::cout << "\t-s, --sleep <seconds>\tSpecify the time to sleep in main loop. It should be positive integer unless you are my boyfriend and have that ability ;)" << std::endl;
 	std::cout << "\t-of,--onfinish <action>\tSpecify action to take once film is converted. Accepted values are copy and move" << std::endl;
 	std::cout << "\t-v, --version\t\tShow version and compile information" << std::endl;
 	std::cout << "\t-h, --help\t\tShow this message" << std::endl;
