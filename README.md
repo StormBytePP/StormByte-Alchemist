@@ -6,7 +6,7 @@ This is a program to handle automatic ffmpeg conversions between downloaded vide
 
 ### Requirements
 
-* Compiler with C++17 support
+* Compiler with C++20 support
 * [libConfig++](http://hyperrealm.github.io/libconfig) A library to parse config files
 * [SQlite3](https://www.sqlite.org/index.html) A lite database manager
 * [FFmpeg](https://ffmpeg.org) Multimedia converter software

@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 # set the project name and version
 project("StormByte Video Converter"
-	VERSION 1.3.2
+	VERSION 0.0.1
 	DESCRIPTION "This is a program to handle automatic ffmpeg conversions between downloaded videos in order to format them to be properly stored"
 	HOMEPAGE_URL "David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>"
 )
+
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -Wall -Wextra -Werror -pedantic")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -17,6 +18,7 @@ endif()
 find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
 find_package (Boost REQUIRED)
+find_package (Git REQUIRED)
 
 # Encoder support
 option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)

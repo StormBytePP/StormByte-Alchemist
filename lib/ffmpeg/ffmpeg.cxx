@@ -21,34 +21,34 @@ pid_t FFmpeg::exec(const std::filesystem::path& in_base, const std::filesystem::
 	const auto full_in_file_path = in_base / get_input_file(), full_out_file_path = out_base / get_output_file();
 
 	// Output debug info
-	logger.get()->message_line(Utils::Logger::LEVEL_DEBUG, "FFmpeg film ID " + std::to_string(m_film_id) + ":");
-	logger.get()->message_line(Utils::Logger::LEVEL_DEBUG, "\tInput file: " + full_in_file_path.string());
-	logger.get()->message_line(Utils::Logger::LEVEL_DEBUG, "\tOutput file: " + full_out_file_path.string());
-	logger.get()->message_line(Utils::Logger::LEVEL_DEBUG, "\t" + std::to_string(m_streams.size()) + " streams");
+	logger->message_line(Utils::Logger::LEVEL_DEBUG, "FFmpeg film ID " + std::to_string(m_film_id) + ":");
+	logger->message_line(Utils::Logger::LEVEL_DEBUG, "\tInput file: " + full_in_file_path.string());
+	logger->message_line(Utils::Logger::LEVEL_DEBUG, "\tOutput file: " + full_out_file_path.string());
+	logger->message_line(Utils::Logger::LEVEL_DEBUG, "\t" + std::to_string(m_streams.size()) + " streams");
 
 	for (auto it = m_streams.begin(); it != m_streams.end(); it++)
-		logger.get()->message_line(Utils::Logger::LEVEL_DEBUG, std::string("\t\t(") + (*it)->get_type() + ") " + (*it)->get_encoder());
+		logger->message_line(Utils::Logger::LEVEL_DEBUG, std::string("\t\t(") + (*it)->get_type() + ") " + (*it)->get_encoder());
 
 	auto params = parameters(in_base, out_base);
 	// Output debug parameters and prepare c-like array
-	logger.get()->message_part_begin(Utils::Logger::LEVEL_DEBUG, "Will use the following parameters: ");
+	logger->message_part_begin(Utils::Logger::LEVEL_DEBUG, "Will use the following parameters: ");
 	std::unique_ptr<char*[]> parameters(new char*[params.size() + 1]); // ISO C++ forbids variable length array
 	for (size_t i = 0; i < params.size(); i++) {
-		logger.get()->message_part_continue(Utils::Logger::LEVEL_DEBUG, params[i] + " ");
-		parameters.get()[i] = const_cast<char*>(params[i].c_str());
+		logger->message_part_continue(Utils::Logger::LEVEL_DEBUG, params[i] + " ");
+		parameters[i] = const_cast<char*>(params[i].c_str());
 	}
-	logger.get()->message_part_end(Utils::Logger::LEVEL_DEBUG, "");
-	parameters.get()[params.size()] = nullptr;
+	logger->message_part_end(Utils::Logger::LEVEL_DEBUG, "");
+	parameters[params.size()] = nullptr;
 
 	// Create folders if needed
 	if (!std::filesystem::exists(full_out_file_path.parent_path())) {
-		logger.get()->message_line(Utils::Logger::LEVEL_NOTICE, "Create work: " + full_out_file_path.parent_path().string());
+		logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create work: " + full_out_file_path.parent_path().string());
 		std::filesystem::create_directories(full_out_file_path.parent_path());
 	}
 
 	pid_t pid = fork();
 	if (pid == 0) {
-		execvp(Application::FFMPEG_EXECUTABLE.c_str(), parameters.get());
+		execvp(Application::FFMPEG_EXECUTABLE.c_str(), parameters.get()); // Here get() is needed as there is no operator* for this case
 	}
 
 	return pid;

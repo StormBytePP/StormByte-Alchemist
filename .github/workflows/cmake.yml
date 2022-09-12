@@ -2,9 +2,9 @@ name: CMake
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -24,7 +24,7 @@ jobs:
       run: sudo apt update
     
     - name: Install needed deps   
-      run: sudo apt install -y libconfig++-dev libboost-all-dev libsqlite3-dev ffmpeg
+      run: sudo apt install -y libboost-all-dev libconfig++-dev libsqlite3-dev ffmpeg git
       
     - name: Install GCC11
       shell: bash

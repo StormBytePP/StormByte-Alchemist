@@ -10,11 +10,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
 mark_as_advanced(FFMPEG_EXECUTABLE)
 
+# Manually set VERSION_UPDATE_FROM_GIT to true to update version from last tag
+include(${PROJECT_SOURCE_DIR}/cmake/GetVersionFromGitTag.cmake)
 file(CONFIGURE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version.hxx CONTENT "
 const std::string StormByte::VideoConvert::Application::PROGRAM_NAME 			= \"StormByte-videoconvert\";
 const std::string StormByte::VideoConvert::Application::PROGRAM_DESCRIPTION		= \"${PROJECT_DESCRIPTION}\";
 const std::string StormByte::VideoConvert::Application::PROGRAM_AUTHOR 			= \"${PROJECT_HOMEPAGE_URL}\";
-const std::string StormByte::VideoConvert::Application::PROGRAM_VERSION 		= \"${CMAKE_PROJECT_VERSION}\";
+const std::string StormByte::VideoConvert::Application::PROGRAM_VERSION 		= \"${${PROJECT_NAME}_VERSION_STRING}\";
 
 const std::string StormByte::VideoConvert::Application::COMPILER_NAME			= \"${CMAKE_CXX_COMPILER_ID}\";
 const std::string StormByte::VideoConvert::Application::COMPILER_VERSION		= \"${CMAKE_CXX_COMPILER_VERSION}\";
