@@ -16,8 +16,6 @@ namespace StormByte::VideoConvert {
 			Configuration& operator=(Configuration&& config) noexcept = default;
 			~Configuration() = default;
 
-			enum OUTPUT_MODE { OUTPUT_CERR, OUTPUT_LOGGER };
-
 			/* Getters */
 			inline const std::optional<std::filesystem::path>& get_database_file() const { return m_database; }
 			inline const std::optional<std::filesystem::path>& get_input_folder() const { return m_input; }
@@ -56,7 +54,7 @@ namespace StormByte::VideoConvert {
 			/* Functions */
 			void merge(const Configuration& config);
 			void merge(Configuration&& config) noexcept;
-			bool check(const OUTPUT_MODE& output_mode) const;
+			bool check() const;
 			bool have_all_mandatory_values() const;
 
 			/* Constants */

@@ -38,7 +38,7 @@ void Configuration::merge(Configuration&& config) noexcept {
 	if (config.m_interactive_parameter) m_interactive_parameter	= std::move(config.m_interactive_parameter);
 }
 
-bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
+bool Configuration::check() const {
 	std::list<std::string> errors;
 
 	if (!m_database)
@@ -73,17 +73,8 @@ bool Configuration::check(const Configuration::OUTPUT_MODE& output_mode) const {
 
 	if (!errors.empty()) {
 		errors.push_front("Found " + std::to_string(errors.size()) + " errors in configuration:");
-		for (auto it = errors.begin(); it != errors.end(); it++) {
-			switch(output_mode) {
-				case OUTPUT_CERR:
-					std::cerr << (*it) << std::endl;
-					break;
-
-				case OUTPUT_LOGGER:
-					Application::get_instance().get_logger()->message_line(Utils::Logger::LEVEL_ERROR, "\t*" + (*it));
-					break;
-			}
-		}
+		for (auto it = errors.begin(); it != errors.end(); it++)
+			std::cerr << (*it) << std::endl;
 	}
 
 	return errors.empty();

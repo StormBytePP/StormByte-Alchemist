@@ -1,8 +1,5 @@
 #pragma once
 
-#include <filesystem>
-#include <vector>
-
 /* For convenience, all usable codecs are included here */
 #ifdef ENABLE_HEVC
 #include "stream/video/hevc.hxx"
@@ -22,13 +19,14 @@
 #ifdef ENABLE_OPUS
 #include "stream/audio/opus.hxx"
 #endif
-
 #include "stream/video/copy.hxx"
 #include "stream/audio/copy.hxx"
 #include "stream/subtitle/copy.hxx"
 #include "database/data.hxx"
+#include "utils/logger.hxx"
 
-namespace StormByte::VideoConvert::Utils { class Logger; }
+#include <filesystem>
+#include <vector>
 
 namespace StormByte::VideoConvert {
 	class FFmpeg {
@@ -44,7 +42,7 @@ namespace StormByte::VideoConvert {
 			enum STATUS { CONVERT_QUEUE = 0, CONVERT_PROCESSING, CONVERT_OK, CONVERT_ERROR };
 
 			void add_stream(const Stream::Base&);
-			pid_t exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base) const;
+			pid_t exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base, std::shared_ptr<Utils::Logger> logger) const;
 
 			/* Setters */
 			inline void set_status(const STATUS& status) { m_status = status; }

@@ -1,7 +1,7 @@
 #!/sbin/openrc-run
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-extra_commands="configtest reload wakeup"
+extra_commands="configtest wakeup"
 
 PIDFILE="/var/run/StormByte-videoconvert.pid"
 COMMAND="/usr/bin/StormByte-videoconvert"
@@ -27,12 +27,6 @@ stop() {
 configtest() {
 	ebegin "Checking for StormByte-videoconvert daemon start without starting it"
 	start-stop-daemon --start --user ${USER} --exec ${COMMAND} -- -c > /dev/null
-	eend $?
-}
-
-reload() {
-	ebegin "Reloading StormByte-videoconvert config"
-	start-stop-daemon --pidfile $PIDFILE --signal SIGUSR1
 	eend $?
 }
 

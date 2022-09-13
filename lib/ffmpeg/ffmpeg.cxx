@@ -17,8 +17,7 @@ void FFmpeg::add_stream(const Stream::Base& stream) {
 	m_streams.push_back(stream.clone());
 }
 
-pid_t FFmpeg::exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base) const {
-	std::shared_ptr<Utils::Logger> logger = Application::get_instance().get_logger();
+pid_t FFmpeg::exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base, std::shared_ptr<Utils::Logger> logger) const {
 	// Full path in and out (from FFmpeg's point of view, which means, out is work from Application point of view)
 	const auto full_in_file_path = in_base / get_input_file(), full_out_file_path = out_base / get_output_file();
 

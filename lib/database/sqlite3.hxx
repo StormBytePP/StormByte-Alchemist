@@ -2,6 +2,7 @@
 
 #include "data.hxx"
 #include "ffmpeg/ffmpeg.hxx"
+#include "utils/logger.hxx"
 
 #include <filesystem>
 #include <map>
@@ -10,7 +11,7 @@
 namespace StormByte::VideoConvert::Database {
 	class SQLite3 {
 		public:
-			SQLite3(const std::filesystem::path& dbfile);
+			SQLite3(const std::filesystem::path& dbfile, std::shared_ptr<Utils::Logger> logger = std::shared_ptr<Utils::Logger>());
 			SQLite3(const SQLite3& db) = delete;
 			SQLite3(SQLite3&& db) = delete;
 			SQLite3& operator=(const SQLite3& db) = delete;
@@ -35,6 +36,7 @@ namespace StormByte::VideoConvert::Database {
 		private:
 			sqlite3* m_database;
 			std::map<std::string, sqlite3_stmt*> m_prepared;
+			std::shared_ptr<Utils::Logger> m_logger;
 			static const std::string DATABASE_CREATE_SQL;
 			static const std::map<std::string, std::string> DATABASE_PREPARED_SENTENCES;
 

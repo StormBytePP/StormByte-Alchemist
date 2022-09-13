@@ -1,5 +1,4 @@
 #include "sqlite3.hxx"
-#include "application.hxx"
 
 #include <stdexcept>
 
@@ -73,7 +72,7 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"deleteGroup",					"DELETE FROM groups WHERE id = ?"}
 };
 
-Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
+Database::SQLite3::SQLite3(const std::filesystem::path& dbfile, std::shared_ptr<Utils::Logger> logger):m_logger(logger) {
 	int rc = sqlite3_open(dbfile.c_str(), &m_database);
 
 	if (rc != SQLITE_OK) {
@@ -85,6 +84,7 @@ Database::SQLite3::SQLite3(const std::filesystem::path& dbfile) {
 	prepare_sentences();
 	
 }
+
 Database::SQLite3::~SQLite3() {
 	for (auto it = m_prepared.begin(); it != m_prepared.end(); it++) {
 		sqlite3_finalize(it->second);
@@ -97,7 +97,6 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 	begin_exclusive_transaction();
 	std::optional<FFmpeg> ffmpeg;
 	std::optional<unsigned int> film_id = get_film_id_for_process();
-	auto logger = Application::get_instance().get_logger();
 
 	if (film_id) {
 		std::optional<Data::film> film_data = get_film_data(*film_id);
@@ -182,17 +181,17 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 
 			// We now check if we have unsupported codecs
 			if (unsupported_codecs.empty()) {
-				logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as processing");
+				if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as processing");
 				set_film_processing_status(film.get_film_id(), true);
 				ffmpeg.emplace(std::move(film));
 			}
 			else {
-				logger->message_part_begin(Utils::Logger::LEVEL_ERROR, "The file " + film.get_input_file().string() + " has the following unsupported codecs: ");
+				if (m_logger) m_logger->message_part_begin(Utils::Logger::LEVEL_ERROR, "The file " + film.get_input_file().string() + " has the following unsupported codecs: ");
 				for (auto it = unsupported_codecs.begin(); it != unsupported_codecs.end(); it++) {
-					logger->message_part_continue(Utils::Logger::LEVEL_ERROR, Database::Data::film::stream::codec_string.at(*it) + ", ");
+					if (m_logger) m_logger->message_part_continue(Utils::Logger::LEVEL_ERROR, Database::Data::film::stream::codec_string.at(*it) + ", ");
 				}
-				logger->message_part_end(Utils::Logger::LEVEL_ERROR, "and therefore could NOT be converted!");
-				logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as unsupported");
+				if (m_logger) m_logger->message_part_end(Utils::Logger::LEVEL_ERROR, "and therefore could NOT be converted!");
+				if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as unsupported");
 				set_film_unsupported_status(film.get_film_id(), true);
 			}
 		}
@@ -231,7 +230,7 @@ bool Database::SQLite3::check_database() {
 }
 
 void Database::SQLite3::init_database() {
-	Application::get_instance().get_logger()->message_line(Utils::Logger::LEVEL_NOTICE, "Constructing database");
+	if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Constructing database");
 	char* err_msg = NULL;
 	int rc = sqlite3_exec(m_database, DATABASE_CREATE_SQL.c_str(), nullptr, nullptr, &err_msg);
 	if (rc != SQLITE_OK) throw_error(err_msg);
@@ -252,24 +251,28 @@ void Database::SQLite3::begin_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
 	sqlite3_free(err_msg);
+	if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Database transaction started");
 }
 
 void Database::SQLite3::begin_exclusive_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "BEGIN EXCLUSIVE TRANSACTION;", nullptr, nullptr, &err_msg);
 	sqlite3_free(err_msg);
+	if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Database EXCLUSIVE transaction started");
 }
 
 void Database::SQLite3::commit_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "COMMIT;", nullptr, nullptr, &err_msg);
 	sqlite3_free(err_msg);
+	if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Database transaction commited");
 }
 
 void Database::SQLite3::rollback_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "ROLLBACK;", nullptr, nullptr, &err_msg);
 	sqlite3_free(err_msg);
+	if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Database transaction ABORTED");
 }
 
 void Database::SQLite3::prepare_sentences() {
@@ -313,6 +316,7 @@ std::optional<Database::Data::film> Database::SQLite3::get_film_data(const unsig
 	sqlite3_bind_int(stmt, 1, film_id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		Data::film film;
+		film.m_id			= film_id;
 		film.m_file 		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
 		film.m_priority		= static_cast<Data::film::priority>(sqlite3_column_int(stmt, 1));
 		film.m_processing	= sqlite3_column_int(stmt, 2);
