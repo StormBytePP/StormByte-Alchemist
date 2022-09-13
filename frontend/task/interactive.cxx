@@ -96,7 +96,7 @@ std::optional<std::list<Database::Data::film>> Task::Interactive::ask_film_data(
 			std::cout << "\t* " << (*it) << "\n";
 		std::cout << std::endl;
 		do {
-			std::cout << "Do you wish to continue? [y/n]: ";
+			std::cout << "Do you wish to continue? [(y)es/(n)o]: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
 		if (buffer_str == "n" || buffer_str == "N") return std::optional<std::list<Database::Data::film>>();
@@ -117,7 +117,7 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 	do {
 		std::string buffer_str;		
 		do {
-			std::cout << "Select stream type; video(v), audio(a) or subtitles(s): ";
+			std::cout << "Select stream type [(v)ideo, (a)udio or (s)ubtitles]: ";
 			std::getline(std::cin, buffer_str);
 		} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
 		char codec_type = tolower(buffer_str[0]);
@@ -134,7 +134,7 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 			if (continue_asking_any)
 				do {
 					buffer_str = "";
-					std::cout << "Add another stream? [y/n]: ";
+					std::cout << "Add another stream? [(y)es/(n)o]: ";
 					std::getline(std::cin, buffer_str);
 				} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
 			else
@@ -153,7 +153,7 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 	int buffer_int;
 
 	do {
-		std::cout << "Input stream(" << codec_type << ") FFmpeg ID (-1 to select all streams for type " << codec_type << "): ";
+		std::cout << "Input stream(" << codec_type << ") FFmpeg ID (-1 to select all streams for this type: ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::to_int_minimum(buffer_str, buffer_int, -1, true));
 	stream.m_id = buffer_int;
@@ -183,7 +183,7 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
 				buffer_str = "";
-				std::cout << "Is an animated movie? [y/n]: ";
+				std::cout << "Is an animated movie? [(y)es/(n)o]: ";
 				std::getline(std::cin, buffer_str);
 			} while (!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
 			if (buffer_str == "y" || buffer_str == "Y")
@@ -193,7 +193,7 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 		#ifdef ENABLE_HEVC
 		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
-				std::cout << "Does it have HDR? [y/n]: ";
+				std::cout << "Does it have HDR? [(y)es/(n)o]: ";
 				std::getline(std::cin, buffer_str);
 			} while(!Utils::Input::in_options(
 				buffer_str,
@@ -348,7 +348,7 @@ Database::Data::film::stream::hdr Task::Interactive::ask_stream_hdr() const {
 
 	do {
 		buffer_str = "";
-		std::cout << "Does it have light level data? [y/n]: ";
+		std::cout << "Does it have light level data? [(y)es/(n)o]: ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }, true));
 
