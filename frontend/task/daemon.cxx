@@ -1,5 +1,6 @@
 #include "daemon.hxx"
 #include "application.hxx"
+#include "task/execute_ffmpeg.hxx"
 
 #include <iostream>
 #include <csignal>
@@ -54,13 +55,15 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 	const std::filesystem::path full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const std::filesystem::path full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
 
-	m_worker = ffmpeg.exec(*m_config->get_input_folder(), *m_config->get_work_folder(), m_logger);
-	int status;
-	wait(&status);
+	//m_worker = ffmpeg.exec(*m_config->get_input_folder(), *m_config->get_work_folder(), m_logger);
+	Task::ExecuteFFmpeg(ffmpeg).run(m_config);
+	int exit_status;
+	wait(&exit_status);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	m_worker.reset(); // Worker has finished
-	if (status == 0) {
-		ffmpeg.set_status(FFmpeg::CONVERT_OK);
+	bool status;
+	if (exit_status == 0) {
+		status = true;
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + elapsed_time(begin, end));
 		if (!std::filesystem::exists(full_output_file.parent_path())) {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
@@ -80,14 +83,14 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 			std::filesystem::remove(full_input_file);
 	}
 	else {
-		ffmpeg.set_status(FFmpeg::CONVERT_ERROR);
+		status = false;
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + ffmpeg.get_input_file().string() + " failed or interrupted!");
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting work file: " + full_work_file.string());
 		std::filesystem::remove(full_work_file);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + full_work_file.string() + " as unsupported in database");
 	}
 
-	m_database->finish_film_process(ffmpeg);
+	m_database->finish_film_process(ffmpeg, status);
 	if (ffmpeg.get_group() && m_database->is_group_empty(*ffmpeg.get_group())) {
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*m_config->get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
 		std::filesystem::remove_all(*m_config->get_input_folder() / ffmpeg.get_group()->folder);

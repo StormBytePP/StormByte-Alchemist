@@ -13,8 +13,5 @@ namespace StormByte::VideoConvert::Utils {
 			static bool in_range(const int& number, const int& min, const int& max, const bool& use_cerr = false);
 			static bool in_options(const std::string& input, const std::list<std::string>& options, const bool& use_cerr = false);
 			static bool in_options(const std::string& input, const std::list<int>& options, const bool& use_cerr = false);
-
-		private:	
-			static std::string list_to_string(const std::list<std::string>& list_of_strings);
 	};
 }

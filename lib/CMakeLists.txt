@@ -11,7 +11,10 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	utils/logger.cxx
 	utils/filesystem.cxx
 	utils/input.cxx
+	utils/display.cxx
 	task/base.cxx
+	task/execute.cxx
+	task/execute_ffmpeg.cxx
 )
 
 if (ENABLE_HEVC)

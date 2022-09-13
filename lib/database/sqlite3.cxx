@@ -200,24 +200,13 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 	return ffmpeg;
 }
 
-void Database::SQLite3::finish_film_process(const FFmpeg& ffmpeg) {
+void Database::SQLite3::finish_film_process(const FFmpeg& ffmpeg, const bool& status) {
 	begin_exclusive_transaction();
 
-	switch(ffmpeg.get_status()) {
-		case FFmpeg::CONVERT_OK:
-			delete_film(ffmpeg.get_film_id());
-			break;
-
-		case FFmpeg::CONVERT_ERROR:
-			set_film_unsupported_status(ffmpeg.get_film_id(), true);
-			break;
-
-		case FFmpeg::CONVERT_QUEUE:
-		case FFmpeg::CONVERT_PROCESSING:
-		default:
-			// No operation
-			break;
-	}
+	if (status)
+		delete_film(ffmpeg.get_film_id());
+	else
+		set_film_unsupported_status(ffmpeg.get_film_id(), true);
 
 	commit_transaction();
 }

@@ -26,7 +26,7 @@ namespace StormByte::VideoConvert::Database {
 
 			/* Write data */
 			std::optional<FFmpeg> get_film_for_process();
-			void finish_film_process(const FFmpeg& ffmpeg);
+			void finish_film_process(const FFmpeg& ffmpeg, const bool& status);
 			void reset_processing_films();
 			std::optional<unsigned int> insert_film(const Data::film& film);
 			bool insert_films(const std::list<Data::film>& films);

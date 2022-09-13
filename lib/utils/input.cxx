@@ -1,4 +1,5 @@
 #include "input.hxx"
+#include "display.hxx"
 
 #include <cstdlib>
 #include <iostream>
@@ -54,7 +55,7 @@ bool Utils::Input::in_range(const int& number, const int& min, const int& max, c
 bool Utils::Input::in_options(const std::string& input, const std::list<std::string>& options, const bool& use_cerr) {
 	if (std::find(options.begin(), options.end(), input) == options.end()) {
 		if (use_cerr) {
-			std::cerr << "Selected option " << input << " not found in " << list_to_string(options) << std::endl;
+			std::cerr << "Selected option " << input << " not found in " << Display::list_to_string(options, "[", " ", "]") << std::endl;
 		}
 		return false;
 	}
@@ -62,14 +63,3 @@ bool Utils::Input::in_options(const std::string& input, const std::list<std::str
 		return true;
 	}
 }
-
-std::string Utils::Input::list_to_string(const std::list<std::string>& list_of_strings) {
-	std::string result ="[ ";
-	
-	for (std::string i: list_of_strings)
-		result += i + " ";
-	result += "]";
-
-	return result;
-}
-
