@@ -5,7 +5,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::Base::Base():m_status(STOPPED) {}
+Task::Base::Base():m_status(STOPPED), m_require_logger(false), m_require_database(false) {}
 
 std::string Task::Base::elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const {
 	/* NOTE: Until C++20's <format> support is complete, I just use this aproach */
@@ -27,8 +27,8 @@ Task::STATUS Task::Base::run(std::shared_ptr<Configuration> config) noexcept {
 	m_status = RUNNING;
 	try {
 		m_config = config;
-		m_logger.reset(new Utils::Logger(*m_config->get_log_file(), static_cast<Utils::Logger::LEVEL>(*m_config->get_log_level())));
-		m_database.reset(new Database::SQLite3(*m_config->get_database_file(), m_logger));
+		if (m_require_logger) m_logger.reset(new Utils::Logger(*m_config->get_log_file(), static_cast<Utils::Logger::LEVEL>(*m_config->get_log_level())));
+		if (m_require_database) m_database.reset(new Database::SQLite3(*m_config->get_database_file(), m_logger));
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << std::endl;

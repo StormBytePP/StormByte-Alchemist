@@ -10,7 +10,10 @@ using namespace StormByte::VideoConvert;
 Task::Daemon::Daemon():Base() {
 	signal(SIGTERM,	signal_handler);
 	signal(SIGINT,	signal_handler);
-	signal(SIGUSR1,	signal_handler); // Wakeup
+	signal(SIGUSR1,	signal_handler); // Wakeupç
+
+	m_require_logger = true;
+	m_require_database = true;
 }
 
 Task::Daemon& Task::Daemon::get_instance() {

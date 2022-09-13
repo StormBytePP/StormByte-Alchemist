@@ -29,5 +29,6 @@ namespace StormByte::VideoConvert::Task {
 			std::shared_ptr<Utils::Logger> m_logger;
 			std::unique_ptr<Database::SQLite3> m_database;
 			STATUS m_status;
+			bool m_require_logger, m_require_database;
 	};
 }

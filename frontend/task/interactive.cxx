@@ -13,6 +13,9 @@ using namespace StormByte::VideoConvert;
 
 Task::Interactive::Interactive():Task::Base() {
 	signal(SIGINT,	signal_handler);
+
+	m_require_logger = false;
+	m_require_database = true;
 }
 
 Task::Interactive& Task::Interactive::get_instance() {

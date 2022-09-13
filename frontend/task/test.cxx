@@ -2,6 +2,11 @@
 
 using namespace StormByte::VideoConvert;
 
+Task::Test::Test():Base() {
+	m_require_logger = true;
+	m_require_database = true;
+}
+
 Task::Test& Task::Test::get_instance() {
 	static Test instance;
 	return instance;

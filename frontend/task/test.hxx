@@ -16,6 +16,6 @@ namespace StormByte::VideoConvert::Task {
 			STATUS run(std::shared_ptr<Configuration> config) noexcept override;
 
 		private:
-			Test() = default;
+			Test();
 	};
 }
