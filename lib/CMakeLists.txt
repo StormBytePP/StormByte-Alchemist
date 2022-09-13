@@ -11,6 +11,7 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	utils/logger.cxx
 	utils/filesystem.cxx
 	utils/input.cxx
+	task/base.cxx
 )
 
 if (ENABLE_HEVC)

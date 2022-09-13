@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.hxx"
+#include "task/base.hxx"
 
 namespace StormByte::VideoConvert::Task {
 	class Interactive: public Base {
