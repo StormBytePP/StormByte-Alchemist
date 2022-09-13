@@ -6,10 +6,10 @@
 namespace StormByte::VideoConvert::Task {
 	class Daemon: public Base {
 		public:
-			Daemon(const Daemon& daemon) = default;
-			Daemon(Daemon&& daemon) noexcept = default;
-			Daemon& operator=(const Daemon& daemon) = default;
-			Daemon& operator=(Daemon&& daemon) noexcept = default;
+			Daemon(const Daemon& daemon) = delete;
+			Daemon(Daemon&& daemon) noexcept = delete;
+			Daemon& operator=(const Daemon& daemon) = delete;
+			Daemon& operator=(Daemon&& daemon) noexcept = delete;
 			~Daemon() noexcept = default;
 
 			static Daemon& get_instance();
