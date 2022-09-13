@@ -27,29 +27,29 @@ const std::list<std::string> Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
 	".mkv", ".mp4" 
 };
 
-const std::list<Database::Data::stream_codec> Application::SUPPORTED_CODECS = {
+const std::list<Database::Data::film::stream::codec> Application::SUPPORTED_CODECS = {
 	#ifdef ENABLE_HEVC
-	Database::Data::VIDEO_HEVC,
+	Database::Data::film::stream::VIDEO_HEVC,
 	#endif
 	#ifdef ENABLE_AAC
-	Database::Data::AUDIO_AAC,
+	Database::Data::film::stream::AUDIO_AAC,
 	#endif
 	#ifdef ENABLE_FDKAAC
-	Database::Data::AUDIO_FDKAAC,
+	Database::Data::film::stream::AUDIO_FDKAAC,
 	#endif
 	#ifdef ENABLE_AC3
-	Database::Data::AUDIO_AC3,
+	Database::Data::film::stream::AUDIO_AC3,
 	#endif
 	#ifdef ENABLE_EAC3
-	Database::Data::AUDIO_EAC3,
+	Database::Data::film::stream::AUDIO_EAC3,
 	#endif
 	#ifdef ENABLE_OPUS
-	Database::Data::AUDIO_OPUS,
+	Database::Data::film::stream::AUDIO_OPUS,
 	#endif
 	
-	Database::Data::VIDEO_COPY,
-	Database::Data::AUDIO_COPY,
-	Database::Data::SUBTITLE_COPY
+	Database::Data::film::stream::VIDEO_COPY,
+	Database::Data::film::stream::AUDIO_COPY,
+	Database::Data::film::stream::SUBTITLE_COPY
 };
 
 Application::Application(): m_status(HALT_ERROR) {
@@ -343,21 +343,19 @@ int Application::daemon() {
 	return (m_status == HALT_OK) ? 0 : 1;
 }
 
-void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
+void Application::execute_ffmpeg(FFmpeg& ffmpeg) {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	const std::filesystem::path full_input_file = *m_config.get_input_folder() / ffmpeg.get_input_file();
 	const std::filesystem::path full_work_file = *m_config.get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const std::filesystem::path full_output_file = *m_config.get_output_folder() / ffmpeg.get_output_file();
 
-
-	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + ffmpeg.get_input_file().string() + " as being processed in database");
-	m_database->set_film_processing_status(ffmpeg.get_film_id(), true);
 	m_worker = ffmpeg.exec(*m_config.get_input_folder(), *m_config.get_work_folder());
 	int status;
 	wait(&status);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	m_worker.reset(); // Worker has finished
 	if (status == 0) {
+		ffmpeg.set_status(FFmpeg::CONVERT_OK);
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + elapsed_time(begin, end));
 		if (!std::filesystem::exists(full_output_file.parent_path())) {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
@@ -375,23 +373,22 @@ void Application::execute_ffmpeg(const FFmpeg& ffmpeg) {
 		}
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
 			std::filesystem::remove(full_input_file);
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete film from database");
-		m_database->delete_film(ffmpeg.get_film_id());
-		if (ffmpeg.get_group() && m_database->is_group_empty(ffmpeg.get_group()->id)) {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*m_config.get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
-			std::filesystem::remove_all(*m_config.get_input_folder() / ffmpeg.get_group()->folder);
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group work folder: " + (*m_config.get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
-			std::filesystem::remove_all(*m_config.get_work_folder() / ffmpeg.get_group()->folder);
-			m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Delete group from database");
-			m_database->delete_group(ffmpeg.get_group()->id);
-		}
 	}
 	else {
+		ffmpeg.set_status(FFmpeg::CONVERT_ERROR);
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + ffmpeg.get_input_file().string() + " failed or interrupted!");
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting work file: " + full_work_file.string());
 		std::filesystem::remove(full_work_file);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + full_work_file.string() + " as unsupported in database");
-		m_database->set_film_unsupported_status(ffmpeg.get_film_id(), false);
+	}
+
+	m_database->finish_film_process(ffmpeg);
+	if (ffmpeg.get_group() && m_database->is_group_empty(*ffmpeg.get_group())) {
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*m_config.get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+		std::filesystem::remove_all(*m_config.get_input_folder() / ffmpeg.get_group()->folder);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group work folder: " + (*m_config.get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+		std::filesystem::remove_all(*m_config.get_work_folder() / ffmpeg.get_group()->folder);
+		m_database->delete_group(*ffmpeg.get_group());
 	}
 }
 
@@ -418,7 +415,11 @@ int Application::interactive() {
 	if (!films) return 1;
 	auto streams = std::move(ask_streams());
 
-	if (add_films_to_database(std::move(*films), std::move(streams)))
+	// Now we put the streams into all films
+	for (auto film = films->begin(); film != films->end(); film++)
+		film->m_streams = streams;
+
+	if (add_films_to_database(std::move(*films)))
 		return 0;
 	else
 		return 1;
@@ -434,20 +435,20 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data() cons
 		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(2), IMPORTANT(3): ";
 		std::getline(std::cin, buffer_str);
 	} while (buffer_str != "" && !Utils::Input::to_int_in_range(buffer_str, buffer_int, 0, 3, true));
-	film.prio = (buffer_str == "") ? 1 : buffer_int;
+	film.m_priority = static_cast<Database::Data::film::priority>((buffer_str == "") ? 1 : buffer_int);
 
 	// Now we look if a single film was specified or if it was a folder
 	const std::filesystem::path full_path = *m_config.get_input_folder() / *m_config.get_interactive_parameter();
 	const std::filesystem::path input_folder = *m_config.get_input_folder();
 	if (std::filesystem::is_directory(full_path)) {
-		film.group = m_database->insert_group(*m_config.get_interactive_parameter());
+		film.m_group = m_database->insert_group(*m_config.get_interactive_parameter());
 
 		// Look for all supported films in directory
 		for (std::filesystem::recursive_directory_iterator i(full_path), end; i != end; ++i) 
 			if (!std::filesystem::is_directory(i->path())) {
 				std::string extension = boost::to_lower_copy(i->path().extension().string());
 				if (std::find(SUPPORTED_MULTIMEDIA_EXTENSIONS.begin(), SUPPORTED_MULTIMEDIA_EXTENSIONS.end(), extension) != SUPPORTED_MULTIMEDIA_EXTENSIONS.end()) {
-					film.file = std::filesystem::relative(i->path(), input_folder);
+					film.m_file = std::filesystem::relative(i->path(), input_folder);
 					films.push_back(film);
 				}
 				else {
@@ -457,7 +458,7 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data() cons
 	}
 	else {
 		// Single file
-		film.file = *m_config.get_interactive_parameter();
+		film.m_file = *m_config.get_interactive_parameter();
 		films.push_back(film);
 	}
 
@@ -476,13 +477,13 @@ std::optional<std::list<Database::Data::film>> Application::ask_film_data() cons
 	return films;
 }
 
-std::list<Database::Data::stream> Application::ask_streams() {
+std::list<Database::Data::film::stream> Application::ask_streams() {
 	std::map<char, bool> continue_asking {
 		{ 'v', true },
 		{ 'a', true },
 		{ 's', true }
 	};
-	std::list<Database::Data::stream> streams;
+	std::list<Database::Data::film::stream> streams;
 	bool add_new_stream, continue_asking_any;
 
 	do {
@@ -498,7 +499,7 @@ std::list<Database::Data::stream> Application::ask_streams() {
 		}
 		else {
 			auto stream = std::move(ask_stream(codec_type));
-			continue_asking[codec_type] = stream.id >= 0; // If negative, means all streams have been covered
+			continue_asking[codec_type] = stream.m_id >= 0; // If negative, means all streams have been covered
 			streams.push_back(std::move(stream));
 			continue_asking_any = continue_asking['v'] || continue_asking['a'] || continue_asking['s'];
 
@@ -518,8 +519,8 @@ std::list<Database::Data::stream> Application::ask_streams() {
 	return streams;
 }
 
-Database::Data::stream Application::ask_stream(const char& codec_type) const {
-	Database::Data::stream stream;
+Database::Data::film::stream Application::ask_stream(const char& codec_type) const {
+	Database::Data::film::stream stream;
 	std::string buffer_str;
 	int buffer_int;
 
@@ -527,14 +528,14 @@ Database::Data::stream Application::ask_stream(const char& codec_type) const {
 		std::cout << "Input stream(" << codec_type << ") FFmpeg ID (-1 to select all streams for type " << codec_type << "): ";
 		std::getline(std::cin, buffer_str);
 	} while(!Utils::Input::to_int_minimum(buffer_str, buffer_int, -1, true));
-	stream.id = buffer_int;
+	stream.m_id = buffer_int;
 
 	if (codec_type == 'v') {
 		do {
 			std::cout << "Select video codec:" << std::endl;
-			std::cout << "\tcopy(" << Database::Data::VIDEO_COPY << ")" << std::endl;
+			std::cout << "\tcopy(" << Database::Data::film::stream::VIDEO_COPY << ")" << std::endl;
 			#ifdef ENABLE_HEVC
-			std::cout << "\tHEVC(" << Database::Data::VIDEO_HEVC << ")" << std::endl;
+			std::cout << "\tHEVC(" << Database::Data::film::stream::VIDEO_HEVC << ")" << std::endl;
 			#endif
 			std::cout << "Which codec to use?: ";
 			std::getline(std::cin, buffer_str);
@@ -542,27 +543,27 @@ Database::Data::stream Application::ask_stream(const char& codec_type) const {
 			buffer_str,
 			{
 				#ifdef ENABLE_HEVC
-				std::to_string(Database::Data::VIDEO_HEVC),
+				std::to_string(Database::Data::film::stream::VIDEO_HEVC),
 				#endif
-				std::to_string(Database::Data::VIDEO_COPY)
+				std::to_string(Database::Data::film::stream::VIDEO_COPY)
 			},
 			true
 		));
-		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
+		stream.m_codec = static_cast<Database::Data::film::stream::codec>(buffer_int);
 
 		// Only certain codecs supports animation, TODO: Make it better
-		if (stream.codec == Database::Data::VIDEO_HEVC) {
+		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
 				buffer_str = "";
 				std::cout << "Is an animated movie? [y/n]: ";
 				std::getline(std::cin, buffer_str);
 			} while (!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
 			if (buffer_str == "y" || buffer_str == "Y")
-				stream.is_animation = true;
+				stream.m_is_animation = true;
 		}
 	
 		#ifdef ENABLE_HEVC
-		if (stream.codec == Database::Data::VIDEO_HEVC) {
+		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
 				std::cout << "Does it have HDR? [y/n]: ";
 				std::getline(std::cin, buffer_str);
@@ -571,7 +572,7 @@ Database::Data::stream Application::ask_stream(const char& codec_type) const {
 				{ "y", "Y", "n", "N" }
 			));
 			if (buffer_str == "y" || buffer_str == "Y")
-				stream.HDR = ask_stream_hdr();
+				stream.m_hdr.emplace(ask_stream_hdr());
 		}
 		#endif
 	}
@@ -579,88 +580,69 @@ Database::Data::stream Application::ask_stream(const char& codec_type) const {
 		do {
 			std::cout << "Select audio codec:" << std::endl;
 			#ifdef ENABLE_AAC
-			std::cout << "\tAAC(" << Database::Data::AUDIO_AAC << ")" << std::endl;
+			std::cout << "\tAAC(" << Database::Data::film::stream::AUDIO_AAC << ")" << std::endl;
 			#endif
 			#ifdef ENABLE_FDKAAC
-			std::cout << "\tFDKAAC(" << Database::Data::AUDIO_FDKAAC << ")" << std::endl;
+			std::cout << "\tFDKAAC(" << Database::Data::film::stream::AUDIO_FDKAAC << ")" << std::endl;
 			#endif
 			#ifdef ENABLE_AC3
-			std::cout << "\tAC-3(" << Database::Data::AUDIO_AC3 << ")" << std::endl;
+			std::cout << "\tAC-3(" << Database::Data::film::stream::AUDIO_AC3 << ")" << std::endl;
 			#endif
 			#ifdef ENABLE_EAC3
-			std::cout << "\tE-AC3(" << Database::Data::AUDIO_EAC3 << ")" << std::endl;
+			std::cout << "\tE-AC3(" << Database::Data::film::stream::AUDIO_EAC3 << ")" << std::endl;
 			#endif
 			#ifdef ENABLE_OPUS
-			std::cout << "\tOpus(" << Database::Data::AUDIO_OPUS << ")" << std::endl;
+			std::cout << "\tOpus(" << Database::Data::film::stream::AUDIO_OPUS << ")" << std::endl;
 			#endif
-			std::cout << "\tcopy(" << Database::Data::AUDIO_COPY << ")" << std::endl;
+			std::cout << "\tcopy(" << Database::Data::film::stream::AUDIO_COPY << ")" << std::endl;
 			std::cout << "Which codec to use?: ";
 			std::getline(std::cin, buffer_str);
 		} while (!Utils::Input::to_int(buffer_str, buffer_int, true) || !Utils::Input::in_options(
 			buffer_str,
 			{
 				#ifdef ENABLE_AAC
-				std::to_string(Database::Data::AUDIO_AAC),
+				std::to_string(Database::Data::film::stream::AUDIO_AAC),
 				#endif
 				#ifdef ENABLE_AC3
-				std::to_string(Database::Data::AUDIO_AC3),
+				std::to_string(Database::Data::film::stream::AUDIO_AC3),
 				#endif
 				#ifdef ENABLE_EAC3
-				std::to_string(Database::Data::AUDIO_EAC3),
+				std::to_string(Database::Data::film::stream::AUDIO_EAC3),
 				#endif
 				#ifdef ENABLE_OPUS
-				std::to_string(Database::Data::AUDIO_OPUS),
+				std::to_string(Database::Data::film::stream::AUDIO_OPUS),
 				#endif
 				#ifdef ENABLE_FDKAAC
-				std::to_string(Database::Data::AUDIO_FDKAAC),
+				std::to_string(Database::Data::film::stream::AUDIO_FDKAAC),
 				#endif
-				std::to_string(Database::Data::AUDIO_COPY),
+				std::to_string(Database::Data::film::stream::AUDIO_COPY),
 			},
 			true
 		));
-		stream.codec = static_cast<Database::Data::stream_codec>(buffer_int);
+		stream.m_codec = static_cast<Database::Data::film::stream::codec>(buffer_int);
 	}
 	else {
 		std::cout << "Subtitles have only copy codec so it is being autoselected" << std::endl;
-		stream.codec = Database::Data::SUBTITLE_COPY;
+		stream.m_codec = Database::Data::film::stream::SUBTITLE_COPY;
 	}
 
 	return stream;
 }
 
-bool Application::add_films_to_database(const std::list<Database::Data::film>& films, std::list<Database::Data::stream>&& streams) {
-	try {
-		m_database->begin_transaction();
-		std::optional<int> filmID;
-		for (auto film = films.begin(); film != films.end(); film++) {
-			if (m_database->is_film_in_database(*film))
-				throw std::runtime_error("ERROR: Film " + film->file.string() + " is already in database");
-			else
-				filmID = m_database->insert_film(*film);
-
-			if (!filmID)
-				throw std::runtime_error("ERROR: Film " + film->file.string() + " could not be inserted in database");
-
-			for (auto stream = streams.begin(); stream != streams.end(); stream++) {
-				// First is to assign film ID to stream
-				stream->film_id = *filmID;
-				m_database->insert_stream(*stream);
-			}
-		}
+bool Application::add_films_to_database(const std::list<Database::Data::film>& films) {
+	if (m_database->insert_films(films)) {
+		std::cout << "Inserted " << std::to_string(films.size()) + " film(s) in database" << std::endl;
+		return true;
 	}
-	catch(const std::runtime_error& error) {
-		m_database->rollback_transaction();
-		std::cerr << error.what() << std::endl;
+	else {
+		std::cerr << "Some films failed to be inserted, therefore none were inserted" << std::endl;
 		return false;
 	}
-	m_database->commit_transaction();
-	std::cout << "Inserted " << std::to_string(films.size()) + " film(s) in database" << std::endl;
-	return true;
 }
 
 #ifdef ENABLE_HEVC
-Database::Data::hdr Application::ask_stream_hdr() const {
-	Database::Data::hdr HDR;
+Database::Data::film::stream::hdr Application::ask_stream_hdr() const {
+	Database::Data::film::stream::hdr HDR;
 	std::string buffer_str;
 	int buffer_int;
 

@@ -25,7 +25,7 @@ namespace StormByte::VideoConvert {
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			static const std::string FFMPEG_EXECUTABLE;
 
-			static const std::list<Database::Data::stream_codec> SUPPORTED_CODECS;
+			static const std::list<Database::Data::film::stream::codec> SUPPORTED_CODECS;
 
 		private:
 			/* Config data */
@@ -50,14 +50,14 @@ namespace StormByte::VideoConvert {
 			std::string elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const;
 
 			int daemon();
-			void execute_ffmpeg(const FFmpeg& ffmpeg);
+			void execute_ffmpeg(FFmpeg& ffmpeg);
 			int interactive();
 			std::optional<std::list<Database::Data::film>> ask_film_data() const;
-			std::list<Database::Data::stream> ask_streams();
-			Database::Data::stream ask_stream(const char& codec_type) const;
-			bool add_films_to_database(const std::list<Database::Data::film>& films, std::list<Database::Data::stream>&& streams);
+			std::list<Database::Data::film::stream> ask_streams();
+			Database::Data::film::stream ask_stream(const char& codec_type) const;
+			bool add_films_to_database(const std::list<Database::Data::film>& films);
 			#ifdef ENABLE_HEVC // HDR is only available if HEVC/H265 is supported
-			Database::Data::hdr ask_stream_hdr() const;
+			Database::Data::film::stream::hdr ask_stream_hdr() const;
 			#endif
 			static const std::list<std::string> SUPPORTED_MULTIMEDIA_EXTENSIONS; 
 	};

@@ -1,6 +1,5 @@
 #include "sqlite3.hxx"
 #include "application.hxx"
-#include "ffmpeg/ffmpeg.hxx"
 
 #include <stdexcept>
 
@@ -95,109 +94,138 @@ Database::SQLite3::~SQLite3() {
 }
 
 std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
+	begin_exclusive_transaction();
 	std::optional<FFmpeg> ffmpeg;
-	int film_id = get_film_id_for_process();
+	std::optional<unsigned int> film_id = get_film_id_for_process();
 	auto logger = Application::get_instance().get_logger();
 
-	if (film_id != -1) {
-		Data::film film_data = get_film_data(film_id);
-		FFmpeg film(film_id, film_data.file, film_data.group);
-		auto streams = get_film_streams(film_id);
-		std::list<Data::stream_codec> unsupported_codecs;
+	if (film_id) {
+		std::optional<Data::film> film_data = get_film_data(*film_id);
+		if (film_data) {
+			FFmpeg film(*film_data->m_id, film_data->m_file, film_data->m_group);
+			auto streams = get_film_streams(*film_data->m_id);
+			std::list<Data::film::stream::codec> unsupported_codecs;
 
-		for (auto it = streams.begin(); it != streams.end(); it++) {
-			switch (it->codec) {
-				case Data::VIDEO_HEVC: {
-					#ifdef ENABLE_HEVC
-					auto codec = Stream::Video::HEVC(it->id);
-					if (it->HDR) {
-						codec.set_HDR(std::move(*it->HDR));
+			for (auto it = streams.begin(); it != streams.end(); it++) {
+				switch (it->m_codec) {
+					case Data::film::stream::VIDEO_HEVC: {
+						#ifdef ENABLE_HEVC
+						auto codec = Stream::Video::HEVC(it->m_id);
+						if (it->m_hdr) {
+							codec.set_HDR(std::move(*it->m_hdr));
+						}
+						if (it->m_is_animation) codec.set_tune_animation();
+						film.add_stream(codec);
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
 					}
-					if (it->is_animation) codec.set_tune_animation();
-					film.add_stream(codec);
-					#else
-					unsupported_codecs.push_back(Data::VIDEO_HEVC);
-					#endif
-					break;
-				}
-				case Data::VIDEO_COPY: {
-					film.add_stream(Stream::Video::Copy(it->id));
-					break;
-				}
-				case Data::AUDIO_AAC: {
-					#ifdef ENABLE_AAC
-					film.add_stream(Stream::Audio::AAC(it->id));
-					#else
-					unsupported_codecs.push_back(Data::AUDIO_AAC);
-					#endif
-					break;
-				}
-				case Data::AUDIO_FDKAAC: {
-					#ifdef ENABLE_FDKAAC
-					film.add_stream(Stream::Audio::FDKAAC(it->id));
-					#else
-					unsupported_codecs.push_back(Data::AUDIO_FDKAAC);
-					#endif
-					break;
-				}
-				case Data::AUDIO_AC3: {
-					#ifdef ENABLE_AC3
-					film.add_stream(Stream::Audio::AC3(it->id));
-					#else
-					unsupported_codecs.push_back(Data::AUDIO_AC3);
-					#endif
-					break;
-				}
-				case Data::AUDIO_COPY: {
-					film.add_stream(Stream::Audio::Copy(it->id));
-					break;
-				}
-				case Data::AUDIO_EAC3: {
-					#ifdef ENABLE_EAC3
-					film.add_stream(Stream::Audio::EAC3(it->id));
-					#else
-					unsupported_codecs.push_back(Data::AUDIO_EAC3);
-					#endif
-					break;
-				}
-				case Data::AUDIO_OPUS: {
-					#ifdef ENABLE_OPUS
-					film.add_stream(Stream::Audio::Opus(it->id));
-					#else
-					unsupported_codecs.push_back(Data::AUDIO_OPUS);
-					#endif
-					break;
-				}
-				case Data::SUBTITLE_COPY: {
-					film.add_stream(Stream::Subtitle::Copy(it->id));
-					break;
-				}
-				default: {
-					unsupported_codecs.push_back(Data::INVALID_CODEC);
-					break;
+					case Data::film::stream::VIDEO_COPY: {
+						film.add_stream(Stream::Video::Copy(it->m_id));
+						break;
+					}
+					case Data::film::stream::AUDIO_AAC: {
+						#ifdef ENABLE_AAC
+						film.add_stream(Stream::Audio::AAC(it->m_id));
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
+					}
+					case Data::film::stream::AUDIO_FDKAAC: {
+						#ifdef ENABLE_FDKAAC
+						film.add_stream(Stream::Audio::FDKAAC(it->m_id));
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
+					}
+					case Data::film::stream::AUDIO_AC3: {
+						#ifdef ENABLE_AC3
+						film.add_stream(Stream::Audio::AC3(it->m_id));
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
+					}
+					case Data::film::stream::AUDIO_COPY: {
+						film.add_stream(Stream::Audio::Copy(it->m_id));
+						break;
+					}
+					case Data::film::stream::AUDIO_EAC3: {
+						#ifdef ENABLE_EAC3
+						film.add_stream(Stream::Audio::EAC3(it->m_id));
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
+					}
+					case Data::film::stream::AUDIO_OPUS: {
+						#ifdef ENABLE_OPUS
+						film.add_stream(Stream::Audio::Opus(it->m_id));
+						#else
+						unsupported_codecs.push_back(it->m_codec);
+						#endif
+						break;
+					}
+					case Data::film::stream::SUBTITLE_COPY: {
+						film.add_stream(Stream::Subtitle::Copy(it->m_id));
+						break;
+					}
+					default: {
+						unsupported_codecs.push_back(Data::film::stream::INVALID_CODEC);
+						break;
+					}
 				}
 			}
-		}
 
-		// We now check if we have unsupported codecs
-		if (!unsupported_codecs.empty()) {
-			logger->message_part_begin(Utils::Logger::LEVEL_ERROR, "The file " + film.get_input_file().string() + " has the following unsupported codecs: ");
-			for (auto it = unsupported_codecs.begin(); it != unsupported_codecs.end(); it++) {
-				logger->message_part_continue(Utils::Logger::LEVEL_ERROR, Database::Data::codec_string.at(*it) + ", ");
+			// We now check if we have unsupported codecs
+			if (unsupported_codecs.empty()) {
+				logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as processing");
+				set_film_processing_status(film.get_film_id(), true);
+				ffmpeg.emplace(std::move(film));
 			}
-			logger->message_part_end(Utils::Logger::LEVEL_ERROR, "and therefore could NOT be converted!");
-			logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as unsupported");
-			set_film_unsupported_status(film.get_film_id(), true);
+			else {
+				logger->message_part_begin(Utils::Logger::LEVEL_ERROR, "The file " + film.get_input_file().string() + " has the following unsupported codecs: ");
+				for (auto it = unsupported_codecs.begin(); it != unsupported_codecs.end(); it++) {
+					logger->message_part_continue(Utils::Logger::LEVEL_ERROR, Database::Data::film::stream::codec_string.at(*it) + ", ");
+				}
+				logger->message_part_end(Utils::Logger::LEVEL_ERROR, "and therefore could NOT be converted!");
+				logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking file " + film.get_input_file().string() + " as unsupported");
+				set_film_unsupported_status(film.get_film_id(), true);
+			}
 		}
-		else
-			ffmpeg.emplace(std::move(film));
 	}
+	commit_transaction();
 	return ffmpeg;
+}
+
+void Database::SQLite3::finish_film_process(const FFmpeg& ffmpeg) {
+	begin_exclusive_transaction();
+
+	switch(ffmpeg.get_status()) {
+		case FFmpeg::CONVERT_OK:
+			delete_film(ffmpeg.get_film_id());
+			break;
+
+		case FFmpeg::CONVERT_ERROR:
+			set_film_unsupported_status(ffmpeg.get_film_id(), true);
+			break;
+
+		case FFmpeg::CONVERT_QUEUE:
+		case FFmpeg::CONVERT_PROCESSING:
+		default:
+			// No operation
+			break;
+	}
+
+	commit_transaction();
 }
 
 bool Database::SQLite3::check_database() {
 	char* err_msg = NULL;
-	int rc = sqlite3_exec(m_database, "SELECT * FROM films;", 0, 0, &err_msg);
+	int rc = sqlite3_exec(m_database, "SELECT * FROM films;", nullptr, nullptr, &err_msg);
 	sqlite3_free(err_msg);
 	return rc == SQLITE_OK;
 }
@@ -205,7 +233,7 @@ bool Database::SQLite3::check_database() {
 void Database::SQLite3::init_database() {
 	Application::get_instance().get_logger()->message_line(Utils::Logger::LEVEL_NOTICE, "Constructing database");
 	char* err_msg = NULL;
-	int rc = sqlite3_exec(m_database, DATABASE_CREATE_SQL.c_str(), 0, 0, &err_msg);
+	int rc = sqlite3_exec(m_database, DATABASE_CREATE_SQL.c_str(), nullptr, nullptr, &err_msg);
 	if (rc != SQLITE_OK) throw_error(err_msg);
 }
 
@@ -223,16 +251,25 @@ void Database::SQLite3::reset_stmt(sqlite3_stmt* stmt) {
 void Database::SQLite3::begin_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
+	sqlite3_free(err_msg);
+}
+
+void Database::SQLite3::begin_exclusive_transaction() {
+	char* err_msg = nullptr;
+	sqlite3_exec(m_database, "BEGIN EXCLUSIVE TRANSACTION;", nullptr, nullptr, &err_msg);
+	sqlite3_free(err_msg);
 }
 
 void Database::SQLite3::commit_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "COMMIT;", nullptr, nullptr, &err_msg);
+	sqlite3_free(err_msg);
 }
 
 void Database::SQLite3::rollback_transaction() {
 	char* err_msg = nullptr;
 	sqlite3_exec(m_database, "ROLLBACK;", nullptr, nullptr, &err_msg);
+	sqlite3_free(err_msg);
 }
 
 void Database::SQLite3::prepare_sentences() {
@@ -244,8 +281,8 @@ void Database::SQLite3::prepare_sentences() {
 	}
 }
 
-int Database::SQLite3::get_film_id_for_process() {
-	int result = -1; // No films for converting available
+std::optional<unsigned int> Database::SQLite3::get_film_id_for_process() {
+	std::optional<unsigned int> result;
 	auto stmt = m_prepared["getFilmIDForProcess"];
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		result = sqlite3_column_int(stmt, 0);
@@ -270,166 +307,193 @@ void Database::SQLite3::set_film_unsupported_status(const unsigned int& film_id,
 	reset_stmt(stmt);
 }
 
-Database::Data::film Database::SQLite3::get_film_data(const unsigned int& film_id) {
-	Data::film result;
+std::optional<Database::Data::film> Database::SQLite3::get_film_data(const unsigned int& film_id) {
+	std::optional<Data::film> result;
 	auto stmt = m_prepared["getFilmData"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		result.file 		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-		result.prio 		= sqlite3_column_int(stmt, 1);
-		result.processing	= sqlite3_column_int(stmt, 2);
-		result.unsupported	= sqlite3_column_int(stmt, 3);
+		Data::film film;
+		film.m_file 		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+		film.m_priority		= static_cast<Data::film::priority>(sqlite3_column_int(stmt, 1));
+		film.m_processing	= sqlite3_column_int(stmt, 2);
+		film.m_unsupported	= sqlite3_column_int(stmt, 3);
 		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL)
-			result.group	= get_group_data(sqlite3_column_int(stmt, 4));
+			film.m_group	= get_group_data(sqlite3_column_int(stmt, 4));
+		result.emplace(std::move(film));
 	}
 	reset_stmt(stmt);
 	return result;
 }
 
-std::list<Database::Data::stream> Database::SQLite3::get_film_streams(const unsigned int& film_id) {
-	std::list<Data::stream> result;
+std::list<Database::Data::film::stream> Database::SQLite3::get_film_streams(const unsigned int& film_id) {
+	std::list<Data::film::stream> result;
 	auto stmt = m_prepared["getFilmStreams"];
 	sqlite3_bind_int(stmt, 1, film_id);
 	while (sqlite3_step(stmt) == SQLITE_ROW) {
-		Data::stream stream;
-		stream.film_id 		= film_id;
-		stream.id 			= sqlite3_column_int(stmt, 0);
-		stream.codec 		= static_cast<Data::stream_codec>(sqlite3_column_int(stmt, 1));
-		stream.is_animation	= sqlite3_column_int(stmt, 2);
-		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-		if (has_film_stream_HDR(stream)) {
-			stream.HDR = get_film_stream_HDR(stream);
-		}
-		result.push_back(stream);
+		Data::film::stream stream;
+		stream.m_id				= sqlite3_column_int(stmt, 0);
+		stream.m_codec 			= static_cast<Data::film::stream::codec>(sqlite3_column_int(stmt, 1));
+		stream.m_is_animation	= sqlite3_column_int(stmt, 2);
+		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.m_max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.m_bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+		set_film_stream_HDR(film_id, stream);
+		result.push_back(std::move(stream));
 	}
 	reset_stmt(stmt);
 	return result;
 }
 
-bool Database::SQLite3::has_film_stream_HDR(const Data::stream& stream) {
+bool Database::SQLite3::has_film_stream_HDR(const unsigned int& film_id, const Data::film::stream& stream) {
 	bool result = false;
 	auto stmt = m_prepared["hasStreamHDR?"];
-	sqlite3_bind_int(stmt, 1, stream.film_id);
-	sqlite3_bind_int(stmt, 2, stream.id);
-	sqlite3_bind_int(stmt, 3, stream.codec);
+	sqlite3_bind_int(stmt, 1, film_id);
+	sqlite3_bind_int(stmt, 2, stream.m_id);
+	sqlite3_bind_int(stmt, 3, stream.m_codec);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		result = sqlite3_column_int(stmt, 0);
+		result = static_cast<bool>(sqlite3_column_int(stmt, 0));
 	}
 	reset_stmt(stmt);
 	return result;
 }
 
-Database::Data::hdr Database::SQLite3::get_film_stream_HDR(const Data::stream& stream) {
-	Data::hdr result;
-	auto stmt = m_prepared["getFilmStreamHDR"];
-	sqlite3_bind_int(stmt, 1, stream.film_id);
-	sqlite3_bind_int(stmt, 2, stream.id);
-	sqlite3_bind_int(stmt, 3, stream.codec);
-	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		result.red_x			= sqlite3_column_int(stmt, 0);
-		result.red_y			= sqlite3_column_int(stmt, 1);
-		result.green_x			= sqlite3_column_int(stmt, 2);
-		result.green_y			= sqlite3_column_int(stmt, 3);
-		result.blue_x			= sqlite3_column_int(stmt, 4);
-		result.blue_y			= sqlite3_column_int(stmt, 5);
-		result.white_point_x	= sqlite3_column_int(stmt, 6);
-		result.white_point_y	= sqlite3_column_int(stmt, 7);
-		result.luminance_min	= sqlite3_column_int(stmt, 8);
-		result.luminance_max	= sqlite3_column_int(stmt, 9);
-		if (sqlite3_column_type(stmt, 10) != SQLITE_NULL && sqlite3_column_type(stmt, 11) != SQLITE_NULL)
-			result.light_level = std::make_pair(sqlite3_column_int(stmt, 10), sqlite3_column_int(stmt, 10));
+void Database::SQLite3::set_film_stream_HDR(const unsigned int& film_id, Data::film::stream& stream) {
+	if (has_film_stream_HDR(film_id, stream)) {
+		Data::film::stream::hdr result;
+		auto stmt = m_prepared["getFilmStreamHDR"];
+		sqlite3_bind_int(stmt, 1, film_id);
+		sqlite3_bind_int(stmt, 2, stream.m_id);
+		sqlite3_bind_int(stmt, 3, stream.m_codec);
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			result.red_x			= sqlite3_column_int(stmt, 0);
+			result.red_y			= sqlite3_column_int(stmt, 1);
+			result.green_x			= sqlite3_column_int(stmt, 2);
+			result.green_y			= sqlite3_column_int(stmt, 3);
+			result.blue_x			= sqlite3_column_int(stmt, 4);
+			result.blue_y			= sqlite3_column_int(stmt, 5);
+			result.white_point_x	= sqlite3_column_int(stmt, 6);
+			result.white_point_y	= sqlite3_column_int(stmt, 7);
+			result.luminance_min	= sqlite3_column_int(stmt, 8);
+			result.luminance_max	= sqlite3_column_int(stmt, 9);
+			if (sqlite3_column_type(stmt, 10) != SQLITE_NULL && sqlite3_column_type(stmt, 11) != SQLITE_NULL)
+				result.light_level = std::make_pair(sqlite3_column_int(stmt, 10), sqlite3_column_int(stmt, 10));
+			
+			stream.m_hdr.emplace(std::move(result));
+		}
+		reset_stmt(stmt);
 	}
-	reset_stmt(stmt);
-	return result;
 }
 
-std::optional<Database::Data::group> Database::SQLite3::get_group_data(const unsigned int& group_id) {
-	std::optional<Data::group> result;
+std::optional<Database::Data::film::group> Database::SQLite3::get_group_data(const unsigned int& group_id) {
+	std::optional<Data::film::group> result;
 	auto stmt = m_prepared["getGroupData"];
 	sqlite3_bind_int(stmt, 1, group_id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		result = {
-			group_id,
-			reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0))
-		};
+		Data::film::group group;
+		group.id 		= group_id;
+		group.folder	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+		result.emplace(std::move(group));
 	}
 	reset_stmt(stmt);
 	return result;
 }
 
-std::optional<int> Database::SQLite3::insert_film(const Data::film& film) {
-	std::optional<int> result;
-	auto stmt = m_prepared["insertFilm"];
-	sqlite3_bind_text(stmt, 1, film.file.c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_int(stmt, 2, film.prio);
-	if (film.group)
-		sqlite3_bind_int(stmt, 3, film.group->id);
-	else
-		sqlite3_bind_null(stmt, 3);
-	if (sqlite3_step(stmt) == SQLITE_ROW)
-		result = sqlite3_column_int(stmt, 0);
-	reset_stmt(stmt);
-	return result;
+std::optional<unsigned int> Database::SQLite3::insert_film(const Data::film& film) {
+	std::optional<unsigned int> film_id;
+	if (!is_film_in_database(film.m_file)) {
+		auto stmt = m_prepared["insertFilm"];
+		sqlite3_bind_text(stmt, 1, film.m_file.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_int(stmt, 2, film.m_priority);
+		if (film.m_group)
+			sqlite3_bind_int(stmt, 3, film.m_group->id);
+		else
+			sqlite3_bind_null(stmt, 3);
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			film_id = sqlite3_column_int(stmt, 0);
+
+			// Now we insert all streams
+			for (auto stream = film.m_streams.begin(); stream != film.m_streams.end(); stream++)
+				insert_stream(*film_id, *stream);
+		}
+		reset_stmt(stmt);
+	}
+	return film_id;
 }
 
-void Database::SQLite3::insert_stream(const Data::stream& stream) {
+bool Database::SQLite3::insert_films(const std::list<Data::film>& films) {
+	bool continue_inserting = true;
+	begin_exclusive_transaction();
+
+	for (auto film = films.begin(); film != films.end() && continue_inserting; film++) {
+		if (!insert_film(*film)) continue_inserting = false;
+	}
+
+	if (continue_inserting)
+		commit_transaction();
+	else
+		rollback_transaction();
+
+	return continue_inserting;
+}
+
+void Database::SQLite3::insert_stream(const unsigned int& film_id, const Data::film::stream& stream) {
 	auto stmt = m_prepared["insertStream"];
-	sqlite3_bind_int(stmt, 1, stream.id);
-	sqlite3_bind_int(stmt, 2, stream.film_id);
-	sqlite3_bind_int(stmt, 3, stream.codec);
-	sqlite3_bind_int(stmt, 4, stream.is_animation);
-	if (stream.max_rate)
-		sqlite3_bind_text(stmt, 5, stream.max_rate->c_str(), -1, SQLITE_STATIC);
+	sqlite3_bind_int(stmt, 1, stream.m_id);
+	sqlite3_bind_int(stmt, 2, film_id);
+	sqlite3_bind_int(stmt, 3, stream.m_codec);
+	sqlite3_bind_int(stmt, 4, stream.m_is_animation);
+	if (stream.m_max_rate)
+		sqlite3_bind_text(stmt, 5, stream.m_max_rate->c_str(), -1, SQLITE_STATIC);
 	else
 		sqlite3_bind_null(stmt, 5);
-	if (stream.bitrate)
-		sqlite3_bind_text(stmt, 6, stream.bitrate->c_str(), -1, SQLITE_STATIC);
+	if (stream.m_bitrate)
+		sqlite3_bind_text(stmt, 6, stream.m_bitrate->c_str(), -1, SQLITE_STATIC);
 	else
 		sqlite3_bind_null(stmt, 6);
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 
-	if (stream.HDR) insert_HDR(stream);
+	insert_HDR(film_id, stream);
 }
 
-void Database::SQLite3::insert_HDR(const Data::stream& stream) {
-	auto stmt = m_prepared["insertHDR"];
-	sqlite3_bind_int(stmt, 1, stream.film_id);
-	sqlite3_bind_int(stmt, 2, stream.id);
-	sqlite3_bind_int(stmt, 3, stream.codec);
-	sqlite3_bind_int(stmt, 4, stream.HDR->red_x);
-	sqlite3_bind_int(stmt, 5, stream.HDR->red_y);
-	sqlite3_bind_int(stmt, 6, stream.HDR->green_x);
-	sqlite3_bind_int(stmt, 7, stream.HDR->green_y);
-	sqlite3_bind_int(stmt, 8, stream.HDR->blue_x);
-	sqlite3_bind_int(stmt, 9, stream.HDR->blue_y);
-	sqlite3_bind_int(stmt, 10, stream.HDR->white_point_x);
-	sqlite3_bind_int(stmt, 11, stream.HDR->white_point_y);
-	sqlite3_bind_int(stmt, 12, stream.HDR->luminance_min);
-	sqlite3_bind_int(stmt, 13, stream.HDR->luminance_max);
-	if (stream.HDR->light_level) {
-		sqlite3_bind_int(stmt, 14, stream.HDR->light_level->first);
-		sqlite3_bind_int(stmt, 15, stream.HDR->light_level->second);
+void Database::SQLite3::insert_HDR(const unsigned int& film_id, const Data::film::stream& stream) {
+	if (stream.m_hdr) {
+		auto stmt = m_prepared["insertHDR"];
+		sqlite3_bind_int(stmt, 1, film_id);
+		sqlite3_bind_int(stmt, 2, stream.m_id);
+		sqlite3_bind_int(stmt, 3, stream.m_codec);
+		sqlite3_bind_int(stmt, 4, stream.m_hdr->red_x);
+		sqlite3_bind_int(stmt, 5, stream.m_hdr->red_y);
+		sqlite3_bind_int(stmt, 6, stream.m_hdr->green_x);
+		sqlite3_bind_int(stmt, 7, stream.m_hdr->green_y);
+		sqlite3_bind_int(stmt, 8, stream.m_hdr->blue_x);
+		sqlite3_bind_int(stmt, 9, stream.m_hdr->blue_y);
+		sqlite3_bind_int(stmt, 10, stream.m_hdr->white_point_x);
+		sqlite3_bind_int(stmt, 11, stream.m_hdr->white_point_y);
+		sqlite3_bind_int(stmt, 12, stream.m_hdr->luminance_min);
+		sqlite3_bind_int(stmt, 13, stream.m_hdr->luminance_max);
+		if (stream.m_hdr->light_level) {
+			sqlite3_bind_int(stmt, 14, stream.m_hdr->light_level->first);
+			sqlite3_bind_int(stmt, 15, stream.m_hdr->light_level->second);
+		}
+		else {
+			sqlite3_bind_null(stmt, 14);
+			sqlite3_bind_null(stmt, 15);
+		}	
+		sqlite3_step(stmt); // No result
+		reset_stmt(stmt);
 	}
-	else {
-		sqlite3_bind_null(stmt, 14);
-		sqlite3_bind_null(stmt, 15);
-	}	
-	sqlite3_step(stmt); // No result
-	reset_stmt(stmt);
 }
 
-std::optional<Database::Data::group> Database::SQLite3::insert_group(const std::filesystem::path& folder) {
-	std::optional<Database::Data::group> result;
+std::optional<Database::Data::film::group> Database::SQLite3::insert_group(const std::filesystem::path& folder) {
+	std::optional<Database::Data::film::group> group;
 	if (!is_group_in_database(folder)) {
 		auto stmt = m_prepared["insertGroup"];
 		sqlite3_bind_text(stmt, 1, folder.c_str(), -1, SQLITE_STATIC);
 		if (sqlite3_step(stmt) == SQLITE_ROW)
-			result = get_group_data(sqlite3_column_int(stmt, 0));
+			group = get_group_data(sqlite3_column_int(stmt, 0));
 		reset_stmt(stmt);
 	}
-	return result;
+	return group;
 }
 
 void Database::SQLite3::reset_processing_films() {
@@ -461,9 +525,9 @@ void Database::SQLite3::delete_film_stream_HDR(const unsigned int& film_id) {
 	reset_stmt(stmt);
 }
 
-void Database::SQLite3::delete_group(const unsigned int& group_id) {
+void Database::SQLite3::delete_group(const Data::film::group& group) {
 	auto stmt = m_prepared["deleteGroup"];
-	sqlite3_bind_int(stmt, 1, group_id);
+	sqlite3_bind_int(stmt, 1, group.id);
 	sqlite3_step(stmt);
 	reset_stmt(stmt);
 }
@@ -473,7 +537,7 @@ bool Database::SQLite3::is_film_in_database(const std::filesystem::path& file) {
 	auto stmt = m_prepared["isFilmAlreadyInDatabase?"];
 	sqlite3_bind_text(stmt, 1, file.c_str(), -1, SQLITE_STATIC);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
-		result = sqlite3_column_int(stmt, 0);
+		result = static_cast<bool>(sqlite3_column_int(stmt, 0));
 	}
 	reset_stmt(stmt);
 	return result;
@@ -490,10 +554,10 @@ bool Database::SQLite3::is_group_in_database(const std::filesystem::path& path) 
 	return result;
 }
 
-bool Database::SQLite3::is_group_empty(const unsigned int& group_id) {
+bool Database::SQLite3::is_group_empty(const Data::film::group& group) {
 	bool result = false;
 	auto stmt = m_prepared["isGroupEmpty?"];
-	sqlite3_bind_int(stmt, 1, group_id);
+	sqlite3_bind_int(stmt, 1, group.id);
 	if (sqlite3_step(stmt) == SQLITE_ROW) {
 		result = sqlite3_column_int(stmt, 0);
 	}

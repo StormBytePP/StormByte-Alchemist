@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ffmpeg/ffmpeg.hxx"
 #include "data.hxx"
+#include "ffmpeg/ffmpeg.hxx"
 
 #include <filesystem>
 #include <map>
@@ -17,25 +17,20 @@ namespace StormByte::VideoConvert::Database {
 			SQLite3& operator=(SQLite3&& db) = delete;
 			~SQLite3();
 
-			void begin_transaction();
-			void commit_transaction();
-			void rollback_transaction();
-
-			std::optional<FFmpeg> get_film_for_process();
-			void set_film_processing_status(const unsigned int& film_id, const bool& status);
-			void set_film_unsupported_status(const unsigned int& film_id, const bool& status);
-			void reset_processing_films();
-			void delete_film(const unsigned int& film_id);
-			void delete_group(const unsigned int& group_id);
-			inline bool is_film_in_database(const Data::film& film) { return is_film_in_database(film.file); }
+			/* Read data */
+			inline bool is_film_in_database(const Data::film& film) { return is_film_in_database(film.m_file); }
 			bool is_film_in_database(const std::filesystem::path& file);
 			bool is_group_in_database(const std::filesystem::path& path);
-			bool is_group_empty(const unsigned int& group_id);
-			
-			/* Insert data functions */
-			std::optional<int> insert_film(const Data::film& film);
-			void insert_stream(const Data::stream& stream);
-			std::optional<Data::group> insert_group(const std::filesystem::path& folder);
+			bool is_group_empty(const Data::film::group& group);
+
+			/* Write data */
+			std::optional<FFmpeg> get_film_for_process();
+			void finish_film_process(const FFmpeg& ffmpeg);
+			void reset_processing_films();
+			std::optional<unsigned int> insert_film(const Data::film& film);
+			bool insert_films(const std::list<Data::film>& films);
+			std::optional<Data::film::group> insert_group(const std::filesystem::path& folder);
+			void delete_group(const Data::film::group& group);
 
 		private:
 			sqlite3* m_database;
@@ -49,16 +44,24 @@ namespace StormByte::VideoConvert::Database {
 			void prepare_sentences();
 			void throw_error(char* err_msg);
 			void reset_stmt(sqlite3_stmt*);
+			void begin_transaction();
+			void begin_exclusive_transaction();
+			void commit_transaction();
+			void rollback_transaction();
 
 			/* Data managing internal functions */
-			int get_film_id_for_process();
-			Data::film get_film_data(const unsigned int& film_id);
-			std::optional<Data::group> get_group_data(const unsigned int& group_id);
-			std::list<Data::stream> get_film_streams(const unsigned int& film_id);
-			bool has_film_stream_HDR(const Data::stream& stream);
-			Data::hdr get_film_stream_HDR(const Data::stream& stream);
-			void insert_HDR(const Data::stream& stream);
+			std::optional<unsigned int> get_film_id_for_process();
+			std::optional<Data::film> get_film_data(const unsigned int& film_id);
+			std::optional<Data::film::group> get_group_data(const unsigned int& group_id);
+			std::list<Data::film::stream> get_film_streams(const unsigned int& film_id);
+			bool has_film_stream_HDR(const unsigned int& film_id, const Data::film::stream& stream);
+			void set_film_stream_HDR(const unsigned int& film_id, Data::film::stream& stream);
+			void insert_stream(const unsigned int& film_id, const Data::film::stream& stream);
+			void insert_HDR(const unsigned int& film_id, const Data::film::stream& stream);
+			void delete_film(const unsigned int& film_id);
 			void delete_film_stream(const unsigned int& film_id);
 			void delete_film_stream_HDR(const unsigned int& film_id);
+			void set_film_processing_status(const unsigned int& film_id, const bool& status);
+			void set_film_unsupported_status(const unsigned int& film_id, const bool& status);
 	};
 }

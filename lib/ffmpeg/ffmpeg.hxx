@@ -33,32 +33,40 @@ namespace StormByte::VideoConvert::Utils { class Logger; }
 namespace StormByte::VideoConvert {
 	class FFmpeg {
 		public:
-			FFmpeg(const unsigned int& film_id, const std::filesystem::path& input_file, const std::optional<Database::Data::group>& group = std::optional<Database::Data::group>());
-			FFmpeg(unsigned int&& film_id, std::filesystem::path&& input_file, std::optional<Database::Data::group>&& group = std::optional<Database::Data::group>());
+			FFmpeg(const unsigned int& film_id, const std::filesystem::path& input_file, const std::optional<Database::Data::film::group>& group = std::optional<Database::Data::film::group>());
+			FFmpeg(unsigned int&& film_id, std::filesystem::path&& input_file, std::optional<Database::Data::film::group>&& group = std::optional<Database::Data::film::group>());
 			FFmpeg(const FFmpeg& ffmpeg) = default;
 			FFmpeg(FFmpeg&& ffmpeg) noexcept = default;
 			FFmpeg& operator=(const FFmpeg& ffmpeg) = default;
 			FFmpeg& operator=(FFmpeg&& ffmpeg) noexcept = default;
 			~FFmpeg() = default;
 
+			enum STATUS { CONVERT_QUEUE = 0, CONVERT_PROCESSING, CONVERT_OK, CONVERT_ERROR };
+
 			void add_stream(const Stream::Base&);
 			pid_t exec(const std::filesystem::path& in_base, const std::filesystem::path& out_base) const;
 
+			/* Setters */
+			inline void set_status(const STATUS& status) { m_status = status; }
+			inline void set_status(STATUS&& status) { m_status = std::move(status); }
+
 			/* Getters */
 			inline unsigned int get_film_id() const { return m_film_id; }
-			std::optional<Database::Data::group> get_group() const { return m_group; }
+			std::optional<Database::Data::film::group> get_group() const { return m_group; }
 			inline bool is_empty() const { return m_streams.empty(); }
 			inline std::filesystem::path get_input_file() const { return m_input_file; }
 			inline std::filesystem::path get_output_file() const { auto result = m_input_file; return result.replace_extension(m_container); }
+			inline STATUS get_status() const { return m_status; }
 
 		private:
 			unsigned int m_film_id;
 			std::filesystem::path m_input_file;
-			std::optional<Database::Data::group> m_group;
+			std::optional<Database::Data::film::group> m_group;
 			std::filesystem::path m_container; // For future
 			std::list<std::unique_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
 			static const std::list<const char*> FFMPEG_INIT_OPTIONS;
 
 			std::vector<std::string> parameters(const std::filesystem::path& in_base, const std::filesystem::path& out_base) const;
+			STATUS m_status;
 	};
 }

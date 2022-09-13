@@ -2,9 +2,9 @@
 
 using namespace StormByte::VideoConvert;
 
-Stream::Base::Base(const short& stream_id, const std::string& encoder, const Database::Data::stream_codec& codec, const char& type):m_stream_id(stream_id), m_encoder(encoder), m_codec(codec), m_type(type) {}
+Stream::Base::Base(const short& stream_id, const std::string& encoder, const Database::Data::film::stream::codec& codec, const char& type):m_stream_id(stream_id), m_encoder(encoder), m_codec(codec), m_type(type) {}
 
-Stream::Base::Base(short&& stream_id, std::string&& encoder, Database::Data::stream_codec&& codec, char&& type):m_stream_id(std::move(stream_id)), m_encoder(std::move(encoder)), m_codec(std::move(codec)), m_type(std::move(type)) {}
+Stream::Base::Base(short&& stream_id, std::string&& encoder, Database::Data::film::stream::codec&& codec, char&& type):m_stream_id(std::move(stream_id)), m_encoder(std::move(encoder)), m_codec(std::move(codec)), m_type(std::move(type)) {}
 
 std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 	std::list<std::string> result {

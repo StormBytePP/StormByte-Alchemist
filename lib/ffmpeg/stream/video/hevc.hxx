@@ -21,12 +21,12 @@ namespace StormByte::VideoConvert::Stream::Video {
 						const unsigned int& light_level_content,	const unsigned int& light_level_average);
 					HDR(const HDR& hdr) = default;
 					HDR(HDR&&) noexcept = default;
-					inline HDR(const Database::Data::hdr& hdr) { m_data = hdr; }
-					inline HDR(Database::Data::hdr&& hdr) noexcept { m_data = std::move(hdr); }
+					inline HDR(const Database::Data::film::stream::hdr& hdr) { m_data = hdr; }
+					inline HDR(Database::Data::film::stream::hdr&& hdr) noexcept { m_data = std::move(hdr); }
 					HDR& operator=(const HDR& hdr) = default;
 					HDR& operator=(HDR&& hdr) noexcept = default;
-					inline HDR& operator=(const Database::Data::hdr& hdr) { m_data = hdr; return *this; }
-					inline HDR& operator=(Database::Data::hdr&& hdr) { m_data = std::move(hdr); return *this; }
+					inline HDR& operator=(const Database::Data::film::stream::hdr& hdr) { m_data = hdr; return *this; }
+					inline HDR& operator=(Database::Data::film::stream::hdr&& hdr) { m_data = std::move(hdr); return *this; }
 					~HDR() = default;
 					inline void set_light_level(const unsigned int& light_level_content, const unsigned int& light_level_average) { m_data.light_level = std::make_pair(light_level_content, light_level_average); }
 					std::string ffmpeg_parameters() const;
@@ -34,7 +34,7 @@ namespace StormByte::VideoConvert::Stream::Video {
 					static const unsigned int DEFAULT_REDX, DEFAULT_REDY, DEFAULT_GREENX, DEFAULT_GREENY, DEFAULT_BLUEX, DEFAULT_BLUEY, DEFAULT_WHITEPOINTX, DEFAULT_WHITEPOINTY, DEFAULT_LUMINANCEMIN, DEFAULT_LUMINANCEMAX;
 			
 				private:
-					Database::Data::hdr m_data;
+					Database::Data::film::stream::hdr m_data;
 			};
 
 			HEVC(const unsigned short& stream_id);
@@ -47,8 +47,8 @@ namespace StormByte::VideoConvert::Stream::Video {
 
 			inline void set_HDR(const HDR& hdr) { m_hdr = hdr; }
 			inline void set_HDR(HDR&& hdr) { m_hdr = std::move(hdr); }
-			inline void set_HDR(const Database::Data::hdr& hdr) { m_hdr = hdr; }
-			inline void set_HDR(Database::Data::hdr&& hdr) { m_hdr = std::move(hdr); }
+			inline void set_HDR(const Database::Data::film::stream::hdr& hdr) { m_hdr = hdr; }
+			inline void set_HDR(Database::Data::film::stream::hdr&& hdr) { m_hdr = std::move(hdr); }
 			std::list<std::string> ffmpeg_parameters() const override;
 			
 			static const HDR DEFAULT_HDR;
