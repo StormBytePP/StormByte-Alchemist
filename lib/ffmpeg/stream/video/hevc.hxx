@@ -27,6 +27,7 @@ namespace StormByte::VideoConvert::Stream::Video {
 					HDR& operator=(HDR&& hdr) noexcept = default;
 					inline HDR& operator=(const Database::Data::film::stream::hdr& hdr) { m_data = hdr; return *this; }
 					inline HDR& operator=(Database::Data::film::stream::hdr&& hdr) { m_data = std::move(hdr); return *this; }
+					inline operator Database::Data::film::stream::hdr() const { return m_data; }
 					~HDR() = default;
 					inline void set_light_level(const unsigned int& light_level_content, const unsigned int& light_level_average) { m_data.light_level = std::make_pair(light_level_content, light_level_average); }
 					std::string ffmpeg_parameters() const;

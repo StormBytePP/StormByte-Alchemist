@@ -1,6 +1,9 @@
 #include "interactive.hxx"
 #include "application.hxx"
 #include "utils/input.hxx"
+#ifdef ENABLE_HEVC
+#include "ffmpeg/stream/video/hevc.hxx" // For default HDR
+#endif
 
 #include <iostream>
 #include <boost/algorithm/string.hpp> // For string lowercase
@@ -193,14 +196,16 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 		#ifdef ENABLE_HEVC
 		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
-				std::cout << "Does it have HDR? [(y)es/(n)o]: ";
+				std::cout << "Does it have HDR? [(y)es/(n)o/(d)efault]: ";
 				std::getline(std::cin, buffer_str);
 			} while(!Utils::Input::in_options(
 				buffer_str,
-				{ "y", "Y", "n", "N" }
+				{ "y", "Y", "n", "N", "d", "D" }
 			));
 			if (buffer_str == "y" || buffer_str == "Y")
 				stream.m_hdr.emplace(ask_stream_hdr());
+			else if (buffer_str == "d" || buffer_str == "D")
+				stream.m_hdr.emplace(Stream::Video::HEVC::DEFAULT_HDR);
 		}
 		#endif
 	}
