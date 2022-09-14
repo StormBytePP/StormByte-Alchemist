@@ -33,6 +33,8 @@ Task::Execute::~Execute() {
 Task::STATUS Task::Execute::run(std::shared_ptr<Configuration> config) noexcept {
 	if (Base::run(config) == RUNNING) {
 		set_arguments();
+		construct_execvp_arguments();
+		m_output = ""; // Clear output so run can be called more than once
 
 		// Setup file descriptors for redirecting stdout
 		int file_descriptor[2];
