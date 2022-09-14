@@ -18,6 +18,7 @@ namespace StormByte::VideoConvert::Task {
 
 			inline std::optional<pid_t> get_worker() const { return m_worker; }
 			virtual void set_arguments() = 0; // Override so m_arguments can be set inside run automatically
+			inline std::string get_output() const { return m_output; }
 
 		protected:
 			void construct_execvp_arguments();
@@ -28,5 +29,6 @@ namespace StormByte::VideoConvert::Task {
 			std::filesystem::path m_program;
 			std::list<std::string> m_arguments;
 			std::vector<char*> m_arguments_for_execvp;
+			std::string m_output;
 	};
 }

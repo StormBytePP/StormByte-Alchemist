@@ -130,7 +130,9 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 		do {
 			if (!is_path) {
 				std::cout << "Available streams for selected film " << *m_config->get_interactive_parameter()<<  std::endl;
-				Task::ExecuteFFprobeStreams(*m_config->get_interactive_parameter()).run(m_config);
+				auto task = Task::ExecuteFFprobeStreams(*m_config->get_interactive_parameter());
+				task.run(m_config);
+				std::cout << task.get_output() << std::endl;
 				int status;
 				wait(&status);
 			}
@@ -217,12 +219,14 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 	
 		//#ifdef ENABLE_HEVC
 		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
+			std::cout << "Film frame info:" << std::endl;
+			auto task = Task::ExecuteFFprobeHDR(*m_config->get_interactive_parameter());
+			task.run(m_config);
+			int status;
+			wait(&status);
+			std::cout << task.get_output() << std::endl;
 			do {
-				std::cout << "Film frame info:" << std::endl;
-				Task::ExecuteFFprobeHDR(*m_config->get_interactive_parameter()).run(m_config);
 				std::cout << "Does it have HDR? [(y)es/(n)o/(d)efault]: ";
-				int status;
-				wait(&status);
 				std::getline(std::cin, buffer_str);
 			} while(!Utils::Input::in_options(
 				buffer_str,
