@@ -48,6 +48,7 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 		auto films = std::move(ask_film_data());
 		if (!films) return HALT_ERROR;
 		auto streams = std::move(ask_streams());
+		if (streams.empty()) return HALT_OK;
 
 		// Now we put the streams into all films
 		for (auto film = films->begin(); film != films->end(); film++)
@@ -108,7 +109,7 @@ std::optional<std::list<Database::Data::film>> Task::Interactive::ask_film_data(
 			std::cout << "Do you wish to continue? [(y)es/(n)o]: ";
 			std::getline(std::cin, buffer_str);
 		} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
-		if (buffer_str == "n" || buffer_str == "N") return std::optional<std::list<Database::Data::film>>();
+		if (buffer_str == "n" || buffer_str == "N") films.clear(); 
 	}
 
 	return films;
@@ -133,9 +134,13 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 				int status;
 				wait(&status);
 			}
-			std::cout << "Select stream type [(v)ideo, (a)udio or (s)ubtitles]: ";
+			std::cout << "Select stream type [(v)ideo, (a)udio, (s)ubtitles or (q)uit]: ";
 			std::getline(std::cin, buffer_str);
-		} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));
+		} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S", "q", "Q" }, true));
+		if (buffer_str == "q" || buffer_str == "Q") {
+			streams.clear();
+			return streams;
+		}
 		char codec_type = tolower(buffer_str[0]);
 
 		if (!continue_asking[codec_type]) {
@@ -150,13 +155,17 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 			if (continue_asking_any)
 				do {
 					buffer_str = "";
-					std::cout << "Add another stream? [(y)es/(n)o]: ";
+					std::cout << "Add another stream? [(y)es/(n)o/(q)uit]: ";
 					std::getline(std::cin, buffer_str);
-				} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N" }));
+				} while(!Utils::Input::in_options(buffer_str, { "y", "Y", "n", "N", "q", "Q" }));
 			else
 				std::cout << "There are no more streams to add" << std::endl;
 
 			add_new_stream = buffer_str == "y" || buffer_str == "Y";
+			if (buffer_str == "q" || buffer_str == "Q") {
+				streams.clear();
+				return streams;
+			}
 		}
 	} while(add_new_stream && continue_asking_any);
 
