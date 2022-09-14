@@ -37,14 +37,14 @@ Task::STATUS Task::Execute::run(std::shared_ptr<Configuration> config) noexcept 
 		// Setup file descriptors for redirecting stdout
 		int file_descriptor[2];
 		if (pipe(file_descriptor) == -1) {
-			m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Can not create pipes for executing the program " + m_program.string());
+			if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Can not create pipes for executing the program " + m_program.string());
 			return HALT_ERROR;
 		}
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Executing " + m_program.string() + " " + Utils::Display::list_to_string(m_arguments, "", " ", ""));
+		if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Executing " + m_program.string() + " " + Utils::Display::list_to_string(m_arguments, "", " ", ""));
 		pid_t worker = fork();
 
 		if (worker < 0) { // Fork error
-			m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Can not fork process!");
+			if (m_logger) m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Can not fork process!");
 			m_status = HALT_ERROR;
 		}
 		else if (worker > 0) { // Fork parent
