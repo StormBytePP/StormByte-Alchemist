@@ -15,6 +15,8 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	task/base.cxx
 	task/execute.cxx
 	task/execute_ffmpeg.cxx
+	task/execute_ffprobe.cxx
+	task/execute_ffprobe_streams.cxx
 )
 
 if (ENABLE_HEVC)

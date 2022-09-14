@@ -16,7 +16,7 @@ namespace StormByte::VideoConvert {
 
 			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_AUTHOR, PROGRAM_VERSION;
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
-			static const std::string FFMPEG_EXECUTABLE;
+			static const std::string FFMPEG_EXECUTABLE, FFPROBE_EXECUTABLE;
 
 			static const std::list<Database::Data::film::stream::codec> SUPPORTED_CODECS;
 			static const std::list<std::string> SUPPORTED_MULTIMEDIA_EXTENSIONS;

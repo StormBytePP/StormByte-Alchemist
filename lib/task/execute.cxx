@@ -13,7 +13,7 @@ Task::Execute::Execute(const std::filesystem::path& program):Base(), m_program(p
 Task::STATUS Task::Execute::run(std::shared_ptr<Configuration> config) noexcept {
 	if (Base::run(config) == RUNNING) {
 		set_arguments();
-		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Executing " + Utils::Display::list_to_string(m_arguments, "", " ", ""));
+		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Executing " + m_program.string() + " " + Utils::Display::list_to_string(m_arguments, "", " ", ""));
 		pid_t worker = fork();
 
 		if (worker < 0)

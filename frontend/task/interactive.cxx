@@ -4,10 +4,12 @@
 #ifdef ENABLE_HEVC
 #include "ffmpeg/stream/video/hevc.hxx" // For default HDR
 #endif
+#include "task/execute_ffprobe_streams.hxx"
 
 #include <iostream>
 #include <boost/algorithm/string.hpp> // For string lowercase
 #include <csignal>
+#include <sys/wait.h>
 
 using namespace StormByte::VideoConvert;
 
@@ -112,6 +114,7 @@ std::optional<std::list<Database::Data::film>> Task::Interactive::ask_film_data(
 }
 
 std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
+	bool is_path = std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter());
 	std::map<char, bool> continue_asking {
 		{ 'v', true },
 		{ 'a', true },
@@ -123,6 +126,12 @@ std::list<Database::Data::film::stream> Task::Interactive::ask_streams() {
 	do {
 		std::string buffer_str;		
 		do {
+			if (!is_path) {
+				std::cout << "Available streams for selected film " << *m_config->get_interactive_parameter()<<  std::endl;
+				Task::ExecuteFFprobeStreams(*m_config->get_interactive_parameter()).run(m_config);
+				int status;
+				wait(&status);
+			}
 			std::cout << "Select stream type [(v)ideo, (a)udio or (s)ubtitles]: ";
 			std::getline(std::cin, buffer_str);
 		} while (!Utils::Input::in_options(buffer_str, { "v", "V", "a", "A", "s", "S" }, true));

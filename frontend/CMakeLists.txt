@@ -12,6 +12,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
 mark_as_advanced(FFMPEG_EXECUTABLE)
+find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)
+mark_as_advanced(FFPROBE_EXECUTABLE)
 
 # Manually set VERSION_UPDATE_FROM_GIT to true to update version from last tag
 include(${PROJECT_SOURCE_DIR}/cmake/GetVersionFromGitTag.cmake)
@@ -25,6 +27,7 @@ const std::string StormByte::VideoConvert::Application::COMPILER_NAME			= \"${CM
 const std::string StormByte::VideoConvert::Application::COMPILER_VERSION		= \"${CMAKE_CXX_COMPILER_VERSION}\";
 
 const std::string StormByte::VideoConvert::Application::FFMPEG_EXECUTABLE		= \"${FFMPEG_EXECUTABLE}\";
+const std::string StormByte::VideoConvert::Application::FFPROBE_EXECUTABLE		= \"${FFPROBE_EXECUTABLE}\";
 ")
 string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
 if (build_type STREQUAL DEBUG)

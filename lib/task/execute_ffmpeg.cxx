@@ -20,5 +20,5 @@ void Task::ExecuteFFmpeg::set_arguments() {
 
 	result.push_back(*m_config->get_work_folder() / m_ffmpeg.get_output_file());
 
-	m_arguments = result;
+	m_arguments = std::move(result);
 }
