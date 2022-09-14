@@ -3,6 +3,14 @@
 
 using namespace StormByte::VideoConvert;
 
+FFprobe::FFprobe() {
+	m_streams = {
+		{ stream::VIDEO,	std::vector<stream>() },
+		{ stream::AUDIO,	std::vector<stream>() },
+		{ stream::SUBTITLE,	std::vector<stream>() }
+	};
+}
+
 void FFprobe::initialize_video_data(const std::string& json) {
 	std::optional<Json::Value> root = parse_json(json);
 	if (root) {
@@ -38,6 +46,32 @@ void FFprobe::initialize_video_data(const std::string& json) {
 					}
 				}
 				#endif
+			}
+		}
+		catch (const std::exception& e) {
+			//Something went wrong but we ignore it
+		}
+	}
+}
+
+void FFprobe::initialize_stream_data(const std::string& json, const stream::TYPE& type) {
+	m_streams[type].clear();
+	std::optional<Json::Value> root = parse_json(json);
+	if (root) {
+		auto json = (*root)["streams"];
+		Json::Value item;
+
+		try {
+			for (Json::ArrayIndex i = 0; i < json.size(); i++) {
+				stream strm;
+				for (auto it = json[i].begin(); it != json[i].end(); it++) {
+					if (it.key() == "codec_name" && !it->isNull()) strm.codec_name = it->asString();
+					else if (it.key() == "tags") {
+						if (it->size() > 0 && !(*it).begin()->isNull())
+							strm.language = (*it).begin()->asString();
+					}
+				}
+				m_streams[type].push_back(strm);
 			}
 		}
 		catch (const std::exception& e) {

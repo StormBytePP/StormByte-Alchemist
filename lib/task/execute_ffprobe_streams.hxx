@@ -2,8 +2,6 @@
 
 #include "execute_ffprobe.hxx"
 
-// USEFUL COMMAND: /usr/bin/ffprobe -hide_banner -loglevel error -select_streams v -show_entries stream=index:stream_tags=language  -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 -print_format json  "/warehouse/Encode/Queue/Pelis/Maverick - m1080p.mkv"
-
 namespace StormByte::VideoConvert::Task {
 	class ExecuteFFprobeStreams: public ExecuteFFprobe {
 		public:
@@ -18,7 +16,11 @@ namespace StormByte::VideoConvert::Task {
 
 			void set_arguments() override;
 
+			enum MODES: char { VIDEO = 'v', AUDIO = 'a', SUBTITLE = 's' };
+			inline void set_mode(const MODES& mode) { m_mode = mode; }
+
 		private:
 			static const std::list<std::string> DEFAULT_ARGUMENTS;
+			MODES m_mode;
 	};
 }
