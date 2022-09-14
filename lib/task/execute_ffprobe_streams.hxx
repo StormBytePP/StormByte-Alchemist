@@ -1,6 +1,7 @@
 #pragma once
 
 #include "execute_ffprobe.hxx"
+#include "ffprobe/ffprobe.hxx"
 
 namespace StormByte::VideoConvert::Task {
 	class ExecuteFFprobeStreams: public ExecuteFFprobe {
@@ -14,13 +15,12 @@ namespace StormByte::VideoConvert::Task {
 			ExecuteFFprobeStreams& operator=(ExecuteFFprobeStreams&& execute_ffprobe_streams) noexcept = default;
 			~ExecuteFFprobeStreams() noexcept = default;
 
-			void set_arguments() override;
-
-			enum MODES: char { VIDEO = 'v', AUDIO = 'a', SUBTITLE = 's' };
-			inline void set_mode(const MODES& mode) { m_mode = mode; }
+			inline void set_mode(const FFprobe::stream::TYPE& mode) { m_mode = mode; }
 
 		private:
+			void set_arguments() override;
+
 			static const std::list<std::string> DEFAULT_ARGUMENTS;
-			MODES m_mode;
+			FFprobe::stream::TYPE m_mode;
 	};
 }

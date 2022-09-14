@@ -68,3 +68,23 @@ bool Utils::Input::in_options(const std::string& input, const std::list<std::str
 		return true;
 	}
 }
+
+bool Utils::Input::in_options(const int& input, const std::list<int>& options, const bool& use_cerr) {
+	if (std::find(options.begin(), options.end(), input) == options.end()) {
+		if (use_cerr) {
+			std::cerr << "Selected option " << input << " not found in " << Display::list_to_string(options, "[", " ", "]") << std::endl;
+		}
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+bool Utils::Input::in_yes_no(const std::string input, bool& store, const bool& use_cerr) {
+	bool result = in_options(input, { "y", "Y", "n", "N", "yes", "YES", "no", "NO"}, use_cerr);
+	if (result) {
+		store = input == "y" || input == "Y" || input == "yes" || input == "YES";
+	}
+	return result;
+}

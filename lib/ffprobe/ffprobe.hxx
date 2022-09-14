@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ffmpeg/stream/video/hevc.hxx"
+
 #include <optional>
 #include <string>
 #include <map>
@@ -27,15 +29,17 @@ namespace StormByte::VideoConvert {
 			void initialize_stream_data(const std::string& json, const stream::TYPE& type);
 
 			/* Getters */
-			std::optional<std::string> get_pix_fmt() const { return m_pix_fmt; }
-			std::optional<std::string> get_color_space() const { return m_color_space; }
-			std::optional<std::string> get_color_primaries() const { return m_color_primaries; }
-			std::optional<std::string> get_color_transfer() const { return m_color_transfer; }
+			std::optional<std::string>	get_pix_fmt() const { return m_pix_fmt; }
+			std::optional<std::string>	get_color_space() const { return m_color_space; }
+			std::optional<std::string>	get_color_primaries() const { return m_color_primaries; }
+			std::optional<std::string>	get_color_transfer() const { return m_color_transfer; }
+			inline const auto&			get_stream(const stream::TYPE& type) const { return m_streams.at(type); }
 
 
 			#ifdef ENABLE_HEVC
 			bool is_HDR_detected() const;
 			bool is_HDR_factible() const; // When HDR metadata is missing but color space is compatible
+			Stream::Video::HEVC::HDR get_HDR() const;
 			#endif
 
 		private:

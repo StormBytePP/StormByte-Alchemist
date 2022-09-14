@@ -100,6 +100,22 @@ bool FFprobe::is_HDR_factible() const {
 			m_color_primaries && m_color_primaries == "bt2020" &&
 			m_color_transfer && m_color_transfer == "smpte2084";
 }
+
+Stream::Video::HEVC::HDR FFprobe::get_HDR() const {
+	Stream::Video::HEVC::HDR result = Stream::Video::HEVC::DEFAULT_HDR;
+	if (is_HDR_detected()) {
+		// Then were we put the correct values
+		result.set_red(std::stoi(*m_red_x), std::stoi(*m_red_y));
+		result.set_green(std::stoi(*m_green_x), std::stoi(*m_green_y));
+		result.set_blue(std::stoi(*m_blue_x), std::stoi(*m_blue_y));
+		result.set_white_point(std::stoi(*m_white_point_x), std::stoi(*m_white_point_y));
+		result.set_luminance(std::stoi(*m_min_luminance), std::stoi(*m_max_luminance));
+		if (m_max_content && m_max_average) {
+			result.set_light_level(std::stoi(*m_max_content), std::stoi(*m_max_average));
+		}
+	}
+	return result;
+}
 #endif
 
 std::optional<Json::Value> FFprobe::parse_json(const std::string& json) const {

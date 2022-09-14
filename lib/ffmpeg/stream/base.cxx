@@ -9,7 +9,7 @@ Stream::Base::Base(short&& stream_id, std::string&& encoder, Database::Data::fil
 std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 	std::list<std::string> result {
 		"-map",
-		"0:" + ffmpeg_stream_id(),
+		"0:" + ffmpeg_stream_id() + (m_stream_id == -1 ? "?" : ""), // Because this content might not be existant
 		"-c:" + ffmpeg_stream_id(),
 		m_encoder
 	};

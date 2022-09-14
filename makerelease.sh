@@ -14,6 +14,11 @@ if [ $# -eq 1 ]; then
 	git tag -d $1 &> /dev/null;
 	git tag -a $1 -m "Version $1 released" &> /dev/null;
 	git push origin $1 &> /dev/null;
+
+	# Last part is to leave again VERSION_UPDATE_FROM_GIT in false so it is not updating on each rebuild by accident
+	cd build &> /dev/null;
+	cmake -DVERSION_UPDATE_FROM_GIT=false .. &> /dev/null;
+	cd .. &> /dev/null;
 	echo "Version $1 released and pushed";
 else
 	echo "Only 1 argument is expected and should be version string!";
