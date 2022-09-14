@@ -34,6 +34,8 @@ Task::STATUS Task::Daemon::run(std::shared_ptr<Configuration> config) noexcept {
 			if (film) {
 				m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film->get_input_file().string() + " found");
 				execute_ffmpeg(*film);
+				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Pausing for " + std::to_string(m_config->get_pause_time()) + " seconds");
+				sleep(m_config->get_pause_time());
 			}
 			else {
 				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "No films found");

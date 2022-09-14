@@ -8,6 +8,7 @@ using namespace StormByte::VideoConvert;
 
 const std::filesystem::path Configuration::DEFAULT_CONFIG_FILE	= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
 const unsigned int Configuration::DEFAULT_SLEEP_TIME			= 3600; // 1 hour
+const unsigned int Configuration::DEFAULT_PAUSE_TIME			= 60; // 1 minute
 const std::string Configuration::DEFAULT_ONFINISH				= "move";
 
 void Configuration::merge(const Configuration& config) {
@@ -19,7 +20,8 @@ void Configuration::merge(const Configuration& config) {
 	if (config.m_logfile) m_logfile 							= config.m_logfile;
 	if (config.m_loglevel) m_loglevel							= config.m_loglevel;
 	if (config.m_sleep) m_sleep 								= config.m_sleep;
-	if (config.m_onfinish) m_onfinish 								= config.m_onfinish;
+	if (config.m_sleep) m_pause 								= config.m_pause;
+	if (config.m_onfinish) m_onfinish 							= config.m_onfinish;
 
 	if (config.m_interactive_parameter) m_interactive_parameter	= config.m_interactive_parameter;
 }
@@ -33,6 +35,7 @@ void Configuration::merge(Configuration&& config) noexcept {
 	if (config.m_logfile) m_logfile								= std::move(config.m_logfile);
 	if (config.m_loglevel) m_loglevel							= std::move(config.m_loglevel);
 	if (config.m_sleep) m_sleep									= std::move(config.m_sleep);
+	if (config.m_sleep) m_pause									= std::move(config.m_pause);
 	if (config.m_onfinish) m_onfinish							= std::move(config.m_onfinish);
 
 	if (config.m_interactive_parameter) m_interactive_parameter	= std::move(config.m_interactive_parameter);
@@ -95,6 +98,7 @@ const std::list<std::pair<std::string, std::string>> Configuration::items() cons
 		std::make_pair("logfile", m_logfile.value_or("")),
 		std::make_pair("loglevel", m_loglevel ? std::to_string(*m_loglevel) : ""),
 		std::make_pair("sleep", m_sleep ? std::to_string(*m_sleep) : ""),
+		std::make_pair("sleep", m_pause ? std::to_string(*m_pause) : ""),
 		std::make_pair("onfinish", m_onfinish.value_or(""))
 	});
 }

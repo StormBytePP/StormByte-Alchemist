@@ -158,6 +158,16 @@ Configuration Application::read_cli(int argc, char** argv) {
 				else
 					throw std::runtime_error("Sleep time specified without argument, correct usage:");
 			}
+			else if (argument == "-p" || argument == "--pause") {
+				if (++counter < argc) {
+					int pause;
+					if (!Utils::Input::to_int_positive(argv[counter++], pause))
+						throw std::runtime_error("Pause time is not recognized as integer or it has a negative value");
+					config.set_pause_time(pause);
+				}
+				else
+					throw std::runtime_error("Pause time specified without argument, correct usage:");
+			}
 			else if (argument == "-of" || argument == "--onfinish") {
 				if (++counter < argc) {
 					std::string onfinish = argv[counter++];
@@ -239,6 +249,8 @@ Configuration Application::read_config(const std::filesystem::path& config_file)
 		config.set_log_level(static_cast<int>(cfg.lookup("loglevel")));
 	if (cfg.exists("sleep") && cfg.lookup("sleep").isNumber())
 		config.set_sleep_time(static_cast<int>(cfg.lookup("sleep")));
+	if (cfg.exists("pause") && cfg.lookup("pause").isNumber())
+		config.set_sleep_time(static_cast<int>(cfg.lookup("pause")));
 	if (cfg.exists("onfinish")) {
 		std::string onfinish = cfg.lookup("onfinish");
 		if (onfinish == "copy" || onfinish == "move")

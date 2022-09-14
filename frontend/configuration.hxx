@@ -25,6 +25,7 @@ namespace StormByte::VideoConvert {
 			inline const std::optional<std::filesystem::path>& get_log_file() const { return m_logfile; }
 			inline const std::optional<unsigned int>& get_log_level() const { return m_loglevel; }
 			inline const unsigned int& get_sleep_time() const { return m_sleep ? *m_sleep : DEFAULT_SLEEP_TIME; }
+			inline const unsigned int& get_pause_time() const { return m_pause ? *m_pause : DEFAULT_PAUSE_TIME; }
 			inline const std::string& get_onfinish() const { return m_onfinish ? *m_onfinish : DEFAULT_ONFINISH; }
 
 			/* Action getters */
@@ -45,6 +46,7 @@ namespace StormByte::VideoConvert {
 			inline void set_log_file(std::filesystem::path&& logfile) { m_logfile = std::move(logfile); }
 			inline void set_log_level(const unsigned int& loglevel) { m_loglevel = loglevel; }
 			inline void set_sleep_time(const unsigned int& sleep_time) { m_sleep = sleep_time; }
+			inline void set_pause_time(const unsigned int& pause_time) { m_pause = pause_time; }
 			inline void set_onfinish(const std::string& onfinish) { m_onfinish = onfinish; }
 			inline void set_onfinish(std::string&& onfinish) { m_onfinish = std::move(onfinish); }
 
@@ -59,7 +61,7 @@ namespace StormByte::VideoConvert {
 
 			/* Constants */
 			static const std::filesystem::path DEFAULT_CONFIG_FILE;
-			static const unsigned int DEFAULT_SLEEP_TIME;
+			static const unsigned int DEFAULT_SLEEP_TIME, DEFAULT_PAUSE_TIME;
 			static const std::string DEFAULT_ONFINISH;
 
 			#ifdef DEBUG
@@ -68,7 +70,7 @@ namespace StormByte::VideoConvert {
 
 		private:
 			std::optional<std::filesystem::path> m_database, m_input, m_output, m_work, m_configfile, m_logfile;
-			std::optional<unsigned int> m_loglevel, m_sleep;
+			std::optional<unsigned int> m_loglevel, m_sleep, m_pause;
 			std::optional<std::string> m_onfinish;
 
 			/* Action data */
