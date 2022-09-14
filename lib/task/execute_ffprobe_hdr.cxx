@@ -12,5 +12,5 @@ void Task::ExecuteFFprobeHDR::set_arguments() {
 	std::list<std::string> result = DEFAULT_ARGUMENTS;
 	result.push_back(*m_config->get_input_folder() / m_file);
 
-	m_arguments = std::move(result);
+	m_arguments =std::move(result);
 }
