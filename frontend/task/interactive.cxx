@@ -1,9 +1,10 @@
 #include "interactive.hxx"
 #include "application.hxx"
 #include "utils/input.hxx"
-#ifdef ENABLE_HEVC
+//#ifdef ENABLE_HEVC
 #include "ffmpeg/stream/video/hevc.hxx" // For default HDR
-#endif
+#include "task/execute_ffprobe_hdr.hxx"
+//#endif
 #include "task/execute_ffprobe_streams.hxx"
 
 #include <iostream>
@@ -205,10 +206,14 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 				stream.m_is_animation = true;
 		}
 	
-		#ifdef ENABLE_HEVC
+		//#ifdef ENABLE_HEVC
 		if (stream.m_codec == Database::Data::film::stream::VIDEO_HEVC) {
 			do {
+				std::cout << "Film frame info:" << std::endl;
+				Task::ExecuteFFprobeHDR(*m_config->get_interactive_parameter()).run(m_config);
 				std::cout << "Does it have HDR? [(y)es/(n)o/(d)efault]: ";
+				int status;
+				wait(&status);
 				std::getline(std::cin, buffer_str);
 			} while(!Utils::Input::in_options(
 				buffer_str,
@@ -219,7 +224,7 @@ Database::Data::film::stream Task::Interactive::ask_stream(const char& codec_typ
 			else if (buffer_str == "d" || buffer_str == "D")
 				stream.m_hdr.emplace(Stream::Video::HEVC::DEFAULT_HDR);
 		}
-		#endif
+		//#endif
 	}
 	else if (codec_type == 'a') {
 		do {

@@ -20,7 +20,10 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 )
 
 if (ENABLE_HEVC)
-	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/video/hevc.cxx)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES
+		ffmpeg/stream/video/hevc.cxx
+		task/execute_ffprobe_hdr.cxx
+	)
 endif()
 
 if (ENABLE_AAC)
