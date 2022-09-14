@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstring>
+#include <fcntl.h>
 
 using namespace StormByte::VideoConvert;
 
@@ -70,9 +71,13 @@ Task::STATUS Task::Execute::run(std::shared_ptr<Configuration> config) noexcept 
 			close(file_descriptor[0]);
 		}
 		else { // Fork child
+			// stderr to /dev/null
+			int null = open("/dev/null", O_RDONLY);
+			while ((dup2(null, STDERR_FILENO) == -1) && (errno == EINTR)) {}
 			while ((dup2(file_descriptor[1], STDOUT_FILENO) == -1) && (errno == EINTR)) {}
 			close(file_descriptor[1]);
 			close(file_descriptor[0]);
+			close(null);
 			execvp(m_program.c_str(), get_execvp_arguments()); // Here get() is needed as there is no operator* for this case
 		}
 	}
