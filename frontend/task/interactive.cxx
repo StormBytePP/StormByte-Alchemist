@@ -1,10 +1,10 @@
 #include "interactive.hxx"
 #include "application.hxx"
 #include "utils/input.hxx"
-//#ifdef ENABLE_HEVC
-#include "ffmpeg/stream/video/hevc.hxx" // For default HDR
+#include "ffprobe/ffprobe.hxx"
+#ifdef ENABLE_HEVC
 #include "task/execute_ffprobe_hdr.hxx"
-//#endif
+#endif
 #include "task/execute_ffprobe_streams.hxx"
 
 #include <iostream>
@@ -59,7 +59,6 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 		else
 			m_status = HALT_ERROR;
 	}
-
 	return m_status;
 }
 

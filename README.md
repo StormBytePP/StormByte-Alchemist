@@ -7,6 +7,7 @@ This is a program to handle automatic ffmpeg conversions between downloaded vide
 ### Requirements
 
 * Compiler with C++20 support
+* [Jsoncpp](https://github.com/open-source-parsers/jsoncpp) Jsoncpp to parse JSON
 * [libConfig++](http://hyperrealm.github.io/libconfig) A library to parse config files
 * [SQlite3](https://www.sqlite.org/index.html) A lite database manager
 * [FFmpeg](https://ffmpeg.org) Multimedia converter software

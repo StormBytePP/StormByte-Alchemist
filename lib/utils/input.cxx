@@ -7,6 +7,11 @@
 
 using namespace StormByte::VideoConvert;
 
+bool Utils::Input::is_int(const std::string& possible_int) {
+	return !possible_int.empty() && std::find_if(possible_int.begin(), possible_int.end(),
+		[](unsigned char c) { return !std::isdigit(c); }) == possible_int.end();
+}
+
 bool Utils::Input::to_int(const std::string& possible_number, int& store, const bool& use_cerr) {
 	char *endptr;
 	store = strtol(possible_number.c_str(), &endptr, 10);

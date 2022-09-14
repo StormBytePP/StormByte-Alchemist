@@ -19,6 +19,7 @@ find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
 find_package (Boost REQUIRED)
 find_package (Git REQUIRED)
+find_package (JsonCpp REQUIRED)
 
 # Encoder support
 option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)

@@ -8,6 +8,7 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	ffmpeg/stream/subtitle/base.cxx
 	ffmpeg/stream/subtitle/copy.cxx
 	ffmpeg/ffmpeg.cxx
+	ffprobe/ffprobe.cxx
 	utils/logger.cxx
 	utils/filesystem.cxx
 	utils/input.cxx
@@ -52,4 +53,5 @@ set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRE
 set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormByte-videoconvert")
 target_link_libraries(StormByte-videoconvert-library sqlite3)
 target_link_libraries(StormByte-videoconvert-library config++)
+target_link_libraries(StormByte-videoconvert-library jsoncpp)
 install(TARGETS StormByte-videoconvert-library DESTINATION ${CMAKE_INSTALL_LIBDIR})
