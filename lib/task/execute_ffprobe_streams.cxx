@@ -6,7 +6,7 @@ Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(const std::filesystem::path& 
 
 Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(std::filesystem::path&& file):ExecuteFFprobe(std::move(file)) {}
 
-const std::list<std::string> Task::ExecuteFFprobeStreams::DEFAULT_ARGUMENTS { "-hide_banner", "-loglevel", "error", "-show_entries", "stream=index:stream_tags=language", "-show_entries", "stream=codec_name", "-print_format", "json" };
+const std::list<std::string> Task::ExecuteFFprobeStreams::DEFAULT_ARGUMENTS { "-hide_banner", "-loglevel", "error", "-show_entries", "stream=codec_name,width,height,index:stream_tags=language", "-print_format", "json" };
 
 void Task::ExecuteFFprobeStreams::set_arguments() {
 	std::list<std::string> result = DEFAULT_ARGUMENTS;

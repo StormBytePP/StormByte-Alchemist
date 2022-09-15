@@ -18,13 +18,11 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	task/execute_ffmpeg.cxx
 	task/execute_ffprobe.cxx
 	task/execute_ffprobe_streams.cxx
+	task/execute_ffprobe_video_color.cxx
 )
 
 if (ENABLE_HEVC)
-	list(APPEND VIDEOCONVERT_LIBRARY_FILES
-		ffmpeg/stream/video/hevc.cxx
-		task/execute_ffprobe_hdr.cxx
-	)
+	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/video/hevc.cxx)
 endif()
 
 if (ENABLE_AAC)

@@ -2,9 +2,7 @@
 #include "application.hxx"
 #include "utils/input.hxx"
 #include "utils/display.hxx"
-#ifdef ENABLE_HEVC
-#include "task/execute_ffprobe_hdr.hxx"
-#endif
+#include "task/execute_ffprobe_video_color.hxx"
 #include "task/execute_ffprobe_streams.hxx"
 
 #include <iostream>
@@ -68,11 +66,9 @@ FFprobe Task::Interactive::get_film_data() {
 	std::unique_ptr<Task::Execute> task;
 
 	const std::filesystem::path full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
-	#ifdef ENABLE_HEVC
-	task.reset(new Task::ExecuteFFprobeHDR(full_path));
+	task.reset(new Task::ExecuteFFprobeVideoColor(full_path));
 	task->run(m_config);
-	probe.initialize_video_data(task->get_output());
-	#endif
+	probe.initialize_video_color_data(task->get_output());
 	task.reset(new Task::ExecuteFFprobeStreams(full_path));
 	for (const auto i : { FFprobe::stream::VIDEO, FFprobe::stream::AUDIO, FFprobe::stream::SUBTITLE }) {
 		dynamic_cast<Task::ExecuteFFprobeStreams&>(*task).set_mode(i);

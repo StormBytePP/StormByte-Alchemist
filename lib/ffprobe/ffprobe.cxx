@@ -3,6 +3,22 @@
 
 using namespace StormByte::VideoConvert;
 
+const std::map<FFprobe::stream::RESOLUTION, std::string> FFprobe::stream::RESOLUTION_STRING = {
+	{ RES_480P,		"480p" },
+	{ RES_720P,		"720p" },
+	{ RES_1080P,	"1080p" },
+	{ RES_4K,		"4K" },
+	{ RES_8K,		"8K" }
+};
+
+const std::map<FFprobe::stream::RESOLUTION, unsigned short> FFprobe::stream::RESOLUTION_MAX_HEIGHT = {
+	{ RES_480P,		480 },
+	{ RES_720P,		720 },
+	{ RES_1080P,	1080 },
+	{ RES_4K,		2160 },
+	{ RES_8K,		4320 }
+};
+
 FFprobe::FFprobe() {
 	m_streams = {
 		{ stream::VIDEO,	std::vector<stream>() },
@@ -11,7 +27,7 @@ FFprobe::FFprobe() {
 	};
 }
 
-void FFprobe::initialize_video_data(const std::string& json) {
+void FFprobe::initialize_video_color_data(const std::string& json) {
 	std::optional<Json::Value> root = parse_json(json);
 	if (root) {
 		auto json = *(root->begin());
@@ -66,6 +82,8 @@ void FFprobe::initialize_stream_data(const std::string& json, const stream::TYPE
 				stream strm;
 				for (auto it = json[i].begin(); it != json[i].end(); it++) {
 					if (it.key() == "codec_name" && !it->isNull()) strm.codec_name = it->asString();
+					else if (it.key() == "width" && it->isInt()) m_width = it->asInt();
+					else if (it.key() == "height" && it->isInt()) m_height = it->asInt();
 					else if (it.key() == "tags") {
 						if (it->size() > 0 && !(*it).begin()->isNull())
 							strm.language = (*it).begin()->asString();
@@ -78,6 +96,26 @@ void FFprobe::initialize_stream_data(const std::string& json, const stream::TYPE
 			//Something went wrong but we ignore it
 		}
 	}
+}
+
+std::optional<FFprobe::stream::RESOLUTION> FFprobe::get_resolution() const {
+	std::optional<FFprobe::stream::RESOLUTION> res;
+
+	if (m_height) { // Width is ignored
+		// The protection is needed because somehow video resolution might not be detected by FFprobe, just in case...
+		if (*m_height <= stream::RESOLUTION_MAX_HEIGHT.at(stream::RES_480P))
+			res = stream::RES_480P;
+		else if (*m_height <= stream::RESOLUTION_MAX_HEIGHT.at(stream::RES_720P))
+			res = stream::RES_720P;
+		else if (*m_height <= stream::RESOLUTION_MAX_HEIGHT.at(stream::RES_1080P))
+			res = stream::RES_1080P;
+		else if (*m_height <= stream::RESOLUTION_MAX_HEIGHT.at(stream::RES_4K))
+			res = stream::RES_4K;
+		else if (*m_height <= stream::RESOLUTION_MAX_HEIGHT.at(stream::RES_8K))
+			res = stream::RES_8K;
+	}
+
+	return res;
 }
 
 #ifdef ENABLE_HEVC
