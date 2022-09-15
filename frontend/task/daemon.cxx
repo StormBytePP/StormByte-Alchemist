@@ -117,8 +117,10 @@ void Task::Daemon::signal_handler(int signal) {
 		case SIGINT:
 		case SIGTERM:
 			task_instance.m_status = HALT_OK;
-			if (task_instance.m_worker)
+			if (task_instance.m_worker) {
+				task_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sending term signal to running FFMPEG");
 				kill(*task_instance.m_worker, SIGTERM);
+			}
 			break;
 
 		case SIGUSR1:

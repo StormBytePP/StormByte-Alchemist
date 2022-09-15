@@ -233,7 +233,7 @@ void Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const s
 	}
 
 	do {
-		std::cout << "Select desired codec: " << Utils::Display::list_to_string(options) << ": ";
+		std::cout << "Select desired codec: " << Utils::Display::list_to_string(options, "[", ", ", "]") << ": ";
 		std::getline(std::cin, m_buffer_str);
 	} while (!Utils::Input::to_int_positive(m_buffer_str, m_buffer_int) && !Utils::Input::in_options(m_buffer_int, options, true));
 
