@@ -2,6 +2,7 @@
 
 if [ $# -eq 1 ]; then
 	git pull --rebase &> /dev/null
+	git push &> /dev/null # In case there is pending work
 	git tag -a $1 -m "Version $1 released" &> /dev/null;
 	rm -Rf build/* &> /dev/null;
 	cd build &> /dev/null;
