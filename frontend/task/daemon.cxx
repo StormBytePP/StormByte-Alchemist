@@ -65,7 +65,9 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create work path: " + full_work_file.parent_path().string());
 		std::filesystem::create_directories(full_work_file.parent_path());
 	}
-	Task::ExecuteFFmpeg(ffmpeg).run(m_config);
+	Task::ExecuteFFmpeg task_ffmpeg = Task::ExecuteFFmpeg(ffmpeg);
+	task_ffmpeg.run(m_config);
+	m_worker = task_ffmpeg.get_worker();
 	int exit_status;
 	wait(&exit_status);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

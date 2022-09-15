@@ -28,7 +28,7 @@ namespace StormByte::VideoConvert::Task {
 			Types::config_t m_config;
 			Types::logger_t m_logger;
 			Types::database_t m_database;
-			STATUS m_status;
+			volatile STATUS m_status;
 			bool m_require_logger, m_require_database;
 	};
 }

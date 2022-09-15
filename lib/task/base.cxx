@@ -1,7 +1,6 @@
 #include "base.hxx"
 
 #include <iostream>
-#include <csignal>
 
 using namespace StormByte::VideoConvert;
 
