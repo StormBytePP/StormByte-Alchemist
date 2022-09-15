@@ -14,7 +14,7 @@ namespace StormByte::VideoConvert {
 			Application& operator=(Application&&) = delete;
 			~Application() = default;
 
-			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_AUTHOR, PROGRAM_VERSION;
+			static const std::string PROGRAM_NAME, PROGRAM_DESCRIPTION, PROGRAM_AUTHOR, PROGRAM_VERSION, PROJECT_URI;
 			static const std::string COMPILER_NAME, COMPILER_VERSION, COMPILER_FLAGS;
 			static const std::string FFMPEG_EXECUTABLE, FFPROBE_EXECUTABLE;
 

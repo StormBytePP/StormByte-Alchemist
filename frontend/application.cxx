@@ -11,6 +11,8 @@
 
 using namespace StormByte::VideoConvert;
 
+const std::string Application::PROJECT_URI = "https://github.com/StormBytePP/StormByte-videoconvert";
+
 const std::list<std::string> Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
 	".asf", ".asx", ".avi", ".wav", ".wma", ".wax", ".wm", ".wmv", ".wvx",
 	".ra", ".ram", ".rm", ".rmm",

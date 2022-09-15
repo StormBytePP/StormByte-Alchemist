@@ -3,7 +3,7 @@
 
 using namespace StormByte::VideoConvert;
 
-const std::list<const char*> Task::ExecuteFFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0", "-metadata", "title=" });
+const std::list<const char*> Task::ExecuteFFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0" });
 
 Task::ExecuteFFmpeg::ExecuteFFmpeg(const FFmpeg& ffmpeg):Execute(Application::FFMPEG_EXECUTABLE), m_ffmpeg(ffmpeg) {}
 
@@ -17,6 +17,15 @@ void Task::ExecuteFFmpeg::set_arguments() {
 		auto parameters = (*it)->ffmpeg_parameters();
 		result.insert(result.end(), parameters.begin(), parameters.end());
 	}
+
+	if (m_ffmpeg.get_title()) {
+		result.push_back("-metadata"); result.push_back("title='" + *m_ffmpeg.get_title() + "'");
+	}
+	else {
+		result.push_back("-metadata"); result.push_back("title=");
+	}
+
+	result.push_back("-metadata:s:v"); result.push_back("encoder='" + Application::PROGRAM_NAME + " " + Application::PROGRAM_VERSION + " ( " + Application::PROJECT_URI + " )'" );
 
 	result.push_back(*m_config->get_work_folder() / m_ffmpeg.get_output_file());
 
