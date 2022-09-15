@@ -63,6 +63,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   endif()
 endif()
 
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/generated)
+include_directories(${CMAKE_BINARY_DIR}/generated)
 include_directories(lib)
 include_directories(frontend)
 add_subdirectory(lib)

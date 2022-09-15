@@ -45,6 +45,8 @@ if (ENABLE_OPUS)
 	list(APPEND VIDEOCONVERT_LIBRARY_FILES ffmpeg/stream/audio/opus.cxx)
 endif()
 
+add_subdirectory(database)
+
 add_library(StormByte-videoconvert-library SHARED ${VIDEOCONVERT_LIBRARY_FILES})
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)
