@@ -57,7 +57,11 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 	const std::filesystem::path full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const std::filesystem::path full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
 
-	//m_worker = ffmpeg.exec(*m_config->get_input_folder(), *m_config->get_work_folder(), m_logger);
+	// We need to be sure that the output folder exists so we try to create before running in that case
+	if (!std::filesystem::exists(full_work_file.parent_path())) {
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create work path: " + full_work_file.parent_path().string());
+		std::filesystem::create_directories(full_work_file.parent_path());
+	}
 	Task::ExecuteFFmpeg(ffmpeg).run(m_config);
 	int exit_status;
 	wait(&exit_status);
