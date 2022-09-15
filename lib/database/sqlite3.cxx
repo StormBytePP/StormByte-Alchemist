@@ -12,6 +12,7 @@ const std::string Database::SQLite3::DATABASE_CREATE_SQL =
 	"CREATE TABLE films("
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"file VARCHAR NOT NULL,"
+		"title VARCHAR DEFAULT NULL,"
 		"prio TINYINT,"
 		"processing BOOL DEFAULT FALSE,"
 		"unsupported BOOL DEFAULT FALSE,"
@@ -53,12 +54,12 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"setProcessingStatusForFilm",	"UPDATE films SET processing = ? WHERE id = ?"},
 	{"setUnsupportedStatusForFilm",	"UPDATE films SET unsupported = ? WHERE id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
-	{"getFilmData",					"SELECT file, prio, processing, unsupported, group_id FROM films WHERE id = ?"},
+	{"getFilmData",					"SELECT file, prio, title, processing, unsupported, group_id FROM films WHERE id = ?"},
 	{"getFilmStreams",				"SELECT id, codec, is_animation, max_rate, bitrate FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getGroupData",				"SELECT folder FROM groups WHERE id = ?"},
-	{"insertFilm",					"INSERT INTO films(file, prio, group_id) VALUES (?, ?, ?) RETURNING id"},
+	{"insertFilm",					"INSERT INTO films(file, prio, title, group_id) VALUES (?, ?, ?, ?) RETURNING id"},
 	{"insertStream",				"INSERT INTO streams(id, film_id, codec, is_animation, max_rate, bitrate) VALUES (?, ?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
 	{"insertGroup",					"INSERT INTO groups(folder) VALUES (?) RETURNING id"},
@@ -102,6 +103,8 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 		std::optional<Data::film> film_data = get_film_data(*film_id);
 		if (film_data) {
 			FFmpeg film(*film_data->m_id, film_data->m_file, film_data->m_group);
+			if (film_data->m_title)
+				film.set_title(*film_data->m_title);
 			auto streams = get_film_streams(*film_data->m_id);
 			std::list<Data::film::stream::codec> unsupported_codecs;
 
@@ -308,10 +311,12 @@ std::optional<Database::Data::film> Database::SQLite3::get_film_data(const unsig
 		film.m_id			= film_id;
 		film.m_file 		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
 		film.m_priority		= static_cast<Data::film::priority>(sqlite3_column_int(stmt, 1));
-		film.m_processing	= sqlite3_column_int(stmt, 2);
-		film.m_unsupported	= sqlite3_column_int(stmt, 3);
+		if (sqlite3_column_type(stmt, 2) != SQLITE_NULL)
+			film.m_title		= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+		film.m_processing	= sqlite3_column_int(stmt, 3);
+		film.m_unsupported	= sqlite3_column_int(stmt, 4);
 		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL)
-			film.m_group	= get_group_data(sqlite3_column_int(stmt, 4));
+			film.m_group	= get_group_data(sqlite3_column_int(stmt, 5));
 		result.emplace(std::move(film));
 	}
 	reset_stmt(stmt);
@@ -396,10 +401,14 @@ std::optional<unsigned int> Database::SQLite3::insert_film(const Data::film& fil
 		auto stmt = m_prepared["insertFilm"];
 		sqlite3_bind_text(stmt, 1, film.m_file.c_str(), -1, SQLITE_STATIC);
 		sqlite3_bind_int(stmt, 2, film.m_priority);
-		if (film.m_group)
-			sqlite3_bind_int(stmt, 3, film.m_group->id);
+		if (film.m_title)
+			sqlite3_bind_text(stmt, 3, film.m_title->c_str(), -1, SQLITE_STATIC);
 		else
 			sqlite3_bind_null(stmt, 3);
+		if (film.m_group)
+			sqlite3_bind_int(stmt, 4, film.m_group->id);
+		else
+			sqlite3_bind_null(stmt, 4);
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
 			film_id = sqlite3_column_int(stmt, 0);
 

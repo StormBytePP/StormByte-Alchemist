@@ -47,17 +47,17 @@ namespace StormByte::VideoConvert {
 			inline std::optional<std::string> get_title() const { return m_title; } 
 			inline bool is_empty() const { return m_streams.empty(); }
 			inline std::filesystem::path get_input_file() const { return m_input_file; }
-			inline std::filesystem::path get_output_file() const { auto result = m_input_file; return result.replace_extension(m_container); }
+			std::filesystem::path get_output_file() const;
 			inline const auto& get_streams() const { return m_streams; }
 
 			/* Setters */
-			inline void set_title(const std::string& title) { m_title = title; }
+			inline void set_title(const std::filesystem::path& title) { m_title = title; }
 
 		private:
 			unsigned int m_film_id;
 			std::filesystem::path m_input_file;
 			std::optional<Database::Data::film::group> m_group;
-			std::optional<std::string> m_title;
+			std::optional<std::filesystem::path> m_title;
 			std::filesystem::path m_container; // For future
 			std::list<std::shared_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
 	};

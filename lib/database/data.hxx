@@ -73,6 +73,7 @@ namespace StormByte::VideoConvert::Database::Data {
 		std::optional<unsigned int> m_id; //No value means not in database or not queried
 		std::filesystem::path m_file;
 		priority m_priority = NORMAL;
+		std::optional<std::filesystem::path> m_title;
 		bool m_processing = false;
 		bool m_unsupported = false;
 		std::optional<group> m_group;

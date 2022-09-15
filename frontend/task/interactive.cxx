@@ -43,6 +43,18 @@ bool Task::Interactive::run_initial_checks() {
 		return true;
 }
 
+std::optional<std::filesystem::path> Task::Interactive::ask_title() {
+	std::optional<std::filesystem::path> result;
+
+	std::cout << "Type new film title, empty to not rename original file: ";
+	std::getline(std::cin, m_buffer_str);
+
+	if (!m_buffer_str.empty())
+		result = m_buffer_str;
+
+	return result;
+}
+
 Database::Data::film::priority Task::Interactive::ask_priority() {
 	do {
 		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(2), IMPORTANT(3): ";
@@ -77,6 +89,19 @@ FFprobe Task::Interactive::get_film_data() {
 	}
 
 	return probe;
+}
+
+void Task::Interactive::update_title_renamed(const FFprobe& film_data, const stream_map_type& stream_data, std::optional<std::filesystem::path>& title) {
+	if (title) {
+		const auto resolution = film_data.get_resolution();
+		std::string new_title = *title;
+		if (resolution)
+			new_title += " - m" + FFprobe::stream::RESOLUTION_STRING.at(*resolution);
+
+		if (stream_data.at(FFprobe::stream::VIDEO).begin()->second.m_hdr)
+			new_title += " HDR";
+		title = new_title + ".mkv";
+	}
 }
 
 Task::Interactive::pending_streams_type Task::Interactive::initialize_pending_streams(const FFprobe& probe) {
@@ -252,10 +277,11 @@ void Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const s
 	strm_map.at(strm_id.first)[strm_id.second] = stream;
 }
 
-Database::Data::film Task::Interactive::generate_film(const stream_map_type& stream_map, const Database::Data::film::priority& priority, const bool& animation) {
+Database::Data::film Task::Interactive::generate_film(const stream_map_type& stream_map, const Database::Data::film::priority& priority, const std::optional<std::filesystem::path>& title, const bool& animation) {
 	Database::Data::film result;
 	result.m_priority = priority;
 	result.m_file = *m_config->get_interactive_parameter();
+	result.m_title = title;
 	std::list<Database::Data::film::stream> streams;
 
 	// For FFmpeg map order matters so we do in order
@@ -383,6 +409,10 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 
 		m_status = HALT_OK; // Unless something changes, this will return HALT_OK
 
+		std::optional<std::filesystem::path> title;
+		// Title is only displayed when not in batch mode (path)
+		if (!std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter()))
+			title = ask_title();
 		Database::Data::film::priority priority = ask_priority();
 		bool animation = ask_animation();
 
@@ -413,6 +443,7 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 		else {
 			Database::Data::film film;
 			FFprobe film_data = get_film_data();
+
 			auto pending_streams = initialize_pending_streams(film_data);
 			auto stream_map = initialize_stream_map();
 			
@@ -427,7 +458,8 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 				}
 			} while (continue_asking);
 
-			film = generate_film(stream_map, priority, animation);
+			update_title_renamed(film_data, stream_map, title);
+			film = generate_film(stream_map, priority, title, animation);
 
 			if (film.m_streams.empty()) {
 				std::cerr << "There were no streams selected for film " + m_config->get_interactive_parameter()->string() + ", no changes were made to database" << std::endl;

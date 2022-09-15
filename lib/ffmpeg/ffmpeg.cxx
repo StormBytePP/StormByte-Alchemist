@@ -14,3 +14,9 @@ FFmpeg::FFmpeg(unsigned int&& film_id, std::filesystem::path&& input_file, std::
 void FFmpeg::add_stream(const Stream::Base& stream) {
 	m_streams.push_back(stream.clone());
 }
+
+std::filesystem::path FFmpeg::get_output_file() const {
+	auto parent = m_input_file.parent_path();
+	auto result = parent / (m_title ? m_title->filename() : m_input_file);
+	return result.replace_extension(m_container);
+}
