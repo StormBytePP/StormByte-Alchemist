@@ -11,7 +11,7 @@
 namespace StormByte::VideoConvert::Database {
 	class SQLite3 {
 		public:
-			SQLite3(const std::filesystem::path& dbfile, std::shared_ptr<Utils::Logger> logger = std::shared_ptr<Utils::Logger>());
+			SQLite3(const Types::path_t& dbfile, Types::logger_t logger = Types::logger_t());
 			SQLite3(const SQLite3& db) = delete;
 			SQLite3(SQLite3&& db) = delete;
 			SQLite3& operator=(const SQLite3& db) = delete;
@@ -20,8 +20,8 @@ namespace StormByte::VideoConvert::Database {
 
 			/* Read data */
 			inline bool is_film_in_database(const Data::film& film) { return is_film_in_database(film.m_file); }
-			bool is_film_in_database(const std::filesystem::path& file);
-			bool is_group_in_database(const std::filesystem::path& path);
+			bool is_film_in_database(const Types::path_t& file);
+			bool is_group_in_database(const Types::path_t& path);
 			bool is_group_empty(const Data::film::group& group);
 
 			/* Write data */
@@ -30,13 +30,13 @@ namespace StormByte::VideoConvert::Database {
 			void reset_processing_films();
 			std::optional<unsigned int> insert_film(const Data::film& film);
 			bool insert_films(const std::list<Data::film>& films);
-			std::optional<Data::film::group> insert_group(const std::filesystem::path& folder);
+			std::optional<Data::film::group> insert_group(const Types::path_t& folder);
 			void delete_group(const Data::film::group& group);
 
 		private:
 			sqlite3* m_database;
 			std::map<std::string, sqlite3_stmt*> m_prepared;
-			std::shared_ptr<Utils::Logger> m_logger;
+			Types::logger_t m_logger;
 			static const std::string DATABASE_CREATE_SQL;
 			static const std::map<std::string, std::string> DATABASE_PREPARED_SENTENCES;
 

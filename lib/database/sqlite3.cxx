@@ -29,7 +29,7 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"deleteGroup",					"DELETE FROM groups WHERE id = ?"}
 };
 
-Database::SQLite3::SQLite3(const std::filesystem::path& dbfile, std::shared_ptr<Utils::Logger> logger):m_logger(logger) {
+Database::SQLite3::SQLite3(const Types::path_t& dbfile, Types::logger_t logger):m_logger(logger) {
 	int rc = sqlite3_open(dbfile.c_str(), &m_database);
 
 	if (rc != SQLITE_OK) {
@@ -442,7 +442,7 @@ void Database::SQLite3::insert_HDR(const unsigned int& film_id, const Data::film
 	}
 }
 
-std::optional<Database::Data::film::group> Database::SQLite3::insert_group(const std::filesystem::path& folder) {
+std::optional<Database::Data::film::group> Database::SQLite3::insert_group(const Types::path_t& folder) {
 	std::optional<Database::Data::film::group> group;
 	if (!is_group_in_database(folder)) {
 		auto stmt = m_prepared["insertGroup"];
@@ -490,7 +490,7 @@ void Database::SQLite3::delete_group(const Data::film::group& group) {
 	reset_stmt(stmt);
 }
 
-bool Database::SQLite3::is_film_in_database(const std::filesystem::path& file) {
+bool Database::SQLite3::is_film_in_database(const Types::path_t& file) {
 	bool result = false;
 	auto stmt = m_prepared["isFilmAlreadyInDatabase?"];
 	sqlite3_bind_text(stmt, 1, file.c_str(), -1, SQLITE_STATIC);
@@ -501,7 +501,7 @@ bool Database::SQLite3::is_film_in_database(const std::filesystem::path& file) {
 	return result;
 }
 
-bool Database::SQLite3::is_group_in_database(const std::filesystem::path& path) {
+bool Database::SQLite3::is_group_in_database(const Types::path_t& path) {
 	bool result = false;
 	auto stmt = m_prepared["doGroupExist?"];
 	sqlite3_bind_text(stmt, 1, path.c_str(), -1, SQLITE_STATIC);

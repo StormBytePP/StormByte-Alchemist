@@ -4,7 +4,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Utils::Logger::Logger(const std::filesystem::path& logfile, LEVEL display_level):m_display_level(display_level) {
+Utils::Logger::Logger(const Types::path_t& logfile, LEVEL display_level):m_display_level(display_level) {
 	m_logfile.open(logfile, std::fstream::out | std::fstream::app);
 }
 

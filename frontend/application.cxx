@@ -218,7 +218,7 @@ Configuration Application::read_cli(int argc, char** argv) {
 	return config;
 }
 
-Configuration Application::read_config(const std::filesystem::path& config_file) {
+Configuration Application::read_config(const Types::path_t& config_file) {
 	Configuration config;
 	libconfig::Config cfg;
 

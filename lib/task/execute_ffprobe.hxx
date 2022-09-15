@@ -7,8 +7,8 @@
 namespace StormByte::VideoConvert::Task {
 	class ExecuteFFprobe: public Execute {
 		public:
-			ExecuteFFprobe(const std::filesystem::path& file);
-			ExecuteFFprobe(std::filesystem::path&& file);
+			ExecuteFFprobe(const Types::path_t& file);
+			ExecuteFFprobe(Types::path_t&& file);
 			ExecuteFFprobe(FFmpeg&& ffprobe);
 			ExecuteFFprobe(const ExecuteFFprobe& execute_ffprobe) = default;
 			ExecuteFFprobe(ExecuteFFprobe&& execute_ffprobe) noexcept = default;
@@ -19,6 +19,6 @@ namespace StormByte::VideoConvert::Task {
 			virtual void set_arguments() = 0;
 
 		protected:
-			std::filesystem::path m_file;
+			Types::path_t m_file;
 	};
 }

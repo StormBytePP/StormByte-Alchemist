@@ -8,7 +8,7 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::Execute::Execute(const std::filesystem::path& program):Base(), m_program(program) {
+Task::Execute::Execute(const Types::path_t& program):Base(), m_program(program) {
 	m_require_logger = true;
 }
 
@@ -30,7 +30,7 @@ Task::Execute::~Execute() {
 	clear_execvp_arguments();
 }
 
-Task::STATUS Task::Execute::run(std::shared_ptr<Configuration> config) noexcept {
+Task::STATUS Task::Execute::run(Types::config_t config) noexcept {
 	if (Base::run(config) == RUNNING) {
 		set_arguments();
 		construct_execvp_arguments();

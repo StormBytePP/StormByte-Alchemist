@@ -22,7 +22,7 @@ Task::Daemon& Task::Daemon::get_instance() {
 	return instance;
 }
 
-Task::STATUS Task::Daemon::run(std::shared_ptr<Configuration> config) noexcept {
+Task::STATUS Task::Daemon::run(Types::config_t config) noexcept {
 	if (Base::run(config) == RUNNING) {
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon version " + Application::PROGRAM_VERSION);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
@@ -56,9 +56,9 @@ Task::STATUS Task::Daemon::run(std::shared_ptr<Configuration> config) noexcept {
 
 void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	const std::filesystem::path full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
-	const std::filesystem::path full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
-	const std::filesystem::path full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
+	const Types::path_t full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
+	const Types::path_t full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
+	const Types::path_t full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
 
 	// We need to be sure that the output folder exists so we try to create before running in that case
 	if (!std::filesystem::exists(full_work_file.parent_path())) {

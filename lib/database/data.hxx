@@ -1,6 +1,7 @@
 #pragma once
 
-#include <optional>
+#include "types.hxx"
+
 #include <filesystem>
 #include <map>
 #include <list>
@@ -17,7 +18,7 @@ namespace StormByte::VideoConvert::Database::Data {
 
 		struct group {
 			unsigned int id;
-			std::filesystem::path folder;
+			Types::path_t folder;
 		};
 
 		struct stream {
@@ -71,9 +72,9 @@ namespace StormByte::VideoConvert::Database::Data {
 		};
 
 		std::optional<unsigned int> m_id; //No value means not in database or not queried
-		std::filesystem::path m_file;
+		Types::path_t m_file;
 		priority m_priority = NORMAL;
-		std::optional<std::filesystem::path> m_title;
+		Types::optional_path_t m_title;
 		bool m_processing = false;
 		bool m_unsupported = false;
 		std::optional<group> m_group;

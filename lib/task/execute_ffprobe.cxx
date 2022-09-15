@@ -3,10 +3,10 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::ExecuteFFprobe::ExecuteFFprobe(const std::filesystem::path& file):Execute(Application::FFPROBE_EXECUTABLE), m_file(file) {
+Task::ExecuteFFprobe::ExecuteFFprobe(const Types::path_t& file):Execute(Application::FFPROBE_EXECUTABLE), m_file(file) {
 	m_require_logger = false;
 }
 
-Task::ExecuteFFprobe::ExecuteFFprobe(std::filesystem::path&& file):Execute(Application::FFPROBE_EXECUTABLE), m_file(std::move(file)) {
+Task::ExecuteFFprobe::ExecuteFFprobe(Types::path_t&& file):Execute(Application::FFPROBE_EXECUTABLE), m_file(std::move(file)) {
 	m_require_logger = false;
 }

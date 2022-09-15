@@ -2,9 +2,9 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(const std::filesystem::path& file):ExecuteFFprobe(file) {}
+Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(const Types::path_t& file):ExecuteFFprobe(file) {}
 
-Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(std::filesystem::path&& file):ExecuteFFprobe(std::move(file)) {}
+Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(Types::path_t&& file):ExecuteFFprobe(std::move(file)) {}
 
 const std::list<std::string> Task::ExecuteFFprobeStreams::DEFAULT_ARGUMENTS { "-hide_banner", "-loglevel", "error", "-show_entries", "stream=codec_name,width,height,index:stream_tags=language", "-print_format", "json" };
 

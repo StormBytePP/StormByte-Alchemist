@@ -17,7 +17,7 @@ namespace StormByte::VideoConvert::Task {
 			Base& operator=(Base&& base) noexcept = delete;
 			virtual ~Base() noexcept = default;
 
-			virtual STATUS run(std::shared_ptr<Configuration> config) noexcept;
+			virtual STATUS run(Types::config_t config) noexcept;
 
 			inline void set_status(const STATUS& status) { m_status = status; }
 
@@ -25,9 +25,9 @@ namespace StormByte::VideoConvert::Task {
 			Base();
 			std::string elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const;
 
-			std::shared_ptr<Configuration> m_config;
-			std::shared_ptr<Utils::Logger> m_logger;
-			std::unique_ptr<Database::SQLite3> m_database;
+			Types::config_t m_config;
+			Types::logger_t m_logger;
+			Types::database_t m_database;
 			STATUS m_status;
 			bool m_require_logger, m_require_database;
 	};

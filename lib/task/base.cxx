@@ -23,7 +23,7 @@ std::string Task::Base::elapsed_time(const std::chrono::steady_clock::time_point
 	return result;;
 }
 
-Task::STATUS Task::Base::run(std::shared_ptr<Configuration> config) noexcept {
+Task::STATUS Task::Base::run(Types::config_t config) noexcept {
 	m_status = RUNNING;
 	try {
 		m_config = config;

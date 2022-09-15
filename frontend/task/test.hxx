@@ -13,7 +13,7 @@ namespace StormByte::VideoConvert::Task {
 
 			static Test& get_instance();
 
-			STATUS run(std::shared_ptr<Configuration> config) noexcept override;
+			STATUS run(Types::config_t config) noexcept override;
 
 		private:
 			Test();

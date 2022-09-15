@@ -31,14 +31,14 @@ namespace StormByte::VideoConvert {
 
 		private:
 			/* Config data */
-			std::shared_ptr<Configuration> m_config;
+			Types::config_t m_config;
 			enum STATUS { RUN_TASK, HALT_OK, HALT_ERROR };
 			volatile STATUS m_status; // It might be changed from signal handlers!
 			Task::Base* m_task;
 			
 			Application(); // Hide constructor
 			Configuration read_cli(int argc, char** argv);
-			Configuration read_config(const std::filesystem::path& config_file);
+			Configuration read_config(const Types::path_t& config_file);
 			void init(Configuration&& cli_config); // Will update m_status
 	};
 }

@@ -1,10 +1,6 @@
 #pragma once
 
-#include <optional>
-#include <filesystem>
-#ifdef DEBUG
-#include <list>
-#endif
+#include "types.hxx"
 
 namespace StormByte::VideoConvert {
 	class Configuration {
@@ -17,33 +13,33 @@ namespace StormByte::VideoConvert {
 			~Configuration() = default;
 
 			/* Getters */
-			inline const std::optional<std::filesystem::path>& get_database_file() const { return m_database; }
-			inline const std::optional<std::filesystem::path>& get_input_folder() const { return m_input; }
-			inline const std::optional<std::filesystem::path>& get_output_folder() const { return m_output; }
-			inline const std::optional<std::filesystem::path>& get_work_folder() const { return m_work; }
-			inline const std::filesystem::path& get_config_file() const { return m_configfile ? *m_configfile : DEFAULT_CONFIG_FILE; }
-			inline const std::optional<std::filesystem::path>& get_log_file() const { return m_logfile; }
+			inline const Types::optional_path_t& get_database_file() const { return m_database; }
+			inline const Types::optional_path_t& get_input_folder() const { return m_input; }
+			inline const Types::optional_path_t& get_output_folder() const { return m_output; }
+			inline const Types::optional_path_t& get_work_folder() const { return m_work; }
+			inline const Types::path_t& get_config_file() const { return m_configfile ? *m_configfile : DEFAULT_CONFIG_FILE; }
+			inline const Types::optional_path_t& get_log_file() const { return m_logfile; }
 			inline const std::optional<unsigned int>& get_log_level() const { return m_loglevel; }
 			inline const unsigned int& get_sleep_time() const { return m_sleep ? *m_sleep : DEFAULT_SLEEP_TIME; }
 			inline const unsigned int& get_pause_time() const { return m_pause ? *m_pause : DEFAULT_PAUSE_TIME; }
 			inline const std::string& get_onfinish() const { return m_onfinish ? *m_onfinish : DEFAULT_ONFINISH; }
 
 			/* Action getters */
-			inline const std::optional<std::filesystem::path>& get_interactive_parameter() const { return m_interactive_parameter; }
+			inline const Types::optional_path_t& get_interactive_parameter() const { return m_interactive_parameter; }
 
 			/* Setters */
-			inline void set_database_file(const std::filesystem::path& dbfile) { m_database = dbfile; }
-			inline void set_database_file(std::filesystem::path&& dbfile) { m_database = std::move(dbfile); }
-			inline void set_input_folder(const std::filesystem::path& input) { m_input = input; }
-			inline void set_input_folder(std::filesystem::path&& input) { m_input = std::move(input); }
-			inline void set_output_folder(const std::filesystem::path& output) { m_output = output; }
-			inline void set_output_folder(std::filesystem::path&& output) { m_output = std::move(output); }
-			inline void set_work_folder(const std::filesystem::path& work) { m_work = work; }
-			inline void set_work_folder(std::filesystem::path&& work) { m_work = std::move(work); }
-			inline void set_config_file(const std::filesystem::path& configfile) { m_configfile = configfile; }
-			inline void set_config_file(std::filesystem::path&& configfile) { m_configfile = std::move(configfile); }
-			inline void set_log_file(const std::filesystem::path& logfile) { m_logfile = logfile; }
-			inline void set_log_file(std::filesystem::path&& logfile) { m_logfile = std::move(logfile); }
+			inline void set_database_file(const Types::path_t& dbfile) { m_database = dbfile; }
+			inline void set_database_file(Types::path_t&& dbfile) { m_database = std::move(dbfile); }
+			inline void set_input_folder(const Types::path_t& input) { m_input = input; }
+			inline void set_input_folder(Types::path_t&& input) { m_input = std::move(input); }
+			inline void set_output_folder(const Types::path_t& output) { m_output = output; }
+			inline void set_output_folder(Types::path_t&& output) { m_output = std::move(output); }
+			inline void set_work_folder(const Types::path_t& work) { m_work = work; }
+			inline void set_work_folder(Types::path_t&& work) { m_work = std::move(work); }
+			inline void set_config_file(const Types::path_t& configfile) { m_configfile = configfile; }
+			inline void set_config_file(Types::path_t&& configfile) { m_configfile = std::move(configfile); }
+			inline void set_log_file(const Types::path_t& logfile) { m_logfile = logfile; }
+			inline void set_log_file(Types::path_t&& logfile) { m_logfile = std::move(logfile); }
 			inline void set_log_level(const unsigned int& loglevel) { m_loglevel = loglevel; }
 			inline void set_sleep_time(const unsigned int& sleep_time) { m_sleep = sleep_time; }
 			inline void set_pause_time(const unsigned int& pause_time) { m_pause = pause_time; }
@@ -51,7 +47,7 @@ namespace StormByte::VideoConvert {
 			inline void set_onfinish(std::string&& onfinish) { m_onfinish = std::move(onfinish); }
 
 			/* Action setters */
-			inline void set_interactive_parameter(const std::optional<std::filesystem::path>& file_or_folder) { m_interactive_parameter = file_or_folder; }
+			inline void set_interactive_parameter(const Types::optional_path_t& file_or_folder) { m_interactive_parameter = file_or_folder; }
 
 			/* Functions */
 			void merge(const Configuration& config);
@@ -60,7 +56,7 @@ namespace StormByte::VideoConvert {
 			bool have_all_mandatory_values() const;
 
 			/* Constants */
-			static const std::filesystem::path DEFAULT_CONFIG_FILE;
+			static const Types::path_t DEFAULT_CONFIG_FILE;
 			static const unsigned int DEFAULT_SLEEP_TIME, DEFAULT_PAUSE_TIME;
 			static const std::string DEFAULT_ONFINISH;
 
@@ -69,11 +65,11 @@ namespace StormByte::VideoConvert {
 			#endif
 
 		private:
-			std::optional<std::filesystem::path> m_database, m_input, m_output, m_work, m_configfile, m_logfile;
+			Types::optional_path_t m_database, m_input, m_output, m_work, m_configfile, m_logfile;
 			std::optional<unsigned int> m_loglevel, m_sleep, m_pause;
 			std::optional<std::string> m_onfinish;
 
 			/* Action data */
-			std::optional<std::filesystem::path> m_interactive_parameter;
+			Types::optional_path_t m_interactive_parameter;
 	};
 }

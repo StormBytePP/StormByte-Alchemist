@@ -1,7 +1,8 @@
 #pragma once
 
+#include "types.hxx"
+
 #include <fstream>
-#include <filesystem>
 
 namespace StormByte::VideoConvert::Utils {
 	class Logger {
@@ -15,7 +16,7 @@ namespace StormByte::VideoConvert::Utils {
 				LEVEL_FATAL,
 				LEVEL_MAX
 			};
-			Logger(const std::filesystem::path& logfile, LEVEL display_level);
+			Logger(const Types::path_t& logfile, LEVEL display_level);
 			Logger(const Logger&) = delete;
 			Logger(Logger&&) = delete;
 			Logger& operator=(const Logger&) = delete;

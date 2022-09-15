@@ -7,14 +7,14 @@
 namespace StormByte::VideoConvert::Task {
 	class Execute: public Base {
 		public:
-			Execute(const std::filesystem::path& program);
+			Execute(const Types::path_t& program);
 			Execute(const Execute& execute);
 			Execute(Execute&& execute) noexcept = default;
 			Execute& operator=(const Execute& execute);
 			Execute& operator=(Execute&& execute) noexcept = default;
 			~Execute() noexcept;
 
-			virtual STATUS run(std::shared_ptr<Configuration> config) noexcept override;
+			virtual STATUS run(Types::config_t config) noexcept override;
 
 			inline std::optional<pid_t> get_worker() const { return m_worker; }
 			virtual void set_arguments() = 0; // Override so m_arguments can be set inside run automatically
@@ -26,7 +26,7 @@ namespace StormByte::VideoConvert::Task {
 			char*const* get_execvp_arguments();
 
 			std::optional<pid_t> m_worker;
-			std::filesystem::path m_program;
+			Types::path_t m_program;
 			std::list<std::string> m_arguments;
 			std::vector<char*> m_arguments_for_execvp;
 			std::string m_output;

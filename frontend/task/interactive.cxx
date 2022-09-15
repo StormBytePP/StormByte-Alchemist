@@ -25,7 +25,7 @@ Task::Interactive& Task::Interactive::get_instance() {
 }
 
 bool Task::Interactive::run_initial_checks() {
-	const std::filesystem::path full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
+	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
 
 	if (!std::filesystem::exists(full_path)) {
 		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
@@ -43,8 +43,8 @@ bool Task::Interactive::run_initial_checks() {
 		return true;
 }
 
-std::optional<std::filesystem::path> Task::Interactive::ask_title() {
-	std::optional<std::filesystem::path> result;
+Types::optional_path_t Task::Interactive::ask_title() {
+	Types::optional_path_t result;
 
 	std::cout << "Type new film title, empty to not rename original file: ";
 	std::getline(std::cin, m_buffer_str);
@@ -77,7 +77,7 @@ FFprobe Task::Interactive::get_film_data() {
 	FFprobe probe;
 	std::unique_ptr<Task::Execute> task;
 
-	const std::filesystem::path full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
+	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
 	task.reset(new Task::ExecuteFFprobeVideoColor(full_path));
 	task->run(m_config);
 	probe.initialize_video_color_data(task->get_output());
@@ -91,7 +91,7 @@ FFprobe Task::Interactive::get_film_data() {
 	return probe;
 }
 
-void Task::Interactive::update_title_renamed(const FFprobe& film_data, const stream_map_type& stream_data, std::optional<std::filesystem::path>& title) {
+void Task::Interactive::update_title_renamed(const FFprobe& film_data, const stream_map_t& stream_data, Types::optional_path_t& title) {
 	if (title) {
 		const auto resolution = film_data.get_resolution();
 		std::string new_title = *title;
@@ -104,7 +104,7 @@ void Task::Interactive::update_title_renamed(const FFprobe& film_data, const str
 	}
 }
 
-Task::Interactive::pending_streams_type Task::Interactive::initialize_pending_streams(const FFprobe& probe) {
+Task::Interactive::pending_streams_t Task::Interactive::initialize_pending_streams(const FFprobe& probe) {
 	return std::map<FFprobe::stream::TYPE, size_t> {
 		{ FFprobe::stream::VIDEO,		probe.get_stream(FFprobe::stream::VIDEO).size() },
 		{ FFprobe::stream::AUDIO,		probe.get_stream(FFprobe::stream::AUDIO).size() },
@@ -112,7 +112,7 @@ Task::Interactive::pending_streams_type Task::Interactive::initialize_pending_st
 	};
 }
 
-Task::Interactive::stream_map_type Task::Interactive::initialize_stream_map() {
+Task::Interactive::stream_map_t Task::Interactive::initialize_stream_map() {
 	return std::map<FFprobe::stream::TYPE, std::map<unsigned short, Database::Data::film::stream>> {
 		{
 			{ FFprobe::stream::VIDEO,		{} },
@@ -122,7 +122,7 @@ Task::Interactive::stream_map_type Task::Interactive::initialize_stream_map() {
 	};
 }
 
-void Task::Interactive::display_stream_map(const FFprobe& probe, const stream_map_type& stream_map) {
+void Task::Interactive::display_stream_map(const FFprobe& probe, const stream_map_t& stream_map) {
 	std::cout << "Film stream list:" << std::endl;
 	for (FFprobe::stream::TYPE type: { FFprobe::stream::VIDEO, FFprobe::stream::AUDIO, FFprobe::stream::SUBTITLE }) {
 		const auto& strm_probe = probe.get_stream(type);
@@ -150,8 +150,8 @@ void Task::Interactive::display_stream_map(const FFprobe& probe, const stream_ma
 	}
 }
 
-std::optional<Task::Interactive::stream_id> Task::Interactive::ask_stream_id(const FFprobe& probe, const pending_streams_type& pending_strms) {
-	std::optional<Task::Interactive::stream_id> result;
+std::optional<Task::Interactive::stream_id_t> Task::Interactive::ask_stream_id(const FFprobe& probe, const pending_streams_t& pending_strms) {
+	std::optional<Task::Interactive::stream_id_t> result;
 	if (pending_strms.at(FFprobe::stream::VIDEO) == 0 && pending_strms.at(FFprobe::stream::AUDIO) == 0 && pending_strms.at(FFprobe::stream::SUBTITLE) == 0) {
 		std::cout << "All streams have been selected" << std::endl << std::endl;
 	}
@@ -164,7 +164,7 @@ std::optional<Task::Interactive::stream_id> Task::Interactive::ask_stream_id(con
 			} while (!Utils::Input::in_options(m_buffer_str, { "v", "V", "a", "A", "s", "S", "f", "F" }, true));
 
 			if (m_buffer_str == "f" || m_buffer_str == "F") {
-				return std::optional<Task::Interactive::stream_id>();
+				return std::optional<Task::Interactive::stream_id_t>();
 			}
 			else {
 					selected_type = static_cast<FFprobe::stream::TYPE>(tolower(m_buffer_str[0]));
@@ -188,7 +188,7 @@ std::optional<Task::Interactive::stream_id> Task::Interactive::ask_stream_id(con
 	return result;
 }
 
-void Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const stream_id& strm_id, stream_map_type& strm_map, pending_streams_type& strm_pending) {
+void Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const stream_id_t& strm_id, stream_map_t& strm_map, pending_streams_t& strm_pending) {
 	std::list<int> options;
 	if (strm_id.first == FFprobe::stream::VIDEO) {
 		options = {
@@ -277,7 +277,7 @@ void Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const s
 	strm_map.at(strm_id.first)[strm_id.second] = stream;
 }
 
-Database::Data::film Task::Interactive::generate_film(const stream_map_type& stream_map, const Database::Data::film::priority& priority, const std::optional<std::filesystem::path>& title, const bool& animation) {
+Database::Data::film Task::Interactive::generate_film(const stream_map_t& stream_map, const Database::Data::film::priority& priority, const Types::optional_path_t& title, const bool& animation) {
 	Database::Data::film result;
 	result.m_priority = priority;
 	result.m_file = *m_config->get_interactive_parameter();
@@ -303,15 +303,15 @@ std::optional<unsigned int> Task::Interactive::insert_film(const Database::Data:
 }
 
 #ifdef ENABLE_HEVC
-Task::Interactive::group_file_info Task::Interactive::find_files_recursive() {
-	const std::filesystem::path full_folder = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
+Task::Interactive::group_file_info_t Task::Interactive::find_files_recursive() {
+	const Types::path_t full_folder = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
 
-	std::list<std::filesystem::path> valid, invalid;
+	std::list<Types::path_t> valid, invalid;
 
 	for (std::filesystem::recursive_directory_iterator it(full_folder), end; it != end; ++it) {
 		if (!is_directory(it->path())) {
 			const std::string extension = it->path().extension();
-			std::filesystem::path relative = std::filesystem::relative(it->path(), *m_config->get_input_folder());
+			Types::path_t relative = std::filesystem::relative(it->path(), *m_config->get_input_folder());
 			if (std::find(Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.begin(), Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.end(), extension) == Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.end())
 				invalid.push_back(relative);
 			else
@@ -322,7 +322,7 @@ Task::Interactive::group_file_info Task::Interactive::find_files_recursive() {
 	return { valid, invalid };
 }
 
-bool Task::Interactive::ask_group_confirmation(const group_file_info& group_info) {
+bool Task::Interactive::ask_group_confirmation(const group_file_info_t& group_info) {
 	bool result = true;
 
 	if (group_info.first.empty()) {
@@ -337,7 +337,7 @@ bool Task::Interactive::ask_group_confirmation(const group_file_info& group_info
 		std::cout << "Found " << group_info.first.size() << " film(s)" << std::endl;
 		if (!group_info.second.empty()) {
 			std::cout << "Warning: found " << group_info.second.size() << " invalid file(s) that will be ignored." << std::endl;
-			for (std::filesystem::path file: group_info.second)
+			for (Types::path_t file: group_info.second)
 				std::cout << "\t* " << file.string() << std::endl;
 		}
 		do {
@@ -370,12 +370,12 @@ std::list<Database::Data::film::stream> Task::Interactive::generate_default_stre
 	return { video, audio, subtitle };
 }
 
-Task::Interactive::film_group Task::Interactive::generate_film_group(const group_file_info& film_group_info, const Database::Data::film::group& group, const Database::Data::film::priority& priority, const bool& animation) {
-	film_group result;
+Task::Interactive::film_group_t Task::Interactive::generate_film_group_t(const group_file_info_t& film_group_t_info, const Database::Data::film::group& group, const Database::Data::film::priority& priority, const bool& animation) {
+	film_group_t result;
 
 	const std::list<Database::Data::film::stream> streams = generate_default_streams_for_group(animation);
 
-	for (std::filesystem::path film_path: film_group_info.first) {
+	for (Types::path_t film_path: film_group_t_info.first) {
 		Database::Data::film film;
 		film.m_file = film_path;
 		film.m_group = group;
@@ -387,11 +387,11 @@ Task::Interactive::film_group Task::Interactive::generate_film_group(const group
 	return result;
 }
 
-bool Task::Interactive::insert_film_group(const film_group& film_group) {
-	bool operation = m_database->insert_films(film_group);
+bool Task::Interactive::insert_film_group_t(const film_group_t& film_group_t) {
+	bool operation = m_database->insert_films(film_group_t);
 	
 	if (operation) {
-		std::cout << "Inserted " << film_group.size() << " film(s) in database" << std::endl;
+		std::cout << "Inserted " << film_group_t.size() << " film(s) in database" << std::endl;
 	}
 	else {
 		std::cerr << "There was an error inserting and therefore no films were added!" << std::endl;
@@ -401,7 +401,7 @@ bool Task::Interactive::insert_film_group(const film_group& film_group) {
 }
 #endif
 
-Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexcept {
+Task::STATUS Task::Interactive::run(Types::config_t config) noexcept {
 	if (Base::run(config) == RUNNING) {
 		Application::display_header();
 		
@@ -409,7 +409,7 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 
 		m_status = HALT_OK; // Unless something changes, this will return HALT_OK
 
-		std::optional<std::filesystem::path> title;
+		Types::optional_path_t title;
 		// Title is only displayed when not in batch mode (path)
 		if (!std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter()))
 			title = ask_title();
@@ -418,14 +418,14 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 
 		if (std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter())) {
 			#ifdef ENABLE_HEVC
-			group_file_info files = find_files_recursive();
+			group_file_info_t files = find_files_recursive();
 			if (files.first.empty()) {
 				m_status = HALT_ERROR;
 			}
 			if (ask_group_confirmation(files)) {
 				Database::Data::film::group group = insert_group();
-				if (!insert_film_group(
-					generate_film_group(
+				if (!insert_film_group_t(
+					generate_film_group_t(
 						files,
 						group,
 						priority,
@@ -450,7 +450,7 @@ Task::STATUS Task::Interactive::run(std::shared_ptr<Configuration> config) noexc
 			bool continue_asking = true;
 			do {
 				display_stream_map(film_data, stream_map);
-				std::optional<stream_id> strm_id = ask_stream_id(film_data, pending_streams);
+				std::optional<stream_id_t> strm_id = ask_stream_id(film_data, pending_streams);
 
 				if (!strm_id) continue_asking = false;
 				else {
