@@ -3,7 +3,7 @@
 
 using namespace StormByte::VideoConvert;
 
-const std::list<const char*> Task::ExecuteFFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0" });
+const std::list<const char*> Task::ExecuteFFmpeg::FFMPEG_INIT_OPTIONS = std::list<const char*>({ "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0", "-metadata", "title=" });
 
 Task::ExecuteFFmpeg::ExecuteFFmpeg(const FFmpeg& ffmpeg):Execute(Application::FFMPEG_EXECUTABLE), m_ffmpeg(ffmpeg) {}
 
