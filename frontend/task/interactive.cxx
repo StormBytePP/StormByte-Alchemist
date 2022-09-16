@@ -66,9 +66,10 @@ Database::Data::film::priority Task::Interactive::ask_priority() {
 
 bool Task::Interactive::ask_animation() {
 	do {
-		std::cout << "Is an animated movie? [(y)es/(n)o]: ";
+		std::cout << "Is an animated movie? (default no) [(y)es/(n)o]: ";
 		std::getline(std::cin, m_buffer_str);
-	} while (!Utils::Input::in_yes_no(m_buffer_str, m_buffer_bool, true));
+	} while (m_buffer_str != "" && !Utils::Input::in_yes_no(m_buffer_str, m_buffer_bool, true));
+	if (m_buffer_str == "") m_buffer_bool = false;
 
 	return m_buffer_bool;
 }
