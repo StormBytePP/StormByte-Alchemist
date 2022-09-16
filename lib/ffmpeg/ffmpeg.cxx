@@ -17,6 +17,6 @@ void FFmpeg::add_stream(const Stream::Base& stream) {
 
 Types::path_t FFmpeg::get_output_file() const {
 	auto parent = m_input_file.parent_path();
-	auto result = parent / (m_title ? m_title->filename() : m_input_file);
+	auto result = parent / (m_title ? m_title->filename() : m_input_file.filename());
 	return result.replace_extension(m_container);
 }

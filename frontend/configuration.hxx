@@ -2,6 +2,10 @@
 
 #include "types.hxx"
 
+#ifdef DEBUG
+#include <list>
+#endif
+
 namespace StormByte::VideoConvert {
 	class Configuration {
 		public:

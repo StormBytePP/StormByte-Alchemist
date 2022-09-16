@@ -20,7 +20,7 @@ start() {
 
 stop() {
 	ebegin "Stopping StormByte-videoconvert daemon"
-	start-stop-daemon --pidfile $PIDFILE --signal TERM
+	start-stop-daemon --pidfile $PIDFILE --stop
 	eend $?
 }
 

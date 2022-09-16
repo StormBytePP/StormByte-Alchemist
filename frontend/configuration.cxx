@@ -6,7 +6,7 @@
 
 using namespace StormByte::VideoConvert;
 
-const Types::path_t Configuration::DEFAULT_CONFIG_FILE	= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
+const Types::path_t Configuration::DEFAULT_CONFIG_FILE			= "/etc/conf.d/" + Application::PROGRAM_NAME + ".conf";
 const unsigned int Configuration::DEFAULT_SLEEP_TIME			= 3600; // 1 hour
 const unsigned int Configuration::DEFAULT_PAUSE_TIME			= 60; // 1 minute
 const std::string Configuration::DEFAULT_ONFINISH				= "move";

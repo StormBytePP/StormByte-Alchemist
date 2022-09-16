@@ -55,7 +55,6 @@ Task::STATUS Task::Daemon::run(Types::config_t config) noexcept {
 }
 
 void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	const Types::path_t full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
 	const Types::path_t full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const Types::path_t full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
@@ -65,15 +64,13 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create work path: " + full_work_file.parent_path().string());
 		std::filesystem::create_directories(full_work_file.parent_path());
 	}
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	Task::ExecuteFFmpeg task_ffmpeg = Task::ExecuteFFmpeg(ffmpeg);
-	task_ffmpeg.run(m_config);
-	m_worker = task_ffmpeg.get_worker();
-	int exit_status;
-	wait(&exit_status);
+	STATUS exit_status = task_ffmpeg.run(m_config, m_worker);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	m_worker.reset(); // Worker has finished
+	
 	bool status;
-	if (exit_status == 0) {
+	if (exit_status == HALT_OK) {
 		status = true;
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + elapsed_time(begin, end));
 		if (!std::filesystem::exists(full_output_file.parent_path())) {
@@ -96,6 +93,8 @@ void Task::Daemon::execute_ffmpeg(FFmpeg& ffmpeg) {
 	else {
 		status = false;
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + ffmpeg.get_input_file().string() + " failed or interrupted!");
+		if (!task_ffmpeg.get_stderr().empty())
+			m_logger->message_line(Utils::Logger::LEVEL_ERROR, "stderr contains:\n" + task_ffmpeg.get_stderr());
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting work file: " + full_work_file.string());
 		std::filesystem::remove(full_work_file);
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + full_work_file.string() + " as unsupported in database");
@@ -121,7 +120,7 @@ void Task::Daemon::signal_handler(int signal) {
 			task_instance.m_status = HALT_OK;
 			if (task_instance.m_worker) {
 				task_instance.m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sending term signal to running FFMPEG");
-				kill(*task_instance.m_worker, SIGTERM);
+				kill(*task_instance.m_worker, SIGINT);
 			}
 			break;
 

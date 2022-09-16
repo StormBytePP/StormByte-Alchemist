@@ -91,9 +91,9 @@ std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
 	std::string x265_params;
 	if (m_hdr)
-		x265_params = (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters());
+		x265_params = "\"" + (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters()) + "\"";
 	else
-		x265_params = X265_PARAMS;
+		x265_params = "\"" + X265_PARAMS + "\"";
 
 	result.push_back("-profile:"		+ ffmpeg_stream_id());		result.push_back("main10");
 	result.push_back("-level:"			+ ffmpeg_stream_id());		result.push_back("5.1");

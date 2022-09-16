@@ -21,6 +21,7 @@ if [ $# -eq 1 ]; then
 	cd build &> /dev/null;
 	cmake -DVERSION_UPDATE_FROM_GIT=false .. &> /dev/null;
 	cd .. &> /dev/null;
+	gh release create $1 &> /dev/null
 	echo "Version $1 released and pushed";
 else
 	echo "Only 1 argument is expected and should be version string!";

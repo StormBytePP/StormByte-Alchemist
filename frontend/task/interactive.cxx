@@ -80,13 +80,13 @@ FFprobe Task::Interactive::get_film_data() {
 
 	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
 	task.reset(new Task::ExecuteFFprobeVideoColor(full_path));
-	task->run(m_config);
-	probe.initialize_video_color_data(task->get_output());
+	if (task->run(m_config) == HALT_OK)
+		probe.initialize_video_color_data(task->get_stdout());
 	task.reset(new Task::ExecuteFFprobeStreams(full_path));
 	for (const auto i : { FFprobe::stream::VIDEO, FFprobe::stream::AUDIO, FFprobe::stream::SUBTITLE }) {
 		dynamic_cast<Task::ExecuteFFprobeStreams&>(*task).set_mode(i);
-		task->run(m_config);
-		probe.initialize_stream_data(task->get_output(), i);
+		if (task->run(m_config) == HALT_OK)
+			probe.initialize_stream_data(task->get_stdout(), i);
 	}
 
 	return probe;

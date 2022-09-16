@@ -19,8 +19,6 @@ namespace StormByte::VideoConvert::Task {
 
 			virtual STATUS run(Types::config_t config) noexcept;
 
-			inline void set_status(const STATUS& status) { m_status = status; }
-
 		protected:
 			Base();
 			std::string elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const;

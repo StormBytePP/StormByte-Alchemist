@@ -1,5 +1,7 @@
 #include "execute_ffprobe_streams.hxx"
 
+#include <boost/algorithm/string/join.hpp>
+
 using namespace StormByte::VideoConvert;
 
 Task::ExecuteFFprobeStreams::ExecuteFFprobeStreams(const Types::path_t& file):ExecuteFFprobe(file) {}
@@ -13,5 +15,5 @@ void Task::ExecuteFFprobeStreams::set_arguments() {
 	result.push_back("-select_streams"); result.push_back(std::string(1, m_mode));
 	result.push_back(*m_config->get_input_folder() / m_file);
 
-	m_arguments = std::move(result);
+	m_arguments = boost::algorithm::join(result, " ");
 }
