@@ -12,7 +12,7 @@ Task::ExecuteFFprobeVideoColor::ExecuteFFprobeVideoColor(Types::path_t&& file):E
 
 void Task::ExecuteFFprobeVideoColor::set_arguments() {
 	std::list<std::string> result = DEFAULT_ARGUMENTS;
-	result.push_back(*m_config->get_input_folder() / m_file);
+	result.push_back("\"" + std::string(*m_config->get_input_folder() / m_file) + "\"");
 
 	m_arguments = boost::algorithm::join(result, " ");
 }

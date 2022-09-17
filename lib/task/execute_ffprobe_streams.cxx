@@ -13,7 +13,7 @@ const std::list<std::string> Task::ExecuteFFprobeStreams::DEFAULT_ARGUMENTS { "-
 void Task::ExecuteFFprobeStreams::set_arguments() {
 	std::list<std::string> result = DEFAULT_ARGUMENTS;
 	result.push_back("-select_streams"); result.push_back(std::string(1, m_mode));
-	result.push_back(*m_config->get_input_folder() / m_file);
+	result.push_back("\"" + std::string(*m_config->get_input_folder() / m_file) + "\"");
 
 	m_arguments = boost::algorithm::join(result, " ");
 }
