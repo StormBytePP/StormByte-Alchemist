@@ -28,5 +28,5 @@ void Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 
 	result.push_back("-metadata:s:v"); result.push_back("encoder=\"" + std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " ( " + std::string(PROJECT_URI) + " )\"" );
 
-	m_arguments += boost::algorithm::join(result, " ");
+	m_arguments += " " + boost::algorithm::join(result, " ");
 }
