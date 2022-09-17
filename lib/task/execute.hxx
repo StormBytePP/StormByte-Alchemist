@@ -12,7 +12,7 @@ namespace StormByte::VideoConvert::Task {
 			Execute(Execute&& execute) noexcept = default;
 			Execute& operator=(const Execute& execute) = default;
 			Execute& operator=(Execute&& execute) noexcept = default;
-			~Execute() noexcept = default;
+			virtual ~Execute() noexcept = default;
 
 			virtual void set_arguments() = 0; // Override so m_arguments can be set inside run automatically
 			inline std::string get_stdout() const { return m_stdout; }

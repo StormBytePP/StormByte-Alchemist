@@ -14,7 +14,7 @@ namespace StormByte::VideoConvert::Task {
 			ExecuteFFprobe(ExecuteFFprobe&& execute_ffprobe) noexcept = default;
 			ExecuteFFprobe& operator=(const ExecuteFFprobe& execute_ffprobe) = default;
 			ExecuteFFprobe& operator=(ExecuteFFprobe&& execute_ffprobe) noexcept = default;
-			~ExecuteFFprobe() noexcept = default;
+			virtual ~ExecuteFFprobe() noexcept = default;
 
 			virtual void set_arguments() = 0;
 
