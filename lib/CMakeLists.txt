@@ -19,7 +19,7 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	task/config/cli/base.cxx
 	task/execute/base.cxx
 	task/execute/ffprobe/base.cxx
-	task/execute/ffprobe/streams.cxx
+	task/execute/ffprobe/stream.cxx
 	task/execute/ffprobe/video_color.cxx
 	task/execute/ffmpeg/base.cxx
 	task/execute/ffmpeg/convert.cxx

@@ -1,6 +1,6 @@
 #include "ffprobe.hxx"
 #include "utils/input.hxx"
-#include "task/execute/ffprobe/streams.hxx"
+#include "task/execute/ffprobe/stream.hxx"
 #include "task/execute/ffprobe/video_color.hxx"
 
 using namespace StormByte::VideoConvert;
@@ -41,11 +41,10 @@ void FFprobe::initialize(const Types::path_t& file) noexcept {
 	task.reset(new Task::Execute::FFprobe::VideoColor(file));
 	if (task->run() == Task::HALT_OK)
 		initialize_video_color_data(task->get_stdout());
-	task.reset(new Task::Execute::FFprobe::Streams(file));
-	for (const auto i : { stream::VIDEO, stream::AUDIO, stream::SUBTITLE }) {
-		dynamic_cast<Task::Execute::FFprobe::Streams&>(*task).set_mode(i);
+	for (const auto type : { stream::VIDEO, stream::AUDIO, stream::SUBTITLE }) {
+		task.reset(new Task::Execute::FFprobe::Stream(file, type));
 		if (task->run() == Task::HALT_OK)
-			initialize_stream_data(task->get_stdout(), i);
+			initialize_stream_data(task->get_stdout(), type);
 	}
 }
 
