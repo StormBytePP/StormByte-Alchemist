@@ -30,6 +30,7 @@ bool Frontend::Task::Interactive::run_initial_checks() {
 		check = false;
 	}
 	else if (std::filesystem::is_directory(full_path)) {
+		#ifdef ENABLE_HEVC
 		if (m_database->is_group_in_database(*m_config->get_interactive_parameter())) {
 			std::cerr << "Film group (folder) " << *m_config->get_interactive_parameter() << " is already in database" << std::endl;
 			check = false;
@@ -44,8 +45,11 @@ bool Frontend::Task::Interactive::run_initial_checks() {
 				check = false;
 			}
 		}
+		#else
+		std::cerr << "Folder adition is only allowed with HEVC support but it was not compiled in!" << std::endl;
+		check = false;
+		#endif
 	}
-	
 	return check;
 }
 
@@ -408,8 +412,8 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 	Database::Data::film::priority priority = ask_priority();
 	bool animation = ask_animation();
 
+	#ifdef ENABLE_HEVC
 	if (std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter())) {
-		#ifdef ENABLE_HEVC
 		group_file_info_t files = find_files_recursive();
 		if (files.first.empty()) {
 			std::cerr << "Directory is empty!" << std::endl;
@@ -428,12 +432,9 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 				return VideoConvert::Task::HALT_ERROR;
 			}
 		}
-		#else
-		std::cerr << "Directory aditions are only available with HEVC support but it was not compiled in" << std::endl;
-		return VideoConvert::Task::HALT_ERROR;
-		#endif
 	}
 	else {
+	#endif
 		Database::Data::film film;
 		FFprobe film_data = get_film_data();
 
@@ -469,6 +470,8 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 				return VideoConvert::Task::HALT_ERROR;
 			}
 		}
+	#ifdef ENABLE_HEVC
 	}
+	#endif
 	return VideoConvert::Task::HALT_OK;
 }
