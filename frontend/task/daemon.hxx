@@ -15,7 +15,7 @@ namespace StormByte::VideoConvert::Frontend::Task {
 
 		private:
 			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
-			void execute_ffmpeg(FFmpeg&& ffmpeg) const;
+			VideoConvert::Task::STATUS execute_ffmpeg(FFmpeg&& ffmpeg) const;
 
 			std::optional<pid_t>* m_worker;
 	};

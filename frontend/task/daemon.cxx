@@ -18,9 +18,9 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>&) noexcept {
 		auto film = m_database->get_film_for_process();
 		if (film) {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film->get_input_file().string() + " found");
-			execute_ffmpeg(std::move(*film));
+			auto convert_status = execute_ffmpeg(std::move(*film));
 			// Only sleep if process is to be continued (not killed by a signal)
-			if (m_status != VideoConvert::Task::HALTED) {
+			if (m_status != VideoConvert::Task::HALT_ERROR && convert_status != VideoConvert::Task::HALT_ERROR) {
 				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Pausing for " + std::to_string(m_config->get_pause_time()) + " seconds");
 				sleep(m_config->get_pause_time());
 			}
@@ -37,7 +37,7 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>&) noexcept {
 	return VideoConvert::Task::HALT_OK;
 }
 
-void Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg) const {
+StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg) const {
 	const Types::path_t full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
 	const Types::path_t full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const Types::path_t full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
@@ -86,4 +86,6 @@ void Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg) const {
 		std::filesystem::remove_all(*m_config->get_work_folder() / ffmpeg.get_group()->folder);
 		m_database->delete_group(*ffmpeg.get_group());
 	}
+
+	return convert_status;
 }
