@@ -1,7 +1,5 @@
 #include "logger.hxx"
 
-#include <ctime>
-
 using namespace StormByte::VideoConvert;
 
 Utils::Logger::Logger(const Types::path_t& logfile, LEVEL display_level):m_display_level(display_level) {
