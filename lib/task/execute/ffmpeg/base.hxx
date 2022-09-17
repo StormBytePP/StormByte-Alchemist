@@ -12,7 +12,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFmpeg {
 			Base(Base&&) noexcept = default;
 			Base& operator=(const Base&) = default;
 			Base& operator=(Base&&) noexcept = default;
-			~Base() noexcept = 0;
+			virtual ~Base() noexcept = 0;
 
 		protected:
 			virtual void pre_run_actions() noexcept override;
