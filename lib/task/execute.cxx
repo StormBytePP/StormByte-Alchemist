@@ -11,8 +11,6 @@
 #include <boost/process.hpp>
 #include <boost/asio.hpp>
 
-#include <iostream>
-
 using namespace StormByte::VideoConvert;
 
 Task::Execute::Execute(const Types::path_t& program):Base(), m_program(program) {
