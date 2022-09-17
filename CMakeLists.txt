@@ -72,27 +72,30 @@ mark_as_advanced(FFPROBE_EXECUTABLE)
 include(${PROJECT_SOURCE_DIR}/cmake/GetVersionFromGitTag.cmake)
 
 # Project and version info
-add_compile_definitions("PROGRAM_NAME=\"StormByte-videoconvert\"")
-add_compile_definitions("PROGRAM_DESCRIPTION=\"${PROJECT_DESCRIPTION}\"")
-add_compile_definitions("PROGRAM_AUTHOR=\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"")
-add_compile_definitions("PROGRAM_VERSION=\"${${PROJECT_NAME}_VERSION_STRING}\"")
-add_compile_definitions("PROJECT_URI=\"${PROJECT_HOMEPAGE_URL}\"")
-add_compile_definitions("COMPILER_NAME=\"${CMAKE_CXX_COMPILER_ID}\"")
-add_compile_definitions("COMPILER_VERSION=\"${CMAKE_CXX_COMPILER_VERSION}\"")
-add_compile_definitions("FFMPEG_EXECUTABLE=\"${FFMPEG_EXECUTABLE}\"")
-add_compile_definitions("FFPROBE_EXECUTABLE=\"${FFPROBE_EXECUTABLE}\"")
+file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/definitions.h CONTENT "#pragma once
+
+#define PROGRAM_NAME			\"StormByte-videoconvert\"
+#define PROGRAM_DESCRIPTION		\"${PROJECT_DESCRIPTION}\"
+#define PROGRAM_AUTHOR			\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"
+#define PROGRAM_VERSION			\"${${PROJECT_NAME}_VERSION_STRING}\"
+#define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
+#define COMPILER_NAME			\"${CMAKE_CXX_COMPILER_ID}\"
+#define COMPILER_VERSION		\"${CMAKE_CXX_COMPILER_VERSION}\"
+#define FFMPEG_EXECUTABLE		\"${FFMPEG_EXECUTABLE}\"
+#define FFPROBE_EXECUTABLE		\"${FFPROBE_EXECUTABLE}\"
+")
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
 if (build_type STREQUAL DEBUG)
-	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_DEBUG}\"")
+	file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define COMPILER_FLAGS			\"${CMAKE_CXX_FLAGS_DEBUG}\"")
 elseif(build_type STREQUAL RELWITHDEBINFO)
-	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_RELWITHDEBINFO}\"")
+	file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define COMPILER_FLAGS			\"${CMAKE_CXX_FLAGS_RELWITHDEBINFO}\"")
 elseif(build_type STREQUAL MINSIZEREL)
-	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_MINSIZEREL}\"")
+	file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define COMPILER_FLAGS			\"${CMAKE_CXX_FLAGS_MINSIZEREL}\"")
 elseif(build_type STREQUAL RELEASE)
-	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_RELEASE}\"")
+	file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define COMPILER_FLAGS			\"${CMAKE_CXX_FLAGS_RELEASE}\"")
 else()
-	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS}\"")
+	file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define COMPILER_FLAGS			\"${CMAKE_CXX_FLAGS}\"")
 endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/generated)

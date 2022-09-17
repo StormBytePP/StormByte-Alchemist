@@ -3,6 +3,7 @@
 #include "task/interactive.hxx"
 #include "task/test.hxx"
 #include "utils/input.hxx"
+#include "definitions.h"
 
 #include <csignal>
 #include <libconfig.h++>

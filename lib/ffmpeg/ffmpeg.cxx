@@ -1,9 +1,5 @@
 #include "ffmpeg.hxx"
 #include "utils/logger.hxx"
-#include "application.hxx"
-
-#include <algorithm>
-#include <unistd.h>
 
 using namespace StormByte::VideoConvert;
 

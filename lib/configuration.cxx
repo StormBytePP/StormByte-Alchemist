@@ -1,6 +1,7 @@
 #include "configuration.hxx"
 #include "utils/filesystem.hxx"
 #include "utils/logger.hxx"
+#include "definitions.h"
 
 #include <iostream>
 #include <list>

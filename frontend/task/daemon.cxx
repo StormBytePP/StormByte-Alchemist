@@ -1,4 +1,5 @@
 #include "daemon.hxx"
+#include "definitions.h"
 #include "task/execute/ffmpeg/convert.hxx"
 
 #include <iostream>

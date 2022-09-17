@@ -1,4 +1,5 @@
 #include "base.hxx"
+#include "definitions.h"
 
 using namespace StormByte::VideoConvert;
 
