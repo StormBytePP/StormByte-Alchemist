@@ -306,6 +306,7 @@ void Frontend::Application::signal_handler(int signal) {
 		case SIGINT:
 		case SIGTERM:
 			if (instance.m_worker) {
+				m_task->ask_stop();
 				kill(*instance.m_worker, SIGINT);
 			}
 			break;

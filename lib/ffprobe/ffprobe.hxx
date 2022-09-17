@@ -17,6 +17,8 @@ namespace StormByte::VideoConvert {
 			FFprobe& operator=(FFprobe&&) = default;
 			~FFprobe() = default;
 
+			static FFprobe from_file(const Types::path_t&) noexcept;
+
 			struct stream {
 				enum TYPE: char { VIDEO = 'v', AUDIO = 'a', SUBTITLE = 's' };
 				enum RESOLUTION: unsigned short { RES_480P = 0, RES_720P, RES_1080P, RES_4K, RES_8K };
@@ -28,8 +30,7 @@ namespace StormByte::VideoConvert {
 			};
 
 			/* Initialize */
-			void initialize_video_color_data(const std::string& json);
-			void initialize_stream_data(const std::string& json, const stream::TYPE& type);
+			void initialize(const Types::path_t&) noexcept;
 
 			/* Getters */
 			inline std::optional<std::string>		get_pix_fmt() const { return m_pix_fmt; }
@@ -48,6 +49,8 @@ namespace StormByte::VideoConvert {
 			#endif
 
 		private:
+			void initialize_video_color_data(const std::string& json);
+			void initialize_stream_data(const std::string& json, const stream::TYPE& type);
 			std::optional<Json::Value> parse_json(const std::string& json) const;
 			
 			std::optional<std::string> m_pix_fmt, m_color_space, m_color_primaries, m_color_transfer;

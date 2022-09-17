@@ -2,8 +2,6 @@
 #include "application.hxx"
 #include "utils/input.hxx"
 #include "utils/display.hxx"
-#include "task/execute/ffprobe/video_color.hxx"
-#include "task/execute/ffprobe/streams.hxx"
 
 #include <csignal>
 #include <iostream>
@@ -69,21 +67,9 @@ bool Frontend::Task::Interactive::ask_animation() {
 }
 
 FFprobe Frontend::Task::Interactive::get_film_data() {
-	FFprobe probe;
-	std::unique_ptr<VideoConvert::Task::Execute::FFprobe::Base> task;
-
 	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
-	task.reset(new VideoConvert::Task::Execute::FFprobe::VideoColor(full_path));
-	if (task->run() == VideoConvert::Task::HALT_OK)
-		probe.initialize_video_color_data(task->get_stdout());
-	task.reset(new VideoConvert::Task::Execute::FFprobe::Streams(full_path));
-	for (const auto i : { FFprobe::stream::VIDEO, FFprobe::stream::AUDIO, FFprobe::stream::SUBTITLE }) {
-		dynamic_cast<VideoConvert::Task::Execute::FFprobe::Streams&>(*task).set_mode(i);
-		if (task->run() == VideoConvert::Task::HALT_OK)
-			probe.initialize_stream_data(task->get_stdout(), i);
-	}
-
-	return probe;
+	
+	return FFprobe::from_file(full_path);
 }
 
 void Frontend::Task::Interactive::update_title_renamed(const FFprobe& film_data, const stream_map_t& stream_data, Types::optional_path_t& title) {
