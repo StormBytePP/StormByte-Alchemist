@@ -3,5 +3,5 @@
 using namespace StormByte::VideoConvert;
 
 int main(int argc, char **argv) {
-	return Application::get_instance().run(argc, argv);
+	return Frontend::Application::get_instance().run(argc, argv);
 }

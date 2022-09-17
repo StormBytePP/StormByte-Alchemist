@@ -1,32 +1,36 @@
 #pragma once
 
-#include "database/sqlite3.hxx"
-#include "utils/logger.hxx"
-#include "configuration.hxx"
-
+#include <string>
 #include <chrono>
+#include <optional>
 
 namespace StormByte::VideoConvert::Task {
-	enum STATUS { STOPPED, RUNNING, HALT_OK, HALT_ERROR };
+	enum STATUS:unsigned short { STOPPED, HALTED, RUNNING, HALT_OK, HALT_ERROR };
 	
 	class Base {
 		public:
-			Base(const Base& base) = delete;
-			Base(Base&& base) noexcept = delete;
-			Base& operator=(const Base& base) = delete;
-			Base& operator=(Base&& base) noexcept = delete;
+			Base();
+			Base(const Base&) = default;
+			Base(Base&&) noexcept = default;
+			Base& operator=(const Base&) = default;
+			Base& operator=(Base&&) noexcept = default;
 			virtual ~Base() noexcept = default;
 
-			virtual STATUS run(Types::config_t config) noexcept;
+			/* Long time running tasks might require a worker PID to be known */
+			STATUS run(std::optional<pid_t>&) noexcept;
+			/* For short tasks no worker is needed */
+			STATUS run() noexcept;
+
+			/* Use this inside signal handlers */
+			inline void ask_stop() { m_status = HALTED; }
+			
+			std::string elapsed_time_string() const;
 
 		protected:
-			Base();
-			std::string elapsed_time(const std::chrono::steady_clock::time_point& begin, const std::chrono::steady_clock::time_point& end) const;
-
-			Types::config_t m_config;
-			Types::logger_t m_logger;
-			Types::database_t m_database;
+			virtual STATUS do_work(std::optional<pid_t>&) noexcept = 0;
 			volatile STATUS m_status;
-			bool m_require_logger, m_require_database;
+
+		private:
+			std::chrono::steady_clock::time_point m_start, m_end;
 	};
 }

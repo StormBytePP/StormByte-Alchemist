@@ -1,26 +1,22 @@
 #pragma once
 
-#include "task/base.hxx"
+#include "task/config/base.hxx"
 #include "ffmpeg/ffmpeg.hxx"
 
-namespace StormByte::VideoConvert::Task {
-	class Daemon: public Base {
+namespace StormByte::VideoConvert::Frontend::Task {
+	class Daemon: public VideoConvert::Task::Config::Base {
 		public:
-			Daemon(const Daemon& daemon) = delete;
-			Daemon(Daemon&& daemon) noexcept = delete;
-			Daemon& operator=(const Daemon& daemon) = delete;
-			Daemon& operator=(Daemon&& daemon) noexcept = delete;
+			Daemon(Types::config_t config, std::optional<pid_t>& worker);
+			Daemon(const Daemon& daemon) = default;
+			Daemon(Daemon&& daemon) noexcept = default;
+			Daemon& operator=(const Daemon& daemon) = default;
+			Daemon& operator=(Daemon&& daemon) noexcept = default;
 			~Daemon() noexcept = default;
 
-			static Daemon& get_instance();
-
-			STATUS run(Types::config_t config) noexcept override;
-
 		private:
-			Daemon();
-			void execute_ffmpeg(FFmpeg& ffmpeg);
-			static void signal_handler(int);
+			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
+			void execute_ffmpeg(FFmpeg&& ffmpeg) const;
 
-			std::optional<pid_t> m_worker;
+			std::optional<pid_t>* m_worker;
 	};
 }

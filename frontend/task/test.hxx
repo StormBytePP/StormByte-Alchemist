@@ -1,21 +1,18 @@
 #pragma once
 
-#include "task/base.hxx"
+#include "task/config/cli/base.hxx"
 
-namespace StormByte::VideoConvert::Task {	
-	class Test: public Base {
+namespace StormByte::VideoConvert::Frontend::Task {	
+	class Test: public VideoConvert::Task::Config::CLI::Base {
 		public:
-			Test(const Test& Test) = delete;
-			Test(Test&& Test) noexcept = delete;
-			Test& operator=(const Test& Test) = delete;
-			Test& operator=(Test&& Test) noexcept = delete;
+			Test(Types::config_t);
+			Test(const Test& Test) = default;
+			Test(Test&& Test) noexcept = default;
+			Test& operator=(const Test& Test) = default;
+			Test& operator=(Test&& Test) noexcept = default;
 			virtual ~Test() noexcept = default;
 
-			static Test& get_instance();
-
-			STATUS run(Types::config_t config) noexcept override;
-
 		private:
-			Test();
+			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
 	};
 }

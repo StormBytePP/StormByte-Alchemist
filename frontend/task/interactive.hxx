@@ -1,26 +1,22 @@
 #pragma once
 
-#include "task/base.hxx"
+#include "task/config/cli/base.hxx"
 #include "ffprobe/ffprobe.hxx"
 
 #include <map>
 
-namespace StormByte::VideoConvert::Task {
-	class Interactive: public Base {
+namespace StormByte::VideoConvert::Frontend::Task {
+	class Interactive: public VideoConvert::Task::Config::CLI::Base {
 		public:
-			Interactive(Types::path_t&& path);
+			Interactive(Types::config_t config);
 			Interactive(const Interactive& interactive) = delete;
 			Interactive(Interactive&& interactive) noexcept = delete;
 			Interactive& operator=(const Interactive& interactive) = delete;
 			Interactive& operator=(Interactive&& interactive) noexcept = delete;
 			~Interactive() noexcept = default;
 
-			static Interactive& get_instance();
-
-			STATUS run(Types::config_t config) noexcept override;
-
 		private:
-			Interactive();
+			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
 
 			using pending_streams_t					= std::map<FFprobe::stream::TYPE, size_t>;
 			using stream_map_t						= std::map<FFprobe::stream::TYPE, std::map<unsigned short, Database::Data::film::stream>>;
@@ -49,8 +45,6 @@ namespace StormByte::VideoConvert::Task {
 			film_group_t							generate_film_group_t(const group_file_info_t&, const Database::Data::film::group& group, const Database::Data::film::priority&, const bool& animation);
 			bool									insert_film_group_t(const film_group_t&);
 			#endif
-			
-			static void signal_handler(int);
 
 			std::string m_buffer_str;
 			int m_buffer_int;

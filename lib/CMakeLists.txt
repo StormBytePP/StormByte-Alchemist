@@ -1,4 +1,5 @@
 list(APPEND VIDEOCONVERT_LIBRARY_FILES
+	configuration.cxx
 	database/sqlite3.cxx
 	ffmpeg/stream/base.cxx
 	ffmpeg/stream/audio/base.cxx
@@ -14,11 +15,14 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	utils/input.cxx
 	utils/display.cxx
 	task/base.cxx
-	task/execute.cxx
-	task/execute_ffmpeg.cxx
-	task/execute_ffprobe.cxx
-	task/execute_ffprobe_streams.cxx
-	task/execute_ffprobe_video_color.cxx
+	task/config/base.cxx
+	task/config/cli/base.cxx
+	task/execute/base.cxx
+	task/execute/ffprobe/base.cxx
+	task/execute/ffprobe/streams.cxx
+	task/execute/ffprobe/video_color.cxx
+	task/execute/ffmpeg/base.cxx
+	task/execute/ffmpeg/convert.cxx
 )
 
 if (ENABLE_HEVC)

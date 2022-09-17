@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project("StormByte Video Converter"
 	VERSION 0.0.1
 	DESCRIPTION "This is a program to handle automatic ffmpeg conversions between downloaded videos in order to format them to be properly stored"
-	HOMEPAGE_URL "David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>"
+	HOMEPAGE_URL "https://github.com/StormBytePP/StormByte-videoconvert"
 )
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -14,12 +14,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
-
-find_package (SQLite3 REQUIRED)
-find_package (Config++ REQUIRED)
-find_package (Boost REQUIRED)
-find_package (Git REQUIRED)
-find_package (JsonCpp REQUIRED)
 
 # Encoder support
 option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)
@@ -61,6 +55,44 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13.0.0")
     message(FATAL_ERROR "Clang needs to be at least version 13.0.0 but found ${CMAKE_CXX_COMPILER_VERSION}")
   endif()
+endif()
+
+find_package (SQLite3 REQUIRED)
+find_package (Config++ REQUIRED)
+find_package (Boost REQUIRED)
+find_package (Git REQUIRED)
+find_package (JsonCpp REQUIRED)
+
+find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
+mark_as_advanced(FFMPEG_EXECUTABLE)
+find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)
+mark_as_advanced(FFPROBE_EXECUTABLE)
+
+# Manually set VERSION_UPDATE_FROM_GIT to true to update version from last tag
+include(${PROJECT_SOURCE_DIR}/cmake/GetVersionFromGitTag.cmake)
+
+# Project and version info
+add_compile_definitions("PROGRAM_NAME=\"StormByte-videoconvert\"")
+add_compile_definitions("PROGRAM_DESCRIPTION=\"${PROJECT_DESCRIPTION}\"")
+add_compile_definitions("PROGRAM_AUTHOR=\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"")
+add_compile_definitions("PROGRAM_VERSION=\"${${PROJECT_NAME}_VERSION_STRING}\"")
+add_compile_definitions("PROJECT_URI=\"${PROJECT_HOMEPAGE_URL}\"")
+add_compile_definitions("COMPILER_NAME=\"${CMAKE_CXX_COMPILER_ID}\"")
+add_compile_definitions("COMPILER_VERSION=\"${CMAKE_CXX_COMPILER_VERSION}\"")
+add_compile_definitions("FFMPEG_EXECUTABLE=\"${FFMPEG_EXECUTABLE}\"")
+add_compile_definitions("FFPROBE_EXECUTABLE=\"${FFPROBE_EXECUTABLE}\"")
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
+if (build_type STREQUAL DEBUG)
+	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_DEBUG}\"")
+elseif(build_type STREQUAL RELWITHDEBINFO)
+	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_RELWITHDEBINFO}\"")
+elseif(build_type STREQUAL MINSIZEREL)
+	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_MINSIZEREL}\"")
+elseif(build_type STREQUAL RELEASE)
+	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS_RELEASE}\"")
+else()
+	add_compile_definitions("COMPILER_FLAGS=\"${CMAKE_CXX_FLAGS}\"")
 endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/generated)
