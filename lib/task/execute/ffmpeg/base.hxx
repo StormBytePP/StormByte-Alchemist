@@ -15,7 +15,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFmpeg {
 			~Base() noexcept = 0;
 
 		protected:
-			virtual std::string create_arguments() const override;
+			virtual void pre_run_actions() noexcept override;
 			
 			VideoConvert::FFmpeg m_ffmpeg;
 

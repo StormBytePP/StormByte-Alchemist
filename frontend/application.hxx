@@ -30,7 +30,7 @@ namespace StormByte::VideoConvert::Frontend {
 			Configuration read_cli(int argc, char** argv);
 			Configuration read_config(const Types::path_t& config_file);
 			void init(Configuration&& cli_config); // Will update m_status
-			void signal_handler(int);
+			static void signal_handler(int);
 
 			Types::config_t m_config;
 			enum STATUS { RUN_TASK, HALT_OK, HALT_ERROR };

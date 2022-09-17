@@ -11,10 +11,16 @@ Task::STATUS Task::Base::run() noexcept {
 
 Task::STATUS Task::Base::run(std::optional<pid_t>& worker) noexcept {
 	m_start = std::chrono::steady_clock::now();
+	pre_run_actions();
 	STATUS exit_code = do_work(worker);
+	post_run_actions();
 	m_end = std::chrono::steady_clock::now();
 	return exit_code;
 }
+
+void Task::Base::pre_run_actions() noexcept {}
+
+void Task::Base::post_run_actions() noexcept {}
 
 std::string Task::Base::elapsed_time_string() const {
 	/* NOTE: Until C++20's <format> support is complete, I just use this aproach */

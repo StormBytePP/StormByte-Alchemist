@@ -11,7 +11,7 @@ Task::Execute::FFmpeg::Base::Base(VideoConvert::FFmpeg&& ffmpeg):Execute::Base(F
 
 Task::Execute::FFmpeg::Base::~Base() {}
 
-std::string Task::Execute::FFmpeg::Base::create_arguments() const {
+void Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 	std::list<std::string> result = FFMPEG_INIT_OPTIONS;
 
 	for (auto it = m_ffmpeg.get_streams().begin(); it != m_ffmpeg.get_streams().end(); it++) {
@@ -28,5 +28,5 @@ std::string Task::Execute::FFmpeg::Base::create_arguments() const {
 
 	result.push_back("-metadata:s:v"); result.push_back("encoder=\"" + std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " ( " + std::string(PROJECT_URI) + " )\"" );
 
-	return boost::algorithm::join(result, " ");
+	m_arguments += boost::algorithm::join(result, " ");
 }

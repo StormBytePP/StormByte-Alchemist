@@ -27,7 +27,11 @@ namespace StormByte::VideoConvert::Task {
 			std::string elapsed_time_string() const;
 
 		protected:
+			/* Actions */
 			virtual STATUS do_work(std::optional<pid_t>&) noexcept = 0;
+			virtual void pre_run_actions() noexcept;
+			virtual void post_run_actions() noexcept;
+
 			volatile STATUS m_status;
 
 		private:

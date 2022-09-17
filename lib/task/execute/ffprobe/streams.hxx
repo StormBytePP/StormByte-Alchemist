@@ -17,7 +17,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 			inline void set_mode(const VideoConvert::FFprobe::stream::TYPE& mode) { m_mode = mode; }
 
 		private:
-			std::string create_arguments() const override;
+			void pre_run_actions() noexcept override;
 
 			static const std::list<std::string> DEFAULT_ARGUMENTS;
 			VideoConvert::FFprobe::stream::TYPE m_mode;

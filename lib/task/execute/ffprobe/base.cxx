@@ -9,6 +9,7 @@ Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base(FFP
 
 Task::Execute::FFprobe::Base::~Base() {}
 
-std::string Task::Execute::FFprobe::Base::create_arguments() const {
-	return " \"" + m_file.string() + "\"";
+void Task::Execute::FFprobe::Base::pre_run_actions() noexcept {
+	m_arguments += " \"" + m_file.string() + "\"";
+	Task::Execute::Base::pre_run_actions();
 }

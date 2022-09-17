@@ -10,7 +10,9 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::Execute::Base::Base(const Types::path_t& program, const std::string& stdinput):Task::Base(), m_program(program), m_stdin(stdinput) {}
+Task::Execute::Base::Base(const Types::path_t& program, const std::string& arguments, const std::string& stdinput):Task::Base(), m_program(program), m_arguments(arguments), m_stdin(stdinput) {}
+
+Task::Execute::Base::Base(Types::path_t&& program, std::string&& arguments, std::string&& stdinput):Task::Base(), m_program(std::move(program)), m_arguments(std::move(arguments)), m_stdin(std::move(stdinput)) {}
 
 Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept {
 	using namespace boost;
@@ -19,13 +21,6 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 	asio::io_service ios;
 
 	try {
-		// Rebuilding arguments
-		std::string arguments = create_arguments();
-
-		// Clearing previous run output
-		m_stdout = "";
-		m_stderr = "";
-
 		// stdout setup
 		std::vector<char> vOut(128 << 10);
 		auto outBuffer{ asio::buffer(vOut) };
@@ -61,7 +56,7 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 		process::async_pipe pipeIn(ios);
 
 		process::child c(
-			m_program.string() + " " + arguments,
+			m_program.string() + " " + m_arguments,
 			process::std_out > pipeOut, 
 			process::std_err > pipeErr, 
 			process::std_in < pipeIn
@@ -88,4 +83,9 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 	worker.reset();
 
 	return status;
+}
+
+void Task::Execute::Base::pre_run_actions() noexcept {
+	m_stdout = "";
+	m_stdin = "";
 }

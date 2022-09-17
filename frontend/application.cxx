@@ -50,7 +50,12 @@ const std::list<Database::Data::film::stream::codec> Frontend::Application::SUPP
 	Database::Data::film::stream::SUBTITLE_COPY
 };
 
-Frontend::Application::Application(): m_config(new Configuration()) {}
+Frontend::Application::Application(): m_config(new Configuration()) {
+	signal(SIGTERM,		signal_handler);
+	signal(SIGINT,		signal_handler);
+	signal(SIGUSR1,		signal_handler);
+	signal(SIGUSR2,		signal_handler);
+}
 
 Frontend::Application& Frontend::Application::get_instance() {
 	static Application instance;
@@ -305,10 +310,11 @@ void Frontend::Application::signal_handler(int signal) {
 	switch(signal) {
 		case SIGINT:
 		case SIGTERM:
-			if (instance.m_worker) {
-				m_task->ask_stop();
+			// If instance.m_task is not valid then it is a serios bug, we should not check
+			assert(instance.m_task);
+			instance.m_task->ask_stop();
+			if (instance.m_worker)
 				kill(*instance.m_worker, SIGINT);
-			}
 			break;
 
 		case SIGUSR1:

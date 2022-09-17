@@ -15,7 +15,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 			virtual ~Base() noexcept = 0;
 
 		protected:
-			virtual std::string create_arguments() const override;
+			virtual void pre_run_actions() noexcept override;
 
 			Types::path_t m_file;
 	};

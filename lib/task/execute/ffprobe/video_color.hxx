@@ -16,7 +16,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 			~VideoColor() noexcept = default;
 
 		private:
-			std::string create_arguments() const override;
+			void pre_run_actions() noexcept override;
 
 			static const std::list<std::string> DEFAULT_ARGUMENTS;
 	};

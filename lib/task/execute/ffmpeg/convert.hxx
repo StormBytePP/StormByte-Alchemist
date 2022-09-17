@@ -14,7 +14,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFmpeg {
 			~Convert() noexcept = default;
 
 		private:
-			std::string create_arguments() const override;
+			void pre_run_actions() noexcept override;
 
 			Types::path_t m_inpath, m_outpath;
 	};
