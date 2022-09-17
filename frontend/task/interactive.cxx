@@ -19,20 +19,34 @@ Frontend::Task::Interactive::Interactive(Types::config_t config):VideoConvert::T
 bool Frontend::Task::Interactive::run_initial_checks() {
 	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
 
+	bool check = true;
+
 	if (!std::filesystem::exists(full_path)) {
 		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
-		return false;
+		check = false;
 	}
 	else if (m_database->is_film_in_database(*m_config->get_interactive_parameter())) {
 		std::cerr << "Film " << *m_config->get_interactive_parameter() << " is already in database!" << std::endl;
-		return false;
+		check = false;
 	}
-	else if (std::filesystem::is_directory(full_path) && m_database->is_group_in_database(*m_config->get_interactive_parameter())) {
-		std::cerr << "Film group (folder) " << *m_config->get_interactive_parameter() << " is already in database" << std::endl;
-		return false;
+	else if (std::filesystem::is_directory(full_path)) {
+		if (m_database->is_group_in_database(*m_config->get_interactive_parameter())) {
+			std::cerr << "Film group (folder) " << *m_config->get_interactive_parameter() << " is already in database" << std::endl;
+			check = false;
+		}
+		else {
+			auto files = find_files_recursive();
+			if (files.first.empty()) {
+				std::cerr << "Folder contains 0 valid files";
+				if (!files.second.empty())
+					std::cerr << " (but " << files.second.size() << " unsupported files" << ")";
+				std::cerr << "!" << std::endl;
+				check = false;
+			}
+		}
 	}
-	else
-		return true;
+	
+	return check;
 }
 
 Types::optional_path_t Frontend::Task::Interactive::ask_title() {
