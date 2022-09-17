@@ -8,7 +8,7 @@ project("StormByte Video Converter"
 )
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -Wall -Wextra -Werror -Wnon-virtual-dtor -pedantic -g3 -fno-inline -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -Wall -Wextra -Werror -Wnon-virtual-dtor -pedantic -g3 -fno-inline -O0 -Wunused-variable")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	message(STATUS "Setting build type to Release as none was specified.")
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
