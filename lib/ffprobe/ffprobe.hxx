@@ -50,6 +50,7 @@ namespace StormByte::VideoConvert {
 
 		private:
 			void initialize_video_color_data(const std::string& json);
+			void initialize_video_resolution(const std::string& json);
 			void initialize_stream_data(const std::string& json, const stream::TYPE& type);
 			std::optional<Json::Value> parse_json(const std::string& json) const;
 			
