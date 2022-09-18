@@ -102,14 +102,6 @@ void Frontend::Task::Interactive::update_title_renamed(const FFprobe& film_data,
 	}
 }
 
-Frontend::Task::Interactive::pending_streams_t Frontend::Task::Interactive::initialize_pending_streams(const FFprobe& probe) {
-	return std::map<FFprobe::stream::TYPE, size_t> {
-		{ FFprobe::stream::VIDEO,		probe.get_stream(FFprobe::stream::VIDEO).size() },
-		{ FFprobe::stream::AUDIO,		probe.get_stream(FFprobe::stream::AUDIO).size() },
-		{ FFprobe::stream::SUBTITLE,	probe.get_stream(FFprobe::stream::SUBTITLE).size() }
-	};
-}
-
 Frontend::Task::Interactive::stream_map_t Frontend::Task::Interactive::initialize_stream_map() {
 	return std::map<FFprobe::stream::TYPE, std::map<unsigned short, Database::Data::film::stream>> {
 		{
@@ -148,45 +140,51 @@ void Frontend::Task::Interactive::display_stream_map(const FFprobe& probe, const
 	}
 }
 
-std::optional<Frontend::Task::Interactive::stream_id_t> Frontend::Task::Interactive::ask_stream_id(const FFprobe& probe, const pending_streams_t& pending_strms) {
+std::optional<Frontend::Task::Interactive::stream_id_t> Frontend::Task::Interactive::ask_stream_id(const FFprobe& probe) {
 	std::optional<Task::Interactive::stream_id_t> result;
-	if (pending_strms.at(FFprobe::stream::VIDEO) == 0 && pending_strms.at(FFprobe::stream::AUDIO) == 0 && pending_strms.at(FFprobe::stream::SUBTITLE) == 0) {
-		std::cout << "All streams have been selected" << std::endl << std::endl;
+
+	// Generate a list of available options
+	std::list<std::string> available_options;
+	for (auto type: { FFprobe::stream::VIDEO, FFprobe::stream::AUDIO, FFprobe::stream::SUBTITLE }) {
+		auto stream = probe.get_stream(type);
+		if (!stream.empty()) {
+			std::string stream_type_str = std::string(1, type);
+			available_options.push_back(stream_type_str + ":-1");
+			for (size_t id = 0; id < stream.size(); id++)
+				available_options.push_back(stream_type_str + ":" + std::to_string(id));
+		}
 	}
-	else {
-		FFprobe::stream::TYPE selected_type;
-		do {
-			do {
-				std::cout << "Which type to select? [(v)ideo/(a)udio/(s)ubtitle/(f)inish]: ";
-				std::getline(std::cin, m_buffer_str);
-			} while (!Utils::Input::in_options(m_buffer_str, { "v", "V", "a", "A", "s", "S", "f", "F" }, true));
+	available_options.push_back("f");
+	available_options.push_back("F");
 
-			if (m_buffer_str == "f" || m_buffer_str == "F") {
-				return std::optional<Task::Interactive::stream_id_t>();
-			}
-			else {
-					selected_type = static_cast<FFprobe::stream::TYPE>(tolower(m_buffer_str[0]));
-				if (pending_strms.at(selected_type) == 0) 
-					std::cerr << "Selected type is already fully configured, select another type" << std::endl << std::endl;
-			}
-		} while (pending_strms.at(selected_type) == 0);
+	do {
+		std::cout << "Select stream ID (-1 for all of that type) or (f)inish: ";
+		std::getline(std::cin, m_buffer_str);
+	} while (!Utils::Input::in_options(m_buffer_str, available_options, true));
 
-		do {
-			std::cout << "Select stream ID: [-1, ";
-			for (size_t i = 0; i < probe.get_stream(selected_type).size(); i++) {
-				std::cout << i;
-				if (i < probe.get_stream(selected_type).size() - 1) std::cout << ", ";
-			}
-			std::cout << "] (-1 means all for " << selected_type << "): ";
-			std::getline(std::cin, m_buffer_str);
-		} while (!Utils::Input::to_int_in_range(m_buffer_str, m_buffer_int, -1, probe.get_stream(selected_type).size() - 1, true));
+	if (m_buffer_str != "f" && m_buffer_str != "F") {
+		/* Mini tokenizer */
+		std::vector<std::string> tokens;
+		std::stringstream ss (m_buffer_str);
+		std::string item;
 
-		result = { selected_type, m_buffer_int };
+		while (std::getline (ss, item, ':')) {
+			tokens.push_back (item);
+		}
+		assert(tokens.size() == 2);
+		
+		Utils::Input::to_int(tokens[1], m_buffer_int);
+		Frontend::Task::Interactive::stream_id_t selected_stream_id = {
+			static_cast<FFprobe::stream::TYPE>(tokens[0][0]),
+			m_buffer_int
+		};
+
+		result = selected_stream_id;
 	}
 	return result;
 }
 
-void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const stream_id_t& strm_id, stream_map_t& strm_map, pending_streams_t& strm_pending) {
+void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& probe, const stream_id_t& strm_id, stream_map_t& strm_map) {
 	std::list<int> options;
 	if (strm_id.first == FFprobe::stream::VIDEO) {
 		options = {
@@ -266,11 +264,20 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 		// Nothing yet
 	}
 
-	// Now we update our variables
-	if (strm_id.second == -1)
-		strm_pending.at(strm_id.first) = 0;
-	else
-		strm_pending.at(strm_id.first) = strm_pending.at(strm_id.first) - 1;
+	// If -1 is selected we delete previous stuff
+	if (strm_id.second == -1) {
+		strm_map.at(strm_id.first).clear();
+	}
+	// Else we could have before a -1 and now we want specific
+	else if (strm_map.at(strm_id.first).count(-1) == 1) {
+		// In which case we need to copy that -1 as if it were specific
+		auto stream_info = strm_map.at(strm_id.first)[-1];
+		strm_map.at(strm_id.first).clear();
+		for (size_t i = 0; i < probe.get_stream(strm_id.first).size(); i++) {
+			stream_info.m_id = i;
+			strm_map.at(strm_id.first)[i] = stream_info;
+		}
+	}
 
 	strm_map.at(strm_id.first)[strm_id.second] = stream;
 }
@@ -437,17 +444,16 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 		Database::Data::film film;
 		FFprobe film_data = get_film_data();
 
-		auto pending_streams = initialize_pending_streams(film_data);
 		auto stream_map = initialize_stream_map();
 		
 		bool continue_asking = true;
 		do {
 			display_stream_map(film_data, stream_map);
-			std::optional<stream_id_t> strm_id = ask_stream_id(film_data, pending_streams);
+			std::optional<stream_id_t> strm_id = ask_stream_id(film_data);
 
 			if (!strm_id) continue_asking = false;
 			else {
-				ask_stream(film_data, *strm_id, stream_map, pending_streams);
+				ask_stream(film_data, *strm_id, stream_map);
 			}
 		} while (continue_asking);
 

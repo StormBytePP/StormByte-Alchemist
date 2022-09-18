@@ -18,7 +18,6 @@ namespace StormByte::VideoConvert::Frontend::Task {
 		private:
 			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
 
-			using pending_streams_t					= std::map<FFprobe::stream::TYPE, size_t>;
 			using stream_map_t						= std::map<FFprobe::stream::TYPE, std::map<unsigned short, Database::Data::film::stream>>;
 			using stream_id_t						= std::pair<FFprobe::stream::TYPE, short>; // Not unsigned as can be -1 for all
 			using group_file_info_t					= std::pair<std::list<Types::path_t>, std::list<Types::path_t>>; // First valid files, second invalid files (not having supported extensions)
@@ -30,11 +29,10 @@ namespace StormByte::VideoConvert::Frontend::Task {
 			bool									ask_animation();
 			FFprobe									get_film_data();
 			void									update_title_renamed(const FFprobe&, const stream_map_t&, Types::optional_path_t& title);
-			pending_streams_t						initialize_pending_streams(const FFprobe&);
 			stream_map_t							initialize_stream_map();
 			void									display_stream_map(const FFprobe&, const stream_map_t&);
-			std::optional<stream_id_t>				ask_stream_id(const FFprobe&, const pending_streams_t&);
-			void									ask_stream(const FFprobe&, const stream_id_t&, stream_map_t&, pending_streams_t&);
+			std::optional<stream_id_t>				ask_stream_id(const FFprobe&);
+			void									ask_stream(const FFprobe&, const stream_id_t&, stream_map_t&);
 			Database::Data::film					generate_film(const stream_map_t&, const Database::Data::film::priority&, const Types::optional_path_t& title, const bool& animation);
 			std::optional<unsigned int>				insert_film(const Database::Data::film&);
 			#ifdef ENABLE_HEVC
