@@ -19,12 +19,7 @@ void Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 		result.insert(result.end(), parameters.begin(), parameters.end());
 	}
 
-	if (m_ffmpeg.get_title()) {
-		result.push_back("-metadata"); result.push_back("title=\"" + *m_ffmpeg.get_title() + "\"");
-	}
-	else {
-		result.push_back("-metadata"); result.push_back("title=");
-	}
+	result.push_back("-metadata"); result.push_back("title=");
 
 	result.push_back("-metadata:s:v"); result.push_back("encoder=\"" + std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " ( " + std::string(PROJECT_URI) + " )\"" );
 
