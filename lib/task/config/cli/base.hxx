@@ -2,6 +2,8 @@
 
 #include "../base.hxx"
 
+#include <iostream>
+
 namespace StormByte::VideoConvert::Task::Config::CLI {	
 	class Base: public Task::Config::Base {
 		public:

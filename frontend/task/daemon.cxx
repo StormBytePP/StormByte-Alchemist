@@ -2,8 +2,6 @@
 #include "definitions.h"
 #include "task/execute/ffmpeg/convert.hxx"
 
-#include <iostream>
-
 using namespace StormByte::VideoConvert;
 
 Frontend::Task::Daemon::Daemon(Types::config_t config, std::optional<pid_t>& worker):VideoConvert::Task::Config::Base(config, VideoConvert::Task::Config::REQUIRE_LOGGER | VideoConvert::Task::Config::REQUIRE_DATABASE), m_worker(&worker) {}

@@ -35,7 +35,7 @@ FFprobe FFprobe::from_file(const Types::path_t& file) noexcept {
 	probe.initialize(file);
 	return probe;
 }
-#include <iostream>
+
 void FFprobe::initialize(const Types::path_t& file) noexcept {
 	std::unique_ptr<Task::Execute::FFprobe::Base> task;
 
@@ -50,8 +50,6 @@ void FFprobe::initialize(const Types::path_t& file) noexcept {
 	task.reset(new Task::Execute::FFprobe::VideoResolution(file));
 	if (task->run() == Task::HALT_OK)
 		initialize_video_resolution(task->get_stdout());
-	else
-		std::cerr << "Failed: " << task->get_stderr() << std::endl;
 }
 
 void FFprobe::initialize_video_color_data(const std::string& json) {
@@ -95,7 +93,7 @@ void FFprobe::initialize_video_color_data(const std::string& json) {
 		}
 	}
 }
-#include <iostream>
+
 void FFprobe::initialize_video_resolution(const std::string& json) {
 	std::optional<Json::Value> root = parse_json(json);
 	if (root) {
@@ -108,7 +106,7 @@ void FFprobe::initialize_video_resolution(const std::string& json) {
 					else if (it2.key() == "width" && it2->isUInt()) m_width = it2->asUInt();
 		}
 		catch(const std::exception& e) {
-			std::cerr << e.what() << std::endl;
+			// We just ignore
 		}
 	}
 }

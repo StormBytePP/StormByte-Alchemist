@@ -4,7 +4,6 @@
 #include "utils/display.hxx"
 
 #include <csignal>
-#include <iostream>
 #include <boost/algorithm/string.hpp> // For string lowercase
 
 using namespace StormByte::VideoConvert;
