@@ -8,6 +8,7 @@ namespace StormByte::VideoConvert::Task::Config::CLI {
 	class Base: public Task::Config::Base {
 		public:
 			Base(Types::config_t config, const unsigned short& req_mask = 0);
+			Base(int argc, char* argv[]);
 			Base(const Base&) = default;
 			Base(Base&&) noexcept = default;
 			Base& operator=(const Base&) = default;
@@ -44,5 +45,8 @@ namespace StormByte::VideoConvert::Task::Config::CLI {
 			inline std::string ansi_code(const ANSI_code& color) const								{ return "\033[" + std::to_string(color) + "m";	}
 			inline std::string colored_text(const ANSI_code& color, const std::string& str) const	{ return ansi_code(color) + str + "\033[0m";	}
 			inline std::string colored_text(const ANSI_code& color, const int& number) const		{ return colored_text(color, std::to_string(number)); }
+
+			int m_argc;
+			char** m_argv;
 	};
 }
