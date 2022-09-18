@@ -3,6 +3,8 @@
 #include "../base.hxx"
 #include "types.hxx"
 
+#include <list>
+
 namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 	class Base: public Task::Execute::Base {
 		public:
@@ -16,6 +18,8 @@ namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 
 		protected:
 			virtual void pre_run_actions() noexcept override;
+
+			static const std::list<std::string> BASE_ARGUMENTS;
 
 			Types::path_t m_file;
 	};

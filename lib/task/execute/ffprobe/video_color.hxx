@@ -2,8 +2,6 @@
 
 #include "base.hxx"
 
-#include <list>
-
 namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 	class VideoColor: public FFprobe::Base {
 		public:

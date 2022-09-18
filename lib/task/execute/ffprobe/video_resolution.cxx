@@ -2,7 +2,7 @@
 
 using namespace StormByte::VideoConvert;
 
-const std::list<std::string> Task::Execute::FFprobe::VideoResolution::BASE_ARGUMENTS { "-hide_banner", "-loglevel", "error", "-select_streams", "v", "-print_format", "json", "-show_entries", "stream=width,height" };
+const std::list<std::string> Task::Execute::FFprobe::VideoResolution::BASE_ARGUMENTS { "-select_streams", "v", "-show_entries", "stream=width,height" };
 
 Task::Execute::FFprobe::VideoResolution::VideoResolution(const Types::path_t& file):FFprobe::Base(file) {}
 
