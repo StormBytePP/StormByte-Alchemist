@@ -17,7 +17,7 @@ namespace StormByte::VideoConvert::Task::Execute::FFprobe {
 		private:
 			void pre_run_actions() noexcept override;
 
-			static const std::list<std::string> DEFAULT_ARGUMENTS;
+			static const std::list<std::string> BASE_ARGUMENTS;
 			VideoConvert::FFprobe::stream::TYPE m_type;
 	};
 }
