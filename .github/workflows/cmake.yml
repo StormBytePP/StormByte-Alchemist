@@ -24,7 +24,7 @@ jobs:
       run: sudo apt update
     
     - name: Install needed deps   
-      run: sudo apt install -y libboost-dev libconfig++-dev libsqlite3-dev ffmpeg git libjsoncpp-dev
+      run: sudo apt install -y libboost-dev libboost-filesystem-dev libconfig++-dev libsqlite3-dev ffmpeg git libjsoncpp-dev
       
     - name: Install GCC11
       shell: bash

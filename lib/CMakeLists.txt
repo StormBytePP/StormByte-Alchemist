@@ -59,4 +59,5 @@ set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormBy
 target_link_libraries(StormByte-videoconvert-library sqlite3)
 target_link_libraries(StormByte-videoconvert-library config++)
 target_link_libraries(StormByte-videoconvert-library jsoncpp)
+target_link_libraries(StormByte-videoconvert-library ${Boost_LIBRARIES})
 install(TARGETS StormByte-videoconvert-library DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -5,9 +5,9 @@ using namespace StormByte::VideoConvert;
 
 const std::list<std::string> Task::Execute::FFprobe::Base::BASE_ARGUMENTS = { "-hide_banner", "-loglevel", "error", "-print_format", "json" };
 
-Task::Execute::FFprobe::Base::Base(const Types::path_t& file):Task::Execute::Base(FFPROBE_EXECUTABLE), m_file(file) {}
+Task::Execute::FFprobe::Base::Base(const Types::path_t& file):Task::Execute::Base("ffprobe"), m_file(file) {}
 
-Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base(FFPROBE_EXECUTABLE), m_file(std::move(file)) {}
+Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base("ffprobe"), m_file(std::move(file)) {}
 
 Task::Execute::FFprobe::Base::~Base() {}
 

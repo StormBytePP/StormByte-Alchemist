@@ -59,7 +59,7 @@ endif()
 
 find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
-find_package (Boost REQUIRED)
+find_package (Boost REQUIRED COMPONENTS filesystem)
 find_package (Git REQUIRED)
 find_package (JsonCpp REQUIRED)
 
@@ -81,8 +81,6 @@ file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/definitions.h CONTENT "#prag
 #define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
 #define COMPILER_NAME			\"${CMAKE_CXX_COMPILER_ID}\"
 #define COMPILER_VERSION		\"${CMAKE_CXX_COMPILER_VERSION}\"
-#define FFMPEG_EXECUTABLE		\"${FFMPEG_EXECUTABLE}\"
-#define FFPROBE_EXECUTABLE		\"${FFPROBE_EXECUTABLE}\"
 ")
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)

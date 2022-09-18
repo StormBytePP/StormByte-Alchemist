@@ -56,7 +56,7 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 		process::async_pipe pipeIn(ios);
 
 		process::child c(
-			m_program.string() + " " + m_arguments,
+			process::search_path(m_program.string()).string() + " " + m_arguments,
 			process::std_out > pipeOut, 
 			process::std_err > pipeErr, 
 			process::std_in < pipeIn

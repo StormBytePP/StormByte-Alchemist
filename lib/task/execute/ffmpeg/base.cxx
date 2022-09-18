@@ -5,9 +5,9 @@ using namespace StormByte::VideoConvert;
 
 const std::list<std::string> Task::Execute::FFmpeg::Base::FFMPEG_INIT_OPTIONS = { "-hide_banner", "-y", "-map_metadata", "0", "-map_chapters", "0" };
 
-Task::Execute::FFmpeg::Base::Base(const VideoConvert::FFmpeg& ffmpeg):Execute::Base(FFMPEG_EXECUTABLE), m_ffmpeg(ffmpeg) {}
+Task::Execute::FFmpeg::Base::Base(const VideoConvert::FFmpeg& ffmpeg):Execute::Base("ffmpeg"), m_ffmpeg(ffmpeg) {}
 
-Task::Execute::FFmpeg::Base::Base(VideoConvert::FFmpeg&& ffmpeg):Execute::Base(FFMPEG_EXECUTABLE), m_ffmpeg(std::move(ffmpeg)) {}
+Task::Execute::FFmpeg::Base::Base(VideoConvert::FFmpeg&& ffmpeg):Execute::Base("ffmpeg"), m_ffmpeg(std::move(ffmpeg)) {}
 
 Task::Execute::FFmpeg::Base::~Base() {}
 
