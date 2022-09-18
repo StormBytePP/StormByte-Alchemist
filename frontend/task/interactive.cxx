@@ -21,31 +21,31 @@ bool Frontend::Task::Interactive::run_initial_checks() {
 	bool check = true;
 
 	if (!std::filesystem::exists(full_path)) {
-		std::cerr << "File " << (std::filesystem::is_directory(full_path) ? "path " : "") << full_path << " does not exist" << std::endl;
+		std::cerr << red("File " + std::string(std::filesystem::is_directory(full_path) ? "path " : "") + full_path.string() + " does not exist") << std::endl;
 		check = false;
 	}
 	else if (m_database->is_film_in_database(*m_config->get_interactive_parameter())) {
-		std::cerr << "Film " << *m_config->get_interactive_parameter() << " is already in database!" << std::endl;
+		std::cerr << red("Film " + m_config->get_interactive_parameter()->string() + " is already in database!") << std::endl;
 		check = false;
 	}
 	else if (std::filesystem::is_directory(full_path)) {
 		#ifdef ENABLE_HEVC
 		if (m_database->is_group_in_database(*m_config->get_interactive_parameter())) {
-			std::cerr << "Film group (folder) " << *m_config->get_interactive_parameter() << " is already in database" << std::endl;
+			std::cerr << red("Film group (folder) " + m_config->get_interactive_parameter()->string() + " is already in database") << std::endl;
 			check = false;
 		}
 		else {
 			auto files = find_files_recursive();
 			if (files.first.empty()) {
-				std::cerr << "Folder contains 0 valid files";
+				std::cerr << red("Folder contains 0 valid files");
 				if (!files.second.empty())
-					std::cerr << " (but " << files.second.size() << " unsupported files" << ")";
-				std::cerr << "!" << std::endl;
+					std::cerr << gray(" (but " + std::to_string(files.second.size()) + " unsupported files)");
+				std::cerr << red("!") << std::endl;
 				check = false;
 			}
 		}
 		#else
-		std::cerr << "Folder adition is only allowed with HEVC support but it was not compiled in!" << std::endl;
+		std::cerr << red("Folder adition is only allowed with HEVC support but it was not compiled in!") << std::endl;
 		check = false;
 		#endif
 	}
@@ -55,7 +55,7 @@ bool Frontend::Task::Interactive::run_initial_checks() {
 Types::optional_path_t Frontend::Task::Interactive::ask_title() {
 	Types::optional_path_t result;
 
-	std::cout << "Type new film title, empty to not rename original file: ";
+	std::cout << "Type new film title " << gray("(empty to not rename original file)") << ": ";
 	std::getline(std::cin, m_buffer_str);
 
 	if (!m_buffer_str.empty())
@@ -66,7 +66,7 @@ Types::optional_path_t Frontend::Task::Interactive::ask_title() {
 
 Database::Data::film::priority Frontend::Task::Interactive::ask_priority() {
 	do {
-		std::cout << "Which priority (default NORMAL)? LOW(0), NORMAL(1), HIGH(2), IMPORTANT(3): ";
+		std::cout << "Which priority (default NORMAL)? " << gray("LOW(0), NORMAL(1), HIGH(2), IMPORTANT(3)") << ": ";
 		std::getline(std::cin, m_buffer_str);
 	} while (m_buffer_str != "" && !Utils::Input::to_int_in_range(m_buffer_str, m_buffer_int, 0, 3, true));
 
@@ -75,7 +75,7 @@ Database::Data::film::priority Frontend::Task::Interactive::ask_priority() {
 
 bool Frontend::Task::Interactive::ask_animation() {
 	do {
-		std::cout << "Is an animated movie? (default no) [(y)es/(n)o]: ";
+		std::cout << "Is an animated movie (default no)? " << gray("[(y)es/(n)o]") << ": ";
 		std::getline(std::cin, m_buffer_str);
 	} while (m_buffer_str != "" && !Utils::Input::in_yes_no(m_buffer_str, m_buffer_bool, true));
 	if (m_buffer_str == "") m_buffer_bool = false;
@@ -119,21 +119,21 @@ void Frontend::Task::Interactive::display_stream_map(const FFprobe& probe, const
 		const auto& strm_map = stream_map.at(type);
 		std::string line;
 		for (size_t i = 0; i < strm_probe.size(); i++) {
-			line = std::string(1, type) + ":" + std::to_string(i);
-			line += " " + strm_probe[i].codec_name;
+			line = magenta(std::string(1, type) + ":" + std::to_string(i));
+			line += " " + blue(strm_probe[i].codec_name);
 
 			if (strm_probe[i].language) {
-				line += " (" + *strm_probe[i].language + ")";
+				line += gray(" (" + *strm_probe[i].language + ")");
 			}
 			line += " -> ";
 			if (strm_map.contains(i)) {
-				line += Database::Data::film::stream::codec_string.at(strm_map.at(i).m_codec);
+				line += light_green(Database::Data::film::stream::codec_string.at(strm_map.at(i).m_codec));
 			}
 			else if (strm_map.contains(-1)) {
-				line += Database::Data::film::stream::codec_string.at(strm_map.at(-1).m_codec);
+				line += light_green(Database::Data::film::stream::codec_string.at(strm_map.at(-1).m_codec));
 			}
 			else
-				line += "(not selected)";
+				line += light_red("(not selected)");
 
 			std::cout << line << std::endl;
 		}
@@ -225,11 +225,11 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 	
 	std::cout << "Available codecs:" << std::endl;
 	for (int i : options) {
-		std::cout << i << ": " << Database::Data::film::stream::codec_string.at(static_cast<Database::Data::film::stream::codec>(i)) << std::endl;
+		std::cout << magenta(i) << ": " << blue(Database::Data::film::stream::codec_string.at(static_cast<Database::Data::film::stream::codec>(i))) << std::endl;
 	}
 
 	do {
-		std::cout << "Select desired codec: " << Utils::Display::list_to_string(options, "[", ", ", "]") << ": ";
+		std::cout << "Select desired codec: " << Utils::Display::list_to_string(options, ansi_code(LIGHT_GRAY) + "[", ", ", "]\033[0m") << ": ";
 		std::getline(std::cin, m_buffer_str);
 	} while (!Utils::Input::to_int_positive(m_buffer_str, m_buffer_int) && !Utils::Input::in_options(m_buffer_int, options, true));
 
@@ -243,12 +243,12 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 	if (strm_id.first == FFprobe::stream::VIDEO) {
 		#ifdef ENABLE_HEVC
 		if (probe.is_HDR_detected()) {
-			std::cout << "HDR was detected!" << std::endl;
+			std::cout << green("HDR detected!") << std::endl;
 			stream.m_hdr = probe.get_HDR().data();
 		}
 		else if (probe.is_HDR_factible()) {
 			do {
-				std::cout << "HDR not found but is factible, put default HDR? [(y)es/(n)o]: ";
+				std::cout << yellow("HDR not found but is factible, put default HDR?") << light_gray("[(y)es/(n)o]") << ": ";
 				std::getline(std::cin, m_buffer_str);
 			} while (!Utils::Input::in_yes_no(m_buffer_str, m_buffer_bool, true));
 			if (m_buffer_bool) {
@@ -331,22 +331,23 @@ bool Frontend::Task::Interactive::ask_group_confirmation(const group_file_info_t
 	bool result = true;
 
 	if (group_info.first.empty()) {
-		std::cerr 	<< "No valid files found in path "
-					<< *m_config->get_interactive_parameter()
-					<< " with accepted extensions "
-					<< Utils::Display::list_to_string(Application::SUPPORTED_MULTIMEDIA_EXTENSIONS, "(", ", ", ")")
+		std::cerr 	<< red(	"No valid files found in path "
+							+ m_config->get_interactive_parameter()->string()
+							+ " with accepted extensions "
+							+ Utils::Display::list_to_string(Application::SUPPORTED_MULTIMEDIA_EXTENSIONS, ansi_code(LIGHT_GRAY) + "(", ", ", ")")
+					)
 					<< std::endl;
 		result = false;
 	}
 	else {
-		std::cout << "Found " << group_info.first.size() << " film(s)" << std::endl;
+		std::cout << green("Found " + std::to_string(group_info.first.size()) + " film(s)") << std::endl;
 		if (!group_info.second.empty()) {
-			std::cout << "Warning: found " << group_info.second.size() << " invalid file(s) that will be ignored." << std::endl;
+			std::cout << yellow("Warning: found " + std::to_string(group_info.second.size()) + " invalid file(s) that will be ignored.") << std::endl;
 			for (Types::path_t file: group_info.second)
-				std::cout << "\t* " << file.string() << std::endl;
+				std::cout << light_yellow("\t* " + file.string()) << std::endl;
 		}
 		do {
-			std::cout << "Do you wish yo continue? [(y)es/(n)o]: ";
+			std::cout << "Do you wish yo continue? " << light_gray("[(y)es/(n)o]") << ": ";
 			std::getline(std::cin, m_buffer_str);
 		} while(!Utils::Input::in_yes_no(m_buffer_str, m_buffer_bool, true));
 		result = m_buffer_bool;
@@ -396,10 +397,10 @@ bool Frontend::Task::Interactive::insert_film_group_t(const film_group_t& film_g
 	bool operation = m_database->insert_films(film_group_t);
 	
 	if (operation) {
-		std::cout << "Inserted " << film_group_t.size() << " film(s) in database" << std::endl;
+		std::cout << green("Inserted " + std::to_string(film_group_t.size()) + " film(s) in database") << std::endl;
 	}
 	else {
-		std::cerr << "There was an error inserting and therefore no films were added!" << std::endl;
+		std::cerr << red("There was an error inserting and therefore no films were added!") << std::endl;
 	}
 
 	return operation;
@@ -407,7 +408,9 @@ bool Frontend::Task::Interactive::insert_film_group_t(const film_group_t& film_g
 #endif
 
 StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::optional<pid_t>&) noexcept {
+	std::cout << ansi_code(BLUE);
 	Application::display_header();
+	std::cout << "\033[0m";
 	
 	if (!run_initial_checks()) return VideoConvert::Task::HALT_ERROR;
 
@@ -422,7 +425,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 	if (std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter())) {
 		group_file_info_t files = find_files_recursive();
 		if (files.first.empty()) {
-			std::cerr << "Directory is empty!" << std::endl;
+			std::cerr << red("Directory is empty!") << std::endl;
 			return VideoConvert::Task::HALT_ERROR;
 		}
 		if (ask_group_confirmation(files)) {
@@ -461,17 +464,17 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 		film = generate_film(stream_map, priority, title, animation);
 
 		if (film.m_streams.empty()) {
-			std::cerr << "There were no streams selected for film " + m_config->get_interactive_parameter()->string() + ", no changes were made to database" << std::endl;
+			std::cerr << light_red("There were no streams selected for film " + m_config->get_interactive_parameter()->string()) << ", " << red("no changes were made to database") << std::endl;
 			return VideoConvert::Task::HALT_ERROR;
 		}
 		else {
 			std::optional<unsigned int> film_id = insert_film(film);
 
 			if (film_id) {
-				std::cout << "Film " << *m_config->get_interactive_parameter() << " was inserted with ID " << *film_id << std::endl;
+				std::cout << green("Film " + m_config->get_interactive_parameter()->string() + " was inserted with ID " + std::to_string(*film_id)) << std::endl;
 			}
 			else {
-				std::cerr << "Could NOT insert film!" << std::endl;
+				std::cerr << red("Could NOT insert film!") << std::endl;
 				return VideoConvert::Task::HALT_ERROR;
 			}
 		}
