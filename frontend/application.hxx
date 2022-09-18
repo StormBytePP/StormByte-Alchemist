@@ -23,7 +23,6 @@ namespace StormByte::VideoConvert::Frontend {
 			static void display_header();
 			static void display_help();
 			static void display_version();
-			static void display_compiler_info();
 
 		private:
 			Application(); // Hide constructor

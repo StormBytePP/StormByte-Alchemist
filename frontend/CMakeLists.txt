@@ -2,6 +2,7 @@ add_executable(StormByte-videoconvert
 	task/daemon.cxx
 	task/interactive.cxx
 	task/test.cxx
+	task/help.cxx
 	application.cxx
 	main.cxx
 )

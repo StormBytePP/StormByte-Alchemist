@@ -2,6 +2,7 @@
 #include "task/daemon.hxx"
 #include "task/interactive.hxx"
 #include "task/test.hxx"
+#include "task/help.hxx"
 #include "utils/input.hxx"
 #include "definitions.h"
 
@@ -203,8 +204,7 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 				counter++; // To keep parsing CLI
 			}
 			else if (argument == "-h" || argument == "--help") {
-				display_header();
-				display_help();
+				Task::Help().run();
 				m_status = HALT_OK;
 				counter++; // To keep parsinc CLI
 			}
@@ -216,9 +216,7 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 			throw std::runtime_error("No action specified, select --add(-a), --daemon(-d) or --test(-t) to execute the program");
 	}
 	catch(const std::runtime_error& exception) {
-		display_header();
-		std::cerr << exception.what() << std::endl << std::endl;
-		display_help();
+		Task::Help().error(exception.what() + std::string("\n"));
 		m_status = HALT_ERROR;
 	}
 	return config;
@@ -269,39 +267,15 @@ Configuration Frontend::Application::read_config(const Types::path_t& config_fil
 }
 
 void Frontend::Application::display_header() {
-	const std::string caption = std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " by " + std::string(PROGRAM_AUTHOR);
-	std::cout << caption << std::endl;
-	std::cout << std::string(caption.size(), '=') << std::endl;
-	std::cout << PROGRAM_DESCRIPTION << std::endl << std::endl;
+	Task::Help().header();
 }
 
 void Frontend::Application::display_help() {
-	std::cout << "This is the list of available options:" << std::endl;
-	std::cout << "\t-t, --test\t\tTest if program can be run without any other action" << std::endl;
-	std::cout << "\t-d, --daemon\t\tRun daemon reading database items to keep converting files" << std::endl;
-	std::cout << "\t-c, --config <file>\tSpecifies a config file instead of the default " << Configuration::DEFAULT_CONFIG_FILE << std::endl;
-	std::cout << "\t-a, --add <file>\tInteractivelly add a new film to database files" << std::endl;
-	std::cout << "\t-db,--database <file>\tSpecify SQLite database file to be used" << std::endl;
-	std::cout << "\t-i, --input <folder>\tSpecify input folder to read films from" << std::endl;
-	std::cout << "\t-o, --output <folder>\tSpecify output folder to store converted files once finished" << std::endl;
-	std::cout << "\t-w, --work <folder>\tSpecify temprary working folder to store files while being converted" << std::endl;
-	std::cout << "\t-l, --logfile <file>\tSpecify a file for storing logs" << std::endl;
-	std::cout << "\t-ll,--loglevel <level>\tSpecify which loglevel to display (Should be between 0 and " << std::to_string(Utils::Logger::Logger::LEVEL_MAX - 1) << ")" << std::endl; 
-	std::cout << "\t-s, --sleep <seconds>\tSpecify the time to sleep in main loop. It should be positive integer unless you are my boyfriend and have that ability ;)" << std::endl;
-	std::cout << "\t-of,--onfinish <action>\tSpecify action to take once film is converted. Accepted values are copy and move" << std::endl;
-	std::cout << "\t-v, --version\t\tShow version and compile information" << std::endl;
-	std::cout << "\t-h, --help\t\tShow this message" << std::endl;
-	std::cout << std::endl;
-	std::cout << "Please note that every unrecognized option in config file will be ignored but every unrecognized option in command line will throw an error." << std::endl;
+	Task::Help().run();
 }
 
 void Frontend::Application::display_version() {
-	std::cout << PROGRAM_NAME << " " << PROGRAM_VERSION << " by " << PROGRAM_AUTHOR << std::endl;
-	display_compiler_info();
-}
-
-void Frontend::Application::display_compiler_info() {
-	std::cout << "Compiled by " << COMPILER_NAME << "(" << COMPILER_VERSION << ")" << " with flags " << COMPILER_FLAGS << std::endl;
+	Task::Help().version();
 }
 
 void Frontend::Application::signal_handler(int signal) {
