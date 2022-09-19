@@ -27,6 +27,6 @@ namespace StormByte::VideoConvert::Task::Execute {
 			std::string m_arguments;
 
 		private:
-			 std::string m_stdout, m_stderr, m_stdin;
+			std::string m_stdout, m_stderr, m_stdin;
 	};
 }
