@@ -4,9 +4,9 @@
 
 using namespace StormByte::VideoConvert;
 
-Frontend::Task::Daemon::Daemon(Types::config_t config, std::optional<pid_t>& worker):VideoConvert::Task::Config::Base(config, VideoConvert::Task::Config::REQUIRE_LOGGER | VideoConvert::Task::Config::REQUIRE_DATABASE), m_worker(&worker) {}
+Frontend::Task::Daemon::Daemon(Types::config_t config):VideoConvert::Task::Config::Base(config, VideoConvert::Task::Config::REQUIRE_LOGGER | VideoConvert::Task::Config::REQUIRE_DATABASE) {}
 
-Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>&) noexcept {
+Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>& worker) noexcept {
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon version " + std::string(PROGRAM_VERSION));
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
@@ -16,7 +16,7 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>&) noexcept {
 		auto film = m_database->get_film_for_process();
 		if (film) {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Film " + film->get_input_file().string() + " found");
-			auto convert_status = execute_ffmpeg(std::move(*film));
+			auto convert_status = execute_ffmpeg(std::move(*film), worker);
 			// Only sleep if process is to be continued (not killed by a signal)
 			if (m_status != VideoConvert::Task::HALT_ERROR && convert_status != VideoConvert::Task::HALT_ERROR) {
 				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Pausing for " + std::to_string(m_config->get_pause_time()) + " seconds");
@@ -35,7 +35,7 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>&) noexcept {
 	return VideoConvert::Task::HALT_OK;
 }
 
-StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg) const {
+StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg, std::optional<pid_t>& worker) const {
 	const Types::path_t full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
 	const Types::path_t full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
 	const Types::path_t full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
@@ -46,7 +46,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 		std::filesystem::create_directories(full_work_file.parent_path());
 	}
 	VideoConvert::Task::Execute::FFmpeg::Convert task_ffmpeg = VideoConvert::Task::Execute::FFmpeg::Convert(std::move(ffmpeg), *m_config->get_input_folder(), *m_config->get_work_folder());
-	VideoConvert::Task::STATUS convert_status = task_ffmpeg.run(*m_worker);
+	VideoConvert::Task::STATUS convert_status = task_ffmpeg.run(worker);
 	
 	if (convert_status == VideoConvert::Task::HALT_OK) {
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + task_ffmpeg.elapsed_time_string());

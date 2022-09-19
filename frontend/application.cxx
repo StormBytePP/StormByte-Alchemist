@@ -72,7 +72,7 @@ int Frontend::Application::run(int argc, char** argv) noexcept {
 	switch(m_status) {
 		case RUN_TASK:
 			m_task->replace_config(m_config);
-			return m_task->run() == VideoConvert::Task::HALT_OK ? 0 : 1;
+			return m_task->run(m_worker) == VideoConvert::Task::HALT_OK ? 0 : 1;
 
 		case HALT_OK:
 			return 0;
@@ -107,7 +107,7 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 				counter++;
 			}
 			else if (argument == "-d" || argument == "--daemon") {
-				m_task.reset(new Task::Daemon(m_config, m_worker));
+				m_task.reset(new Task::Daemon(m_config));
 				m_status = RUN_TASK;
 				counter++;
 			}

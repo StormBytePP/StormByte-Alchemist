@@ -6,7 +6,7 @@
 namespace StormByte::VideoConvert::Frontend::Task {
 	class Daemon: public VideoConvert::Task::Config::Base {
 		public:
-			Daemon(Types::config_t config, std::optional<pid_t>& worker);
+			Daemon(Types::config_t config);
 			Daemon(const Daemon& daemon) = default;
 			Daemon(Daemon&& daemon) noexcept = default;
 			Daemon& operator=(const Daemon& daemon) = default;
@@ -15,8 +15,6 @@ namespace StormByte::VideoConvert::Frontend::Task {
 
 		private:
 			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
-			VideoConvert::Task::STATUS execute_ffmpeg(FFmpeg&& ffmpeg) const;
-
-			std::optional<pid_t>* m_worker;
+			VideoConvert::Task::STATUS execute_ffmpeg(FFmpeg&& ffmpeg, std::optional<pid_t>&) const;
 	};
 }
