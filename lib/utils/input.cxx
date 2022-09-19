@@ -26,7 +26,7 @@ bool Utils::Input::to_int(const std::string& possible_number, int& store, const 
 		return true;
 	}
 	else
-		return true;
+		return false;
 }
 
 bool Utils::Input::to_int_positive(const std::string& possible_number, int& store, const bool& use_cerr) {

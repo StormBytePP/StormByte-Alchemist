@@ -246,7 +246,7 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 	do {
 		std::cout << "Select desired codec: " << Utils::Display::list_to_string(options, ansi_code(LIGHT_GRAY) + "[", ", ", "]\033[0m") << ": ";
 		std::getline(std::cin, m_buffer_str);
-	} while (!Utils::Input::to_int_positive(m_buffer_str, m_buffer_int) && !Utils::Input::in_options(m_buffer_int, options, true));
+	} while (!Utils::Input::to_int_positive(m_buffer_str, m_buffer_int, true) || !Utils::Input::in_options(m_buffer_int, options, true));
 
 	Database::Data::film::stream stream;
 

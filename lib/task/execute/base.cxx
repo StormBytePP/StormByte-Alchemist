@@ -13,7 +13,7 @@ using namespace StormByte::VideoConvert;
 Task::Execute::Base::Base(const Types::path_t& program, const std::string& arguments, const std::string& stdinput):Task::Base(), m_program(program), m_arguments(arguments), m_stdin(stdinput) {}
 
 Task::Execute::Base::Base(Types::path_t&& program, std::string&& arguments, std::string&& stdinput):Task::Base(), m_program(std::move(program)), m_arguments(std::move(arguments)), m_stdin(std::move(stdinput)) {}
-
+#include <iostream>
 Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept {
 	using namespace boost;
 
