@@ -2,6 +2,7 @@
 
 #include "configuration/base.hxx"
 #include "database/data.hxx"
+#include <algorithm>
 
 namespace StormByte::VideoConvert::Frontend {
 	class Configuration: public VideoConvert::Configuration::Base {

@@ -23,18 +23,9 @@ Task::STATUS Frontend::Task::Daemon::pre_run_actions() noexcept {
 }
 
 Task::STATUS Frontend::Task::Daemon::post_run_actions(const VideoConvert::Task::STATUS& status) noexcept {
-	VideoConvert::Task::STATUS new_status = status;
+	m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Daemon ran during " + elapsed_time_string() + " and was stopped gracefully");
 
-	if (status == VideoConvert::Task::HALT_ERROR) {
-		// Use cerr instead of logger because logger might have failed
-		std::cerr << red("Daemon was not started due to errors") << std::endl;
-	}
-	else if (status == VideoConvert::Task::HALTED) {
-		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Daemon ran during " + elapsed_time_string() + " and was stopped gracefully");
-		new_status = VideoConvert::Task::HALT_OK;
-	}
-
-	return new_status;
+	return VideoConvert::Task::CLI::Base::post_run_actions(status);
 }
 
 Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>& worker) noexcept {
