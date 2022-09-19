@@ -1,9 +1,12 @@
 #include "logger.hxx"
 
+#include <exception>
+
 using namespace StormByte::VideoConvert;
 
 Utils::Logger::Logger(const Types::path_t& logfile, LEVEL display_level):m_display_level(display_level) {
 	m_logfile.open(logfile, std::fstream::out | std::fstream::app);
+	if (!m_logfile) throw std::runtime_error("Log file could not be opened for write");
 }
 
 Utils::Logger::~Logger() {

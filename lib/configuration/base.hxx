@@ -20,7 +20,7 @@ namespace StormByte::VideoConvert::Configuration {
 			void merge(const Base& config);
 			void merge(Base&& config) noexcept;
 			bool have_all_mandatory_values() const;
-			inline const std::map<std::string, std::string>& get_parse_errors() const { return m_errors; }
+			inline const std::map<std::string, std::string>& get_errors() const { return m_errors; }
 
 		protected:
 			inline std::optional<int> get_int_value(const std::string& key) 				{ return m_values_int.contains(key) ? m_values_int.at(key) : std::optional<int>(); }

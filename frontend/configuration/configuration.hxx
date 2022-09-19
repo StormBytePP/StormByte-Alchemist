@@ -35,22 +35,22 @@ namespace StormByte::VideoConvert::Frontend {
 
 			/* Setters */
 			inline void set_database_file(const Types::path_t& dbfile)								{ set_string_value("database", dbfile); }
-			//inline void set_database_file(Types::path_t&& dbfile)									{ set_string_value("database", std::move(dbfile)); }
+			inline void set_database_file(Types::path_t&& dbfile)									{ set_string_value("database", std::move(dbfile)); }
 			inline void set_input_folder(const Types::path_t& input)								{ set_string_value("input", input); }
-			//inline void set_input_folder(Types::path_t&& input)										{ set_string_value("input", std::move(input)); }
+			inline void set_input_folder(Types::path_t&& input)										{ set_string_value("input", std::move(input)); }
 			inline void set_output_folder(const Types::path_t& output)								{ set_string_value("output", output); }
-			//inline void set_output_folder(Types::path_t&& output)									{ set_string_value("output", std::move(output)); }
+			inline void set_output_folder(Types::path_t&& output)									{ set_string_value("output", std::move(output)); }
 			inline void set_work_folder(const Types::path_t& work)									{ set_string_value("work", work); }
-			//inline void set_work_folder(Types::path_t&& work)										{ set_string_value("work", std::move(work)); }
+			inline void set_work_folder(Types::path_t&& work)										{ set_string_value("work", std::move(work)); }
 			inline void set_log_file(const Types::path_t& logfile)									{ set_string_value("logfile", logfile); }
-			//inline void set_log_file(Types::path_t&& logfile)										{ set_string_value("logfile", std::move(logfile)); }
+			inline void set_log_file(Types::path_t&& logfile)										{ set_string_value("logfile", std::move(logfile)); }
 			inline void set_config_file(const Types::path_t& file)									{ set_string_value("configfile", file); }
-			//inline void set_config_file(Types::path_t&& file)										{ set_string_value("configfile", std::move(file)); }
+			inline void set_config_file(Types::path_t&& file)										{ set_string_value("configfile", std::move(file)); }
 			inline void set_log_level(const unsigned int& loglevel)									{ set_int_value("loglevel", loglevel); }
 			inline void set_sleep_time(const unsigned int& sleep_time)								{ set_int_value("sleep", sleep_time); }
 			inline void set_pause_time(const unsigned int& pause_time)								{ set_int_value("pause", pause_time); }
 			inline void set_onfinish(const std::string& onfinish)									{ set_string_value("onfinish", onfinish); }
-			//inline void set_onfinish(std::string&& onfinish)										{ set_string_value("onfinish", std::move(onfinish)); }
+			inline void set_onfinish(std::string&& onfinish)										{ set_string_value("onfinish", std::move(onfinish)); }
 
 			/* Action setters */
 			inline void set_interactive_parameter(const Types::path_t& file_or_folder)				{ set_string_value("interactive_parameter", file_or_folder); }

@@ -43,9 +43,3 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Help::do_work(std::optiona
 
 	return VideoConvert::Task::HALT_OK;
 }
-
-void Frontend::Task::Help::error(const std::string& err) const {
-	header();
-	std::cout << red(err) << std::endl;
-	usage();
-}

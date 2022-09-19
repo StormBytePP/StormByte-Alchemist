@@ -15,7 +15,6 @@ namespace StormByte::VideoConvert::Frontend::Task {
 			void header() const;
 			void usage() const;
 			void version() const;
-			void error(const std::string&) const;
 
 		private:
 			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
