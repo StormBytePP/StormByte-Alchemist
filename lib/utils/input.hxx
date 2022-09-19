@@ -6,7 +6,7 @@
 namespace StormByte::VideoConvert::Utils {
 	class Input {
 		public:
-			static bool is_int(const std::string& possible_int);
+			static bool is_int(const std::string& possible_int, const bool& use_cerr = false);
 			static bool to_int(const std::string& possible_number, int& store, const bool& use_cerr = false);
 			static bool to_int_positive(const std::string& possible_number, int& store, const bool& use_cerr = false);
 			static bool to_int_minimum(const std::string& possible_number, int& store, const int& minimum, const bool& use_cerr = false);

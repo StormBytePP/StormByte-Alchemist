@@ -4,25 +4,29 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>
+#include <cctype>
 
 using namespace StormByte::VideoConvert;
 
-bool Utils::Input::is_int(const std::string& possible_int) {
-	return !possible_int.empty() && std::find_if(possible_int.begin(), possible_int.end(),
+bool Utils::Input::is_int(const std::string& possible_int, const bool& use_cerr) {
+	bool result = !possible_int.empty() && std::find_if(possible_int.begin(), possible_int.end(),
 		[](unsigned char c) { return !std::isdigit(c); }) == possible_int.end();
+	if (!result && use_cerr) {
+		std::cerr << possible_int << " is not a number" << std::endl;
+	}
+	return result;
 }
 
 bool Utils::Input::to_int(const std::string& possible_number, int& store, const bool& use_cerr) {
-	char *endptr;
-	store = strtol(possible_number.c_str(), &endptr, 10);
+	bool isnumber = is_int(possible_number, use_cerr);
 
-	if (*endptr == '\0' && !possible_number.empty()) {
+	if (isnumber) {
+		char *endptr;
+		store = strtol(possible_number.c_str(), &endptr, 10);
 		return true;
 	}
-	else {
-		if (use_cerr) std::cerr << "Input \"" << possible_number << "\" is not fully a recognized number" << std::endl;
-		return false;
-	}
+	else
+		return true;
 }
 
 bool Utils::Input::to_int_positive(const std::string& possible_number, int& store, const bool& use_cerr) {
