@@ -55,6 +55,7 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 		auto inBuffer{ asio::buffer(m_stdin) };
 		process::async_pipe pipeIn(ios);
 
+		std::cout << "Executing " << process::search_path(m_program.string()).string() << " " << m_arguments << std::endl;
 		process::child c(
 			process::search_path(m_program.string()).string() + " " + m_arguments,
 			process::std_out > pipeOut, 

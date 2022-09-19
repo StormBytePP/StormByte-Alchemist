@@ -23,6 +23,8 @@ Task::STATUS Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 
 	result.push_back("-metadata:s:v"); result.push_back("encoder=\"" + std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " ( " + std::string(PROJECT_URI) + " )\"" );
 
+	result.push_back("-map 0:t?"); result.push_back("-c:t copy");
+
 	m_arguments += " " + boost::algorithm::join(result, " ");
 
 	return Execute::Base::pre_run_actions();

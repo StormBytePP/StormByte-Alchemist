@@ -11,7 +11,10 @@ Task::STATUS Task::Execute::FFmpeg::Convert::pre_run_actions() noexcept {
 	const std::string out_param = " \"" + std::string(m_outpath / m_ffmpeg.get_output_file()) + "\"";
 
 	m_arguments = in_param;
+
+	VideoConvert::Task::STATUS status = FFmpeg::Base::pre_run_actions();
+
 	m_arguments += out_param;
 
-	return FFmpeg::Base::pre_run_actions();
+	return status;
 }

@@ -10,7 +10,11 @@ const std::list<std::string> Task::Execute::FFprobe::Stream::BASE_ARGUMENTS { "-
 
 Task::STATUS Task::Execute::FFprobe::Stream::pre_run_actions() noexcept {
 	std::list<std::string> result = BASE_ARGUMENTS;
-	result.push_back("-select_streams"); result.push_back(std::string(1, m_type));
+	result.push_back("-select_streams");
+
+	// Only select real video stream (not cover attachments)
+	char type = m_type == VideoConvert::FFprobe::stream::VIDEO ? 'V' : static_cast<char>(m_type);
+	result.push_back(std::string(1, std::move(type)));
 
 	m_arguments = boost::algorithm::join(result, " ");
 	return FFprobe::Base::pre_run_actions();
