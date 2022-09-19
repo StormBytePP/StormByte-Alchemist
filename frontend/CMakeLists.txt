@@ -1,4 +1,5 @@
 add_executable(StormByte-videoconvert
+	configuration/configuration.cxx
 	task/daemon.cxx
 	task/interactive.cxx
 	task/test.cxx
@@ -12,5 +13,5 @@ set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD_REQUIRED ON)
 
 install(TARGETS StormByte-videoconvert DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES config/StormByte-videoconvert.conf DESTINATION /etc/conf.d COMPONENT config)
-install(FILES init/StormByte-videoconvert DESTINATION /etc/init.d COMPONENT init)
+install(FILES install/StormByte-videoconvert.conf DESTINATION /etc/conf.d COMPONENT config)
+install(FILES install/StormByte-videoconvert DESTINATION /etc/init.d COMPONENT init)

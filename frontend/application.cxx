@@ -13,44 +13,6 @@
 
 using namespace StormByte::VideoConvert;
 
-const std::list<std::string> Frontend::Application::SUPPORTED_MULTIMEDIA_EXTENSIONS	= {
-	".asf", ".asx", ".avi", ".wav", ".wma", ".wax", ".wm", ".wmv", ".wvx",
-	".ra", ".ram", ".rm", ".rmm",
-	".m3u", ".mp2v", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa",
-	".vob",
-	"-aif", ".aifc", "-aiff",
-	".au", ".snd",
-	".ivf",
-	".mov", ".qt",
-	".flv",
-	".mkv", ".mp4" 
-};
-
-const std::list<Database::Data::film::stream::codec> Frontend::Application::SUPPORTED_CODECS = {
-	#ifdef ENABLE_HEVC
-	Database::Data::film::stream::VIDEO_HEVC,
-	#endif
-	#ifdef ENABLE_AAC
-	Database::Data::film::stream::AUDIO_AAC,
-	#endif
-	#ifdef ENABLE_FDKAAC
-	Database::Data::film::stream::AUDIO_FDKAAC,
-	#endif
-	#ifdef ENABLE_AC3
-	Database::Data::film::stream::AUDIO_AC3,
-	#endif
-	#ifdef ENABLE_EAC3
-	Database::Data::film::stream::AUDIO_EAC3,
-	#endif
-	#ifdef ENABLE_OPUS
-	Database::Data::film::stream::AUDIO_OPUS,
-	#endif
-	
-	Database::Data::film::stream::VIDEO_COPY,
-	Database::Data::film::stream::AUDIO_COPY,
-	Database::Data::film::stream::SUBTITLE_COPY
-};
-
 Frontend::Application::Application(): m_config(new Configuration()) {
 	signal(SIGTERM,		signal_handler);
 	signal(SIGINT,		signal_handler);
@@ -71,7 +33,7 @@ int Frontend::Application::run(int argc, char** argv) noexcept {
 
 	switch(m_status) {
 		case RUN_TASK:
-			m_task->replace_config(m_config);
+			m_task->set_config(m_config);
 			return m_task->run(m_worker) == VideoConvert::Task::HALT_OK ? 0 : 1;
 
 		case HALT_OK:
@@ -90,11 +52,13 @@ void Frontend::Application::init(Configuration&& cli_config) {
 	m_config->merge(std::move(cli_config));
 	
 
-	if (!m_config->check())
+	if (!m_config->check()) {
+		std::cout << "CHECK FAILED!" << std::endl;
 		m_status = HALT_ERROR;
+	}
 }
 
-Configuration Frontend::Application::read_cli(int argc, char** argv) {
+Frontend::Configuration Frontend::Application::read_cli(int argc, char** argv) {
 	Configuration config;
 	int counter = 1; // Because first item or "argv is always the executable name
 	m_status = HALT_ERROR;
@@ -102,12 +66,12 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 		while (counter < argc) {
 			const std::string argument = argv[counter];
 			if (argument == "-t" || argument == "--test") {
-				m_task.reset(new Task::Test(m_config));
+				m_task.reset(new Task::Test());
 				m_status = RUN_TASK;
 				counter++;
 			}
 			else if (argument == "-d" || argument == "--daemon") {
-				m_task.reset(new Task::Daemon(m_config));
+				m_task.reset(new Task::Daemon());
 				m_status = RUN_TASK;
 				counter++;
 			}
@@ -192,7 +156,7 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 				if (++counter < argc) {
 					// We do here a very basic unscape for bash scaped characters
 					config.set_interactive_parameter(boost::erase_all_copy(std::string(argv[counter++]), "\\"));
-					m_task.reset(new Task::Interactive(m_config));
+					m_task.reset(new Task::Interactive());
 					m_status = RUN_TASK;
 				}
 				else
@@ -222,7 +186,7 @@ Configuration Frontend::Application::read_cli(int argc, char** argv) {
 	return config;
 }
 
-Configuration Frontend::Application::read_config(const Types::path_t& config_file) {
+Frontend::Configuration Frontend::Application::read_config(const Types::path_t& config_file) {
 	Configuration config;
 	libconfig::Config cfg;
 

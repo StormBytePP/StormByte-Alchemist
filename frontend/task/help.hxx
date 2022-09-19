@@ -1,11 +1,11 @@
 #pragma once
 
-#include "task/config/cli/base.hxx"
+#include "task/cli/base.hxx"
 
 namespace StormByte::VideoConvert::Frontend::Task {
-	class Help: public VideoConvert::Task::Config::CLI::Base {
+	class Help: public VideoConvert::Task::CLI::Base {
 		public:
-			Help();
+			Help() = default;
 			Help(const Help&) = default;
 			Help(Help&&) = default;
 			Help& operator=(const Help&) = default;

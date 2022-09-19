@@ -15,11 +15,18 @@ Task::STATUS Task::Base::run(std::optional<pid_t>& worker) noexcept {
 	STATUS status = HALT_ERROR;
 
 	m_start = std::chrono::steady_clock::now();
-	if (pre_run_actions() == RUNNING)
+	// Pre run actions
+	status = pre_run_actions();
+	
+	// do work only if pre run actions where ok
+	if (status == RUNNING)
 		status = do_work(worker);
+	
+	// update now end time so post run actions can take its elapset time value
+	m_end = std::chrono::steady_clock::now();
+	
 	// Post run action might change status
 	status = post_run_actions(status);
-	m_end = std::chrono::steady_clock::now();
 	
 	assert(status == HALT_OK || status == HALT_ERROR);
 	return status;

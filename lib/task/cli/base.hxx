@@ -1,19 +1,23 @@
 #pragma once
 
 #include "../base.hxx"
+#include "types.hxx"
 
 #include <iostream>
 
-namespace StormByte::VideoConvert::Task::Config::CLI {	
-	class Base: public Task::Config::Base {
+namespace StormByte::VideoConvert::Task::CLI {	
+	class Base: public Task::Base {
 		public:
+			Base() = default;
 			Base(int, char**);
-			Base(Types::config_t config, const unsigned short& req_mask = 0);
 			Base(const Base&) = default;
 			Base(Base&&) noexcept = default;
 			Base& operator=(const Base&) = default;
 			Base& operator=(Base&&) noexcept = default;
 			virtual ~Base() noexcept = 0;
+
+			inline void set_config(const Types::config_t& config) { m_config = config; }
+			inline const Types::config_t& get_config() const { return m_config; }
 
 		protected:
 			/* Color functions for convenience */
@@ -48,5 +52,6 @@ namespace StormByte::VideoConvert::Task::Config::CLI {
 
 			int m_argc;
 			char** m_argv;
+			Types::config_t m_config;
 	};
 }

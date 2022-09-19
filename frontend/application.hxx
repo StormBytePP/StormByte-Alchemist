@@ -1,9 +1,8 @@
 #pragma once
 
-#include "database/sqlite3.hxx"
-#include "utils/logger.hxx"
-#include "task/config/base.hxx"
-#include "configuration.hxx"
+#include "types.hxx"
+#include "configuration/configuration.hxx"
+#include "task/cli/base.hxx"
 
 namespace StormByte::VideoConvert::Frontend {
 	class Application {
@@ -13,9 +12,6 @@ namespace StormByte::VideoConvert::Frontend {
 			Application& operator=(const Application&) = delete;
 			Application& operator=(Application&&) = delete;
 			~Application() = default;
-
-			static const std::list<Database::Data::film::stream::codec> SUPPORTED_CODECS;
-			static const std::list<std::string> SUPPORTED_MULTIMEDIA_EXTENSIONS;
 
 			static Application& get_instance();
 			int run(int argc, char** argv) noexcept;
@@ -34,7 +30,7 @@ namespace StormByte::VideoConvert::Frontend {
 			Types::config_t m_config;
 			enum STATUS { RUN_TASK, HALT_OK, HALT_ERROR };
 			STATUS m_status;
-			std::unique_ptr<StormByte::VideoConvert::Task::Config::Base> m_task;
+			std::unique_ptr<StormByte::VideoConvert::Task::CLI::Base> m_task;
 			std::optional<pid_t> m_worker;
 	};
 }

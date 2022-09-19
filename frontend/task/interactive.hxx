@@ -1,14 +1,15 @@
 #pragma once
 
-#include "task/config/cli/base.hxx"
+#include "task/cli/base.hxx"
 #include "ffprobe/ffprobe.hxx"
+#include "database/sqlite3.hxx"
 
 #include <map>
 
 namespace StormByte::VideoConvert::Frontend::Task {
-	class Interactive: public VideoConvert::Task::Config::CLI::Base {
+	class Interactive: public VideoConvert::Task::CLI::Base {
 		public:
-			Interactive(Types::config_t config);
+			Interactive();
 			Interactive(const Interactive& interactive) = delete;
 			Interactive(Interactive&& interactive) noexcept = delete;
 			Interactive& operator=(const Interactive& interactive) = delete;
@@ -16,6 +17,7 @@ namespace StormByte::VideoConvert::Frontend::Task {
 			~Interactive() noexcept = default;
 
 		private:
+			VideoConvert::Task::STATUS pre_run_actions() noexcept override;
 			VideoConvert::Task::STATUS do_work(std::optional<pid_t>&) noexcept override;
 
 			using stream_map_t						= std::map<FFprobe::stream::TYPE, std::map<unsigned short, Database::Data::film::stream>>;
@@ -23,7 +25,6 @@ namespace StormByte::VideoConvert::Frontend::Task {
 			using group_file_info_t					= std::pair<std::list<Types::path_t>, std::list<Types::path_t>>; // First valid files, second invalid files (not having supported extensions)
 			using film_group_t						= std::list<Database::Data::film>;
 
-			bool 									run_initial_checks();
 			Types::optional_path_t	ask_title();
 			Database::Data::film::priority			ask_priority();
 			bool									ask_animation();
@@ -47,5 +48,6 @@ namespace StormByte::VideoConvert::Frontend::Task {
 			std::string m_buffer_str;
 			int m_buffer_int;
 			bool m_buffer_bool;
+			Types::database_t m_database;
 	};
 }

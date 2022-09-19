@@ -1,12 +1,44 @@
 #include "daemon.hxx"
 #include "definitions.h"
+#include "configuration/configuration.hxx"
 #include "task/execute/ffmpeg/convert.hxx"
 
 using namespace StormByte::VideoConvert;
 
-Frontend::Task::Daemon::Daemon(Types::config_t config):VideoConvert::Task::Config::Base(config, VideoConvert::Task::Config::REQUIRE_LOGGER | VideoConvert::Task::Config::REQUIRE_DATABASE) {}
+Task::STATUS Frontend::Task::Daemon::pre_run_actions() noexcept {
+	VideoConvert::Task::STATUS status = VideoConvert::Task::RUNNING;
+
+	assert(m_config);
+	try {
+		const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+		m_logger.reset(new Utils::Logger(*config->get_log_file(), static_cast<Utils::Logger::LEVEL>(*config->get_log_level())));
+		m_database.reset(new Database::SQLite3(*config->get_database_file(), m_logger));
+	}
+	catch (const std::exception& e) {
+		std::cerr << red(e.what()) << std::endl;
+		status = VideoConvert::Task::HALT_ERROR;
+	}
+
+	return status;
+}
+
+Task::STATUS Frontend::Task::Daemon::post_run_actions(const VideoConvert::Task::STATUS& status) noexcept {
+	VideoConvert::Task::STATUS new_status = status;
+
+	if (status == VideoConvert::Task::HALT_ERROR) {
+		// Use cerr instead of logger because logger might have failed
+		std::cerr << red("Daemon was not started due to errors") << std::endl;
+	}
+	else if (status == VideoConvert::Task::HALTED) {
+		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Daemon ran during " + elapsed_time_string() + " and was stopped gracefully");
+		new_status = VideoConvert::Task::HALT_OK;
+	}
+
+	return new_status;
+}
 
 Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>& worker) noexcept {
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
 	m_logger->message_line(Utils::Logger::LEVEL_INFO, "Starting daemon version " + std::string(PROGRAM_VERSION));
 	m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Resetting previously in process films");
 	m_database->reset_processing_films();
@@ -19,14 +51,14 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>& worker) noexc
 			auto convert_status = execute_ffmpeg(std::move(*film), worker);
 			// Only sleep if process is to be continued (not killed by a signal)
 			if (m_status != VideoConvert::Task::HALT_ERROR && convert_status != VideoConvert::Task::HALT_ERROR) {
-				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Pausing for " + std::to_string(m_config->get_pause_time()) + " seconds");
-				sleep(m_config->get_pause_time());
+				m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Pausing for " + std::to_string(config->get_pause_time()) + " seconds");
+				sleep(config->get_pause_time());
 			}
 		}
 		else {
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "No films found");
-			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sleeping " + std::to_string(m_config->get_sleep_time()) + " seconds before retrying");
-			sleep(m_config->get_sleep_time());
+			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Sleeping " + std::to_string(config->get_sleep_time()) + " seconds before retrying");
+			sleep(config->get_sleep_time());
 		}
 	} while(m_status != VideoConvert::Task::HALTED);
 
@@ -36,16 +68,17 @@ Task::STATUS Frontend::Task::Daemon::do_work(std::optional<pid_t>& worker) noexc
 }
 
 StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFmpeg&& ffmpeg, std::optional<pid_t>& worker) const {
-	const Types::path_t full_input_file = *m_config->get_input_folder() / ffmpeg.get_input_file();
-	const Types::path_t full_work_file = *m_config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
-	const Types::path_t full_output_file = *m_config->get_output_folder() / ffmpeg.get_output_file();
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+	const Types::path_t full_input_file = *config->get_input_folder() / ffmpeg.get_input_file();
+	const Types::path_t full_work_file = *config->get_work_folder() / ffmpeg.get_output_file(); // For FFmpeg out means what for Application is work
+	const Types::path_t full_output_file = *config->get_output_folder() / ffmpeg.get_output_file();
 
 	// We need to be sure that the output folder exists so we try to create before running in that case
 	if (!std::filesystem::exists(full_work_file.parent_path())) {
 		m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create work path: " + full_work_file.parent_path().string());
 		std::filesystem::create_directories(full_work_file.parent_path());
 	}
-	VideoConvert::Task::Execute::FFmpeg::Convert task_ffmpeg = VideoConvert::Task::Execute::FFmpeg::Convert(std::move(ffmpeg), *m_config->get_input_folder(), *m_config->get_work_folder());
+	VideoConvert::Task::Execute::FFmpeg::Convert task_ffmpeg = VideoConvert::Task::Execute::FFmpeg::Convert(std::move(ffmpeg), *config->get_input_folder(), *config->get_work_folder());
 	VideoConvert::Task::STATUS convert_status = task_ffmpeg.run(worker);
 	
 	if (convert_status == VideoConvert::Task::HALT_OK) {
@@ -54,7 +87,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
 			std::filesystem::create_directories(full_output_file.parent_path());
 		}
-		if (m_config->get_onfinish() == "copy") {
+		if (config->get_onfinish() == "copy") {
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
 			std::filesystem::copy_file(full_work_file, full_output_file);
 			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
@@ -78,10 +111,10 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 
 	m_database->finish_film_process(ffmpeg, convert_status == VideoConvert::Task::HALT_OK);
 	if (ffmpeg.get_group() && m_database->is_group_empty(*ffmpeg.get_group())) {
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*m_config->get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
-		std::filesystem::remove_all(*m_config->get_input_folder() / ffmpeg.get_group()->folder);
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group work folder: " + (*m_config->get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
-		std::filesystem::remove_all(*m_config->get_work_folder() / ffmpeg.get_group()->folder);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*config->get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+		std::filesystem::remove_all(*config->get_input_folder() / ffmpeg.get_group()->folder);
+		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group work folder: " + (*config->get_work_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
+		std::filesystem::remove_all(*config->get_work_folder() / ffmpeg.get_group()->folder);
 		m_database->delete_group(*ffmpeg.get_group());
 	}
 

@@ -1,38 +1,51 @@
 #include "interactive.hxx"
-#include "application.hxx"
+#include "configuration/configuration.hxx"
 #include "utils/input.hxx"
 #include "utils/display.hxx"
+#include "help.hxx"
 
 #include <csignal>
 #include <boost/algorithm/string.hpp> // For string lowercase
 
 using namespace StormByte::VideoConvert;
 
-Frontend::Task::Interactive::Interactive(Types::config_t config):VideoConvert::Task::Config::CLI::Base(config, VideoConvert::Task::Config::REQUIRE_DATABASE) {
+Frontend::Task::Interactive::Interactive():VideoConvert::Task::CLI::Base() {
 	// Reset signals so app can be exited from CLI
 	signal(SIGTERM,	SIG_DFL);
 	signal(SIGINT,	SIG_DFL);
 	signal(SIGUSR1,	SIG_DFL);
 }
 
-bool Frontend::Task::Interactive::run_initial_checks() {
-	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
+Task::STATUS Frontend::Task::Interactive::pre_run_actions() noexcept {
+	Task::Help().header();
 
-	bool check = true;
+	assert(m_config);
+
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+
+	try {
+		m_database.reset(new Database::SQLite3(*config->get_database_file()));
+	}
+	catch (const std::exception& e) {
+		std::cerr << red(e.what()) << std::endl;
+		return VideoConvert::Task::HALT_ERROR;
+	}
+
+	const Types::path_t full_path = *config->get_input_folder() / *config->get_interactive_parameter();
 
 	if (!std::filesystem::exists(full_path)) {
 		std::cerr << red("File " + std::string(std::filesystem::is_directory(full_path) ? "path " : "") + full_path.string() + " does not exist") << std::endl;
-		check = false;
+		return VideoConvert::Task::HALT_ERROR;
 	}
-	else if (m_database->is_film_in_database(*m_config->get_interactive_parameter())) {
-		std::cerr << red("Film " + m_config->get_interactive_parameter()->string() + " is already in database!") << std::endl;
-		check = false;
+	else if (m_database->is_film_in_database(*config->get_interactive_parameter())) {
+		std::cerr << red("Film " + config->get_interactive_parameter()->string() + " is already in database!") << std::endl;
+		return VideoConvert::Task::HALT_ERROR;
 	}
 	else if (std::filesystem::is_directory(full_path)) {
 		#ifdef ENABLE_HEVC
-		if (m_database->is_group_in_database(*m_config->get_interactive_parameter())) {
-			std::cerr << red("Film group (folder) " + m_config->get_interactive_parameter()->string() + " is already in database") << std::endl;
-			check = false;
+		if (m_database->is_group_in_database(*config->get_interactive_parameter())) {
+			std::cerr << red("Film group (folder) " + config->get_interactive_parameter()->string() + " is already in database") << std::endl;
+			return VideoConvert::Task::HALT_ERROR;
 		}
 		else {
 			auto files = find_files_recursive();
@@ -41,15 +54,16 @@ bool Frontend::Task::Interactive::run_initial_checks() {
 				if (!files.second.empty())
 					std::cerr << gray(" (but " + std::to_string(files.second.size()) + " unsupported files)");
 				std::cerr << red("!") << std::endl;
-				check = false;
+				return VideoConvert::Task::HALT_ERROR;
 			}
 		}
 		#else
 		std::cerr << red("Folder adition is only allowed with HEVC support but it was not compiled in!") << std::endl;
-		check = false;
+		return VideoConvert::Task::HALT_ERROR;
 		#endif
 	}
-	return check;
+
+	return VideoConvert::Task::RUNNING;
 }
 
 Types::optional_path_t Frontend::Task::Interactive::ask_title() {
@@ -84,7 +98,8 @@ bool Frontend::Task::Interactive::ask_animation() {
 }
 
 FFprobe Frontend::Task::Interactive::get_film_data() {
-	const Types::path_t full_path = *m_config->get_input_folder() / *m_config->get_interactive_parameter(); 
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+	const Types::path_t full_path = *config->get_input_folder() / *config->get_interactive_parameter(); 
 	
 	return FFprobe::from_file(full_path);
 }
@@ -283,9 +298,10 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 }
 
 Database::Data::film Frontend::Task::Interactive::generate_film(const stream_map_t& stream_map, const Database::Data::film::priority& priority, const Types::optional_path_t& title, const bool& animation) {
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
 	Database::Data::film result;
 	result.m_priority = priority;
-	result.m_file = *m_config->get_interactive_parameter();
+	result.m_file = *config->get_interactive_parameter();
 	result.m_title = title;
 	std::list<Database::Data::film::stream> streams;
 
@@ -309,15 +325,16 @@ std::optional<unsigned int> Frontend::Task::Interactive::insert_film(const Datab
 
 #ifdef ENABLE_HEVC
 Frontend::Task::Interactive::group_file_info_t Frontend::Task::Interactive::find_files_recursive() {
-	const Types::path_t full_folder = *m_config->get_input_folder() / *m_config->get_interactive_parameter();
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+	const Types::path_t full_folder = *config->get_input_folder() / *config->get_interactive_parameter();
 
 	std::list<Types::path_t> valid, invalid;
 
 	for (std::filesystem::recursive_directory_iterator it(full_folder), end; it != end; ++it) {
 		if (!is_directory(it->path())) {
 			const std::string extension = it->path().extension();
-			Types::path_t relative = std::filesystem::relative(it->path(), *m_config->get_input_folder());
-			if (std::find(Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.begin(), Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.end(), extension) == Application::SUPPORTED_MULTIMEDIA_EXTENSIONS.end())
+			Types::path_t relative = std::filesystem::relative(it->path(), *config->get_input_folder());
+			if (!config->is_extension_supported(extension))
 				invalid.push_back(relative);
 			else
 				valid.push_back(relative);
@@ -329,12 +346,13 @@ Frontend::Task::Interactive::group_file_info_t Frontend::Task::Interactive::find
 
 bool Frontend::Task::Interactive::ask_group_confirmation(const group_file_info_t& group_info) {
 	bool result = true;
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
 
 	if (group_info.first.empty()) {
 		std::cerr 	<< red(	"No valid files found in path "
-							+ m_config->get_interactive_parameter()->string()
+							+ config->get_interactive_parameter()->string()
 							+ " with accepted extensions "
-							+ Utils::Display::list_to_string(Application::SUPPORTED_MULTIMEDIA_EXTENSIONS, ansi_code(LIGHT_GRAY) + "(", ", ", ")")
+							+ Utils::Display::list_to_string(config->get_supported_multimedia_extensions(), ansi_code(LIGHT_GRAY) + "(", ", ", ")")
 					)
 					<< std::endl;
 		result = false;
@@ -357,7 +375,8 @@ bool Frontend::Task::Interactive::ask_group_confirmation(const group_file_info_t
 }
 
 Database::Data::film::group Frontend::Task::Interactive::insert_group() {
-	return *m_database->insert_group(*m_config->get_interactive_parameter());
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
+	return *m_database->insert_group(*config->get_interactive_parameter());
 }
 
 std::list<Database::Data::film::stream> Frontend::Task::Interactive::generate_default_streams_for_group(const bool& animation) {
@@ -408,21 +427,16 @@ bool Frontend::Task::Interactive::insert_film_group_t(const film_group_t& film_g
 #endif
 
 StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::optional<pid_t>&) noexcept {
-	std::cout << ansi_code(BLUE);
-	Application::display_header();
-	std::cout << "\033[0m";
-	
-	if (!run_initial_checks()) return VideoConvert::Task::HALT_ERROR;
-
+	const Frontend::Configuration* const config = dynamic_cast<Frontend::Configuration*>(m_config.get());
 	Types::optional_path_t title;
 	// Title is only displayed when not in batch mode (path)
-	if (!std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter()))
+	if (!std::filesystem::is_directory(*config->get_input_folder() / *config->get_interactive_parameter()))
 		title = ask_title();
 	Database::Data::film::priority priority = ask_priority();
 	bool animation = ask_animation();
 
 	#ifdef ENABLE_HEVC
-	if (std::filesystem::is_directory(*m_config->get_input_folder() / *m_config->get_interactive_parameter())) {
+	if (std::filesystem::is_directory(*config->get_input_folder() / *config->get_interactive_parameter())) {
 		group_file_info_t files = find_files_recursive();
 		if (files.first.empty()) {
 			std::cerr << red("Directory is empty!") << std::endl;
@@ -464,14 +478,14 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 		film = generate_film(stream_map, priority, title, animation);
 
 		if (film.m_streams.empty()) {
-			std::cerr << light_red("There were no streams selected for film " + m_config->get_interactive_parameter()->string()) << ", " << red("no changes were made to database") << std::endl;
+			std::cerr << light_red("There were no streams selected for film " + config->get_interactive_parameter()->string()) << ", " << red("no changes were made to database") << std::endl;
 			return VideoConvert::Task::HALT_ERROR;
 		}
 		else {
 			std::optional<unsigned int> film_id = insert_film(film);
 
 			if (film_id) {
-				std::cout << green("Film " + m_config->get_interactive_parameter()->string() + " was inserted with ID " + std::to_string(*film_id)) << std::endl;
+				std::cout << green("Film " + config->get_interactive_parameter()->string() + " was inserted with ID " + std::to_string(*film_id)) << std::endl;
 			}
 			else {
 				std::cerr << red("Could NOT insert film!") << std::endl;

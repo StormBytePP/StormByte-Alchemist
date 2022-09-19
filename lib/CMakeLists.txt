@@ -1,5 +1,5 @@
 list(APPEND VIDEOCONVERT_LIBRARY_FILES
-	configuration.cxx
+	configuration/base.cxx
 	database/sqlite3.cxx
 	ffmpeg/stream/base.cxx
 	ffmpeg/stream/audio/base.cxx
@@ -15,8 +15,7 @@ list(APPEND VIDEOCONVERT_LIBRARY_FILES
 	utils/input.cxx
 	utils/display.cxx
 	task/base.cxx
-	task/config/base.cxx
-	task/config/cli/base.cxx
+	task/cli/base.cxx
 	task/execute/base.cxx
 	task/execute/ffprobe/base.cxx
 	task/execute/ffprobe/stream.cxx

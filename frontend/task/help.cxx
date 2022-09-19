@@ -1,9 +1,9 @@
 #include "help.hxx"
 #include "definitions.h"
+#include "configuration/configuration.hxx"
+#include "utils/logger.hxx"
 
 using namespace StormByte::VideoConvert;
-
-Frontend::Task::Help::Help():VideoConvert::Task::Config::CLI::Base(Types::config_t()) {}
 
 void Frontend::Task::Help::header() const {
 	const std::string caption = std::string(PROGRAM_NAME) + " " + std::string(PROGRAM_VERSION) + " by " + std::string(PROGRAM_AUTHOR);
