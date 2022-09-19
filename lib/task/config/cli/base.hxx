@@ -7,8 +7,8 @@
 namespace StormByte::VideoConvert::Task::Config::CLI {	
 	class Base: public Task::Config::Base {
 		public:
+			Base(int, char**);
 			Base(Types::config_t config, const unsigned short& req_mask = 0);
-			Base(int argc, char* argv[]);
 			Base(const Base&) = default;
 			Base(Base&&) noexcept = default;
 			Base& operator=(const Base&) = default;
