@@ -8,10 +8,10 @@ Task::Execute::FFprobe::Stream::Stream(Types::path_t&& file):FFprobe::Base(std::
 
 const std::list<std::string> Task::Execute::FFprobe::Stream::BASE_ARGUMENTS { "-show_entries", "stream=codec_name,index:stream_tags=language" };
 
-void Task::Execute::FFprobe::Stream::pre_run_actions() noexcept {
+Task::STATUS Task::Execute::FFprobe::Stream::pre_run_actions() noexcept {
 	std::list<std::string> result = BASE_ARGUMENTS;
 	result.push_back("-select_streams"); result.push_back(std::string(1, m_type));
 
 	m_arguments = boost::algorithm::join(result, " ");
-	FFprobe::Base::pre_run_actions();
+	return FFprobe::Base::pre_run_actions();
 }

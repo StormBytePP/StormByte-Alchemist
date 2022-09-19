@@ -85,7 +85,8 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 	return status;
 }
 
-void Task::Execute::Base::pre_run_actions() noexcept {
+Task::STATUS Task::Execute::Base::pre_run_actions() noexcept {
 	m_stdout = "";
 	m_stdin = "";
+	return RUNNING;
 }

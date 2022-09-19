@@ -29,8 +29,10 @@ namespace StormByte::VideoConvert::Task {
 		protected:
 			/* Actions */
 			virtual STATUS do_work(std::optional<pid_t>&) noexcept = 0;
-			virtual void pre_run_actions() noexcept;
-			virtual void post_run_actions() noexcept;
+
+			/* Pre and post run actions will be always executed having post the previous steps status as parameter */
+			virtual STATUS pre_run_actions() noexcept;
+			virtual STATUS post_run_actions(const STATUS&) noexcept;
 
 			volatile STATUS m_status;
 

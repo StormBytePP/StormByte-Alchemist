@@ -10,17 +10,19 @@ Task::STATUS Task::Base::run() noexcept {
 }
 
 Task::STATUS Task::Base::run(std::optional<pid_t>& worker) noexcept {
+	STATUS status = HALT_ERROR;
 	m_start = std::chrono::steady_clock::now();
-	pre_run_actions();
-	STATUS exit_code = do_work(worker);
-	post_run_actions();
+	if (pre_run_actions() == RUNNING)
+		status = do_work(worker);
+	// Post run action might change status
+	status = post_run_actions(status);
 	m_end = std::chrono::steady_clock::now();
-	return exit_code;
+	return status;
 }
 
-void Task::Base::pre_run_actions() noexcept {}
+Task::STATUS Task::Base::pre_run_actions() noexcept { return RUNNING; }
 
-void Task::Base::post_run_actions() noexcept {}
+Task::STATUS Task::Base::post_run_actions(const STATUS& prev_status) noexcept { return prev_status; }
 
 std::string Task::Base::elapsed_time_string() const {
 	/* NOTE: Until C++20's <format> support is complete, I just use this aproach */

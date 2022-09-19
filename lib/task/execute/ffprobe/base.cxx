@@ -11,7 +11,7 @@ Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base("ff
 
 Task::Execute::FFprobe::Base::~Base() {}
 
-void Task::Execute::FFprobe::Base::pre_run_actions() noexcept {
+Task::STATUS Task::Execute::FFprobe::Base::pre_run_actions() noexcept {
 	m_arguments += " " + boost::algorithm::join(BASE_ARGUMENTS, " ") + " \"" + m_file.string() + "\"";
-	Task::Execute::Base::pre_run_actions();
+	return Task::Execute::Base::pre_run_actions();
 }

@@ -21,7 +21,7 @@ namespace StormByte::VideoConvert::Task::Execute {
 
 		protected:
 			virtual STATUS do_work(std::optional<pid_t>& worker) noexcept override;
-			virtual void pre_run_actions() noexcept override;
+			virtual STATUS pre_run_actions() noexcept override;
 
 			Types::path_t m_program;
 			std::string m_arguments;

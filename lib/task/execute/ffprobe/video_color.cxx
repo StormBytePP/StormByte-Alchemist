@@ -8,7 +8,7 @@ Task::Execute::FFprobe::VideoColor::VideoColor(const Types::path_t& file):FFprob
 
 Task::Execute::FFprobe::VideoColor::VideoColor(Types::path_t&& file):FFprobe::Base(std::move(file)) {}
 
-void Task::Execute::FFprobe::VideoColor::pre_run_actions() noexcept {
+Task::STATUS Task::Execute::FFprobe::VideoColor::pre_run_actions() noexcept {
 	m_arguments = boost::algorithm::join(BASE_ARGUMENTS, " ");
-	FFprobe::Base::pre_run_actions();
+	return FFprobe::Base::pre_run_actions();
 }

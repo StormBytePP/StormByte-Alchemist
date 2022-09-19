@@ -26,7 +26,8 @@ namespace StormByte::VideoConvert::Task::Config {
 			Types::database_t m_database;
 
 		private:
-			void pre_run_actions() noexcept override;
+			STATUS pre_run_actions() noexcept override;
+			STATUS post_run_actions(const STATUS&) noexcept override;
 			bool check_requirement(const unsigned short& req_mask, const REQUIREMENT& req) const;
 
 			unsigned short m_req_mask;
