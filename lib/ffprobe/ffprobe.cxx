@@ -122,6 +122,7 @@ void FFprobe::initialize_stream_data(const std::string& json, const stream::TYPE
 				stream strm;
 				for (auto it = json[i].begin(); it != json[i].end(); it++) {
 					if (it.key() == "codec_name" && !it->isNull()) strm.codec_name = it->asString();
+					else if (it.key() == "channels" && it->isInt()) strm.channels = it->asInt();
 					else if (it.key() == "width" && it->isInt()) m_width = it->asInt();
 					else if (it.key() == "height" && it->isInt()) m_height = it->asInt();
 					else if (it.key() == "tags") {

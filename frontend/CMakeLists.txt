@@ -9,9 +9,10 @@ add_executable(StormByte-videoconvert
 	main.cxx
 )
 
-target_link_libraries(StormByte-videoconvert StormByte-videoconvert-library)
 set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert PROPERTY CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(StormByte-videoconvert StormByte-videoconvert-library)
 
 install(TARGETS StormByte-videoconvert DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES install/StormByte-videoconvert.conf DESTINATION /etc/conf.d COMPONENT config)

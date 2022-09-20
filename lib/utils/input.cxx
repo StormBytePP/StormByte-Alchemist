@@ -9,8 +9,9 @@
 using namespace StormByte::VideoConvert;
 
 bool Utils::Input::is_int(const std::string& possible_int, const bool& use_cerr) {
-	bool result = !possible_int.empty() && std::find_if(possible_int.begin(), possible_int.end(),
-		[](unsigned char c) { return !std::isdigit(c); }) == possible_int.end();
+	std::string new_str = possible_int[0] == '-' ? possible_int.substr(1) : possible_int;
+	bool result = !possible_int.empty() && std::find_if(new_str.begin(), new_str.end(),
+		[](unsigned char c) { return !std::isdigit(c); }) == new_str.end();
 	if (!result && use_cerr) {
 		std::cerr << possible_int << " is not a number" << std::endl;
 	}

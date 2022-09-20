@@ -19,9 +19,9 @@ _I usually like to store videos in H265 format in order to save space (specially
 
 _So finally when I found time, I programmed this little daemon as a **hello world** application because I never used some of the components I used here, like:_
 
-* _libConfig++: To read and parse configuration files in an application_
-* _SQlite3: To make use of a little database_
-* _C++17: Features like std::filesystem, std::shared_ptr, std::unique_ptr and std::optional which I never used (and they are great!)_
+* _libConfig++_: To read and parse configuration files in an application
+* _SQlite3_: To make use of a little database
+* _C++17_: Features like std::filesystem, std::shared_ptr, std::unique_ptr and std::optional which I never used (and they are great!)
 
 _So once I started, this quickly became addictive and now that it is finished I'm very glad this works!_
 

@@ -16,12 +16,13 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 # Encoder support
-option(ENABLE_HEVC 		"Enable HEVC/H265 encoder"			ON)
-option(ENABLE_AAC 		"Enable AAC encoder" 				ON)
-option(ENABLE_FDKAAC 	"Enable Fraunhoffer AAC encoder" 	OFF)
-option(ENABLE_AC3 		"Enable AC3 encoder" 				ON)
-option(ENABLE_EAC3 		"Enable Enhanced AC3 encoder" 		ON)
-option(ENABLE_OPUS 		"Enable Opus encoder"				ON)
+option(ENABLE_HEVC 			"Enable HEVC/H265 encoder"					ON)
+option(ENABLE_AAC 			"Enable AAC encoder" 						ON)
+option(ENABLE_FDKAAC 		"Enable Fraunhoffer AAC encoder" 			OFF)
+option(ENABLE_AC3 			"Enable AC3 encoder" 						ON)
+option(ENABLE_EAC3 			"Enable Enhanced AC3 encoder" 				ON)
+option(ENABLE_OPUS 			"Enable Opus encoder"						ON)
+option(ENABLE_STATIC		"Build static libs along with shared libs"	OFF)
 
 if (ENABLE_HEVC)
 	add_compile_definitions("ENABLE_HEVC")
@@ -59,7 +60,7 @@ endif()
 
 find_package (SQLite3 REQUIRED)
 find_package (Config++ REQUIRED)
-find_package (Boost REQUIRED COMPONENTS filesystem)
+find_package (Boost REQUIRED)
 find_package (Git REQUIRED)
 find_package (JsonCpp REQUIRED)
 

@@ -136,12 +136,14 @@ void Frontend::Task::Interactive::display_stream_map(const FFprobe& probe, const
 		for (size_t i = 0; i < strm_probe.size(); i++) {
 			line = magenta(std::string(1, type) + ":" + std::to_string(i));
 			line += " " + blue(strm_probe[i].codec_name);
-
 			if (strm_probe[i].language) {
 				line += gray(" (" + *strm_probe[i].language + ")");
 			}
-			line += " -> ";
-			if (strm_map.contains(i)) {
+			if (strm_probe[i].channels) {
+				line += gray(" (" + std::to_string(*strm_probe[i].channels) + " channels)");
+			}
+			line += "-> ";
+			if (strm_map.contains(i)) {	
 				line += light_green(Database::Data::film::stream::codec_string.at(strm_map.at(i).m_codec));
 			}
 			else if (strm_map.contains(-1)) {

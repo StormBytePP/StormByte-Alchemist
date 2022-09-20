@@ -27,6 +27,7 @@ namespace StormByte::VideoConvert {
 
 				std::string codec_name;
 				std::optional<std::string> language;
+				std::optional<unsigned short> channels;
 			};
 
 			/* Initialize */

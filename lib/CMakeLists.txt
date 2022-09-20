@@ -51,12 +51,29 @@ endif()
 
 add_subdirectory(database)
 
+find_program(FFMPEG_EXECUTABLE ffmpeg)
+find_program(FFPROBE_EXECUTABLE ffprobe)
+
+file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/ffmpeg_path.h CONTENT "
+#pragma once
+
+#define FFMPEG_EXECUTABLE \"${FFMPEG_EXECUTABLE}\"
+#define FFPROBE_EXECUTABLE \"${FFPROBE_EXECUTABLE}\"
+
+")
+
 add_library(StormByte-videoconvert-library SHARED ${VIDEOCONVERT_LIBRARY_FILES})
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD 20)
 set_property(TARGET StormByte-videoconvert-library PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET StormByte-videoconvert-library PROPERTY OUTPUT_NAME "StormByte-videoconvert")
-target_link_libraries(StormByte-videoconvert-library sqlite3)
-target_link_libraries(StormByte-videoconvert-library config++)
-target_link_libraries(StormByte-videoconvert-library jsoncpp)
-target_link_libraries(StormByte-videoconvert-library ${Boost_LIBRARIES})
+target_link_libraries(StormByte-videoconvert-library sqlite3 config++ jsoncpp)
 install(TARGETS StormByte-videoconvert-library DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+if (ENABLE_STATIC)
+	add_library(StormByte-videoconvert-library-static STATIC ${VIDEOCONVERT_LIBRARY_FILES})
+	set_property(TARGET StormByte-videoconvert-library-static PROPERTY CXX_STANDARD 20)
+	set_property(TARGET StormByte-videoconvert-library-static PROPERTY CXX_STANDARD_REQUIRED ON)
+	set_property(TARGET StormByte-videoconvert-library-static PROPERTY OUTPUT_NAME "StormByte-videoconvert")
+	target_link_libraries(StormByte-videoconvert-library-static sqlite3 config++ jsoncpp)
+	install(TARGETS StormByte-videoconvert-library-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
