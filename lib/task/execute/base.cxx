@@ -28,9 +28,14 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 		asio::io_service ios;
 
 		try {
-			// stdout setup
+			
 			std::vector<char> vOut(128 << 10);
+			std::vector<char> vErr(128 << 10);
 			auto outBuffer{ asio::buffer(vOut) };
+			auto errBuffer{ asio::buffer(vErr) };
+			auto inBuffer{ asio::buffer(m_stdin) };
+
+			// stdout setup
 			process::async_pipe pipeOut(ios);
 
 			std::function<void(const system::error_code & ec, std::size_t n)> onStdOut;
@@ -44,8 +49,6 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 			};
 
 			// stderr setup
-			std::vector<char> vErr(128 << 10);
-			auto errBuffer{ asio::buffer(vErr) };
 			process::async_pipe pipeErr(ios);
 
 			std::function<void(const system::error_code & ec, std::size_t n)> onStdErr;
@@ -59,7 +62,6 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 			};
 
 			// stdin setup
-			auto inBuffer{ asio::buffer(m_stdin) };
 			process::async_pipe pipeIn(ios);
 
 			process::child c(
