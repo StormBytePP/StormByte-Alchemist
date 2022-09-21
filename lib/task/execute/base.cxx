@@ -10,9 +10,14 @@
 
 using namespace StormByte::VideoConvert;
 
-Task::Execute::Base::Base(const Types::path_t& program, const std::string& arguments, const std::string& stdinput):Task::Base(), m_program(program), m_arguments(arguments), m_stdin(stdinput) {}
+Task::Execute::Base::Base(const Types::path_t& program, const std::string& arguments):Task::Base(), m_executables({ Executable(program, arguments) }) {}
 
-Task::Execute::Base::Base(Types::path_t&& program, std::string&& arguments, std::string&& stdinput):Task::Base(), m_program(std::move(program)), m_arguments(std::move(arguments)), m_stdin(std::move(stdinput)) {}
+Task::Execute::Base::Base(Types::path_t&& program, std::string&& arguments):Task::Base(), m_executables({ Executable(std::move(program), std::move(arguments)) }) {}
+
+Task::Execute::Base::Base(const std::vector<Executable>& execs):Task::Base(), m_executables(execs) {}
+
+Task::Execute::Base::Base(std::vector<Executable>&& execs):Task::Base(), m_executables(std::move(execs)) {}
+
 
 Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept {
 	using namespace boost;
@@ -56,7 +61,7 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 		process::async_pipe pipeIn(ios);
 
 		process::child c(
-			m_program .string() + " " + m_arguments,
+			m_executables[0].m_program.string() + " " + m_executables[0].m_arguments,
 			process::std_out > pipeOut, 
 			process::std_err > pipeErr, 
 			process::std_in < pipeIn

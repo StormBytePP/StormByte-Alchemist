@@ -16,6 +16,6 @@ Task::STATUS Task::Execute::FFprobe::Stream::pre_run_actions() noexcept {
 	char type = m_type == VideoConvert::FFprobe::stream::VIDEO ? 'V' : static_cast<char>(m_type);
 	result.push_back(std::string(1, std::move(type)));
 
-	m_arguments = boost::algorithm::join(result, " ");
+	m_executables[0].m_arguments = boost::algorithm::join(result, " ");
 	return FFprobe::Base::pre_run_actions();
 }

@@ -13,6 +13,6 @@ Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base(FFP
 Task::Execute::FFprobe::Base::~Base() {}
 
 Task::STATUS Task::Execute::FFprobe::Base::pre_run_actions() noexcept {
-	m_arguments += " " + boost::algorithm::join(BASE_ARGUMENTS, " ") + " \"" + m_file.string() + "\"";
+	m_executables[0].m_arguments += " " + boost::algorithm::join(BASE_ARGUMENTS, " ") + " \"" + m_file.string() + "\"";
 	return Task::Execute::Base::pre_run_actions();
 }

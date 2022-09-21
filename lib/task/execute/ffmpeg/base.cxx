@@ -26,7 +26,7 @@ Task::STATUS Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 
 	result.push_back("-map 0:t?"); result.push_back("-c:t copy");
 
-	m_arguments += " " + boost::algorithm::join(result, " ");
+	m_executables[0].m_arguments += " " + boost::algorithm::join(result, " ");
 
 	return Execute::Base::pre_run_actions();
 }
