@@ -14,6 +14,7 @@ namespace StormByte::VideoConvert::Task::Execute {
 				Types::path_t m_program;
 				std::string m_arguments;
 			};
+			Base() = default;
 			Base(const Types::path_t&, const std::string& args = "");
 			Base(Types::path_t&&, std::string&& args = "");
 			Base(const Executable&);
