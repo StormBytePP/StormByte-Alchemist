@@ -480,7 +480,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Interactive::do_work(std::
 		film = generate_film(stream_map, priority, title, animation);
 
 		if (film.m_streams.empty()) {
-			std::cerr << light_red("There were no streams selected for film " + config->get_interactive_parameter()->string()) << ", " << red("no changes were made to database") << std::endl;
+			std::cerr << light_red("There were no streams selected for film " + config->get_interactive_parameter()->string()) << ", " << green(bold("no changes were made to database")) << std::endl;
 			return VideoConvert::Task::HALT_ERROR;
 		}
 		else {
