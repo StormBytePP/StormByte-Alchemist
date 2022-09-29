@@ -70,6 +70,13 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 		std::filesystem::create_directories(full_work_file.parent_path());
 	}
 	VideoConvert::Task::Execute::FFmpeg::Convert task_ffmpeg = VideoConvert::Task::Execute::FFmpeg::Convert(std::move(ffmpeg), *config->get_input_folder(), *config->get_work_folder());
+	
+	/* Debug info about streams */
+	m_logger->message_part_begin(Utils::Logger::LEVEL_DEBUG, "Converting with streams:\n");
+	for (auto it = ffmpeg.get_streams().begin(); it != ffmpeg.get_streams().end(); it++) {
+		m_logger->message_part_continue(Utils::Logger::LEVEL_DEBUG, "Stream: " + boost::algorithm::join((*it)->ffmpeg_parameters(), "") + "\n");
+	}
+	m_logger->message_part_end(Utils::Logger::LEVEL_DEBUG, "End stream info");
 	VideoConvert::Task::STATUS convert_status = task_ffmpeg.run(worker);
 	
 	if (convert_status == VideoConvert::Task::HALT_OK) {
