@@ -60,13 +60,30 @@ Frontend::Configuration::Configuration():VideoConvert::Configuration::Base(MANDA
 
 bool Frontend::Configuration::check() const {
 	/* Folder checks */
-	for (std::string item: { "database", "input", "output", "work", "logfile" }) {
+	for (std::string item: { "database", "input", "output", "work" }) {
 		if (!m_values_string.contains(item))
 			m_errors[item] = "Item is not set";
 		else {
-			const Types::path_t parent_folder = Types::path_t(m_values_string.at(item)).parent_path();
-			if (!Utils::Filesystem::is_folder_readable_and_writable(parent_folder))
-				m_errors[item] = "Folder " + parent_folder.string() + " is not readable or not writable";
+			const Types::path_t folder = Types::path_t(m_values_string.at(item));
+			if (!std::filesystem::is_directory(folder))
+				m_errors[item] = "Is not a directory";
+			else if (!Utils::Filesystem::is_folder_readable_and_writable(folder))
+				m_errors[item] = "Directory " + folder.string() + " is not readable or not writable";
+			else
+				m_errors.erase(item);
+		}
+	}
+
+	/* Logfile and database check (they need to check parent dirs for permissions) */
+	for (std::string item: { "database", "logfile" }) {
+		if (!m_values_string.contains(item))
+			m_errors[item] = "Item is not set";
+		else {
+			const Types::path_t file = Types::path_t(m_values_string.at(item));
+			if (!file.has_filename())
+				m_errors[item] = file.string() + " is not a regular file";
+			else if (!Utils::Filesystem::is_folder_readable_and_writable(file.parent_path()))
+				m_errors[item] = "Directory " + file.parent_path().string() + " is not readable or not writable";
 			else
 				m_errors.erase(item);
 		}
