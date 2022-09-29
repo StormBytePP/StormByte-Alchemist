@@ -60,5 +60,6 @@ namespace StormByte::VideoConvert {
 			Types::optional_path_t m_title;
 			Types::path_t m_container; // For future
 			std::list<std::shared_ptr<StormByte::VideoConvert::Stream::Base>> m_streams;
+			unsigned short m_video_position, m_audio_position, m_subtitle_position;
 	};
 }

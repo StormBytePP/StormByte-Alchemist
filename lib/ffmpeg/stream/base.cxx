@@ -10,7 +10,7 @@ std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 	std::list<std::string> result {
 		"-map",
 		"0:" + ffmpeg_stream_id() + (m_stream_id == -1 ? "?" : ""), // Because this content might not be existant
-		"-c:" + ffmpeg_stream_id(),
+		"-c:" + ffmpeg_stream_pos(),
 		m_encoder
 	};
 
@@ -26,6 +26,14 @@ std::string Stream::Base::ffmpeg_stream_id() const {
 	std::string type_str = std::string(1, m_type); // As m_type is a const char as this function member is const
 	if (m_stream_id >= 0)
 		type_str += std::string(":") + std::to_string(m_stream_id);
+
+	return type_str;
+}
+
+std::string Stream::Base::ffmpeg_stream_pos() const {
+	std::string type_str = std::string(1, m_type); // As m_type is a const char as this function member is const
+	if (m_stream_id >= 0)
+		type_str += std::string(":") + std::to_string(m_stream_position);
 
 	return type_str;
 }

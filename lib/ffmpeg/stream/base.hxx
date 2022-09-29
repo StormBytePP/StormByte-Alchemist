@@ -21,13 +21,16 @@ namespace StormByte::VideoConvert::Stream {
 
 			virtual std::list<std::string> ffmpeg_parameters() const;
 			std::string ffmpeg_stream_id() const;
-			inline void set_bitrate(const std::string& bit_rate) { m_bitrate = bit_rate; }
+			std::string ffmpeg_stream_pos() const;
+ 			inline void set_bitrate(const std::string& bit_rate) { m_bitrate = bit_rate; }
 			inline std::string get_encoder() const { return m_encoder; }
 			inline Database::Data::film::stream::codec get_codec() const { return m_codec; }
 			inline char get_type() const { return m_type; }
+			inline void set_stream_position(const unsigned short& pos) { m_stream_position = pos; }
 
 		protected:
 			short m_stream_id;
+			unsigned short m_stream_position;
 			std::string m_encoder;
 			Database::Data::film::stream::codec m_codec;
 			char m_type;
