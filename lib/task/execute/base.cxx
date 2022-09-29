@@ -1,4 +1,5 @@
 #include "base.hxx"
+#include "utils/logger.hxx"
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -63,6 +64,9 @@ Task::STATUS Task::Execute::Base::do_work(std::optional<pid_t>& worker) noexcept
 
 			// stdin setup
 			process::async_pipe pipeIn(ios);
+
+			if (m_logger)
+				m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Executing " + m_executables[0].m_program.string() + " " + m_executables[0].m_arguments);
 
 			process::child c(
 				m_executables[0].m_program.string() + " " + m_executables[0].m_arguments,

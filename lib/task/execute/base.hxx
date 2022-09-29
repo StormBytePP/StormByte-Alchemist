@@ -29,12 +29,14 @@ namespace StormByte::VideoConvert::Task::Execute {
 
 			inline std::string get_stdout() const { return m_stdout; }
 			inline std::string get_stderr() const { return m_stderr; }
+			inline void set_logger(Types::logger_t logger) { m_logger = logger; }
 
 		protected:
 			virtual STATUS do_work(std::optional<pid_t>& worker) noexcept override;
 			virtual STATUS pre_run_actions() noexcept override;
 
 			std::vector<Executable> m_executables;
+			Types::logger_t m_logger;
 
 		private:
 			std::string m_stdout, m_stderr, m_stdin;
