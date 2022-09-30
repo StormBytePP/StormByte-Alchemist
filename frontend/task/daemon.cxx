@@ -72,6 +72,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 	VideoConvert::Task::Execute::FFmpeg::Convert task_ffmpeg = VideoConvert::Task::Execute::FFmpeg::Convert(std::move(ffmpeg), *config->get_input_folder(), *config->get_work_folder());
 	task_ffmpeg.set_logger(m_logger);
 	VideoConvert::Task::STATUS convert_status = task_ffmpeg.run(worker);
+	bool io_failed = false;
 	
 	if (convert_status == VideoConvert::Task::HALT_OK) {
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Conversion for " + ffmpeg.get_input_file().string() + " finished in " + task_ffmpeg.elapsed_time_string());
@@ -79,18 +80,34 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 			m_logger->message_line(Utils::Logger::LEVEL_NOTICE, "Create output path: " + full_output_file.parent_path().string());
 			std::filesystem::create_directories(full_output_file.parent_path());
 		}
-		if (config->get_onfinish() == "copy") {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
-			std::filesystem::copy_file(full_work_file, full_output_file);
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
-			std::filesystem::remove(full_work_file);
+		if (config->get_onfinish() == "move") {
+			try {
+				m_logger->message_line(Utils::Logger::LEVEL_INFO, "Move: " + full_work_file.string() + " -> " + full_output_file.string());
+				std::filesystem::rename(full_work_file, full_output_file);
+				io_failed = false;
+			}
+			catch (const std::exception& e) {
+				m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Move failed because " + std::string(e.what()) + " attempting copy");
+				io_failed = true;
+			}
 		}
-		else {
-			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Move: " + full_work_file.string() + " -> " + full_output_file.string());
-			std::filesystem::rename(full_work_file, full_output_file);
+		if (io_failed || config->get_onfinish() == "copy") {
+			try {
+				m_logger->message_line(Utils::Logger::LEVEL_INFO, "Copy: " + full_work_file.string() + " -> " + full_output_file.string());
+				std::filesystem::copy_file(full_work_file, full_output_file);
+				m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete work: " + full_work_file.string());
+				std::filesystem::remove(full_work_file);
+				io_failed = false;
+			}
+			catch (const std::exception& e) {
+				m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Copy failed because " + std::string(e.what()));
+				io_failed = true;
+			}
 		}
-		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
+		if (!io_failed) {
+			m_logger->message_line(Utils::Logger::LEVEL_INFO, "Delete input: " + full_input_file.string());
 			std::filesystem::remove(full_input_file);
+		}
 	}
 	else {
 		m_logger->message_line(Utils::Logger::LEVEL_ERROR, "Conversion for " + ffmpeg.get_input_file().string() + " failed or interrupted!");
@@ -101,7 +118,7 @@ StormByte::VideoConvert::Task::STATUS Frontend::Task::Daemon::execute_ffmpeg(FFm
 		m_logger->message_line(Utils::Logger::LEVEL_DEBUG, "Marking film " + full_work_file.string() + " as unsupported in database");
 	}
 
-	m_database->finish_film_process(ffmpeg, convert_status == VideoConvert::Task::HALT_OK);
+	m_database->finish_film_process(ffmpeg, !io_failed && convert_status == VideoConvert::Task::HALT_OK);
 	if (ffmpeg.get_group() && m_database->is_group_empty(*ffmpeg.get_group())) {
 		m_logger->message_line(Utils::Logger::LEVEL_INFO, "Deleting group input folder: " + (*config->get_input_folder() / ffmpeg.get_group()->folder).string() + " recursivelly");
 		std::filesystem::remove_all(*config->get_input_folder() / ffmpeg.get_group()->folder);
