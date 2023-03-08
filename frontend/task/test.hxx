@@ -8,10 +8,10 @@ namespace StormByte::VideoConvert::Frontend::Task {
 	class Test: public VideoConvert::Task::CLI::Base {
 		public:
 			Test() = default;
-			Test(const Test& Test) = default;
-			Test(Test&& Test) noexcept = default;
-			Test& operator=(const Test& Test) = default;
-			Test& operator=(Test&& Test) noexcept = default;
+			Test(const Test& Test) = delete;
+			Test(Test&& Test) noexcept = delete;
+			Test& operator=(const Test& Test) = delete;
+			Test& operator=(Test&& Test) noexcept = delete;
 			virtual ~Test() noexcept = default;
 
 		private:

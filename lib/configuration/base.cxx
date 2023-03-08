@@ -70,12 +70,12 @@ void Configuration::Base::merge(const Base& config) {
 
 void Configuration::Base::merge(Base&& config) noexcept {
 	for (auto it = std::make_move_iterator(config.m_values_string.begin()); it != std::make_move_iterator(config.m_values_string.end()); it++) {
-		m_errors.erase(it->first);
+		m_errors.erase((*it).first);
 		m_values_string.emplace(std::move(*it));
 	}
 
 	for (auto it = std::make_move_iterator(config.m_values_int.begin()); it != std::make_move_iterator(config.m_values_int.end()); it++) {
-		m_errors.erase(it->first);
+		m_errors.erase((*it).first);
 		m_values_int.emplace(std::move(*it));
 	}
 }

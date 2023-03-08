@@ -43,7 +43,9 @@ std::string Task::Base::elapsed_time_string() const {
 	std::string result = "";
 
 	auto elapsed = std::chrono::hh_mm_ss(m_end - m_start);
-	auto h = elapsed.hours().count(), m = elapsed.minutes().count(), s = elapsed.seconds().count();
+	auto h = elapsed.hours().count();
+	auto m = elapsed.minutes().count();
+	auto s = elapsed.seconds().count();
 
 	result += std::to_string(h) + ":";
 	if (m < 10) result += "0";

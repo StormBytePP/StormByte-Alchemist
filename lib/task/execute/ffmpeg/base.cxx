@@ -10,7 +10,7 @@ Task::Execute::FFmpeg::Base::Base(const VideoConvert::FFmpeg& ffmpeg):Execute::B
 
 Task::Execute::FFmpeg::Base::Base(VideoConvert::FFmpeg&& ffmpeg):Execute::Base(FFMPEG_EXECUTABLE), m_ffmpeg(std::move(ffmpeg)) {}
 
-Task::Execute::FFmpeg::Base::~Base() {}
+Task::Execute::FFmpeg::Base::~Base() noexcept {}
 
 Task::STATUS Task::Execute::FFmpeg::Base::pre_run_actions() noexcept {
 	std::list<std::string> result = FFMPEG_INIT_OPTIONS;

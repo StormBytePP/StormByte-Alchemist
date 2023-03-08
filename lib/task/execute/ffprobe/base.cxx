@@ -10,7 +10,7 @@ Task::Execute::FFprobe::Base::Base(const Types::path_t& file):Task::Execute::Bas
 
 Task::Execute::FFprobe::Base::Base(Types::path_t&& file):Task::Execute::Base(FFPROBE_EXECUTABLE), m_file(std::move(file)) {}
 
-Task::Execute::FFprobe::Base::~Base() {}
+Task::Execute::FFprobe::Base::~Base() noexcept {}
 
 Task::STATUS Task::Execute::FFprobe::Base::pre_run_actions() noexcept {
 	m_executables[0].m_arguments += " " + boost::algorithm::join(BASE_ARGUMENTS, " ") + " \"" + m_file.string() + "\"";
