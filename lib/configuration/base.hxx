@@ -11,8 +11,8 @@ namespace StormByte::VideoConvert::Configuration {
 			Base(const std::list<std::string>& mandatory_string, const std::list<std::string>& mandatory_int, const std::list<std::string>& optional_string, const std::list<std::string>& optional_int);
 			Base(const Base&) = default;
 			Base(Base&&) noexcept = default;
-			Base& operator=(const Base&);
-			Base& operator=(Base&&) noexcept;
+			Base& operator=(const Base&) = delete;
+			Base& operator=(Base&&) noexcept = delete;
 			virtual ~Base() = default;
 
 			virtual bool check() const = 0;
