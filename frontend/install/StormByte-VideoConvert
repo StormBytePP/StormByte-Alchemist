@@ -3,8 +3,8 @@
 
 extra_commands="configtest wakeup"
 
-PIDFILE="/var/run/StormByte-videoconvert.pid"
-COMMAND="/usr/bin/StormByte-videoconvert"
+PIDFILE="/var/run/StormByte-VideoConvert.pid"
+COMMAND="/usr/bin/StormByte-VideoConvert"
 USER="stormbyte"
 
 depend() {
@@ -13,25 +13,25 @@ depend() {
 }
 
 start() {
-	ebegin "Starting StormByte-videoconvert daemon"
+	ebegin "Starting StormByte Video Convert daemon"
 	start-stop-daemon --start --background --make-pidfile --user ${USER} --pidfile ${PIDFILE} --exec ${COMMAND} -- --daemon
 	eend $?
 }
 
 stop() {
-	ebegin "Stopping StormByte-videoconvert daemon"
+	ebegin "Stopping StormByte Video Convert daemon"
 	start-stop-daemon --pidfile $PIDFILE --stop
 	eend $?
 }
 
 configtest() {
-	ebegin "Checking for StormByte-videoconvert daemon start without starting it"
+	ebegin "Checking for StormByte Video Convert daemon start without starting it"
 	start-stop-daemon --start --user ${USER} --exec ${COMMAND} -- -c > /dev/null
 	eend $?
 }
 
 wakeup() {
-	ebegin "Waking up StormByte-videoconvert to look for new films"
+	ebegin "Waking up StormByte Video Convert to look for new films"
 	start-stop-daemon --pidfile $PIDFILE --signal SIGUSR2
 	eend $?
 }

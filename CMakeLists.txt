@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
 # set the project name and version
-project("StormByte Video Converter"
-	VERSION 1.0.2
+project("StormByte Video Convert"
+	VERSION 1.0.3
 	DESCRIPTION "This is a program to handle automatic ffmpeg conversions between downloaded videos in order to format them to be properly stored"
 	HOMEPAGE_URL "https://github.com/StormBytePP/StormByte-videoconvert"
 )
@@ -75,7 +75,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/GetVersionFromGitTag.cmake)
 # Project and version info
 file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/definitions.h CONTENT "#pragma once
 
-#define PROGRAM_NAME			\"StormByte-videoconvert\"
+#define PROGRAM_NAME			\"StormByte-VideoConvert\"
 #define PROGRAM_DESCRIPTION		\"${PROJECT_DESCRIPTION}\"
 #define PROGRAM_AUTHOR			\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"
 #define PROGRAM_VERSION			\"${${PROJECT_NAME}_VERSION_STRING}\"
