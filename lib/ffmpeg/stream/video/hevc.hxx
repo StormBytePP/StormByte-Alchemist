@@ -62,7 +62,7 @@ namespace StormByte::VideoConvert::Stream::Video {
 
 		private:
 			std::optional<HDR> m_hdr;
-			static const std::string DEFAULT_MAX_BITRATE, DEFAULT_BUFFSIZE, X265_PARAMS;
+			static const std::string DEFAULT_BUFFSIZE, X265_PARAMS;
 
 			inline HEVC* copy() const override { return new HEVC(*this); }
 	};

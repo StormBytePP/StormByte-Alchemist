@@ -73,18 +73,13 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 
 
 /********************************* HEVC *************************************/
-const std::string Stream::Video::HEVC::DEFAULT_MAX_BITRATE 	= "6M";
 const std::string Stream::Video::HEVC::DEFAULT_BUFFSIZE 	= "200M";
 const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:aq-mode=3:log-level=error";
 const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMAX);
 
-Stream::Video::HEVC::HEVC(const unsigned short& stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::film::stream::VIDEO_HEVC) {
-	m_max_rate = DEFAULT_MAX_BITRATE;
-}
+Stream::Video::HEVC::HEVC(const unsigned short& stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::film::stream::VIDEO_HEVC) { }
 
-Stream::Video::HEVC::HEVC(unsigned short&& stream_id):Stream::Video::Base(std::move(stream_id), "libx265", Database::Data::film::stream::VIDEO_HEVC) {
-	m_max_rate = DEFAULT_MAX_BITRATE;
-}
+Stream::Video::HEVC::HEVC(unsigned short&& stream_id):Stream::Video::Base(std::move(stream_id), "libx265", Database::Data::film::stream::VIDEO_HEVC) { }
 
 
 std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
