@@ -6,6 +6,24 @@ using namespace StormByte::VideoConvert;
 
 Configuration::Base::Base(const std::list<std::string>& mandatory_string, const std::list<std::string>& mandatory_int, const std::list<std::string>& optional_string, const std::list<std::string>& optional_int):m_mandatory_string_values(mandatory_string), m_mandatory_int_values(mandatory_int), m_optional_string_values(optional_string), m_optional_int_values(optional_int) {}
 
+Configuration::Base& Configuration::Base::operator=(const Base& b) {
+	if (this != &b) {
+		m_values_string = b.m_values_string;
+		m_values_int = b.m_values_int;
+		m_errors = b.m_errors;
+	}
+	return *this;
+}
+
+Configuration::Base& Configuration::Base::operator=(Base&& b) noexcept {
+	if (this != &b) {
+		m_values_string = std::move(b.m_values_string);
+		m_values_int = std::move(b.m_values_int);
+		m_errors = std::move(b.m_errors);
+	}
+	return *this;
+}
+
 void Configuration::Base::parse(const Types::path_t& file) noexcept {
 	m_errors.clear();
 	m_values_int.clear();
