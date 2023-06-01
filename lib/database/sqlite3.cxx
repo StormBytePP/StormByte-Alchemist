@@ -329,7 +329,7 @@ void Database::SQLite3::set_film_stream_HDR(const unsigned int& film_id, Data::f
 			result.luminance_min	= sqlite3_column_int(stmt, 8);
 			result.luminance_max	= sqlite3_column_int(stmt, 9);
 			if (sqlite3_column_type(stmt, 10) != SQLITE_NULL && sqlite3_column_type(stmt, 11) != SQLITE_NULL)
-				result.light_level = std::make_pair(sqlite3_column_int(stmt, 10), sqlite3_column_int(stmt, 10));
+				result.light_level = std::make_pair(sqlite3_column_int(stmt, 10), sqlite3_column_int(stmt, 11));
 			
 			stream.m_hdr.emplace(std::move(result));
 		}
