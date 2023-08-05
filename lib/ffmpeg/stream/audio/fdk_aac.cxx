@@ -13,7 +13,7 @@ std::list<std::string> Stream::Audio::FDKAAC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Audio::Base::ffmpeg_parameters();
 
 	if (m_profile) {
-		result.push_back("-profile:" + ffmpeg_stream_id());			result.push_back(*m_profile);
+		result.push_back("-profile:" + ffmpeg_stream_pos());			result.push_back(*m_profile);
 	}
 
 	return result;
