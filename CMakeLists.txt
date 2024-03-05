@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -Wimplicit-fallthrough")
 
 # set the project name and version
 project("StormByte Video Convert"
@@ -10,13 +11,6 @@ project("StormByte Video Convert"
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_INCLUDE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
-if(NOT CMAKE_BUILD_TYPE)
-	message(STATUS "Setting build type to Debug as none was specified.")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
-	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
-	#set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
 
 add_subdirectory(lib)
 add_subdirectory(thirdparty)
