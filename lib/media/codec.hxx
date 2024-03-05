@@ -4,6 +4,7 @@
 
 #include <limits>
 #include <list>
+#include <string>
 
 namespace StormByte::Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -31,7 +32,7 @@ namespace StormByte::Alchemist::Media::Codec {
 
 			inline Codec::Type get_codec_type() const;
 
-		private:
+		protected:
 			Codec::Type m_codec_type;
 	};
 }
