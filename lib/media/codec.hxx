@@ -14,4 +14,24 @@ namespace StormByte::Alchemist::Media::Codec {
 	};
 
 	[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
+
+	class Base {
+		public:
+			Base(const Codec::Type&);
+			Base(Codec::Type&&);
+			Base(const Base&)				= default;
+			Base(Base&&)					= default;
+			Base& operator=(const Base&)	= default;
+			Base& operator=(Base&&)			= default;
+			virtual ~Base()					= default;
+
+			virtual bool is_video() const	= 0;
+			virtual bool is_audio() const	= 0;
+			virtual bool is_image() const	= 0;
+
+			inline Codec::Type get_codec_type() const;
+
+		private:
+			Codec::Type m_codec_type;
+	};
 }
