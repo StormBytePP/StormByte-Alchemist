@@ -16,7 +16,7 @@ StormByte::Alchemist::Media::Codec::Type StormByte::Alchemist::Media::Codec::Bas
 	return m_codec_type;
 }
 
-const std::map<StormByte::Alchemist::Media::Codec::Type, std::pair<std::string, std::string>> DLL_PUBLIC StormByte::Alchemist::Media::Codec::Map() {
+const std::map<StormByte::Alchemist::Media::Codec::Type, StormByte::Alchemist::Media::Info> DLL_PUBLIC StormByte::Alchemist::Media::Codec::Metadata() {
 	return {
 		// Video
 		{Codec::AV1,		{"AV1",				"AOMedia Video 1"							}},
@@ -33,7 +33,7 @@ const std::map<StormByte::Alchemist::Media::Codec::Type, std::pair<std::string, 
 		{Codec::DTS,		{"DTS",				"DTS"										}},
 		{Codec::EAC3,		{"E-AC3",			"Dolby Digital Plus"						}},
 		{Codec::FLAC,		{"FLAC",			"Free Lossless Audio Codec"					}},
-		{Codec::MP2,		{"MP2",				"MPEG-1 Audio Layer III"					}},
+		{Codec::MP2,		{"MP2",				"MPEG-1 Audio Layer II"						}},
 		{Codec::MP3,		{"MP3",				"MPEG-1 Audio Layer III"					}},
 		{Codec::OPUS,		{"OPUS",			"Opus"										}},
 		{Codec::VORBIS,		{"VORBIS",			"Vorbis Audio Codec"						}},

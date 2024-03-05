@@ -1,8 +1,9 @@
 #pragma once
 
-#include "visibility.h"
+#include "media.hxx"
 
 #include <list>
+#include <map>
 
 namespace StormByte::Alchemist::Media {
 	struct DLL_PUBLIC Encoder {
@@ -14,7 +15,7 @@ namespace StormByte::Alchemist::Media {
 			MPEG2_VIDEO,
 			VP8_LIBVPX,
 			VP9_LIBVPX,
-			MPEG4_LIBXVID,
+			MPEG4_DEFAULT, MPEG4_LIBXVID,
 
 			// Audio
 			AAC_DEFAULT, AAC_FRAUNHOFFER,
@@ -37,5 +38,6 @@ namespace StormByte::Alchemist::Media {
 		};
 
 		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
+		[[maybe_unused]] static const std::map<Type, Info> DLL_PUBLIC Metadata();
 	};
 }

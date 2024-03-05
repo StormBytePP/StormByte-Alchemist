@@ -1,12 +1,10 @@
 #pragma once
 
-#include "visibility.h"
+#include "media.hxx"
 
-#include <map>
 #include <limits>
 #include <list>
-#include <string>
-#include <utility>
+#include <map>
 
 namespace StormByte::Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -16,8 +14,8 @@ namespace StormByte::Alchemist::Media::Codec {
 		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 
-	[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
-	[[maybe_unused]] static const std::map<Type, std::pair<std::string, std::string>> DLL_PUBLIC Map();
+	[[maybe_unused]] const std::list<Type> DLL_PUBLIC Available();
+	[[maybe_unused]] const std::map<Type, Info> DLL_PUBLIC Metadata();
 
 	class Base {
 		public:

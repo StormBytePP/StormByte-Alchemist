@@ -1,8 +1,9 @@
 #pragma once
 
-#include "visibility.h"
+#include "media.hxx"
 
 #include <list>
+#include <map>
 
 namespace StormByte::Alchemist::Media {
 	struct DLL_PUBLIC Decoder {
@@ -36,6 +37,9 @@ namespace StormByte::Alchemist::Media {
 			WEBP_DEFAULT
 		};
 
+		using Info = std::pair<std::string, std::string>;
+
 		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
+		[[maybe_unused]] static const std::map<Type, Info> DLL_PUBLIC Metadata();
 	};
 }
