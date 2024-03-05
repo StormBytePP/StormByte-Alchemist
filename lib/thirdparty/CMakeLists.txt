@@ -1,0 +1,5 @@
+if (WITH_BUNDLED_SQLITE)
+	add_subdirectory(sqlite3)
+else()
+	find_package(SQLite3 REQUIRED)
+endif()
