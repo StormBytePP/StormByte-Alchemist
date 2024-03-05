@@ -22,3 +22,6 @@
     	#define DLL_LOCAL
   	#endif
 #endif
+
+namespace StormByte::VideoConvert {};
+namespace STVC = StormByte::VideoConvert;
