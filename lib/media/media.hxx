@@ -1,3 +1,3 @@
-#include "codecs.hxx"
-#include "decoders.hxx"
-#include "encoders.hxx"
+#include "codec.hxx"
+#include "decoder.hxx"
+#include "encoder.hxx"

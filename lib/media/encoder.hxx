@@ -5,16 +5,16 @@
 #include <list>
 
 namespace StormByte::Alchemist::Media {
-	struct DLL_PUBLIC Decoders {
+	struct DLL_PUBLIC Encoder {
 		enum Type:unsigned short {
 			// Video
-			AV1_DEFAULT, AV1_DAV1D, AV1_AOM, AV1_CUVID,
-			H264_DEFAULT, H264_OPENH264, H264_CUVID,
-			H265_DEFAULT, H265_CUVID,
-			MPEG2_DEFAULT, MPEG2_CUVID,
-			VP8_DEFAULT, VP8_LIBVPX, VP8_CUVID,
-			VP9_DEFAULT, VP9_LIBVPX, VP9_CUVID,
-			MPEG4_DEFAULT, MPEG4_CUVID,
+			AV1_AOM, AV1_RAV1E, AV1_SVT, AV1_NVENC,
+			H264_X264, H264_OPENH264, H264_NVENC,
+			H265_X265, H265_NVENC,
+			MPEG2_VIDEO,
+			VP8_LIBVPX,
+			VP9_LIBVPX,
+			MPEG4_LIBXVID,
 
 			// Audio
 			AAC_DEFAULT, AAC_FRAUNHOFFER,
@@ -22,8 +22,8 @@ namespace StormByte::Alchemist::Media {
 			DTS_DEFAULT,
 			EAC3_DEFAULT,
 			FLAC_DEFAULT,
-			MP2_DEFAULT,
-			MP3_DEFAULT,
+			MP2_DEFAULT, MP2_TWOLAME,
+			MP3_LAME,
 			OPUS_DEFAULT, OPUS_LIBOPUS,
 			VORBIS_DEFAULT, VORBIS_LIBVORBIS,
 
@@ -33,7 +33,7 @@ namespace StormByte::Alchemist::Media {
 			JPG_DEFAULT,
 			PNG_DEFAULT,
 			TIFF_DEFAULT,
-			WEBP_DEFAULT
+			WEBP_LIBWEBP
 		};
 
 		static const std::list<Type> Available;

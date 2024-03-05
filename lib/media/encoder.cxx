@@ -1,6 +1,6 @@
-#include "encoders.hxx"
+#include "encoder.hxx"
 
-const std::list<StormByte::Alchemist::Media::Encoders::Type> StormByte::Alchemist::Media::Encoders::Available {
+const std::list<StormByte::Alchemist::Media::Encoder::Type> StormByte::Alchemist::Media::Encoder::Available {
 	// Video
 	#ifdef ENABLE_LIBAOM
 	AV1_AOM,

@@ -1,9 +1,9 @@
 set(ALCHEMIST_LIBRARY_DIR ${PROJECT_SOURCE_DIR}/lib)
 
 set(ALCHEMIST_LIBRARY_SOURCE_FILES
-	${ALCHEMIST_LIBRARY_DIR}/media/codecs.cxx
-	${ALCHEMIST_LIBRARY_DIR}/media/decoders.cxx
-	${ALCHEMIST_LIBRARY_DIR}/media/encoders.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/codec.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/decoder.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/encoder.cxx
 )
 
 add_library(StormByte-Alchemist SHARED ${ALCHEMIST_LIBRARY_SOURCE_FILES})
