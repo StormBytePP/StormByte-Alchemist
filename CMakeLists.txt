@@ -17,3 +17,4 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 add_subdirectory(lib)
+add_subdirectory(thirdparty)
