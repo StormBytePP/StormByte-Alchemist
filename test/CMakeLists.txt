@@ -1,5 +1,5 @@
-add_executable(StormByte-VideoConvert
+add_executable(StormByte-Myrddin
 	main.cxx
 )
-target_compile_features(StormByte-VideoConvert PUBLIC cxx_std_17)
-target_link_libraries(StormByte-VideoConvert StormByte-VideoConvert-library)
+target_compile_features(StormByte-Myrddin PUBLIC cxx_std_17)
+target_link_libraries(StormByte-Myrddin StormByte-Alchemist)

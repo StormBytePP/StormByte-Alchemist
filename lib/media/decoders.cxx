@@ -1,6 +1,6 @@
 #include "decoders.hxx"
 
-const std::list<STVC::Media::Decoders::Type> STVC::Media::Decoders::Available {
+const std::list<StormByte::Alchemist::Media::Decoders::Type> StormByte::Alchemist::Media::Decoders::Available {
 	// Video
 	AV1_DEFAULT,
 	#ifdef ENABLE_DAV1D

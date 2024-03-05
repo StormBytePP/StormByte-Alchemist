@@ -1,10 +1,10 @@
 #pragma once
 
-#include "visibility.hxx"
+#include "visibility.h"
 
 #include <list>
 
-namespace StormByte::VideoConvert::Media {
+namespace StormByte::Alchemist::Media {
 	struct DLL_PUBLIC Encoders {
 		enum Type:unsigned short {
 			// Video

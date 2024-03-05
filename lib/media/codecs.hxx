@@ -1,11 +1,11 @@
 #pragma once
 
-#include "visibility.hxx"
+#include "visibility.h"
 
 #include <limits>
 #include <list>
 
-namespace StormByte::VideoConvert::Media {
+namespace StormByte::Alchemist::Media {
 	struct DLL_PUBLIC Codecs {
 		enum Type:unsigned short {
 			AV1, H264, HEVC, MPEG2, VP8, VP9, MPEG4,			// Video

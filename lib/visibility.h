@@ -1,5 +1,5 @@
 #if defined _WIN32 || defined __CYGWIN__
-	#ifdef BUILDING_DLL
+	#ifdef BUILDING_ALCHEMIST
 		#ifdef __GNUC__
     		#define DLL_PUBLIC __attribute__ ((dllexport))
 		#else
@@ -22,6 +22,3 @@
     	#define DLL_LOCAL
   	#endif
 #endif
-
-namespace StormByte::VideoConvert {};
-namespace STVC = StormByte::VideoConvert;

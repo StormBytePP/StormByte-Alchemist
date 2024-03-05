@@ -1,6 +1,10 @@
 #include "media.hxx"
 
-// const std::list<STVC::Media::Encoders::Encoder> STVC::Media::Encoders::Available {
+static const std::list<Codecs::Type> Codecs();
+static const std::list<Encoders::Type> Encoders();
+static const std::list<Decoders::Type> Decoders();
+
+// const std::list<StormByte::Alchemist::Media::Encoders::Encoder> StormByte::Alchemist::Media::Encoders::Available {
 // 	// Video
 // 	#ifdef ENABLE_AV1
 // 	AV1,
@@ -59,7 +63,7 @@
 // 	TIFF
 // };
 
-// const std::map<STVC::Media::Encoders::Encoder, std::pair<std::string, std::string>> STVC::Media::Encoders::Names {
+// const std::map<StormByte::Alchemist::Media::Encoders::Encoder, std::pair<std::string, std::string>> StormByte::Alchemist::Media::Encoders::Names {
 // 	//Video
 // 	{AV1,		{"AV1",				"AOMedia Video 1"							}},
 // 	{H264,		{"AVC/H264",		"Advanced Video Coding"						}},
