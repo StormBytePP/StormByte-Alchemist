@@ -1,9 +1,15 @@
 set(PROJECT_LIBRARY_DIR ${PROJECT_SOURCE_DIR}/lib)
 
 set(VIDEOCONVERT_LIBRARY_SOURCE_FILES
-	${PROJECT_LIBRARY_DIR}/media/media.cxx
-	${PROJECT_LIBRARY_DIR}/media/properties.cxx
-	${PROJECT_LIBRARY_DIR}/media/codec/base.cxx
+	${PROJECT_LIBRARY_DIR}/media/codecs.cxx
+	${PROJECT_LIBRARY_DIR}/media/decoders.cxx
+	${PROJECT_LIBRARY_DIR}/media/encoders.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/base.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/image/bmp.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/image/gif.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/image/jpg.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/image/png.cxx
+	# ${PROJECT_LIBRARY_DIR}/media/codec/image/tiff.cxx
 )
 
 add_library(StormByte-VideoConvert-library SHARED ${VIDEOCONVERT_LIBRARY_SOURCE_FILES})
