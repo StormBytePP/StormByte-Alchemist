@@ -36,6 +36,6 @@ namespace StormByte::Alchemist::Media {
 			WEBP_DEFAULT
 		};
 
-		static const std::list<Type> Available;
+		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
 	};
 }
