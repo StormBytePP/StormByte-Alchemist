@@ -2,11 +2,11 @@
 
 #include "visibility.hxx"
 
+#include <limits>
 #include <list>
 #include <map>
-#include <utility>
 #include <string>
-#include <limits>
+#include <utility>
 
 namespace StormByte::VideoConvert::Media {
 	struct DLL_PUBLIC Encoders {
@@ -18,9 +18,5 @@ namespace StormByte::VideoConvert::Media {
 		};
 		static const std::list<Encoder> Available;
 		static const std::map<Encoder, std::pair<std::string, std::string>> Names;
-
-		bool is_video(const Encoder&) const;
-		bool is_audio(const Encoder&) const;
-		bool is_image(const Encoder&) const;
 	};
 }
