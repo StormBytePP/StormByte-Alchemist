@@ -93,7 +93,7 @@ const std::map<Alchemist::Media::Encoder::Type, Alchemist::Media::Info> DLL_PUBL
 		{VP8_LIBVPX,			{"libvpx",			"VPX VP8"}},
 		{VP9_LIBVPX,			{"libvpx-vp9",		"VPX VP9"}},
 		{MPEG4_DEFAULT,			{"mpeg4",			"FFmpeg MPEG4(DIVX)"}},
-		{MPEG4_LIBXVID,			{"libxvid",			"XVID MPEG4(DIVX)e"}},
+		{MPEG4_LIBXVID,			{"libxvid",			"XVID MPEG4(DIVX)"}},
 
 		// Audio
 		{AAC_DEFAULT,			{"aac",				"FFmpeg AAC"}},
