@@ -7,7 +7,10 @@ namespace Alchemist::Media::Codec {
 			OPUS(const OPUS&)					= default;
 			OPUS(OPUS&&)						= default;
 			OPUS& operator=(const OPUS&)		= default;
-			OPUS& operator=(OPUS&&)			= default;
-			~OPUS()							= default;
+			OPUS& operator=(OPUS&&)				= default;
+			~OPUS()								= default;
+
+			std::list<Decoder::Type> get_available_decoders() const;
+			std::list<Encoder::Type> get_available_encoders() const;
 	};
 }

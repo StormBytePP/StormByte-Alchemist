@@ -9,5 +9,8 @@ namespace Alchemist::Media::Codec {
 			BMP& operator=(const BMP&)		= default;
 			BMP& operator=(BMP&&)			= default;
 			~BMP()							= default;
+
+			std::list<Decoder::Type> get_available_decoders() const;
+			std::list<Encoder::Type> get_available_encoders() const;
 	};
 }

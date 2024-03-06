@@ -9,7 +9,7 @@ namespace Alchemist::Media::Codec {
 			Video(Video&&)					= default;
 			Video& operator=(const Video&)	= default;
 			Video& operator=(Video&&)		= default;
-			virtual ~Video()				= 0;
+			virtual ~Video()				= default;
 
 			bool is_video() const;
 			bool is_audio() const;

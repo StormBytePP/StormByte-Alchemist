@@ -9,5 +9,8 @@ namespace Alchemist::Media::Codec {
 			GIF& operator=(const GIF&)		= default;
 			GIF& operator=(GIF&&)			= default;
 			~GIF()							= default;
+
+			std::list<Decoder::Type> get_available_decoders() const;
+			std::list<Encoder::Type> get_available_encoders() const;
 	};
 }

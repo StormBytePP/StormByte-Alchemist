@@ -8,7 +8,7 @@ const std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Decoder::Avai
 		AV1_DAV1D,
 		#endif
 		#ifdef ENABLE_LIBAOM
-		AV1_AOM,
+		AV1_LIBAOM,
 		#endif
 		#ifdef ENABLE_CUDA
 		AV1_CUVID,
@@ -82,7 +82,7 @@ const std::list<Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Decoder::Al
 		// Video
 		{AV1_DEFAULT,		"av1",				"FFmpeg AV1"			},
 		{AV1_DAV1D,			"libdav1d",			"DAV1D"					},
-		{AV1_AOM,			"libaom-av1",		"AOM AV1"				},
+		{AV1_LIBAOM,		"libaom-av1",		"AOM AV1"				},
 		{AV1_CUVID,			"av1_cuvid",		"CuVid AV1"				},
 		{H264_DEFAULT,		"h264",				"FFmpeg H264"			},
 		{H264_OPENH264,		"libopenh264",		"OpenH264"				},

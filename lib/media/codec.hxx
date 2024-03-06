@@ -1,6 +1,7 @@
 #pragma once
 
-#include "info.hxx"
+#include "decoder.hxx"
+#include "encoder.hxx"
 
 #include <limits>
 #include <list>
@@ -20,17 +21,19 @@ namespace Alchemist::Media::Codec {
 		public:
 			Base(const Type&);
 			Base(Type&&);
-			Base(const Base&)				= default;
-			Base(Base&&)					= default;
-			Base& operator=(const Base&)	= default;
-			Base& operator=(Base&&)			= default;
-			virtual ~Base()					= default;
+			Base(const Base&)												= default;
+			Base(Base&&)													= default;
+			Base& operator=(const Base&)									= default;
+			Base& operator=(Base&&)											= default;
+			virtual ~Base()													= default;
 
-			virtual bool is_video() const	= 0;
-			virtual bool is_audio() const	= 0;
-			virtual bool is_image() const	= 0;
+			virtual bool is_video() const									= 0;
+			virtual bool is_audio() const									= 0;
+			virtual bool is_image() const									= 0;
 
 			inline  Type get_codec_type() const;
+			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
+			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
 		protected:
 			 Type m_codec_type;

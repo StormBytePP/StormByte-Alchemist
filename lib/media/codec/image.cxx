@@ -4,8 +4,6 @@ Alchemist::Media::Codec::Image::Image(const Codec::Type& codec_type):Base(codec_
 
 Alchemist::Media::Codec::Image::Image(Codec::Type&& codec_type):Base(std::move(codec_type)) { }
 
-Alchemist::Media::Codec::Image::~Image() { }
-
 bool Alchemist::Media::Codec::Image::is_video() const { return false; }
 
 bool Alchemist::Media::Codec::Image::is_audio() const { return false; }

@@ -7,7 +7,10 @@ namespace Alchemist::Media::Codec {
 			TIFF(const TIFF&)					= default;
 			TIFF(TIFF&&)						= default;
 			TIFF& operator=(const TIFF&)		= default;
-			TIFF& operator=(TIFF&&)			= default;
-			~TIFF()							= default;
+			TIFF& operator=(TIFF&&)				= default;
+			~TIFF()								= default;
+
+			std::list<Decoder::Type> get_available_decoders() const;
+			std::list<Encoder::Type> get_available_encoders() const;
 	};
 }

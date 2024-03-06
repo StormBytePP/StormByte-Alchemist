@@ -8,9 +8,9 @@ namespace Alchemist::Media {
 	struct DLL_PUBLIC Encoder {
 		enum Type:unsigned short {
 			// Video
-			AV1_AOM, AV1_RAV1E, AV1_SVT, AV1_NVENC,
-			H264_X264, H264_OPENH264, H264_NVENC,
-			H265_X265, H265_NVENC,
+			AV1_LIBAOM, AV1_NVENC, AV1_RAV1E, AV1_SVT,
+			H264_NVENC, H264_OPENH264, H264_X264,
+			H265_NVENC, H265_X265,
 			MPEG2_DEFAULT,
 			VP8_LIBVPX,
 			VP9_LIBVPX,

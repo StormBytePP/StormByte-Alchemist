@@ -1,8 +1,9 @@
 #pragma once
 
-#include "visibility.h"
+#include "visibility.hxx"
 
 #include <filesystem>
+#include <list>
 
 namespace Alchemist::Media {
 	class DLL_PUBLIC Metadata {

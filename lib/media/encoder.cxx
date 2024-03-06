@@ -4,7 +4,7 @@ const std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Encoder::Avai
 	return {
 		// Video
 		#ifdef ENABLE_LIBAOM
-		AV1_AOM,
+		AV1_LIBAOM,
 		#endif
 		#ifdef ENABLE_RAV1E
 		AV1_RAV1E,
@@ -80,7 +80,7 @@ const std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Encoder::Avai
 const std::list<Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Encoder::All() {
 	return {
 		// Video
-		{AV1_AOM,				"libaom-av1",		"AOM AV1"					},
+		{AV1_LIBAOM,			"libaom-av1",		"AOM AV1"					},
 		{AV1_RAV1E,				"librav1e",			"RAV1E AV1"					},
 		{AV1_SVT,				"libsvtav1",		"SVT AV1"					},
 		{AV1_NVENC,				"av1_nvenc",		"NvEnc AV1"					},
