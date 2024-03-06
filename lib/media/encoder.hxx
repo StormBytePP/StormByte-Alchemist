@@ -1,9 +1,8 @@
 #pragma once
 
-#include "media.hxx"
+#include "info.hxx"
 
 #include <list>
-#include <map>
 
 namespace Alchemist::Media {
 	struct DLL_PUBLIC Encoder {
@@ -38,7 +37,7 @@ namespace Alchemist::Media {
 		};
 
 		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
-		[[maybe_unused]] static const std::map<Type, Info> DLL_PUBLIC Metadata();
+		[[maybe_unused]] static const std::list<Info> DLL_PUBLIC All();
 
 		class DLL_PUBLIC Base {
 			public:

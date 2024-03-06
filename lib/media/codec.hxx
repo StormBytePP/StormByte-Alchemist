@@ -1,10 +1,9 @@
 #pragma once
 
-#include "media.hxx"
+#include "info.hxx"
 
 #include <limits>
 #include <list>
-#include <map>
 
 namespace Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -15,7 +14,7 @@ namespace Alchemist::Media::Codec {
 	};
 
 	[[maybe_unused]] const std::list<Type> DLL_PUBLIC Available();
-	[[maybe_unused]] const std::map<Type, Info> DLL_PUBLIC Metadata();
+	[[maybe_unused]] const std::list<Info> DLL_PUBLIC All();
 
 	class Base {
 		public:

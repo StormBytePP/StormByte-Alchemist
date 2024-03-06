@@ -77,50 +77,50 @@ const std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Decoder::Avai
 	};
 }
 
-const std::map<Alchemist::Media::Decoder::Type, Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Decoder::Metadata() {
+const std::list<Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Decoder::All() {
 	return {
 		// Video
-		{AV1_DEFAULT,		{"av1",				"FFmpeg AV1"}},
-		{AV1_DAV1D,			{"libdav1d",		"DAV1D"}},
-		{AV1_AOM,			{"libaom-av1",		"AOM AV1"}},
-		{AV1_CUVID,			{"av1_cuvid",		"CuVid AV1"}},
-		{H264_DEFAULT,		{"h264",			"FFmpeg H264"}},
-		{H264_OPENH264,		{"libopenh264",		"OpenH264"}},
-		{H264_CUVID,		{"h264_cuvid",		"CuVid H264"}},
-		{H265_DEFAULT,		{"hevc",			"FFmpeg H265(HEVC)"}},
-		{H265_CUVID,		{"hevc_cuvid",		"CuVid H265(HEVC)"}},
-		{MPEG2_DEFAULT,		{"mpeg2video",		"FFmpeg MPEG-2"}},
-		{MPEG2_CUVID,		{"mpeg2_cuvid",		"CuVid MPEG-2"}},
-		{VP8_DEFAULT,		{"vp8",				"FFmpeg VP8"}},
-		{VP8_LIBVPX,		{"libvpx",			"VPX VP8"}},
-		{VP8_CUVID,			{"vp8_cuvid",		"CuVid VP8"}},
-		{VP9_DEFAULT,		{"vp9",				"FFmpeg VP9"}},
-		{VP9_LIBVPX,		{"libvpx-vp9",		"VPX VP9"}},
-		{VP9_CUVID,			{"vp9_cuvid",		"CuVid VP9"}},
-		{MPEG4_DEFAULT,		{"mpeg4",			"FFmpeg MPEG-4"}},
-		{MPEG4_CUVID,		{"mpeg4_cuvid",		"CuVid MPEG-4"}},
+		{AV1_DEFAULT,		"av1",				"FFmpeg AV1"			},
+		{AV1_DAV1D,			"libdav1d",			"DAV1D"					},
+		{AV1_AOM,			"libaom-av1",		"AOM AV1"				},
+		{AV1_CUVID,			"av1_cuvid",		"CuVid AV1"				},
+		{H264_DEFAULT,		"h264",				"FFmpeg H264"			},
+		{H264_OPENH264,		"libopenh264",		"OpenH264"				},
+		{H264_CUVID,		"h264_cuvid",		"CuVid H264"			},
+		{H265_DEFAULT,		"hevc",				"FFmpeg H265(HEVC)"		},
+		{H265_CUVID,		"hevc_cuvid",		"CuVid H265(HEVC)"		},
+		{MPEG2_DEFAULT,		"mpeg2video",		"FFmpeg MPEG-2"			},
+		{MPEG2_CUVID,		"mpeg2_cuvid",		"CuVid MPEG-2"			},
+		{VP8_DEFAULT,		"vp8",				"FFmpeg VP8"			},
+		{VP8_LIBVPX,		"libvpx",			"VPX VP8"				},
+		{VP8_CUVID,			"vp8_cuvid",		"CuVid VP8"				},
+		{VP9_DEFAULT,		"vp9",				"FFmpeg VP9"			},
+		{VP9_LIBVPX,		"libvpx-vp9",		"VPX VP9"				},
+		{VP9_CUVID,			"vp9_cuvid",		"CuVid VP9"				},
+		{MPEG4_DEFAULT,		"mpeg4",			"FFmpeg MPEG-4"			},
+		{MPEG4_CUVID,		"mpeg4_cuvid",		"CuVid MPEG-4"			},
 
 		// Audio
-		{AAC_DEFAULT,		{"aac",				"FFmpeg AAC"}},
-		{AAC_FRAUNHOFFER,	{"libfdk_aac",		"Fraunhoffer AAC"}},
-		{AC3_DEFAULT,		{"ac3",				"FFmpeg AC3"}},
-		{DTS_DEFAULT,		{"dca",				"FFmpeg DTS"}},
-		{EAC3_DEFAULT,		{"eac3",			"FFmpeg EAC3"}},
-		{FLAC_DEFAULT,		{"flac",			"FFmpeg FLAC"}},
-		{MP2_DEFAULT,		{"mp2",				"FFmpeg MP2"}},
-		{MP3_DEFAULT,		{"mp3",				"FFmpeg mp3"}},
-		{OPUS_DEFAULT,		{"opus",			"FFmpeg OPUS"}},
-		{OPUS_LIBOPUS,		{"libopus",			"LibOpus"}},
-		{VORBIS_DEFAULT,	{"vorbis",			"FFmpeg VORBIS"}},
-		{VORBIS_LIBVORBIS,	{"libvorbis",		"LibVorbis"}},
+		{AAC_DEFAULT,		"aac",				"FFmpeg AAC"			},
+		{AAC_FRAUNHOFFER,	"libfdk_aac",		"Fraunhoffer AAC"		},
+		{AC3_DEFAULT,		"ac3",				"FFmpeg AC3"			},
+		{DTS_DEFAULT,		"dca",				"FFmpeg DTS"			},
+		{EAC3_DEFAULT,		"eac3",				"FFmpeg EAC3"			},
+		{FLAC_DEFAULT,		"flac",				"FFmpeg FLAC"			},
+		{MP2_DEFAULT,		"mp2",				"FFmpeg MP2"			},
+		{MP3_DEFAULT,		"mp3",				"FFmpeg mp3"			},
+		{OPUS_DEFAULT,		"opus",				"FFmpeg OPUS"			},
+		{OPUS_LIBOPUS,		"libopus",			"LibOpus"				},
+		{VORBIS_DEFAULT,	"vorbis",			"FFmpeg VORBIS"			},
+		{VORBIS_LIBVORBIS,	"libvorbis",		"LibVorbis"				},
 
 		// Image
-		{BMP_DEFAULT,		{"bmp",				"FFmpeg BMP"}},
-		{GIF_DEFAULT,		{"gif",				"FFmpeg GIF"}},
-		{JPG_DEFAULT,		{"mjpeg",			"FFmpeg JPG"}},
-		{PNG_DEFAULT,		{"png",				"FFmpeg PNG"}},
-		{TIFF_DEFAULT,		{"tiff",			"FFmpeg TIFF"}},
-		{WEBP_DEFAULT,		{"webp",			"FFmpeg WEBP"}}
+		{BMP_DEFAULT,		"bmp",				"FFmpeg BMP"			},
+		{GIF_DEFAULT,		"gif",				"FFmpeg GIF"			},
+		{JPG_DEFAULT,		"mjpeg",			"FFmpeg JPG"			},
+		{PNG_DEFAULT,		"png",				"FFmpeg PNG"			},
+		{TIFF_DEFAULT,		"tiff",				"FFmpeg TIFF"			},
+		{WEBP_DEFAULT,		"webp",				"FFmpeg WEBP"			}
 	};
 }
 
