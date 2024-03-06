@@ -123,3 +123,7 @@ const std::map<Alchemist::Media::Decoder::Type, Alchemist::Media::Info> DLL_PUBL
 		{WEBP_DEFAULT,		{"webp",			"FFmpeg WEBP"}}
 	};
 }
+
+Alchemist::Media::Decoder::Base::Base(const Type& decoder_type):m_decoder_type(decoder_type) { }
+
+Alchemist::Media::Decoder::Base::Base(Type&& decoder_type):m_decoder_type(std::move(decoder_type)) { }

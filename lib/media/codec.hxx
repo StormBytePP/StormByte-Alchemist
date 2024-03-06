@@ -19,8 +19,8 @@ namespace Alchemist::Media::Codec {
 
 	class Base {
 		public:
-			Base(const Codec::Type&);
-			Base(Codec::Type&&);
+			Base(const Type&);
+			Base(Type&&);
 			Base(const Base&)				= default;
 			Base(Base&&)					= default;
 			Base& operator=(const Base&)	= default;
@@ -31,9 +31,9 @@ namespace Alchemist::Media::Codec {
 			virtual bool is_audio() const	= 0;
 			virtual bool is_image() const	= 0;
 
-			inline Codec::Type get_codec_type() const;
+			inline  Type get_codec_type() const;
 
 		protected:
-			Codec::Type m_codec_type;
+			 Type m_codec_type;
 	};
 }

@@ -41,5 +41,21 @@ namespace Alchemist::Media {
 
 		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
 		[[maybe_unused]] static const std::map<Type, Info> DLL_PUBLIC Metadata();
+
+		class DLL_PUBLIC Base {
+			public:
+				Base(const Type&);
+				Base(Type&&);
+				Base(const Base&)				= default;
+				Base(Base&&)					= default;
+				Base& operator=(const Base&)	= default;
+				Base& operator=(Base&&)			= default;
+				virtual ~Base()					= 0;
+
+				inline Type get_decoder_type() const;
+
+			protected:
+				Type m_decoder_type;
+		};
 	};
 }

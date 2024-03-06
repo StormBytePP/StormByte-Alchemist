@@ -2,8 +2,6 @@ set(ALCHEMIST_LIBRARY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
 
 set(ALCHEMIST_LIBRARY_SRCs
 	${ALCHEMIST_LIBRARY_DIR}/media/codec.cxx
-	${ALCHEMIST_LIBRARY_DIR}/media/decoder.cxx
-	${ALCHEMIST_LIBRARY_DIR}/media/encoder.cxx
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/audio.cxx
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/image.cxx
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/video.cxx
@@ -29,6 +27,11 @@ set(ALCHEMIST_LIBRARY_SRCs
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/video/mpeg4.cxx
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/video/vp8.cxx
 	${ALCHEMIST_LIBRARY_DIR}/media/codec/video/vp9.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/decoder.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/encoder.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/decoder/audio.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/decoder/image.cxx
+	${ALCHEMIST_LIBRARY_DIR}/media/decoder/video.cxx
 )
 
 add_library(Alchemist SHARED ${ALCHEMIST_LIBRARY_SRCs})
