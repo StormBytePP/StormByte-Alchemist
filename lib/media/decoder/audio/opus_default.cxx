@@ -1,3 +1,3 @@
-#include "opus_default.hxx"
+#include "opus_libopus.hxx"
 
-Alchemist::Media::Codec::Decoder::OPUS_DEFAULT::OPUS_DEFAULT():Audio(Media::Decoder::OPUS_DEFAULT) { }
+Alchemist::Media::Codec::Decoder::OPUS_LIBOPUS::OPUS_LIBOPUS():Audio(Media::Decoder::OPUS_LIBOPUS) { }
