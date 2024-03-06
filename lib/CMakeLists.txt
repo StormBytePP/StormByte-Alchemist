@@ -27,6 +27,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/video/mpeg4.cxx
 	${ALCHEMY_DIR}/media/codec/video/vp8.cxx
 	${ALCHEMY_DIR}/media/codec/video/vp9.cxx
+	${ALCHEMY_DIR}/media/container.cxx
 	${ALCHEMY_DIR}/media/decoder.cxx
 	${ALCHEMY_DIR}/media/decoder/audio.cxx
 	${ALCHEMY_DIR}/media/decoder/audio/aac_default.cxx
