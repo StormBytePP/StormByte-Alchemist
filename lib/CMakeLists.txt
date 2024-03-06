@@ -75,7 +75,7 @@ set(ALCHEMY_SRCs
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
-target_compile_features(Alchemy PUBLIC cxx_std_23)
+target_compile_features(Alchemy PUBLIC cxx_std_17)
 target_link_libraries(Alchemy sqlite3)
 target_include_directories(Alchemy PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
