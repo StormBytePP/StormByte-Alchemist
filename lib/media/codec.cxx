@@ -1,6 +1,6 @@
 #include "codec.hxx"
 
-const std::list<StormByte::Alchemist::Media::Codec::Type> StormByte::Alchemist::Media::Codec::Available() {
+const std::list<Alchemist::Media::Codec::Type> Alchemist::Media::Codec::Available() {
 	return {
 		AV1, H264, H265, MPEG2, VP8, VP9, MPEG4,			// Video
 		AAC, AC3, DTS, EAC3, FLAC, MP2, MP3, OPUS, VORBIS,	// Audio
@@ -8,15 +8,15 @@ const std::list<StormByte::Alchemist::Media::Codec::Type> StormByte::Alchemist::
 	};
 }
 
-StormByte::Alchemist::Media::Codec::Base::Base(const Codec::Type& codec_type):m_codec_type(codec_type) { }
+Alchemist::Media::Codec::Base::Base(const Codec::Type& codec_type):m_codec_type(codec_type) { }
 
-StormByte::Alchemist::Media::Codec::Base::Base(Codec::Type&& codec_type):m_codec_type(std::move(codec_type)) { }
+Alchemist::Media::Codec::Base::Base(Codec::Type&& codec_type):m_codec_type(std::move(codec_type)) { }
 
-StormByte::Alchemist::Media::Codec::Type StormByte::Alchemist::Media::Codec::Base::get_codec_type() const {
+Alchemist::Media::Codec::Type Alchemist::Media::Codec::Base::get_codec_type() const {
 	return m_codec_type;
 }
 
-const std::map<StormByte::Alchemist::Media::Codec::Type, StormByte::Alchemist::Media::Info> DLL_PUBLIC StormByte::Alchemist::Media::Codec::Metadata() {
+const std::map<Alchemist::Media::Codec::Type, Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Codec::Metadata() {
 	return {
 		// Video
 		{Codec::AV1,		{"AV1",				"AOMedia Video 1"							}},

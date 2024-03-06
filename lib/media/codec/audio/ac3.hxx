@@ -1,6 +1,6 @@
 #include "media/codec/audio.hxx"
 
-namespace StormByte::Alchemist::Media::Codec {
+namespace Alchemist::Media::Codec {
 	class DLL_PUBLIC AC3 final: public Audio {
 		public:
 			AC3();

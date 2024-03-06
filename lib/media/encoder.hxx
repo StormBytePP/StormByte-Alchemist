@@ -5,7 +5,7 @@
 #include <list>
 #include <map>
 
-namespace StormByte::Alchemist::Media {
+namespace Alchemist::Media {
 	struct DLL_PUBLIC Encoder {
 		enum Type:unsigned short {
 			// Video

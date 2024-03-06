@@ -1,6 +1,6 @@
 #include "media/codec.hxx"
 
-namespace StormByte::Alchemist::Media::Codec {
+namespace Alchemist::Media::Codec {
 	class DLL_PUBLIC Image: public Base {
 		public:
 			Image(const Codec::Type&);

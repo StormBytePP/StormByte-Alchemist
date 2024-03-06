@@ -1,6 +1,6 @@
 #include "encoder.hxx"
 
-const std::list<StormByte::Alchemist::Media::Encoder::Type> StormByte::Alchemist::Media::Encoder::Available() {
+const std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Encoder::Available() {
 	return {
 		// Video
 		#ifdef ENABLE_LIBAOM
@@ -77,7 +77,7 @@ const std::list<StormByte::Alchemist::Media::Encoder::Type> StormByte::Alchemist
 	};
 }
 
-const std::map<StormByte::Alchemist::Media::Encoder::Type, StormByte::Alchemist::Media::Info> DLL_PUBLIC StormByte::Alchemist::Media::Encoder::Metadata() {
+const std::map<Alchemist::Media::Encoder::Type, Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Encoder::Metadata() {
 	return {
 		// Video
 		{AV1_AOM,				{"libaom-av1",		"AOM AV1"}},

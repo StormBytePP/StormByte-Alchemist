@@ -6,7 +6,7 @@
 #include <list>
 #include <map>
 
-namespace StormByte::Alchemist::Media::Codec {
+namespace Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
 		AV1, H264, H265, MPEG2, VP8, VP9, MPEG4,			// Video
 		AAC, AC3, DTS, EAC3, FLAC, MP2, MP3, OPUS, VORBIS,	// Audio

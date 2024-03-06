@@ -1,6 +1,6 @@
 #include "decoder.hxx"
 
-const std::list<StormByte::Alchemist::Media::Decoder::Type> StormByte::Alchemist::Media::Decoder::Available() {
+const std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Decoder::Available() {
 	return {
 		// Video
 		AV1_DEFAULT,
@@ -77,7 +77,7 @@ const std::list<StormByte::Alchemist::Media::Decoder::Type> StormByte::Alchemist
 	};
 }
 
-const std::map<StormByte::Alchemist::Media::Decoder::Type, StormByte::Alchemist::Media::Info> DLL_PUBLIC StormByte::Alchemist::Media::Decoder::Metadata() {
+const std::map<Alchemist::Media::Decoder::Type, Alchemist::Media::Info> DLL_PUBLIC Alchemist::Media::Decoder::Metadata() {
 	return {
 		// Video
 		{AV1_DEFAULT,		{"av1",				"FFmpeg AV1"}},
