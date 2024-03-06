@@ -12,7 +12,7 @@ namespace Alchemist::Media {
 			AV1_AOM, AV1_RAV1E, AV1_SVT, AV1_NVENC,
 			H264_X264, H264_OPENH264, H264_NVENC,
 			H265_X265, H265_NVENC,
-			MPEG2_VIDEO,
+			MPEG2_DEFAULT,
 			VP8_LIBVPX,
 			VP9_LIBVPX,
 			MPEG4_DEFAULT, MPEG4_LIBXVID,
@@ -39,5 +39,21 @@ namespace Alchemist::Media {
 
 		[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
 		[[maybe_unused]] static const std::map<Type, Info> DLL_PUBLIC Metadata();
+
+		class DLL_PUBLIC Base {
+			public:
+				Base(const Type&);
+				Base(Type&&);
+				Base(const Base&)				= default;
+				Base(Base&&)					= default;
+				Base& operator=(const Base&)	= default;
+				Base& operator=(Base&&)			= default;
+				virtual ~Base()					= 0;
+
+				inline Type get_decoder_type() const;
+
+			protected:
+				Type m_encoder_type;
+		};
 	};
 }

@@ -30,7 +30,7 @@ const std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Encoder::Avai
 		#ifdef ENABLE_NVENC
 		H265_NVENC,
 		#endif
-		MPEG2_VIDEO,
+		MPEG2_DEFAULT,
 		#ifdef ENABLE_LIBVPX
 		VP8_LIBVPX,
 		VP9_LIBVPX,
@@ -89,7 +89,7 @@ const std::map<Alchemist::Media::Encoder::Type, Alchemist::Media::Info> DLL_PUBL
 		{H264_NVENC,			{"h264_nvenc",		"NvEnc H264"}},
 		{H265_X265,				{"libx265",			"x265"}},
 		{H265_NVENC,			{"hevc_nvenc",		"NvEnc H265/HEVC"}},
-		{MPEG2_VIDEO,			{"mpeg2video",		"FFmpeg MPEG2"}},
+		{MPEG2_DEFAULT,			{"mpeg2video",		"FFmpeg MPEG2"}},
 		{VP8_LIBVPX,			{"libvpx",			"VPX VP8"}},
 		{VP9_LIBVPX,			{"libvpx-vp9",		"VPX VP9"}},
 		{MPEG4_DEFAULT,			{"mpeg4",			"FFmpeg MPEG4(DIVX)"}},
@@ -119,3 +119,9 @@ const std::map<Alchemist::Media::Encoder::Type, Alchemist::Media::Info> DLL_PUBL
 		{WEBP_LIBWEBP,			{"libwebp",			"libWEBP"}}
 	};
 }
+
+Alchemist::Media::Encoder::Base::Base(const Type& encoder_type):m_encoder_type(encoder_type) { }
+
+Alchemist::Media::Encoder::Base::Base(Type&& encoder_type):m_encoder_type(std::move(encoder_type)) { }
+
+Alchemist::Media::Encoder::Base::~Base() { }
