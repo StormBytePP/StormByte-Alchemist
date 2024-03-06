@@ -85,5 +85,5 @@ target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
 install(TARGETS Alchemy DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 include(lib/CodecOptions)
-include(lib/ThirdPartyOptions)
+add_subdirectory(thirdparty)
 
