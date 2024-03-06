@@ -1,6 +1,6 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC WEBP_LIBWEBP final: public Image {
 		public:
 			WEBP_LIBWEBP();

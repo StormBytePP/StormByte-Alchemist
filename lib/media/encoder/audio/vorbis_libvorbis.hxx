@@ -1,6 +1,6 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC VORBIS_LIBVORBIS final: public Audio {
 		public:
 			VORBIS_LIBVORBIS();

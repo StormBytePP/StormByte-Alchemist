@@ -1,6 +1,6 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Codec::Decoder {
+namespace Alchemist::Media::Decoder {
 	class DLL_PUBLIC AV1_DAV1D final: public Video {
 		public:
 			AV1_DAV1D();

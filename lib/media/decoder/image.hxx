@@ -1,6 +1,6 @@
 #include "../decoder.hxx"
 
-namespace Alchemist::Media::Codec::Decoder {
+namespace Alchemist::Media::Decoder {
 	class DLL_PUBLIC Image: public Media::Decoder::Base {
 		public:
 			Image(const Media::Decoder::Type&);

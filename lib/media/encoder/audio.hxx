@@ -1,6 +1,6 @@
 #include "media/encoder.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC Audio: public Media::Encoder::Base {
 		public:
 			Audio(const Media::Encoder::Type&);

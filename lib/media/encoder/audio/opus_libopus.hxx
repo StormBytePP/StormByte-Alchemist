@@ -1,6 +1,6 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC OPUS_LIBOPUS final: public Audio {
 		public:
 			OPUS_LIBOPUS();

@@ -1,6 +1,6 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC VP8_LIBVPX final: public Video {
 		public:
 			VP8_LIBVPX();

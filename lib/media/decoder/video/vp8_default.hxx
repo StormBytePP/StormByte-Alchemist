@@ -1,6 +1,6 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Codec::Decoder {
+namespace Alchemist::Media::Decoder {
 	class DLL_PUBLIC VP8_DEFAULT final: public Video {
 		public:
 			VP8_DEFAULT();

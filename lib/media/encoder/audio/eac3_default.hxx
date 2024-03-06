@@ -1,6 +1,6 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC EAC3_DEFAULT final: public Audio {
 		public:
 			EAC3_DEFAULT();

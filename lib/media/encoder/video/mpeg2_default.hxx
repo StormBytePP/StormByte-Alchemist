@@ -1,6 +1,6 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC MPEG2_DEFAULT final: public Video {
 		public:
 			MPEG2_DEFAULT();

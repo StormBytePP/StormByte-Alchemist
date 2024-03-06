@@ -1,6 +1,6 @@
 #include "../encoder.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC Video: public Media::Encoder::Base {
 		public:
 			Video(const Media::Encoder::Type&);

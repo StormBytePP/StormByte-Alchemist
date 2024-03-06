@@ -1,6 +1,6 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Codec::Decoder {
+namespace Alchemist::Media::Decoder {
 	class DLL_PUBLIC GIF_DEFAULT final: public Image {
 		public:
 			GIF_DEFAULT();

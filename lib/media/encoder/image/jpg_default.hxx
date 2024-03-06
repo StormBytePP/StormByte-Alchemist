@@ -1,6 +1,6 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC JPG_DEFAULT final: public Image {
 		public:
 			JPG_DEFAULT();

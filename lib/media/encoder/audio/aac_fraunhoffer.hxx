@@ -1,6 +1,6 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Codec::Encoder {
+namespace Alchemist::Media::Encoder {
 	class DLL_PUBLIC AAC_FRAUNHOFFER final: public Audio {
 		public:
 			AAC_FRAUNHOFFER();
