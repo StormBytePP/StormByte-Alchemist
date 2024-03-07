@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Codec::Image {

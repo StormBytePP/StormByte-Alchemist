@@ -1,3 +1,5 @@
+#pragma once
+
 #include "media/decoder.hxx"
 
 namespace Alchemist::Media::Decoder::Audio {

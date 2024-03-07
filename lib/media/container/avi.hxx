@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../container.hxx"
 
 namespace Alchemist::Media::Container {

@@ -4,6 +4,7 @@
 #include "encoder.hxx"
 
 #include <list>
+#include <memory>
 
 namespace Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -33,4 +34,6 @@ namespace Alchemist::Media::Codec {
 		protected:
 			 DLL_LOCAL Type m_codec_type;
 	};
+
+	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
 }

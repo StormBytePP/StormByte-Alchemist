@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../video.hxx"
 
 namespace Alchemist::Media::Codec::Video {
