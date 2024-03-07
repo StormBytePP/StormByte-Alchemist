@@ -3,6 +3,7 @@
 #include "visibility.h"
 
 #include <list>
+#include <memory>
 
 namespace Alchemist::Media::Decoder {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -50,4 +51,6 @@ namespace Alchemist::Media::Decoder {
 		protected:
 			DLL_LOCAL Type m_decoder_type;
 	};
+
+	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
 }

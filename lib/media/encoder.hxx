@@ -50,4 +50,6 @@ namespace Alchemist::Media::Encoder {
 		protected:
 			DLL_LOCAL Type m_encoder_type;
 	};
+
+	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
 }

@@ -1,4 +1,3 @@
-#include "codec.hxx"
 #include "codec/audio/aac.hxx"
 #include "codec/audio/ac3.hxx"
 #include "codec/audio/dts.hxx"
@@ -8,6 +7,19 @@
 #include "codec/audio/mp3.hxx"
 #include "codec/audio/opus.hxx"
 #include "codec/audio/vorbis.hxx"
+#include "codec/image/bmp.hxx"
+#include "codec/image/gif.hxx"
+#include "codec/image/jpg.hxx"
+#include "codec/image/png.hxx"
+#include "codec/image/tiff.hxx"
+#include "codec/image/webp.hxx"
+#include "codec/video/av1.hxx"
+#include "codec/video/h264.hxx"
+#include "codec/video/h265.hxx"
+#include "codec/video/mpeg2.hxx"
+#include "codec/video/mpeg4.hxx"
+#include "codec/video/vp8.hxx"
+#include "codec/video/vp9.hxx"
 
 Alchemist::Media::Codec::Base::Base(const Codec::Type& codec_type):m_codec_type(codec_type) { }
 
@@ -57,7 +69,57 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 			result.reset(new Codec::Audio::VORBIS());
 			break;
 
+		case Codec::BMP:
+			result.reset(new Codec::Image::BMP());
+			break;
 
+		case Codec::GIF:
+			result.reset(new Codec::Image::GIF());
+			break;
+
+		case Codec::JPG:
+			result.reset(new Codec::Image::JPG());
+			break;
+
+		case Codec::PNG:
+			result.reset(new Codec::Image::PNG());
+			break;
+
+		case Codec::TIFF:
+			result.reset(new Codec::Image::TIFF());
+			break;
+
+		case Codec::WEBP:
+			result.reset(new Codec::Image::WEBP());
+			break;
+
+		case Codec::AV1:
+			result.reset(new Codec::Video::AV1());
+			break;
+
+		case Codec::H264:
+			result.reset(new Codec::Video::H264());
+			break;
+
+		case Codec::H265:
+			result.reset(new Codec::Video::H265());
+			break;
+
+		case Codec::MPEG2:
+			result.reset(new Codec::Video::MPEG2());
+			break;
+
+		case Codec::MPEG4:
+			result.reset(new Codec::Video::MPEG4());
+			break;
+
+		case Codec::VP8:
+			result.reset(new Codec::Video::VP8());
+			break;
+
+		case Codec::VP9:
+			result.reset(new Codec::Video::VP9());
+			break;
 	}
 
 	return result;
