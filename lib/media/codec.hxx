@@ -31,6 +31,6 @@ namespace Alchemist::Media::Codec {
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
 		protected:
-			 Type m_codec_type;
+			 DLL_LOCAL Type m_codec_type;
 	};
 }

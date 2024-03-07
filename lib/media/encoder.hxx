@@ -48,6 +48,6 @@ namespace Alchemist::Media::Encoder {
 			inline Type get_decoder_type() const;
 
 		protected:
-			Type m_encoder_type;
+			DLL_LOCAL Type m_encoder_type;
 	};
 }
