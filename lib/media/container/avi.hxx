@@ -12,6 +12,5 @@ namespace Alchemist::Media::Container {
 			~AVI()						= default;
 
 			std::list<Codec::Type> get_supported_codecs() const;
-			std::string get_extension() const;
 	};
 }

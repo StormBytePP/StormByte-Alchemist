@@ -24,9 +24,7 @@ namespace Alchemist::Media::Container {
 			virtual ~Base()												= default;
 
 			inline std::filesystem::path get_file_path() const;
-
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;
-			virtual std::string get_extension() const					= 0;
 
 		protected:
 			DLL_LOCAL std::filesystem::path m_file_path;
