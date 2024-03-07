@@ -2,24 +2,33 @@
 
 #include "codec.hxx"
 
+#include <filesystem>
 #include <list>
+#include <string>
 
-namespace Alchemist::Media {
-	class DLL_PUBLIC Container {
+namespace Alchemist::Media::Container {
+	enum DLL_PUBLIC Type:unsigned short {
+		AVI, MKV, MP4, OGG, // Video
+		AAC, DTS, MP2, MP3, OPUS, // Audio
+		BMP, GIF, JPG, PNG, TIFF, WEBP // Image
+	};
+	
+	class DLL_PUBLIC Base {
 		public:
-			enum DLL_PUBLIC Type:unsigned short {
-				AVI, MKV, MP4, OGG, // Video
-				AAC, DTS, MP2, MP3, OPUS, // Audio
-				BMP, GIF, JPG, PNG, TIFF, WEBP // Image
-			};
+			Base(const std::filesystem::path&);
+			Base(std::filesystem::path&&);
+			Base(const Base&)											= default;
+			Base(Base&&)												= default;
+			Base& operator=(const Base&)								= default;
+			Base& operator=(Base&&)										= default;
+			virtual ~Base()												= default;
 
-			Container()														= default;
-			Container(const Container&)										= default;
-			Container(Container&&)											= default;
-			Container& operator=(const Container&)							= default;
-			Container& operator=(Container&&)								= default;
-			virtual ~Container()											= default;
+			inline std::filesystem::path get_file_path() const;
 
-			virtual std::list<Codec::Type> get_supported_codecs() const		= 0;
+			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;
+			virtual std::string get_extension() const					= 0;
+
+		protected:
+			DLL_LOCAL std::filesystem::path m_file_path;
 	};
 }
