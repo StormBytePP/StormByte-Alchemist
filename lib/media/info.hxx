@@ -14,15 +14,15 @@ namespace Alchemist::Media {
 			std::string short_name;
 			std::string long_name;
 		};
-		class DLL_PUBLIC Codec {
+		class Codec {
 			static const std::list<Media::Codec::Type>		Available;
 			static const std::list<Item>					All;
 		};
-		class DLL_PUBLIC Decoder {
+		class Decoder {
 			static const std::list<Media::Decoder::Type>	Available;
 			static const std::list<Item>					All;
 		};
-		class DLL_PUBLIC Encoder {
+		class Encoder {
 			static const std::list<Media::Encoder::Type>	Available;
 			static const std::list<Item>					All;
 		};
