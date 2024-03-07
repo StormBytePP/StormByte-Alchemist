@@ -3,7 +3,6 @@
 #include "decoder.hxx"
 #include "encoder.hxx"
 
-#include <limits>
 #include <list>
 
 namespace Alchemist::Media::Codec {
@@ -11,7 +10,6 @@ namespace Alchemist::Media::Codec {
 		AV1, H264, H265, MPEG2, VP8, VP9, MPEG4,			// Video
 		AAC, AC3, DTS, EAC3, FLAC, MP2, MP3, OPUS, VORBIS,	// Audio
 		BMP, GIF, JPG, PNG, TIFF, WEBP,						// Image
-		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 
 	class DLL_PUBLIC Base {
@@ -32,13 +30,7 @@ namespace Alchemist::Media::Codec {
 			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
-			static const std::list<Type> DLL_PUBLIC Available;
-			static const std::list<Info> DLL_PUBLIC All;
-
 		protected:
 			 Type m_codec_type;
 	};
-
-	const std::list<Type> DLL_PUBLIC Available	= Base::Available;
-	const std::list<Info> DLL_PUBLIC All		= Base::All;
 }

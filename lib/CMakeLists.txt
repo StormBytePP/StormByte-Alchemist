@@ -73,6 +73,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/encoder/video.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg2_default.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg4_default.cxx
+	${ALCHEMY_DIR}/media/info.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})

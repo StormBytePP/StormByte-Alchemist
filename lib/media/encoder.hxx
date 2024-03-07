@@ -1,6 +1,6 @@
 #pragma once
 
-#include "info.hxx"
+#include "visibility.h"
 
 #include <list>
 
@@ -47,13 +47,7 @@ namespace Alchemist::Media::Encoder {
 
 			inline Type get_decoder_type() const;
 
-			static const std::list<Type> DLL_PUBLIC Available;
-			static const std::list<Info> DLL_PUBLIC All;
-
 		protected:
 			Type m_encoder_type;
 	};
-
-	const std::list<Type> DLL_PUBLIC Available	= Base::Available;
-	const std::list<Info> DLL_PUBLIC All		= Base::All;
 }
