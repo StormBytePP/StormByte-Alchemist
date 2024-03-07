@@ -17,18 +17,18 @@ namespace Alchemist::Media {
 			};
 			class Codec {
 				public:
-					static const std::list<Media::Codec::Type>		Available;
-					static const std::list<Item>					All;
+					static const std::list<Media::Codec::Type>		DLL_PUBLIC Available;
+					static const std::list<Item>					DLL_PUBLIC All;
 			};
 			class Decoder {
 				public:
-					static const std::list<Media::Decoder::Type>	Available;
-					static const std::list<Item>					All;
+					static const std::list<Media::Decoder::Type>	DLL_PUBLIC Available;
+					static const std::list<Item>					DLL_PUBLIC All;
 			};
 			class Encoder {
 				public:
-					static const std::list<Media::Encoder::Type>	Available;
-					static const std::list<Item>					All;
+					static const std::list<Media::Encoder::Type>	DLL_PUBLIC Available;
+					static const std::list<Item>					DLL_PUBLIC All;
 			};
 	};
 }
