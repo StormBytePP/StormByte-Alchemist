@@ -3,6 +3,7 @@
 #include "visibility.h"
 
 #include <list>
+#include <memory>
 
 namespace Alchemist::Media::Encoder {
 	enum DLL_PUBLIC Type:unsigned short {

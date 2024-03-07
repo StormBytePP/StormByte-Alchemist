@@ -66,7 +66,7 @@
 #include "encoder/video/vp9_libvpx.hxx"
 #endif
 
-#include <memory>
+#include <exception>
 
 Alchemist::Media::Encoder::Base::Base(const Type& encoder_type):m_encoder_type(encoder_type) { }
 
