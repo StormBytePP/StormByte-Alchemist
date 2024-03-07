@@ -5,7 +5,7 @@
 #include <string>
 
 namespace Alchemist::Media {
-	struct DLL_PUBLIC Info {
+	struct Info {
 		unsigned short id;
 		std::string short_name;
 		std::string long_name;
