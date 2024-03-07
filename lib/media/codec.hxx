@@ -14,7 +14,7 @@ namespace Alchemist::Media::Codec {
 		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 
-	class DLL_LOCAL Base {
+	class DLL_PUBLIC Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

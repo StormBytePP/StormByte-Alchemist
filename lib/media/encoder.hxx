@@ -35,7 +35,7 @@ namespace Alchemist::Media::Encoder {
 		WEBP_LIBWEBP
 	};
 
-	class DLL_LOCAL Base {
+	class DLL_PUBLIC Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

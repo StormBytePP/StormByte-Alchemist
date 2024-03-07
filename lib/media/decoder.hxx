@@ -35,7 +35,7 @@ namespace Alchemist::Media::Decoder {
 		WEBP_DEFAULT
 	};
 
-	class DLL_LOCAL Base {
+	class DLL_PUBLIC Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

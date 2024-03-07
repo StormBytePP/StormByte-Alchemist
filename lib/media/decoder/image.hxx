@@ -1,7 +1,7 @@
 #include "../decoder.hxx"
 
 namespace Alchemist::Media::Decoder::Image {
-	class DLL_LOCAL Base: public Decoder::Base {
+	class DLL_PUBLIC Base: public Decoder::Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

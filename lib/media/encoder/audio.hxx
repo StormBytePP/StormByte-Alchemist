@@ -1,7 +1,7 @@
 #include "media/encoder.hxx"
 
 namespace Alchemist::Media::Encoder::Audio {
-	class DLL_LOCAL Base: public Encoder::Base {
+	class DLL_PUBLIC Base: public Encoder::Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);
