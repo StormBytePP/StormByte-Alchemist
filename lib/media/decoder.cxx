@@ -83,7 +83,11 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			break;
 
 		case Decoder::AAC_FRAUNHOFFER:
+			#ifdef ENABLE_FDK
 			result.reset(new Decoder::Audio::AAC_FRAUNHOFFER());
+			#else
+			throw std::runtime_error("Decoder Fraunhoffer not compiled in");
+			#endif
 			break;
 
 		case Decoder::AC3_DEFAULT:
@@ -118,7 +122,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_LIBOPUS
 			result.reset(new Decoder::Audio::OPUS_LIBOPUS());
 			#else
-			throw std::runtime_exception("Decoder libopus not compiled in");
+			throw std::runtime_error("Decoder libopus not compiled in");
 			#endif
 			break;
 
@@ -130,7 +134,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_LIBVORBIS
 			result.reset(new Decoder::Audio::VORBIS_LIBVORBIS());
 			#else
-			throw std::runtime_exception("Decoder libvorbis not compiled in");
+			throw std::runtime_error("Decoder libvorbis not compiled in");
 			#endif
 			break;
 
@@ -162,7 +166,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::AV1_CUVID());
 			#else
-			throw std::runtime_exception("Decoder AV1 CUVID not compiled in");
+			throw std::runtime_error("Decoder AV1 CUVID not compiled in");
 			#endif
 			break;
 
@@ -170,7 +174,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_DAV1D
 			result.reset(new Decoder::Video::AV1_DAV1D());
 			#else
-			throw std::runtime_exception("Decoder dav1d not compiled in");
+			throw std::runtime_error("Decoder dav1d not compiled in");
 			#endif
 			break;
 
@@ -182,7 +186,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_LIBAOM
 			result.reset(new Decoder::Video::AV1_LIBAOM());
 			#else
-			throw std::runtime_exception("Decoder libaom not compiled in");
+			throw std::runtime_error("Decoder libaom not compiled in");
 			#endif
 			break;
 
@@ -190,7 +194,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::H264_CUVID());
 			#else
-			throw std::runtime_exception("Decoder H264 CUVID not compiled in");
+			throw std::runtime_error("Decoder H264 CUVID not compiled in");
 			#endif
 			break;
 
@@ -202,7 +206,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_OPENH264
 			result.reset(new Decoder::Video::H264_OPENH264());
 			#else
-			throw std::runtime_exception("Decoder openH264 not compiled in");
+			throw std::runtime_error("Decoder openH264 not compiled in");
 			#endif
 			break;
 
@@ -210,7 +214,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::H265_CUVID());
 			#else
-			throw std::runtime_exception("Decoder H265 CUVID not compiled in");
+			throw std::runtime_error("Decoder H265 CUVID not compiled in");
 			#endif
 			break;
 
@@ -222,7 +226,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::MPEG2_CUVID());
 			#else
-			throw std::runtime_exception("Decoder MPEG2 CUVID not compiled in");
+			throw std::runtime_error("Decoder MPEG2 CUVID not compiled in");
 			#endif
 			break;
 
@@ -234,7 +238,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::MPEG4_CUVID());
 			#else
-			throw std::runtime_exception("Decoder MPEG4 CUVID not compiled in");
+			throw std::runtime_error("Decoder MPEG4 CUVID not compiled in");
 			#endif
 			break;
 
@@ -246,7 +250,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::VP8_CUVID());
 			#else
-			throw std::runtime_exception("Decoder VP8 CUVID not compiled in");
+			throw std::runtime_error("Decoder VP8 CUVID not compiled in");
 			#endif
 			break;
 
@@ -258,7 +262,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_LIBVPX
 			result.reset(new Decoder::Video::VP8_LIBVPX());
 			#else
-			throw std::runtime_exception("Decoder VP8 libvpx not compiled in");
+			throw std::runtime_error("Decoder VP8 libvpx not compiled in");
 			#endif
 			break;
 
@@ -266,7 +270,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_CUDA
 			result.reset(new Decoder::Video::VP9_CUVID());
 			#else
-			throw std::runtime_exception("Decoder VP9 CUVID not compiled in");
+			throw std::runtime_error("Decoder VP9 CUVID not compiled in");
 			#endif
 			break;
 
@@ -278,7 +282,7 @@ std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Inst
 			#ifdef ENABLE_LIBVPX
 			result.reset(new Decoder::Video::VP9_LIBVPX());
 			#else
-			throw std::runtime_exception("Decoder VP9 libvpx not compiled in");
+			throw std::runtime_error("Decoder VP9 libvpx not compiled in");
 			#endif
 			break;
 	}

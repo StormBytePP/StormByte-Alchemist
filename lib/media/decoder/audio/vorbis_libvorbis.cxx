@@ -1,3 +1,3 @@
-#include "vorbis_default.hxx"
+#include "vorbis_libvorbis.hxx"
 
-Alchemist::Media::Decoder::Audio::VORBIS_DEFAULT::VORBIS_DEFAULT():Base(Decoder::VORBIS_DEFAULT) { }
+Alchemist::Media::Decoder::Audio::VORBIS_LIBVORBIS::VORBIS_LIBVORBIS():Base(Decoder::VORBIS_LIBVORBIS) { }

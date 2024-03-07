@@ -86,7 +86,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_FDK
 			result.reset(new Encoder::Audio::AAC_FRAUNHOFFER());
 			#else
-			throw std::runtime_exception("Encoder Fraunhoffer not compiled in");
+			throw std::runtime_error("Encoder Fraunhoffer not compiled in");
 			#endif
 			break;
 
@@ -114,7 +114,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_TWOLAME
 			result.reset(new Encoder::Audio::MP2_TWOLAME());
 			#else
-			throw std::runtime_exception("Encoder twolame not compiled in");
+			throw std::runtime_error("Encoder twolame not compiled in");
 			#endif
 			break;
 
@@ -122,7 +122,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LAME
 			result.reset(new Encoder::Audio::MP3_LAME());
 			#else
-			throw std::runtime_exception("Encoder lame not compiled in");
+			throw std::runtime_error("Encoder lame not compiled in");
 			#endif
 			break;
 
@@ -134,7 +134,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LIBOPUS
 			result.reset(new Encoder::Audio::OPUS_LIBOPUS());
 			#else
-			throw std::runtime_exception("Encoder libopus not compiled in");
+			throw std::runtime_error("Encoder libopus not compiled in");
 			#endif
 			break;
 
@@ -146,7 +146,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LIBVORBIS
 			result.reset(new Encoder::Audio::VORBIS_LIBVORBIS());
 			#else
-			throw std::runtime_exception("Encoder libvorbis not compiled in");
+			throw std::runtime_error("Encoder libvorbis not compiled in");
 			#endif
 			break;
 
@@ -174,7 +174,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_WEBP
 			result.reset(new Encoder::Image::WEBP_LIBWEBP());
 			#else
-			throw std::runtime_exception("Encoder libwebp not compiled in");
+			throw std::runtime_error("Encoder libwebp not compiled in");
 			#endif
 			break;
 
@@ -182,7 +182,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LIBAOM
 			result.reset(new Encoder::Video::AV1_LIBAOM());
 			#else
-			throw std::runtime_exception("Encoder libaom not compiled in");
+			throw std::runtime_error("Encoder libaom not compiled in");
 			#endif
 			break;
 
@@ -190,7 +190,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_NVENC
 			result.reset(new Encoder::Video::AV1_NVENC());
 			#else
-			throw std::runtime_exception("Encoder AV1 NVenc not compiled in");
+			throw std::runtime_error("Encoder AV1 NVenc not compiled in");
 			#endif
 			break;
 
@@ -198,7 +198,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_RAV1E
 			result.reset(new Encoder::Video::AV1_RAV1E());
 			#else
-			throw std::runtime_exception("Encoder RAV1E not compiled in");
+			throw std::runtime_error("Encoder RAV1E not compiled in");
 			#endif
 			break;
 
@@ -206,7 +206,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_SVT_AV1
 			result.reset(new Encoder::Video::AV1_SVT());
 			#else
-			throw std::runtime_exception("Encoder SVT not compiled in");
+			throw std::runtime_error("Encoder SVT not compiled in");
 			#endif
 			break;
 
@@ -214,7 +214,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_NVENC
 			result.reset(new Encoder::Video::H264_NVENC());
 			#else
-			throw std::runtime_exception("Encoder H264 NVEnc not compiled in");
+			throw std::runtime_error("Encoder H264 NVEnc not compiled in");
 			#endif
 			break;
 
@@ -222,7 +222,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_OPENH264
 			result.reset(new Encoder::Video::H264_OPENH264());
 			#else
-			throw std::runtime_exception("Encoder openH264 not compiled in");
+			throw std::runtime_error("Encoder openH264 not compiled in");
 			#endif
 			break;
 
@@ -230,7 +230,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_X264
 			result.reset(new Encoder::Video::H264_X264());
 			#else
-			throw std::runtime_exception("Encoder x264 not compiled in");
+			throw std::runtime_error("Encoder x264 not compiled in");
 			#endif
 			break;
 
@@ -238,7 +238,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_NVENC
 			result.reset(new Encoder::Video::H265_NVENC());
 			#else
-			throw std::runtime_exception("Encoder H265 NVEnc not compiled in");
+			throw std::runtime_error("Encoder H265 NVEnc not compiled in");
 			#endif
 			break;
 
@@ -246,7 +246,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_X265
 			result.reset(new Encoder::Video::H265_X265());
 			#else
-			throw std::runtime_exception("Encoder x265 not compiled in");
+			throw std::runtime_error("Encoder x265 not compiled in");
 			#endif
 			break;
 
@@ -262,7 +262,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_XVID
 			result.reset(new Encoder::Video::MPEG4_LIBXVID());
 			#else
-			throw std::runtime_exception("Encoder XVID not compiled in");
+			throw std::runtime_error("Encoder XVID not compiled in");
 			#endif
 			break;
 
@@ -270,7 +270,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LIBVPX
 			result.reset(new Encoder::Video::VP8_LIBVPX());
 			#else
-			throw std::runtime_exception("Encoder libVPX not compiled in");
+			throw std::runtime_error("Encoder libVPX not compiled in");
 			#endif
 			break;
 
@@ -278,7 +278,7 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			#ifdef ENABLE_LIBVPX
 			result.reset(new Encoder::Video::VP9_LIBVPX());
 			#else
-			throw std::runtime_exception("Encoder libVPX not compiled in");
+			throw std::runtime_error("Encoder libVPX not compiled in");
 			#endif
 			break;
 	}
