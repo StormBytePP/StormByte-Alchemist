@@ -14,9 +14,6 @@ namespace Alchemist::Media::Codec {
 		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 
-	[[maybe_unused]] const std::list<Type> DLL_PUBLIC Available();
-	[[maybe_unused]] const std::list<Info> DLL_PUBLIC All();
-
 	class DLL_LOCAL Base {
 		public:
 			Base(const Type&);
@@ -35,7 +32,13 @@ namespace Alchemist::Media::Codec {
 			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
+			static const std::list<Type> DLL_PUBLIC Available;
+			static const std::list<Info> DLL_PUBLIC All;
+
 		protected:
 			 Type m_codec_type;
 	};
+
+	const std::list<Type> DLL_PUBLIC Available	= Base::Available;
+	const std::list<Info> DLL_PUBLIC All		= Base::All;
 }
