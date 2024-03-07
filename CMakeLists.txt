@@ -6,7 +6,7 @@ if(UNIX)
 	set(CMAKE_CXX_FLAGS			"-Wall -Wextra -march=native -O2 -flto")
 	set(CMAKE_EXE_LINKER_FLAGS	"-flto -Wl,--as-needed -Wl,--sort-common -Wl,-O2 -s")
 else()
-	set(CMAKE_CXX_FLAGS			"/O2 /LTCG ")
+	set(CMAKE_CXX_FLAGS			"/O2 /EHsc")
 endif()
 
 # set the project name and version
