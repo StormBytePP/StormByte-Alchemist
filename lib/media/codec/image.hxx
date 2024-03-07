@@ -1,15 +1,15 @@
-#include "media/codec.hxx"
+#include "../codec.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC Image: public Base {
+namespace Alchemist::Media::Codec::Image {
+	class DLL_PUBLIC Base: public Codec::Base {
 		public:
-			Image(const Codec::Type&);
-			Image(Codec::Type&&);
-			Image(const Image&)				= default;
-			Image(Image&&)					= default;
-			Image& operator=(const Image&)	= default;
-			Image& operator=(Image&&)		= default;
-			virtual ~Image()				= default;
+			Base(const Codec::Type&);
+			Base(Codec::Type&&);
+			Base(const Base&)				= default;
+			Base(Base&&)					= default;
+			Base& operator=(const Base&)	= default;
+			Base& operator=(Base&&)			= default;
+			virtual ~Base()					= default;
 
 			bool is_video() const;
 			bool is_audio() const;

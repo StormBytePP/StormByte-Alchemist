@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../image.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC PNG final: public Audio {
+namespace Alchemist::Media::Codec::Image {
+	class DLL_PUBLIC PNG final: public Base {
 		public:
 			PNG();
 			PNG(const PNG&)					= default;

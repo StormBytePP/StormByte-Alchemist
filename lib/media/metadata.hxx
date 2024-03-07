@@ -1,6 +1,6 @@
 #pragma once
 
-#include "visibility.hxx"
+#include "visibility.h"
 
 #include <filesystem>
 #include <list>

@@ -1,8 +1,8 @@
 #include "vp9.hxx"
 
-Alchemist::Media::Codec::VP9::VP9():Audio(Codec::VP9) { }
+Alchemist::Media::Codec::Video::VP9::VP9():Base(Codec::VP9) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::VP9::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::VP9::get_available_decoders() const {
 	return {
 		Decoder::VP9_DEFAULT,
 		#ifdef ENABLE_CUDA
@@ -14,7 +14,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::VP9::get_ava
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::VP9::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Video::VP9::get_available_encoders() const {
 	return {
 		#ifdef ENABLE_LIBVPX
 		Encoder::VP9_LIBVPX,

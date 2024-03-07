@@ -1,8 +1,8 @@
 #include "vorbis.hxx"
 
-Alchemist::Media::Codec::VORBIS::VORBIS():Audio(Codec::VORBIS) { }
+Alchemist::Media::Codec::Audio::VORBIS::VORBIS():Base(Codec::VORBIS) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::VORBIS::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::VORBIS::get_available_decoders() const {
 	return {
 		Decoder::VORBIS_DEFAULT,
 		#ifdef ENABLE_LIBVORBIS
@@ -11,7 +11,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::VORBIS::get_
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::VORBIS::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Audio::VORBIS::get_available_encoders() const {
 	return {
 		Encoder::VORBIS_DEFAULT,
 		#ifdef ENABLE_LIBVORBIS

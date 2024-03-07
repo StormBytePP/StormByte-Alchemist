@@ -1,8 +1,8 @@
 #include "mpeg4.hxx"
 
-Alchemist::Media::Codec::MPEG4::MPEG4():Audio(Codec::MPEG4) { }
+Alchemist::Media::Codec::Video::MPEG4::MPEG4():Base(Codec::MPEG4) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::MPEG4::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::MPEG4::get_available_decoders() const {
 	return {
 		Decoder::MPEG4_DEFAULT,
 		#ifdef ENABLE_CUDA
@@ -11,7 +11,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::MPEG4::get_a
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::MPEG4::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Video::MPEG4::get_available_encoders() const {
 	return {
 		Encoder::MPEG4_DEFAULT,
 		#ifdef ENABLE_XVID

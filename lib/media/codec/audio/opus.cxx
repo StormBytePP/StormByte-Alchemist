@@ -1,8 +1,8 @@
 #include "opus.hxx"
 
-Alchemist::Media::Codec::OPUS::OPUS():Audio(Codec::OPUS) { }
+Alchemist::Media::Codec::Audio::OPUS::OPUS():Base(Codec::OPUS) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::OPUS::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::OPUS::get_available_decoders() const {
 	return {
 		Decoder::OPUS_DEFAULT,
 		#ifdef ENABLE_LIBOPUS
@@ -11,7 +11,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::OPUS::get_av
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::OPUS::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Audio::OPUS::get_available_encoders() const {
 	return {
 		Encoder::OPUS_DEFAULT,
 		#ifdef ENABLE_LIBOPUS

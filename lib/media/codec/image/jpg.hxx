@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../image.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC JPG final: public Audio {
+namespace Alchemist::Media::Codec::Image {
+	class DLL_PUBLIC JPG final: public Base {
 		public:
 			JPG();
 			JPG(const JPG&)					= default;

@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../video.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC H264 final: public Audio {
+namespace Alchemist::Media::Codec::Video {
+	class DLL_PUBLIC H264 final: public Base {
 		public:
 			H264();
 			H264(const H264&)					= default;

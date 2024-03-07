@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../audio.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC VORBIS final: public Audio {
+namespace Alchemist::Media::Codec::Audio {
+	class DLL_PUBLIC VORBIS final: public Base {
 		public:
 			VORBIS();
 			VORBIS(const VORBIS&)					= default;

@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../image.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC TIFF final: public Audio {
+namespace Alchemist::Media::Codec::Image {
+	class DLL_PUBLIC TIFF final: public Base {
 		public:
 			TIFF();
 			TIFF(const TIFF&)					= default;

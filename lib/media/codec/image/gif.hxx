@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../image.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC GIF final: public Audio {
+namespace Alchemist::Media::Codec::Image {
+	class DLL_PUBLIC GIF final: public Base {
 		public:
 			GIF();
 			GIF(const GIF&)					= default;

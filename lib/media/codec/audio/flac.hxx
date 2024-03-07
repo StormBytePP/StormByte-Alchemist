@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../audio.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC FLAC final: public Audio {
+namespace Alchemist::Media::Codec::Audio {
+	class DLL_PUBLIC FLAC final: public Base {
 		public:
 			FLAC();
 			FLAC(const FLAC&)					= default;

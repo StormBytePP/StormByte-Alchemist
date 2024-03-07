@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../audio.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC EAC3 final: public Audio {
+namespace Alchemist::Media::Codec::Audio {
+	class DLL_PUBLIC EAC3 final: public Base {
 		public:
 			EAC3();
 			EAC3(const EAC3&)					= default;

@@ -1,8 +1,8 @@
 #include "aac.hxx"
 
-Alchemist::Media::Codec::AAC::AAC():Audio(Codec::AAC) { }
+Alchemist::Media::Codec::Audio::AAC::AAC():Base(Codec::AAC) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::AAC::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::AAC::get_available_decoders() const {
 	return {
 		Decoder::AAC_DEFAULT,
 		#ifdef ENABLE_FDK
@@ -11,7 +11,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::AAC::get_ava
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::AAC::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Audio::AAC::get_available_encoders() const {
 	return {
 		Encoder::AAC_DEFAULT,
 		#ifdef ENABLE_FDK

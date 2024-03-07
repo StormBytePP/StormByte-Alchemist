@@ -1,8 +1,8 @@
 #include "av1.hxx"
 
-Alchemist::Media::Codec::AV1::AV1():Audio(Codec::AV1) { }
+Alchemist::Media::Codec::Video::AV1::AV1():Base(Codec::AV1) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::AV1::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::AV1::get_available_decoders() const {
 	return {
 		Decoder::AV1_DEFAULT,
 		#ifdef ENABLE_LIBAOM
@@ -17,7 +17,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::AV1::get_ava
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::AV1::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Video::AV1::get_available_encoders() const {
 	return {
 		#ifdef ENABLE_LIBAOM
 		Encoder::AV1_LIBAOM,

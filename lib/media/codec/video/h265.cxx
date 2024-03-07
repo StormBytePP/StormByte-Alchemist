@@ -1,8 +1,8 @@
 #include "h265.hxx"
 
-Alchemist::Media::Codec::H265::H265():Audio(Codec::H265) { }
+Alchemist::Media::Codec::Video::H265::H265():Base(Codec::H265) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::H265::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::H265::get_available_decoders() const {
 	return {
 		Decoder::H265_DEFAULT,
 		#ifdef ENABLE_CUDA
@@ -11,7 +11,7 @@ std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::H265::get_av
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::H265::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Video::H265::get_available_encoders() const {
 	return {
 		#ifdef ENABLE_NVENC
 		Encoder::H265_NVENC,

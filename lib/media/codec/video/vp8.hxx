@@ -1,7 +1,7 @@
-#include "media/codec/audio.hxx"
+#include "../video.hxx"
 
-namespace Alchemist::Media::Codec {
-	class DLL_PUBLIC VP8 final: public Audio {
+namespace Alchemist::Media::Codec::Video {
+	class DLL_PUBLIC VP8 final: public Base {
 		public:
 			VP8();
 			VP8(const VP8&)					= default;

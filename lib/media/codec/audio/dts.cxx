@@ -1,14 +1,14 @@
 #include "dts.hxx"
 
-Alchemist::Media::Codec::DTS::DTS():Audio(Codec::DTS) { }
+Alchemist::Media::Codec::Audio::DTS::DTS():Base(Codec::DTS) { }
 
-std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::DTS::get_available_decoders() const {
+std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::DTS::get_available_decoders() const {
 	return {
 		Decoder::DTS_DEFAULT,
 	};
 }
 
-std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::DTS::get_available_encoders() const {
+std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Audio::DTS::get_available_encoders() const {
 	return {
 		Encoder::DTS_DEFAULT,
 	};
