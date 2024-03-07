@@ -5,6 +5,7 @@
 #include "encoder.hxx"
 
 #include <list>
+#include <string>
 
 namespace Alchemist::Media {
 	class DLL_PUBLIC Info {
