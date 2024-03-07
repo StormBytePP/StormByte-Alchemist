@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC MPEG4_DEFAULT final: public Video {
+namespace Alchemist::Media::Encoder::Video {
+	class DLL_PUBLIC MPEG4_DEFAULT final: public Base {
 		public:
 			MPEG4_DEFAULT();
 			MPEG4_DEFAULT(const MPEG4_DEFAULT&)				= default;

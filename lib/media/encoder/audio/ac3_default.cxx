@@ -1,3 +1,3 @@
 #include "ac3_default.hxx"
 
-Alchemist::Media::Encoder::AC3_DEFAULT::AC3_DEFAULT():Audio(Media::Encoder::AC3_DEFAULT) { }
+Alchemist::Media::Encoder::Audio::AC3_DEFAULT::AC3_DEFAULT():Base(Encoder::AC3_DEFAULT) { }

@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC MP3_LAME final: public Audio {
+namespace Alchemist::Media::Encoder::Audio {
+	class DLL_PUBLIC MP3_LAME final: public Base {
 		public:
 			MP3_LAME();
 			MP3_LAME(const MP3_LAME&)				= default;

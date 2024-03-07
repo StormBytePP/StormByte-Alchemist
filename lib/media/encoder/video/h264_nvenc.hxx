@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC H264_NVENC final: public Video {
+namespace Alchemist::Media::Encoder::Video {
+	class DLL_PUBLIC H264_NVENC final: public Base {
 		public:
 			H264_NVENC();
 			H264_NVENC(const H264_NVENC&)				= default;

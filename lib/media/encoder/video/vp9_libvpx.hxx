@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC VP9_LIBVPX final: public Video {
+namespace Alchemist::Media::Encoder::Video {
+	class DLL_PUBLIC VP9_LIBVPX final: public Base {
 		public:
 			VP9_LIBVPX();
 			VP9_LIBVPX(const VP9_LIBVPX&)				= default;

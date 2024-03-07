@@ -1,3 +1,3 @@
 #include "aac_fraunhoffer.hxx"
 
-Alchemist::Media::Encoder::AAC_FRAUNHOFFER::AAC_FRAUNHOFFER():Audio(Media::Encoder::AAC_FRAUNHOFFER) { }
+Alchemist::Media::Encoder::Audio::AAC_FRAUNHOFFER::AAC_FRAUNHOFFER():Base(Encoder::AAC_FRAUNHOFFER) { }

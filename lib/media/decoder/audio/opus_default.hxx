@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC OPUS_DEFAULT final: public Audio {
+namespace Alchemist::Media::Decoder::Audio {
+	class DLL_PUBLIC OPUS_DEFAULT final: public Base {
 		public:
 			OPUS_DEFAULT();
 			OPUS_DEFAULT(const OPUS_DEFAULT&)				= default;

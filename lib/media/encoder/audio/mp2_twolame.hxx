@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC MP2_TWOLAME final: public Audio {
+namespace Alchemist::Media::Encoder::Audio {
+	class DLL_PUBLIC MP2_TWOLAME final: public Base {
 		public:
 			MP2_TWOLAME();
 			MP2_TWOLAME(const MP2_TWOLAME&)				= default;

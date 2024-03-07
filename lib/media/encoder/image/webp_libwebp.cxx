@@ -1,3 +1,3 @@
 #include "webp_libwebp.hxx"
 
-Alchemist::Media::Encoder::WEBP_LIBWEBP::WEBP_LIBWEBP():Image(Media::Encoder::WEBP_LIBWEBP) { }
+Alchemist::Media::Encoder::Image::WEBP_LIBWEBP::WEBP_LIBWEBP():Base(Encoder::WEBP_LIBWEBP) { }

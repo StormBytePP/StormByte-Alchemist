@@ -5,7 +5,7 @@
 #include <list>
 
 namespace Alchemist::Media::Encoder {
-	enum Type:unsigned short {
+	enum DLL_PUBLIC Type:unsigned short {
 		// Video
 		AV1_LIBAOM, AV1_NVENC, AV1_RAV1E, AV1_SVT,
 		H264_NVENC, H264_OPENH264, H264_X264,
@@ -38,7 +38,7 @@ namespace Alchemist::Media::Encoder {
 	[[maybe_unused]] static const std::list<Type> DLL_PUBLIC Available();
 	[[maybe_unused]] static const std::list<Info> DLL_PUBLIC All();
 
-	class DLL_PUBLIC Base {
+	class DLL_LOCAL Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

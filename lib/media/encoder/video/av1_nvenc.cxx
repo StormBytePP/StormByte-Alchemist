@@ -1,3 +1,3 @@
 #include "av1_nvenc.hxx"
 
-Alchemist::Media::Encoder::AV1_NVENC::AV1_NVENC():Video(Media::Encoder::AV1_NVENC) { }
+Alchemist::Media::Encoder::Video::AV1_NVENC::AV1_NVENC():Base(Encoder::AV1_NVENC) { }

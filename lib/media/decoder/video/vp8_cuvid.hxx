@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC VP8_CUVID final: public Video {
+namespace Alchemist::Media::Decoder::Video {
+	class DLL_PUBLIC VP8_CUVID final: public Base {
 		public:
 			VP8_CUVID();
 			VP8_CUVID(const VP8_CUVID&)				= default;

@@ -1,3 +1,3 @@
 #include "mp2_default.hxx"
 
-Alchemist::Media::Encoder::MP2_DEFAULT::MP2_DEFAULT():Audio(Media::Encoder::MP2_DEFAULT) { }
+Alchemist::Media::Encoder::Audio::MP2_DEFAULT::MP2_DEFAULT():Base(Encoder::MP2_DEFAULT) { }

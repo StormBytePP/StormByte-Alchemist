@@ -1,3 +1,3 @@
 #include "mpeg4_default.hxx"
 
-Alchemist::Media::Decoder::MPEG4_DEFAULT::MPEG4_DEFAULT():Video(Media::Decoder::MPEG4_DEFAULT) { }
+Alchemist::Media::Decoder::Video::MPEG4_DEFAULT::MPEG4_DEFAULT():Base(Decoder::MPEG4_DEFAULT) { }

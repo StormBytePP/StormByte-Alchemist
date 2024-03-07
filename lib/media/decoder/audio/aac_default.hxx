@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC AAC_DEFAULT final: public Audio {
+namespace Alchemist::Media::Decoder::Audio {
+	class DLL_PUBLIC AAC_DEFAULT final: public Base {
 		public:
 			AAC_DEFAULT();
 			AAC_DEFAULT(const AAC_DEFAULT&)				= default;

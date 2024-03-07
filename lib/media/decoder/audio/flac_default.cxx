@@ -1,3 +1,3 @@
 #include "flac_default.hxx"
 
-Alchemist::Media::Decoder::FLAC_DEFAULT::FLAC_DEFAULT():Audio(Media::Decoder::FLAC_DEFAULT) { }
+Alchemist::Media::Decoder::Audio::FLAC_DEFAULT::FLAC_DEFAULT():Base(Decoder::FLAC_DEFAULT) { }

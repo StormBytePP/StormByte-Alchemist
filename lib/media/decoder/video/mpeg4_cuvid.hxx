@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC MPEG4_CUVID final: public Video {
+namespace Alchemist::Media::Decoder::Video {
+	class DLL_PUBLIC MPEG4_CUVID final: public Base {
 		public:
 			MPEG4_CUVID();
 			MPEG4_CUVID(const MPEG4_CUVID&)				= default;

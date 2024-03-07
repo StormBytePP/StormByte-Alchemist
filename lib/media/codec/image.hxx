@@ -1,7 +1,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Codec::Image {
-	class DLL_PUBLIC Base: public Codec::Base {
+	class DLL_LOCAL Base: public Codec::Base {
 		public:
 			Base(const Codec::Type&);
 			Base(Codec::Type&&);

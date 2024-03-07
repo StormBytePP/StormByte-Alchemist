@@ -1,14 +1,14 @@
 #include "../encoder.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC Video: public Media::Encoder::Base {
+namespace Alchemist::Media::Encoder::Video {
+	class DLL_LOCAL Base: public Encoder::Base {
 		public:
-			Video(const Media::Encoder::Type&);
-			Video(Media::Encoder::Type&&);
-			Video(const Video&)				= default;
-			Video(Video&&)					= default;
-			Video& operator=(const Video&)	= default;
-			Video& operator=(Video&&)		= default;
-			virtual ~Video()				= 0;
+			Base(const Type&);
+			Base(Type&&);
+			Base(const Base&)				= default;
+			Base(Base&&)					= default;
+			Base& operator=(const Base&)	= default;
+			Base& operator=(Base&&)			= default;
+			virtual ~Base()					= 0;
 	};
 }

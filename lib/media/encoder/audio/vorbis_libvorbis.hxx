@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC VORBIS_LIBVORBIS final: public Audio {
+namespace Alchemist::Media::Encoder::Audio {
+	class DLL_PUBLIC VORBIS_LIBVORBIS final: public Base {
 		public:
 			VORBIS_LIBVORBIS();
 			VORBIS_LIBVORBIS(const VORBIS_LIBVORBIS&)				= default;

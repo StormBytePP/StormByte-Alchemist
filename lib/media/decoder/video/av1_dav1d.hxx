@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC AV1_DAV1D final: public Video {
+namespace Alchemist::Media::Decoder::Video {
+	class DLL_PUBLIC AV1_DAV1D final: public Base {
 		public:
 			AV1_DAV1D();
 			AV1_DAV1D(const AV1_DAV1D&)				= default;

@@ -1,7 +1,7 @@
 #include "image.hxx"
 
-Alchemist::Media::Decoder::Image::Image(const Media::Decoder::Type& decoder_type):Base(decoder_type) { }
+Alchemist::Media::Decoder::Image::Base::Base(const Type& decoder_type):Decoder::Base(decoder_type) { }
 
-Alchemist::Media::Decoder::Image::Image(Media::Decoder::Type&& decoder_type):Base(std::move(decoder_type)) { }
+Alchemist::Media::Decoder::Image::Base::Base(Type&& decoder_type):Decoder::Base(std::move(decoder_type)) { }
 
-Alchemist::Media::Decoder::Image::~Image() { }
+Alchemist::Media::Decoder::Image::Base::~Base() { }

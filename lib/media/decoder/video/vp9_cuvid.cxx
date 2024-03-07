@@ -1,3 +1,3 @@
 #include "vp9_cuvid.hxx"
 
-Alchemist::Media::Decoder::VP9_CUVID::VP9_CUVID():Video(Media::Decoder::VP9_CUVID) { }
+Alchemist::Media::Decoder::Video::VP9_CUVID::VP9_CUVID():Base(Decoder::VP9_CUVID) { }

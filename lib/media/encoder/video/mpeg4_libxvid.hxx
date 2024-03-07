@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC MPEG4_LIBXVID final: public Video {
+namespace Alchemist::Media::Encoder::Video {
+	class DLL_PUBLIC MPEG4_LIBXVID final: public Base {
 		public:
 			MPEG4_LIBXVID();
 			MPEG4_LIBXVID(const MPEG4_LIBXVID&)				= default;

@@ -1,3 +1,3 @@
 #include "aac_default.hxx"
 
-Alchemist::Media::Decoder::AAC_DEFAULT::AAC_DEFAULT():Audio(Media::Decoder::AAC_DEFAULT) { }
+Alchemist::Media::Decoder::Audio::AAC_DEFAULT::AAC_DEFAULT():Base(Decoder::AAC_DEFAULT) { }

@@ -7,7 +7,7 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Container {
 		public:
-			enum Type:unsigned short {
+			enum DLL_PUBLIC Type:unsigned short {
 				AVI, MKV, MP4, OGG, // Video
 				AAC, DTS, MP2, MP3, OPUS, // Audio
 				BMP, GIF, JPG, PNG, TIFF, WEBP // Image

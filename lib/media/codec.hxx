@@ -17,7 +17,7 @@ namespace Alchemist::Media::Codec {
 	[[maybe_unused]] const std::list<Type> DLL_PUBLIC Available();
 	[[maybe_unused]] const std::list<Info> DLL_PUBLIC All();
 
-	class Base {
+	class DLL_LOCAL Base {
 		public:
 			Base(const Type&);
 			Base(Type&&);

@@ -1,7 +1,7 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC TIFF_DEFAULT final: public Image {
+namespace Alchemist::Media::Decoder::Image {
+	class DLL_PUBLIC TIFF_DEFAULT final: public Base {
 		public:
 			TIFF_DEFAULT();
 			TIFF_DEFAULT(const TIFF_DEFAULT&)				= default;

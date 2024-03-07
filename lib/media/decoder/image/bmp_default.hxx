@@ -1,7 +1,7 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC BMP_DEFAULT final: public Image {
+namespace Alchemist::Media::Decoder::Image {
+	class DLL_PUBLIC BMP_DEFAULT final: public Base {
 		public:
 			BMP_DEFAULT();
 			BMP_DEFAULT(const BMP_DEFAULT&)				= default;

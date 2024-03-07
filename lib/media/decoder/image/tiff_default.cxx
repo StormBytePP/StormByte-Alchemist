@@ -1,3 +1,3 @@
 #include "tiff_default.hxx"
 
-Alchemist::Media::Decoder::TIFF_DEFAULT::TIFF_DEFAULT():Image(Media::Decoder::TIFF_DEFAULT) { }
+Alchemist::Media::Decoder::Image::TIFF_DEFAULT::TIFF_DEFAULT():Base(Decoder::TIFF_DEFAULT) { }

@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC MP2_DEFAULT final: public Audio {
+namespace Alchemist::Media::Encoder::Audio {
+	class DLL_PUBLIC MP2_DEFAULT final: public Base {
 		public:
 			MP2_DEFAULT();
 			MP2_DEFAULT(const MP2_DEFAULT&)				= default;

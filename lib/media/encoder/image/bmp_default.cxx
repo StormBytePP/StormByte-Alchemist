@@ -1,3 +1,3 @@
 #include "bmp_default.hxx"
 
-Alchemist::Media::Encoder::BMP_DEFAULT::BMP_DEFAULT():Image(Media::Encoder::BMP_DEFAULT) { }
+Alchemist::Media::Encoder::Image::BMP_DEFAULT::BMP_DEFAULT():Base(Encoder::BMP_DEFAULT) { }

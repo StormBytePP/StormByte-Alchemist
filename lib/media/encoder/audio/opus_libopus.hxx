@@ -1,7 +1,7 @@
 #include "../audio.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC OPUS_LIBOPUS final: public Audio {
+namespace Alchemist::Media::Encoder::Audio {
+	class DLL_PUBLIC OPUS_LIBOPUS final: public Base {
 		public:
 			OPUS_LIBOPUS();
 			OPUS_LIBOPUS(const OPUS_LIBOPUS&)				= default;

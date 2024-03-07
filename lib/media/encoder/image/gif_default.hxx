@@ -1,7 +1,7 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Encoder {
-	class DLL_PUBLIC GIF_DEFAULT final: public Image {
+namespace Alchemist::Media::Encoder::Image {
+	class DLL_PUBLIC GIF_DEFAULT final: public Base {
 		public:
 			GIF_DEFAULT();
 			GIF_DEFAULT(const GIF_DEFAULT&)				= default;

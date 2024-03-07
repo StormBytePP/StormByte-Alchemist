@@ -1,14 +1,14 @@
 #include "../decoder.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC Image: public Media::Decoder::Base {
+namespace Alchemist::Media::Decoder::Image {
+	class DLL_LOCAL Base: public Decoder::Base {
 		public:
-			Image(const Media::Decoder::Type&);
-			Image(Media::Decoder::Type&&);
-			Image(const Image&)				= default;
-			Image(Image&&)					= default;
-			Image& operator=(const Image&)	= default;
-			Image& operator=(Image&&)		= default;
-			virtual ~Image()				= 0;
+			Base(const Type&);
+			Base(Type&&);
+			Base(const Base&)				= default;
+			Base(Base&&)					= default;
+			Base& operator=(const Base&)	= default;
+			Base& operator=(Base&&)			= default;
+			virtual ~Base()					= 0;
 	};
 }

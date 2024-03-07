@@ -1,7 +1,7 @@
 #include "../image.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC WEBP_DEFAULT final: public Image {
+namespace Alchemist::Media::Decoder::Image {
+	class DLL_PUBLIC WEBP_DEFAULT final: public Base {
 		public:
 			WEBP_DEFAULT();
 			WEBP_DEFAULT(const WEBP_DEFAULT&)				= default;

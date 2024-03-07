@@ -1,7 +1,7 @@
 #include "../video.hxx"
 
-namespace Alchemist::Media::Decoder {
-	class DLL_PUBLIC H265_DEFAULT final: public Video {
+namespace Alchemist::Media::Decoder::Video {
+	class DLL_PUBLIC H265_DEFAULT final: public Base {
 		public:
 			H265_DEFAULT();
 			H265_DEFAULT(const H265_DEFAULT&)				= default;

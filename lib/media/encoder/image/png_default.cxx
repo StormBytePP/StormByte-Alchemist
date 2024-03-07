@@ -1,3 +1,3 @@
 #include "png_default.hxx"
 
-Alchemist::Media::Encoder::PNG_DEFAULT::PNG_DEFAULT():Image(Media::Encoder::PNG_DEFAULT) { }
+Alchemist::Media::Encoder::Image::PNG_DEFAULT::PNG_DEFAULT():Base(Encoder::PNG_DEFAULT) { }

@@ -1,3 +1,3 @@
 #include "gif_default.hxx"
 
-Alchemist::Media::Decoder::GIF_DEFAULT::GIF_DEFAULT():Image(Media::Decoder::GIF_DEFAULT) { }
+Alchemist::Media::Decoder::Image::GIF_DEFAULT::GIF_DEFAULT():Base(Decoder::GIF_DEFAULT) { }
