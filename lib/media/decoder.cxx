@@ -66,7 +66,7 @@
 #include "decoder/video/vp9_libvpx.hxx"
 #endif
 
-#include <exception>
+#include <stdexcept>
 
 Alchemist::Media::Decoder::Base::Base(const Type& decoder_type):m_decoder_type(decoder_type) { }
 
