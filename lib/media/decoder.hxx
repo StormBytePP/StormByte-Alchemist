@@ -49,7 +49,7 @@ namespace Alchemist::Media::Decoder {
 			Type get_decoder_type() const;
 
 		protected:
-			Type m_decoder_type;
+			DLL_PROTECTED Type m_decoder_type;
 	};
 
 	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
