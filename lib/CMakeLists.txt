@@ -90,6 +90,6 @@ install(TARGETS Alchemy DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 include(include/CodecOptions)
 include(include/ConfigureFFmpeg)
-include(include/GenerateVersionDefinition)
+include(include/GenerateDefinitions)
 add_subdirectory(thirdparty)
 

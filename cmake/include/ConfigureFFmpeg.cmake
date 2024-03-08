@@ -1,4 +1,10 @@
-find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
+if(NOT WIN32)
+	find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
+	find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)
+else()
+	# In Windows we will release an installer which installs ffmpeg in bin folder
+	set(FFMPEG_EXECUTABLE	"")
+	set(FFPROBE_EXECUTABLE	"")
+endif()
 mark_as_advanced(FFMPEG_EXECUTABLE)
-find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)
 mark_as_advanced(FFPROBE_EXECUTABLE)
