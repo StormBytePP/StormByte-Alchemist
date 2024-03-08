@@ -32,7 +32,7 @@ namespace Alchemist::Media::Codec {
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
 		protected:
-			 Type m_codec_type;
+			Type m_codec_type;
 	};
 
 	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
