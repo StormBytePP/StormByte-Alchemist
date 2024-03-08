@@ -46,7 +46,7 @@ namespace Alchemist::Media::Encoder {
 			Base& operator=(Base&&)			= default;
 			virtual ~Base()					= 0;
 
-			inline Type get_decoder_type() const;
+			Type get_encoder_type() const;
 
 		protected:
 			DLL_LOCAL Type m_encoder_type;

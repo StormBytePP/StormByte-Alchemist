@@ -27,7 +27,7 @@ namespace Alchemist::Media::Codec {
 			virtual bool is_audio() const									= 0;
 			virtual bool is_image() const									= 0;
 
-			inline  Type get_codec_type() const;
+			Type get_codec_type() const;
 			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 

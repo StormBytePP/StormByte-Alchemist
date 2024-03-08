@@ -74,6 +74,10 @@ Alchemist::Media::Encoder::Base::Base(Type&& encoder_type):m_encoder_type(std::m
 
 Alchemist::Media::Encoder::Base::~Base() { }
 
+Alchemist::Media::Encoder::Type Alchemist::Media::Encoder::Base::get_encoder_type() const {
+	return m_encoder_type;
+}
+
 std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Instance(const Encoder::Type& encoder) {
 	std::shared_ptr<Encoder::Base> result;
 

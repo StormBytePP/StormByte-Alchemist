@@ -23,7 +23,7 @@ namespace Alchemist::Media::Container {
 			Base& operator=(Base&&)										= default;
 			virtual ~Base()												= default;
 
-			inline std::filesystem::path get_file_path() const;
+			std::filesystem::path get_file_path() const;
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;
 
 		protected:

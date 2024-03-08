@@ -74,6 +74,10 @@ Alchemist::Media::Decoder::Base::Base(Type&& decoder_type):m_decoder_type(std::m
 
 Alchemist::Media::Decoder::Base::~Base() { }
 
+Alchemist::Media::Decoder::Type Alchemist::Media::Decoder::Base::get_decoder_type() const {
+	return m_decoder_type;
+}
+
 std::shared_ptr<Alchemist::Media::Decoder::Base> Alchemist::Media::Decoder::Instance(const Decoder::Type& decoder) {
 	std::shared_ptr<Decoder::Base> result;
 
