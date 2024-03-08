@@ -6,7 +6,7 @@
 #include <string>
 
 namespace Alchemist {
-	class DLL_PUBLIC Info {
+	class Info {
 		public:
 			static const std::string 			DLL_PUBLIC Name;
 			static const std::string 			DLL_PUBLIC Author;
