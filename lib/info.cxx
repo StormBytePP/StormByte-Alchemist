@@ -36,7 +36,7 @@ const std::filesystem::path Alchemist::Info::current_path() {
 	if (hModule != NULL) {
 		// Use GetModuleFileName() with module handle to get the path
 		GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
-		return ownPth;
+		return std::filesystem::path(ownPth).remove_filename();
 	}
 	else
 		return std::filesystem::path();
