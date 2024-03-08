@@ -13,15 +13,12 @@
     	#endif
   	#endif
   	#define DLL_LOCAL
-	#define DLL_PROTECTED DLL_PUBLIC
 #else
 	#if __GNUC__ >= 4
     	#define DLL_PUBLIC __attribute__ ((visibility ("default")))
     	#define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
-		#define DLL_PROTECTED
   	#else
     	#define DLL_PUBLIC
     	#define DLL_LOCAL
-		#define DLL_PROTECTED
   	#endif
 #endif
