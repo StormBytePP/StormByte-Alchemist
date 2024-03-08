@@ -9,3 +9,15 @@ bool Alchemist::Media::Codec::Audio::Base::is_video() const { return false; }
 bool Alchemist::Media::Codec::Audio::Base::is_audio() const { return true; }
 
 bool Alchemist::Media::Codec::Audio::Base::is_image() const { return false; }
+
+unsigned short Alchemist::Media::Codec::Audio::Base::get_channels() const {
+	return m_channels;
+}
+
+void Alchemist::Media::Codec::Audio::Base::set_channels(const unsigned short& channels) {
+	m_channels = channels;
+}
+
+void Alchemist::Media::Codec::Audio::Base::set_channels(unsigned short&& channels) {
+	m_channels = std::move(channels);
+}

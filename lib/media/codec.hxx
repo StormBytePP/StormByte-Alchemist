@@ -5,6 +5,7 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 
 namespace Alchemist::Media::Codec {
 	enum DLL_PUBLIC Type:unsigned short {
@@ -28,11 +29,15 @@ namespace Alchemist::Media::Codec {
 			virtual bool is_image() const									= 0;
 
 			Type get_codec_type() const;
+			const std::optional<std::string>& get_language() const;
+			void set_language(const std::string&);
+			void set_language(std::string&&);
 			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 
 		protected:
 			Type m_codec_type;
+			std::optional<std::string> m_language;
 	};
 
 	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);

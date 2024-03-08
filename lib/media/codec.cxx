@@ -29,6 +29,12 @@ Alchemist::Media::Codec::Type Alchemist::Media::Codec::Base::get_codec_type() co
 	return m_codec_type;
 }
 
+const std::optional<std::string>& Alchemist::Media::Codec::Base::get_language() const { return m_language; }
+
+void Alchemist::Media::Codec::Base::set_language(const std::string& lang) { m_language = lang; }
+
+void Alchemist::Media::Codec::Base::set_language(std::string&& lang) { m_language.emplace(std::move(lang)); }
+
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const Codec::Type& codec) {
 	std::shared_ptr<Codec::Base> result;
 	
