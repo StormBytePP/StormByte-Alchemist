@@ -88,5 +88,6 @@ target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
 install(TARGETS Alchemy DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 include(include/CodecOptions)
+include(include/ConfigureFFmpeg)
 add_subdirectory(thirdparty)
 
