@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 
 if(UNIX)
-	set(CMAKE_C_COMPILER		"/usr/lib/ccache/bin/clang")
-	set(CMAKE_CXX_COMPILER		"/usr/lib/ccache/bin/clang++")
-	set(CMAKE_CXX_FLAGS			"-Wall -Wextra -march=native -O2 -flto")
-	set(CMAKE_EXE_LINKER_FLAGS	"-flto -Wl,--as-needed -Wl,--sort-common -Wl,-O2 -s")
+	set(CMAKE_CXX_FLAGS_DEBUG	"-g -ggdb -Wall -Wextra")
 else()
-	set(CMAKE_CXX_FLAGS			"/O2 /EHsc")
+	set(CMAKE_CXX_FLAGS_RELEASE	"/O2 /EHsc")
 endif()
 
 # set the project name and version
