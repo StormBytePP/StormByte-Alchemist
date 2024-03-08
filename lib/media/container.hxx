@@ -27,6 +27,6 @@ namespace Alchemist::Media::Container {
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;
 
 		protected:
-			DLL_LOCAL std::filesystem::path m_file_path;
+			std::filesystem::path m_file_path;
 	};
 }
