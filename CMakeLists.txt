@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Remove this on release
-set(CMAKE_C_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang")
-set(CMAKE_CXX_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang++")
+if(UNIX)
+	set(CMAKE_C_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang")
+	set(CMAKE_CXX_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang++")
+endif()
 
 project("Alchemist"
 	VERSION 2.0.0
