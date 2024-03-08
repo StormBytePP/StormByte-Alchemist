@@ -6,6 +6,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/audio.cxx
 	${ALCHEMY_DIR}/media/codec/audio/aac.cxx
 	${ALCHEMY_DIR}/media/codec/audio/ac3.cxx
+	${ALCHEMY_DIR}/media/codec/audio/copy.cxx
 	${ALCHEMY_DIR}/media/codec/audio/dts.cxx
 	${ALCHEMY_DIR}/media/codec/audio/eac3.cxx
 	${ALCHEMY_DIR}/media/codec/audio/flac.cxx
@@ -15,6 +16,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/audio/vorbis.cxx
 	${ALCHEMY_DIR}/media/codec/image.cxx
 	${ALCHEMY_DIR}/media/codec/image/bmp.cxx
+	${ALCHEMY_DIR}/media/codec/image/copy.cxx
 	${ALCHEMY_DIR}/media/codec/image/gif.cxx
 	${ALCHEMY_DIR}/media/codec/image/jpg.cxx
 	${ALCHEMY_DIR}/media/codec/image/png.cxx
@@ -22,6 +24,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/image/webp.cxx
 	${ALCHEMY_DIR}/media/codec/video.cxx
 	${ALCHEMY_DIR}/media/codec/video/av1.cxx
+	${ALCHEMY_DIR}/media/codec/video/copy.cxx
 	${ALCHEMY_DIR}/media/codec/video/h264.cxx
 	${ALCHEMY_DIR}/media/codec/video/h265.cxx
 	${ALCHEMY_DIR}/media/codec/video/mpeg2.cxx
@@ -58,6 +61,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/decoder/video/mpeg4_default.cxx
 	${ALCHEMY_DIR}/media/encoder.cxx
 	${ALCHEMY_DIR}/media/encoder/audio.cxx
+	${ALCHEMY_DIR}/media/encoder/copy.cxx
 	${ALCHEMY_DIR}/media/encoder/audio/aac_default.cxx
 	${ALCHEMY_DIR}/media/encoder/audio/ac3_default.cxx
 	${ALCHEMY_DIR}/media/encoder/audio/dts_default.cxx
@@ -77,6 +81,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/encoder/video/mpeg4_default.cxx
 	${ALCHEMY_DIR}/media/file.cxx
 	${ALCHEMY_DIR}/media/info.cxx
+	${ALCHEMY_DIR}/media/stream.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})

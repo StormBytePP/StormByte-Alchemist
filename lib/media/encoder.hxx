@@ -2,6 +2,7 @@
 
 #include "visibility.h"
 
+#include <limits>
 #include <list>
 #include <memory>
 
@@ -33,7 +34,9 @@ namespace Alchemist::Media::Encoder {
 		JPG_DEFAULT,
 		PNG_DEFAULT,
 		TIFF_DEFAULT,
-		WEBP_LIBWEBP
+		WEBP_LIBWEBP,
+
+		COPY = std::numeric_limits<unsigned short>::max()
 	};
 
 	class DLL_PUBLIC Base {

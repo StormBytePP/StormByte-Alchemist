@@ -1,3 +1,4 @@
+#include "encoder/copy.hxx"
 #include "encoder/audio/aac_default.hxx"
 #ifdef ENABLE_FDK
 #include "encoder/audio/aac_fraunhoffer.hxx"
@@ -285,6 +286,9 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			throw std::runtime_error("Encoder libVPX not compiled in");
 			#endif
 			break;
+
+		case Encoder::COPY:
+			result.reset(new Encoder::Copy());
 	}
 
 	return result;

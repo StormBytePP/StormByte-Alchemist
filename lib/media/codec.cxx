@@ -1,5 +1,6 @@
 #include "codec/audio/aac.hxx"
 #include "codec/audio/ac3.hxx"
+#include "codec/audio/copy.hxx"
 #include "codec/audio/dts.hxx"
 #include "codec/audio/eac3.hxx"
 #include "codec/audio/flac.hxx"
@@ -8,12 +9,14 @@
 #include "codec/audio/opus.hxx"
 #include "codec/audio/vorbis.hxx"
 #include "codec/image/bmp.hxx"
+#include "codec/image/copy.hxx"
 #include "codec/image/gif.hxx"
 #include "codec/image/jpg.hxx"
 #include "codec/image/png.hxx"
 #include "codec/image/tiff.hxx"
 #include "codec/image/webp.hxx"
 #include "codec/video/av1.hxx"
+#include "codec/video/copy.hxx"
 #include "codec/video/h264.hxx"
 #include "codec/video/h265.hxx"
 #include "codec/video/mpeg2.hxx"
@@ -75,6 +78,10 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 			result.reset(new Codec::Audio::VORBIS());
 			break;
 
+		case Codec::COPY_AUDIO:
+			result.reset(new Codec::Audio::Copy());
+			break;
+
 		case Codec::BMP:
 			result.reset(new Codec::Image::BMP());
 			break;
@@ -97,6 +104,10 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 
 		case Codec::WEBP:
 			result.reset(new Codec::Image::WEBP());
+			break;
+
+		case Codec::COPY_IMAGE:
+			result.reset(new Codec::Image::Copy());
 			break;
 
 		case Codec::AV1:
@@ -125,6 +136,10 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 
 		case Codec::VP9:
 			result.reset(new Codec::Video::VP9());
+			break;
+
+		case Codec::COPY_VIDEO:
+			result.reset(new Codec::Video::Copy());
 			break;
 	}
 
