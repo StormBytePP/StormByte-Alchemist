@@ -75,6 +75,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/encoder/video/mpeg2_default.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg4_default.cxx
 	${ALCHEMY_DIR}/media/info.cxx
+	${ALCHEMY_DIR}/info.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
@@ -89,5 +90,6 @@ install(TARGETS Alchemy DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 include(include/CodecOptions)
 include(include/ConfigureFFmpeg)
+include(include/GenerateVersionDefinition)
 add_subdirectory(thirdparty)
 

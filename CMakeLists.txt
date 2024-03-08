@@ -8,8 +8,8 @@ endif()
 
 project("Alchemist"
 	VERSION 2.0.0
-	DESCRIPTION "This is a program to handle multimedia conversions with one or more nodes to process data"
-	HOMEPAGE_URL "https://github.com/StormBytePP/StormByte-Alchemist"
+	DESCRIPTION "This is a program to handle automated multimedia conversions with one or more nodes to process data"
+	HOMEPAGE_URL "https://github.com/StormBytePP/Alchemist"
 )
 
 set(ALCHEMIST_MAIN_DIR ${PROJECT_SOURCE_DIR})
