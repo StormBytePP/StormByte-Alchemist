@@ -65,8 +65,7 @@ void test4() {
 	Alchemist::Executable exec2("/usr/bin/echo", "");
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 	exec1 >> exec2;
-	exec2 << Alchemist::Executable::EoF; // This is NOT needed!
-	
+
 	real_output << exec2;
 	test_result(expected_output, real_output);
 

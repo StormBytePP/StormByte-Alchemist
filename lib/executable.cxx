@@ -13,8 +13,11 @@ Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_prog
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	dup2(exe.m_handle[1], m_handle[1]);
-	//close(exe.m_handle[1]);
-	//write(read());
+	close(exe.m_handle[1]);
+
+	// We write pending data
+	write(read());
+	close(m_handle[0]);
 	m_redirected = &exe;
 	if (m_is_eof) exe.eof();
 	return exe;
