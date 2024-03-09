@@ -1,5 +1,6 @@
 #include "executable.hxx"
 
+#include <filesystem>
 #include <stdexcept>
 #include <sys/wait.h>
 
@@ -74,8 +75,19 @@ void Alchemist::Executable::run() {
 		::close(m_handle[0]);
 		::close(m_handle[1]);
 
+		std::string program_file = std::filesystem::path(m_program).filename().string();
+		std::vector<char*> argv;
+		argv.reserve(m_arguments.size() + 2);
+		argv.push_back(program_file.data());
+		for (size_t i = 0; i < m_arguments.size(); i++)
+			argv.push_back(m_arguments[i].data());
+		argv.push_back(NULL);
+		
+		/* ORIGINAL
 		char *argv[] = {m_program.data(), NULL};
-		if (execvp(argv[0], argv) < 0) exit(0);
+		if (execvp(argv[0], argv) < 0) exit(0); */
+		execvp(m_program.data(), argv.data());
+		exit(0);
 	}
 }
 
