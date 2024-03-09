@@ -82,9 +82,8 @@ void test5() {
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 	real_output << exec1;
 
-	exec1 >> exec2;
+	exec1 >> exec2; // No effect as it was eof already
 
-	
 	test_result(expected_output, real_output);
 
 	exec2.wait();
