@@ -20,8 +20,6 @@ namespace Alchemist {
 
 			void run();
 			int wait();
-			void redirect_stdin(int);
-			void redirect_stdout(int);
 
 			struct _EoF {};
 			static constexpr _EoF EoF = {};
@@ -33,6 +31,7 @@ namespace Alchemist {
 			friend std::string& DLL_PUBLIC operator<<(std::string&, const Executable&);
 			Executable& operator<<(const std::string&);
 			Executable& operator<<(const _EoF&);
+
 			
 
 		private:
