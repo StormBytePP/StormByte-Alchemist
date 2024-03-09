@@ -28,7 +28,9 @@ namespace Alchemist {
 
 			Executable& operator>>(Executable&);
 			friend Executable& DLL_PUBLIC operator>>(const std::string&, Executable&);
+			friend Executable& DLL_PUBLIC operator>>(const _EoF&, Executable&);
 			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
+			friend std::string& DLL_PUBLIC operator<<(std::string&, const Executable&);
 			Executable& operator<<(const std::string&);
 			Executable& operator<<(const _EoF&);
 			
@@ -36,11 +38,13 @@ namespace Alchemist {
 		private:
 			void write(const std::string&);
 			std::string read() const;
+			void eof();
 
 			std::string m_program, m_arguments;
 			std::optional<pid_t> m_pid;
 			int m_handle[2];
 			std::optional<int> m_redirect[2];
 			static constexpr int BUFFER_SIZE = 1;
+			bool m_is_eof;
 	};
 }

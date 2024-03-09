@@ -3,6 +3,62 @@
 
 #include <iostream>
 
+void test_result(const std::string& expected, const std::string& real) {
+	if (expected == real)
+		std::cout << "OK";
+	else
+		std::cout << "ERROR (expected: " << expected << ", got: " << real << ")";
+	std::cout << std::endl;
+}
+
+void test1() {
+	std::cout << "Test 1: " << std::flush;
+	const std::string expected_output = "123";
+	std::string real_output;
+	Alchemist::Executable exec1("/usr/bin/echo", "");
+
+	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
+
+	real_output << exec1;
+	test_result(expected_output, real_output);
+
+	exec1.wait();
+}
+
+void test2() {
+	std::cout << "Test 2: " << std::flush;
+	const std::string expected_output = "123";
+	std::string real_output;
+	Alchemist::Executable exec1("/usr/bin/echo", "");
+
+	"1" >> exec1;
+	"2" >> exec1;
+	"3" >> exec1;
+	Alchemist::Executable::EoF >> exec1;
+
+	real_output << exec1;
+	test_result(expected_output, real_output);
+
+	exec1.wait();
+}
+
+void test3() {
+	std::cout << "Test 3: " << std::flush;
+	const std::string expected_output = "123";
+	std::string real_output;
+	Alchemist::Executable exec1("/usr/bin/echo", "");
+	Alchemist::Executable exec2("/usr/bin/echo", "");
+	exec1 >> exec2;
+	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
+	exec2 << Alchemist::Executable::EoF;
+	
+	real_output << exec2;
+	test_result(expected_output, real_output);
+
+	exec2.wait();
+	exec1.wait();
+}
+
 int main() {
 	// Este ejemplo ha ido muy bien
 	// Alchemist::Executor exec1("/usr/bin/echo", "");
@@ -14,16 +70,22 @@ int main() {
 	// std::cout << exec2;
 	// exec2.wait();
 	// exec1.wait();
-	Alchemist::Executable exec1("/usr/bin/echo", "");
-	Alchemist::Executable exec2("/usr/bin/echo", "");
-	exec1 >> exec2;
-	exec1 << "1\n" << "2\n" << "3\n" << Alchemist::Executable::EoF;
-	exec2 << "9\n" << "8\n" << "7\n";// << Alchemist::Executable::EoF;
-	//exec1 >> exec2; // Does not work yet
-	std::cout << "Exec1: " << exec1;
-	std::cout << "Exec2: " << exec2;
-	exec2.wait();
-	exec1.wait();
+	// Alchemist::Executable exec1("/usr/bin/echo", "");
+	// Alchemist::Executable exec2("/usr/bin/echo", "");
+	// exec1 << "1\n" << "2\n" << "3\n" << Alchemist::Executable::EoF;
+	// exec2 << "9\n" << "8\n" << "7\n"; // << Alchemist::Executable::EoF;
+	// //exec1 >> exec2; // Does not work yet
+	// //exec2 << Alchemist::Executable::EoF; // Should NOT be needed
+	// std::cout << "Exec1: " << std::endl;
+	// std::cout << exec1;
+	// std::cout << "Exec2: " << std::endl;
+	// std::cout << exec2;
+	// exec2.wait();
+	// exec1.wait();
+
+	test1();
+	test2();
+	test3();
 	return 0;
 }
 

@@ -3,16 +3,22 @@
 #include <stdexcept>
 #include <sys/wait.h>
 
-Alchemist::Executable::Executable(const std::string& prog, const std::string& args):m_program(prog), m_arguments(args) {
+Alchemist::Executable::Executable(const std::string& prog, const std::string& args):m_program(prog), m_arguments(args), m_is_eof(false) {
 	run();
 }
 
-Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
+Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_program(std::move(prog)), m_arguments(std::move(args)), m_is_eof(false) {
 	run();
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	dup2(exe.m_handle[1], m_handle[1]);
+	write(read());
+	//close(m_handle[1]);
+	// char buffer[BUFFER_SIZE];
+	// ssize_t bytes = ::read(m_handle[0], buffer, BUFFER_SIZE);
+	// std::cout << "READED IN >> " << bytes << ": " << buffer << std::endl;
+	if (m_is_eof) exe.eof();
 	return exe;
 }
 
@@ -21,8 +27,18 @@ Alchemist::Executable& Alchemist::operator>>(const std::string& str, Alchemist::
 	return exe;
 }
 
+Alchemist::Executable& Alchemist::operator>>(const Alchemist::Executable::_EoF& _eof, Executable& exec) {
+	exec << _eof;
+	return exec;
+}
+
 std::ostream& Alchemist::operator<<(std::ostream& o, const Alchemist::Executable& exe) {
 	return o << exe.read();
+}
+
+std::string& Alchemist::operator<<(std::string& str, const Executable& exe) {
+	str = exe.read();
+	return str;
 }
 
 Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& str) {
@@ -31,7 +47,7 @@ Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& str)
 }
 
 Alchemist::Executable& Alchemist::Executable::operator<<(const Alchemist::Executable::_EoF&) {
-	close(m_handle[1]);
+	eof();
 	return *this;
 }
 
@@ -79,4 +95,9 @@ void Alchemist::Executable::write(const std::string& str) {
 	if (m_pid && m_handle[1] > 0) {
 		::write(m_handle[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
 	}
+}
+
+void Alchemist::Executable::eof() {
+	close(m_handle[1]);
+	m_is_eof = true;
 }
