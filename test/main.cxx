@@ -63,9 +63,9 @@ void test4() {
 	std::string real_output;
 	Alchemist::Executable exec1("/usr/bin/echo", "");
 	Alchemist::Executable exec2("/usr/bin/echo", "");
-	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
+	exec1 << "1" << "2" << "3";
 	exec1 >> exec2;
-
+	exec1 << Alchemist::Executable::EoF;
 	real_output << exec2;
 	test_result(expected_output, real_output);
 
