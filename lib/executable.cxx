@@ -1,79 +1,59 @@
 #include "executable.hxx"
 
 #include <filesystem>
-#include <stdexcept>
 #include <sys/wait.h>
 
-Alchemist::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args), m_is_eof(false) {
+Alchemist::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
 	run();
 }
 
-Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)), m_is_eof(false) {
+Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
 	run();
 }
 
-Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	if (m_is_eof) {
-		// We are attaching an already EOF'ed item so we have to
-		// rewrite the pending data
-		const std::string pending = read();
-		if (!pending.empty()) {
-			exe.write(pending);
-		}
-		exe.eof();
-	}
-	else {
-		dup2(exe.m_handle[1], m_handle[1]);
-		close(exe.m_handle[1]);
-
-		// We write pending data
-		write(read());
-		close(m_handle[0]);
-		m_redirected = &exe;
-		if (m_is_eof) exe.eof();
-	}
-	return exe;
+std::ostream& DLL_PUBLIC Alchemist::operator<<(std::ostream& os, const Executable& exe) {
+	auto data = exe.read_stdout();
+	if (data) os << *data;
+	return os;
 }
 
-Alchemist::Executable& Alchemist::operator>>(const std::string& str, Alchemist::Executable& exe) {
-	exe.write(str);
-	return exe;
-}
-
-Alchemist::Executable& Alchemist::operator>>(const Alchemist::Executable::_EoF& _eof, Executable& exec) {
-	exec << _eof;
-	return exec;
-}
-
-std::ostream& Alchemist::operator<<(std::ostream& o, const Alchemist::Executable& exe) {
-	return o << exe.read();
-}
-
-std::string& Alchemist::operator<<(std::string& str, const Executable& exe) {
-	str = exe.read();
+std::string& DLL_PUBLIC Alchemist::operator<<(std::string& str, const Executable& exe) {
+	auto data = exe.read_stdout();
+	if (data) str += *data;
 	return str;
 }
 
-Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& str) {
-	write(str);
+Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& data) {
+	write(data);
 	return *this;
 }
 
-Alchemist::Executable& Alchemist::Executable::operator<<(const Alchemist::Executable::_EoF&) {
+void Alchemist::Executable::operator<<(const _EoF&) {
 	eof();
-	return *this;
 }
 
 void Alchemist::Executable::run() {
-	pipe(m_handle);
+	pipe(m_pstdin);
+	pipe(m_pstdout);
+	pipe(m_pstderr);
+
 	m_pid = fork();
 
-	if (m_pid == -1) throw std::runtime_error("Can not execute " + m_program);
-	else if (m_pid == 0) {
-		dup2(m_handle[0], STDIN_FILENO);
-		dup2(m_handle[1], STDOUT_FILENO);
-		::close(m_handle[0]);
-		::close(m_handle[1]);
+	if (m_pid == 0) {
+		/* STDIN: Child reads from STDIN but does not write to */
+		close(m_pstdin[1]);
+		dup2(m_pstdin[0], STDIN_FILENO);
+		close(m_pstdin[0]);
+
+		/* STDOUT: Child writes to STDOUT but does not read from */
+		close(m_pstdout[0]);
+		dup2(m_pstdout[1], STDOUT_FILENO);
+		close(m_pstdout[1]);
+
+		/* STDERR: Child writes to STDERR but does not read from */
+		close(m_pstdout[0]);
+		dup2(m_pstdout[1], STDERR_FILENO);
+		close(m_pstdout[1]);
 
 		std::string program_file = std::filesystem::path(m_program).filename().string();
 		std::vector<char*> argv;
@@ -83,51 +63,54 @@ void Alchemist::Executable::run() {
 			argv.push_back(m_arguments[i].data());
 		argv.push_back(NULL);
 		
-		/* ORIGINAL
-		char *argv[] = {m_program.data(), NULL};
-		if (execvp(argv[0], argv) < 0) exit(0); */
 		execvp(m_program.data(), argv.data());
+		// If we reach here then we failed to execute the program
 		exit(0);
 	}
-}
+	else {
+		/* STDIN: Parent writes to STDIN but does not read from */
+		close(m_pstdin[0]);
 
-int Alchemist::Executable::wait() {
-	int status = -1;
-	if (m_pid) {
-		waitpid(*m_pid, &status, 0);
-		m_pid.reset();
-	}
-	return status;
-}
+		/* STDOUT: Parent reads from to STDOUT but does not write to */
+		close(m_pstdout[1]);
 
-std::string Alchemist::Executable::read() const {
-	std::string result = "";
-	if (m_pid && m_handle[0] > 0) {
-		char buffer[BUFFER_SIZE];
-		ssize_t bytes = 0;
-		do {
-			bytes = ::read(m_handle[0], buffer, BUFFER_SIZE);
-			if (bytes > 0) {
-				result += std::string(buffer, bytes);
-			}
-		} while (bytes == BUFFER_SIZE);
+		/* STDERR: Parent reads from to STDERR but does not write to */
+		close(m_pstderr[1]);
 	}
-	return result;
 }
 
 void Alchemist::Executable::write(const std::string& str) {
-	if (m_pid && m_handle[1] > 0) {
-		::write(m_handle[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
+	if (m_pstdin[1] > 0) {
+		::write(m_pstdin[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
 	}
 }
 
-void Alchemist::Executable::eof() {
-	close(m_handle[1]);
-	m_is_eof = true;
-	if (m_redirected) m_redirected.value()->eof();
+std::optional<std::string> Alchemist::Executable::read_stdout() const {
+	return read(m_pstdout[0]);
 }
 
-void Alchemist::Executable::close(int& fd) {
-	::close(fd);
-	fd = -1;
+std::optional<std::string> Alchemist::Executable::read_stderr() const {
+	return read(m_pstderr[0]);
+}
+
+std::optional<std::string> Alchemist::Executable::read(int handle) const {
+	std::optional<std::string> result;
+	char buffer[BUFFER_SIZE];
+	ssize_t bytes;
+	std::string data = "";
+	while ((bytes = ::read(handle, buffer, BUFFER_SIZE))) {
+		data += std::string(buffer, bytes);
+	};
+	if (!data.empty()) result = std::move(data);
+	return result;
+}
+
+void Alchemist::Executable::eof() {
+	close(m_pstdin[1]);
+}
+
+int Alchemist::Executable::wait() {
+	int status;
+	::wait(&status);
+	return status;
 }

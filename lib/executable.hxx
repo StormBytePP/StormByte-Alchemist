@@ -11,7 +11,7 @@
 namespace Alchemist {
 	class DLL_PUBLIC Executable {
 		public:
-			Executable(const std::string&, const std::vector<std::string>& params = std::vector<std::string>());
+			Executable(const std::string& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::string&&, std::vector<std::string>&&);
 			Executable(const Executable&)				= delete;
 			Executable(Executable&&)					= default;
@@ -25,26 +25,27 @@ namespace Alchemist {
 			static constexpr _EoF EoF = {};
 
 			Executable& operator>>(Executable&);
-			friend Executable& DLL_PUBLIC operator>>(const std::string&, Executable&);
-			friend Executable& DLL_PUBLIC operator>>(const _EoF&, Executable&);
+			Executable& operator>>(std::string&);
+			Executable& operator<<(Executable&);
 			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
 			friend std::string& DLL_PUBLIC operator<<(std::string&, const Executable&);
 			Executable& operator<<(const std::string&);
-			Executable& operator<<(const _EoF&);		
+			void operator<<(const _EoF&);
 
-		private:
+		public:
 			void write(const std::string&);
-			std::string read() const;
+			inline std::optional<std::string> read_stdout() const;
+			inline std::optional<std::string> read_stderr() const;
+			std::optional<std::string> read(int) const;
 			void eof();
-			void close(int&);
 			void run();
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
 			std::optional<pid_t> m_pid;
-			int m_handle[2];
+			int m_pstdout[2], m_pstdin[2], m_pstderr[2];
 			std::optional<Executable*> m_redirected;
-			static constexpr int BUFFER_SIZE = 5000;
+			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
 			bool m_is_eof;
 	};
 }
