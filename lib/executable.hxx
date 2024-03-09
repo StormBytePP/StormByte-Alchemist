@@ -18,7 +18,6 @@ namespace Alchemist {
 			Executable& operator=(Executable&&)			= default;
 			~Executable()								= default;
 
-			void run();
 			int wait();
 
 			struct _EoF {};
@@ -39,6 +38,7 @@ namespace Alchemist {
 			std::string read() const;
 			void eof();
 			void close(int&);
+			void run();
 
 			std::string m_program, m_arguments;
 			std::optional<pid_t> m_pid;
