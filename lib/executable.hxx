@@ -44,7 +44,7 @@ namespace Alchemist {
 			std::optional<pid_t> m_pid;
 			int m_handle[2];
 			std::optional<Executable*> m_redirected;
-			static constexpr int BUFFER_SIZE = 1;
+			static constexpr int BUFFER_SIZE = 5000;
 			bool m_is_eof;
 	};
 }
