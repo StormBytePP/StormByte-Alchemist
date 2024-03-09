@@ -14,7 +14,7 @@ Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_prog
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	dup2(exe.m_handle[1], m_handle[1]);
 	//close(exe.m_handle[1]);
-	write(read());
+	//write(read());
 	m_redirected = &exe;
 	if (m_is_eof) exe.eof();
 	return exe;
@@ -57,8 +57,8 @@ void Alchemist::Executable::run() {
 	else if (m_pid == 0) {
 		dup2(m_handle[0], STDIN_FILENO);
 		dup2(m_handle[1], STDOUT_FILENO);
-		close(m_handle[0]);
-		close(m_handle[1]);
+		::close(m_handle[0]);
+		::close(m_handle[1]);
 
 		char *argv[] = {m_program.data(), NULL};
 		if (execvp(argv[0], argv) < 0) exit(0);
@@ -99,4 +99,9 @@ void Alchemist::Executable::eof() {
 	close(m_handle[1]);
 	m_is_eof = true;
 	if (m_redirected) m_redirected.value()->eof();
+}
+
+void Alchemist::Executable::close(int& fd) {
+	::close(fd);
+	fd = -1;
 }

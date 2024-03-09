@@ -39,6 +39,7 @@ namespace Alchemist {
 			void write(const std::string&);
 			std::string read() const;
 			void eof();
+			void close(int&);
 
 			std::string m_program, m_arguments;
 			std::optional<pid_t> m_pid;
