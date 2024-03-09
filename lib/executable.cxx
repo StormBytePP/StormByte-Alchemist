@@ -13,8 +13,9 @@ Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_prog
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	dup2(exe.m_handle[1], m_handle[1]);
+	//close(exe.m_handle[1]);
 	write(read());
-	//close(m_handle[1]);
+	m_redirected = exe.m_handle[1];
 	// char buffer[BUFFER_SIZE];
 	// ssize_t bytes = ::read(m_handle[0], buffer, BUFFER_SIZE);
 	// std::cout << "READED IN >> " << bytes << ": " << buffer << std::endl;
@@ -99,5 +100,6 @@ void Alchemist::Executable::write(const std::string& str) {
 
 void Alchemist::Executable::eof() {
 	close(m_handle[1]);
+	if (m_redirected) close(*m_redirected);
 	m_is_eof = true;
 }

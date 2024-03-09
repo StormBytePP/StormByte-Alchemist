@@ -43,7 +43,7 @@ namespace Alchemist {
 			std::string m_program, m_arguments;
 			std::optional<pid_t> m_pid;
 			int m_handle[2];
-			std::optional<int> m_redirect[2];
+			std::optional<int> m_redirected;
 			static constexpr int BUFFER_SIZE = 1;
 			bool m_is_eof;
 	};
