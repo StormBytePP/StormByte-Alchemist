@@ -4,14 +4,15 @@
 #include <sys/wait.h>
 
 Alchemist::Executable::Executable(const std::string& prog, const std::string& args):m_program(prog), m_arguments(args) {
-	pipe(m_handle);
+	run();
 }
 
 Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
-	pipe(m_handle);
+	run();
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
+	dup2(exe.m_handle[1], m_handle[1]);
 	return exe;
 }
 
@@ -35,6 +36,7 @@ Alchemist::Executable& Alchemist::Executable::operator<<(const Alchemist::Execut
 }
 
 void Alchemist::Executable::run() {
+	pipe(m_handle);
 	m_pid = fork();
 
 	if (m_pid == -1) throw std::runtime_error("Can not execute " + m_program);

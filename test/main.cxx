@@ -16,11 +16,10 @@ int main() {
 	// exec1.wait();
 	Alchemist::Executable exec1("/usr/bin/echo", "");
 	Alchemist::Executable exec2("/usr/bin/echo", "");
-	//exec1 >> exec2;
-	exec1.run();
-	exec2.run();
+	exec1 >> exec2;
 	exec1 << "1\n" << "2\n" << "3\n" << Alchemist::Executable::EoF;
-	exec2 << "9\n" << "8\n" << "7\n" << Alchemist::Executable::EoF;
+	exec2 << "9\n" << "8\n" << "7\n";// << Alchemist::Executable::EoF;
+	//exec1 >> exec2; // Does not work yet
 	std::cout << "Exec1: " << exec1;
 	std::cout << "Exec2: " << exec2;
 	exec2.wait();
