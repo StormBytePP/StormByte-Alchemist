@@ -11,16 +11,22 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 	run();
 }
 
+Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
+	dup2(m_pstdout[0], exe.m_pstdin[1]);
+	close(m_pstdout[0]);
+	return *this;
+}
+
+std::string& Alchemist::Executable::operator>>(std::string& str) {
+	auto data = read_stdout();
+	if (data) str += *data;
+	return str;
+}
+
 std::ostream& DLL_PUBLIC Alchemist::operator<<(std::ostream& os, const Executable& exe) {
 	auto data = exe.read_stdout();
 	if (data) os << *data;
 	return os;
-}
-
-std::string& DLL_PUBLIC Alchemist::operator<<(std::string& str, const Executable& exe) {
-	auto data = exe.read_stdout();
-	if (data) str += *data;
-	return str;
 }
 
 Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& data) {

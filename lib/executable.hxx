@@ -25,10 +25,8 @@ namespace Alchemist {
 			static constexpr _EoF EoF = {};
 
 			Executable& operator>>(Executable&);
-			Executable& operator>>(std::string&);
-			Executable& operator<<(Executable&);
+			std::string& operator>>(std::string&);
 			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
-			friend std::string& DLL_PUBLIC operator<<(std::string&, const Executable&);
 			Executable& operator<<(const std::string&);
 			void operator<<(const _EoF&);
 

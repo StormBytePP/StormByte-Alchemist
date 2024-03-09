@@ -17,13 +17,27 @@ void test1() {
 	std::string returned;
 	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 	exec1.wait();
-	returned << exec1;
+	exec1 >> returned;
 	test_result(expected, returned);
-	
+}
+
+void test2() {
+	std::cout << "Test 2: " << std::flush;
+	Alchemist::Executable exec1("/usr/bin/sort", {"-"});
+	Alchemist::Executable exec2("/usr/bin/tr", {"-d", "\n"});
+	const std::string expected = "123";
+	std::string returned;
+	exec1 >> exec1;
+	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
+	exec2.wait();
+	exec1.wait();
+	exec2 >> returned;
+	test_result(expected, returned);
 }
 
 int main() {
 	test1();
+	//test2();
 
 	return 0;
 }
