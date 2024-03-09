@@ -6,12 +6,13 @@
 #include <optional>
 #include <string>
 #include <unistd.h>
+#include <vector>
 
 namespace Alchemist {
 	class DLL_PUBLIC Executable {
 		public:
-			Executable(const std::string&, const std::string&);
-			Executable(std::string&&, std::string&&);
+			Executable(const std::string&, const std::vector<std::string>& params = std::vector<std::string>());
+			Executable(std::string&&, std::vector<std::string>&&);
 			Executable(const Executable&)				= delete;
 			Executable(Executable&&)					= default;
 			Executable& operator=(const Executable&)	= delete;
@@ -29,9 +30,7 @@ namespace Alchemist {
 			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
 			friend std::string& DLL_PUBLIC operator<<(std::string&, const Executable&);
 			Executable& operator<<(const std::string&);
-			Executable& operator<<(const _EoF&);
-
-			
+			Executable& operator<<(const _EoF&);		
 
 		private:
 			void write(const std::string&);
@@ -40,7 +39,8 @@ namespace Alchemist {
 			void close(int&);
 			void run();
 
-			std::string m_program, m_arguments;
+			std::string m_program;
+			std::vector<std::string> m_arguments;
 			std::optional<pid_t> m_pid;
 			int m_handle[2];
 			std::optional<Executable*> m_redirected;

@@ -14,7 +14,7 @@ void test1() {
 	std::cout << "Test 1: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
 
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 
@@ -28,7 +28,7 @@ void test2() {
 	std::cout << "Test 2: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
 
 	"1" >> exec1;
 	"2" >> exec1;
@@ -45,8 +45,8 @@ void test3() {
 	std::cout << "Test 3: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
-	Alchemist::Executable exec2("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
+	Alchemist::Executable exec2("/usr/bin/echo");
 	exec1 >> exec2;
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 	
@@ -61,8 +61,8 @@ void test4() {
 	std::cout << "Test 4: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
-	Alchemist::Executable exec2("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
+	Alchemist::Executable exec2("/usr/bin/echo");
 	exec1 << "1" << "2" << "3";
 	exec1 >> exec2;
 	exec1 << Alchemist::Executable::EoF;
@@ -77,8 +77,8 @@ void test5() {
 	std::cout << "Test 5: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
-	Alchemist::Executable exec2("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
+	Alchemist::Executable exec2("/usr/bin/echo");
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 	real_output << exec1;
 
@@ -94,8 +94,8 @@ void test6() {
 	std::cout << "Test 6: " << std::flush;
 	const std::string expected_output = "123";
 	std::string real_output;
-	Alchemist::Executable exec1("/usr/bin/echo", "");
-	Alchemist::Executable exec2("/usr/bin/echo", "");
+	Alchemist::Executable exec1("/usr/bin/echo");
+	Alchemist::Executable exec2("/usr/bin/echo");
 	exec1 << "1" << "2" << "3" << Alchemist::Executable::EoF;
 	exec1 >> exec2;
 	

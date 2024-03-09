@@ -3,11 +3,11 @@
 #include <stdexcept>
 #include <sys/wait.h>
 
-Alchemist::Executable::Executable(const std::string& prog, const std::string& args):m_program(prog), m_arguments(args), m_is_eof(false) {
+Alchemist::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args), m_is_eof(false) {
 	run();
 }
 
-Alchemist::Executable::Executable(std::string&& prog, std::string&& args):m_program(std::move(prog)), m_arguments(std::move(args)), m_is_eof(false) {
+Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)), m_is_eof(false) {
 	run();
 }
 
