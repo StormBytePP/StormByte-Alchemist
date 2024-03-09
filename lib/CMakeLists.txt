@@ -1,6 +1,8 @@
 set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
 
 set(ALCHEMY_SRCs
+	${ALCHEMY_DIR}/executable.cxx
+	${ALCHEMY_DIR}/executor.cxx
 	${ALCHEMY_DIR}/info.cxx
 	${ALCHEMY_DIR}/media/codec.cxx
 	${ALCHEMY_DIR}/media/codec/audio.cxx
