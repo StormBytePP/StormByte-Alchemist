@@ -57,9 +57,9 @@ void Alchemist::Executable::run() {
 		close(m_pstdout[1]);
 
 		/* STDERR: Child writes to STDERR but does not read from */
-		close(m_pstdout[0]);
-		dup2(m_pstdout[1], STDERR_FILENO);
-		close(m_pstdout[1]);
+		close(m_pstderr[0]);
+		dup2(m_pstderr[1], STDERR_FILENO);
+		close(m_pstderr[1]);
 
 		std::string program_file = std::filesystem::path(m_program).filename().string();
 		std::vector<char*> argv;
@@ -115,6 +115,6 @@ void Alchemist::Executable::eof() {
 
 int Alchemist::Executable::wait() {
 	int status;
-	::wait(&status);
+	waitpid(m_pid, &status, WNOHANG);
 	return status;
 }

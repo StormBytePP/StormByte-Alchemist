@@ -40,7 +40,7 @@ namespace Alchemist {
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
-			std::optional<pid_t> m_pid;
+			pid_t m_pid;
 			int m_pstdout[2], m_pstdin[2], m_pstderr[2];
 			std::optional<Executable*> m_redirected;
 			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
