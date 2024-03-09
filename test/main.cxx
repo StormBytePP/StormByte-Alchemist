@@ -38,13 +38,12 @@ void test3() {
 	std::cout << "Test 3: " << std::flush;
 	Alchemist::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::Executable sort("/usr/bin/sort", {"-"});
-	const std::string expected = "321";
+	const std::string expected = "123";
 	std::string returned;
 	sort >> tr;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 
 	sort.wait();
-	tr << Alchemist::Executable::EoF;
 	tr.wait();
 	tr >> returned;
 	test_result(expected, returned);

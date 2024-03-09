@@ -12,8 +12,9 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	dup2(exe.m_pstdin[1], m_pstdout[0]);
-	close(exe.m_pstdin[1]);
+	//dup2(m_pstdout[0], exe.m_pstdin[1]);
+	m_redirected = &exe;
+	//close(m_pstdout[0]);
 	return *this;
 }
 
@@ -111,10 +112,16 @@ std::optional<std::string> Alchemist::Executable::read(int handle) const {
 
 void Alchemist::Executable::eof() {
 	close(m_pstdin[1]);
+	if (m_redirected) {
+		auto data = read_stdout();
+		if (data)
+			m_redirected.value()->write(*data);
+		close(m_redirected.value()->m_pstdin[1]);
+	}
 }
 
 int Alchemist::Executable::wait() {
 	int status;
-	waitpid(m_pid, &status, WNOHANG);
+	waitpid(m_pid, &status, 0);
 	return status;
 }
