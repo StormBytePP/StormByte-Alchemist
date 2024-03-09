@@ -12,8 +12,8 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	dup2(m_pstdout[0], exe.m_pstdin[1]);
-	close(m_pstdout[0]);
+	dup2(exe.m_pstdin[1], m_pstdout[0]);
+	close(exe.m_pstdin[1]);
 	return *this;
 }
 
@@ -86,9 +86,7 @@ void Alchemist::Executable::run() {
 }
 
 void Alchemist::Executable::write(const std::string& str) {
-	if (m_pstdin[1] > 0) {
-		::write(m_pstdin[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
-	}
+	::write(m_pstdin[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
 }
 
 std::optional<std::string> Alchemist::Executable::read_stdout() const {
