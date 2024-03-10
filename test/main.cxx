@@ -147,7 +147,7 @@ void testpipeobj2() {
 }
 
 void testpipeobj3() {
-	std::cout << "Test PipeOBJ 2: " << std::flush;
+	std::cout << "Test PipeOBJ 3: " << std::flush;
 	Alchemist::System::Pipe p_in, p_out;
 
 	if (fork() == 0) {
