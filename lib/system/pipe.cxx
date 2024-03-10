@@ -60,8 +60,14 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator>>(Pipe& p) const {
 }
 
 void Alchemist::System::Pipe::write(const std::string& str) {
-	::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
-	m_fd_data[0].events = POLLIN;
+	bool retry = true;
+	do {
+		poll(m_fd_data, 2, -1);
+		if ((m_fd_data[1].revents & POLLOUT) == POLLOUT) {
+			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
+			retry = false;
+		}
+	} while (retry);
 }
 
 std::optional<std::string> Alchemist::System::Pipe::read() const {
