@@ -97,26 +97,23 @@ void testpipe() {
 }
 
 void testpipeobj() {
+	std::cout << "Test PipeOBJ: " << std::flush;
 	Alchemist::System::Pipe p;
 
 	if (fork() == 0) {
 		p.close_read();
-		std::cout << "Child closed read end" << std::endl;
-		p << "Test";
-		p.close_write();
-		std::cout << "Child closed write end" << std::endl;
+		p.bind_write(STDOUT_FILENO);
+		std::cout << "Test";
 		exit(0);
 	}
 	else {
 		int status;
 		std::optional<std::string> read;
 		p.close_write();
-		std::cout << "Parent closed write end" << std::endl;
 		p >> read;
-		std::cout << "Read value is " << read.value_or("<EMPTY>") << std::endl;
-		wait(&status);
 		p.close_read();
-		std::cout << "Child exited with status " << status << std::endl;
+		wait(&status);
+		test_result("Test", read.value_or("<EMPTY>"));
 	}
 }
 
