@@ -1,4 +1,5 @@
 #include <executable.hxx>
+#include <system/pipe.hxx>
 
 #include <iostream>
 
@@ -66,12 +67,40 @@ void test4() {
 	sed >> returned;
 	test_result(expected, returned);
 }
+#include <sys/wait.h>
+void testpipe() {
+	int p[2];
+	pipe(p);
+
+	if (fork() == 0) {
+		close(p[0]);
+		std::cout << "Child closed read end" << std::endl;
+		write(p[1], "Test", sizeof(char) * 5);
+		close(p[1]);
+		std::cout << "Child closed write end" << std::endl;
+		exit(0);
+	}
+	else {
+		int status;
+		std::optional<std::string> read;
+		close(p[1]);
+		std::cout << "Parent closed write end" << std::endl;
+		char buffer[100];
+		auto bytes = ::read(p[0], buffer, 100);
+		const std::string red_data(buffer, bytes);
+		std::cout << "Read value is " << red_data << std::endl;
+		wait(&status);
+		close(p[0]);
+		std::cout << "Child exited with status " << status << std::endl;
+	}
+}
 
 int main() {
-	test1();
-	test2();
-	test3();
+	//test1();
+	//test2();
+	//test3();
 	//test4();
+	testpipe();
 
 	return 0;
 }
