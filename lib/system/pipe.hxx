@@ -5,6 +5,7 @@
 #include <optional>
 #include <stddef.h>
 #include <string>
+#include <sys/poll.h>
 
 namespace Alchemist::System {
 	class DLL_PUBLIC Pipe {
@@ -32,8 +33,10 @@ namespace Alchemist::System {
 			std::optional<std::string> read() const;
 			void bind(int&, int);
 			void close(int&);
+			void init();
 
 			int m_fd[2];
+			mutable pollfd m_fd_data[2];
 			static constexpr ssize_t MAX_BYTES = 1024 * 1024; // 1MB
 	};
 }

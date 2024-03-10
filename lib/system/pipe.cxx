@@ -2,8 +2,10 @@
 
 #include <unistd.h>
 
+#include <iostream>
+
 Alchemist::System::Pipe::Pipe() {
-	pipe(m_fd);
+	init();
 }
 
 Alchemist::System::Pipe::~Pipe() {
@@ -59,19 +61,28 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator>>(Pipe& p) const {
 
 void Alchemist::System::Pipe::write(const std::string& str) {
 	::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
+	m_fd_data[0].events = POLLIN;
 }
 
 std::optional<std::string> Alchemist::System::Pipe::read() const {
 	std::optional<std::string> result;
-	char buffer[MAX_BYTES];
-	ssize_t bytes;
-	std::string data = "";
-	while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
-		data += std::string(buffer, bytes);
-	};
-	if (!data.empty()) {
-		result = std::move(data);
-	}
+	bool retry = true;
+	do {
+		poll(m_fd_data, 2, -1);
+		ssize_t bytes;
+		
+		if ((m_fd_data[0].revents & POLLIN) == POLLIN) {
+			char buffer[MAX_BYTES];
+			std::string data = "";
+			while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
+				data += std::string(buffer, bytes);
+			};
+			if (!data.empty()) {
+				result = std::move(data);
+			}
+			retry = false;
+		}
+	} while(retry);
 	return result;
 }
 
@@ -81,8 +92,15 @@ void Alchemist::System::Pipe::bind(int& src, int dest) {
 }
 
 void Alchemist::System::Pipe::close(int& fd) {
-	if (fd != -1) {
-		::close(fd);
-		fd = -1;
-	}
+	::close(fd);
+}
+
+void Alchemist::System::Pipe::init() {
+	pipe(m_fd);
+	m_fd_data[0].fd = m_fd[0];
+	m_fd_data[0].events = POLLIN;
+	m_fd_data[0].revents = 0;
+	m_fd_data[1].fd = m_fd[1];
+	m_fd_data[1].events = POLLOUT;
+	m_fd_data[1].revents = 0;
 }
