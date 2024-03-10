@@ -142,6 +142,34 @@ void testpipeobj2() {
 	}
 }
 
+void testpipeobj3() {
+	std::cout << "Test PipeOBJ 2: " << std::flush;
+	Alchemist::System::Pipe p_in, p_out;
+
+	if (fork() == 0) {
+		p_in.close_write();
+		p_in.bind_read(STDIN_FILENO);
+		p_out.close_read();
+		p_out.bind_write(STDOUT_FILENO);
+
+		char* argv[] = {const_cast<char*>("sort"), const_cast<char*>("-"), NULL};
+		execvp("/usr/bin/sort", argv);
+		exit(0);
+	}
+	else {
+		p_in.close_read();
+		p_out.close_write();
+		p_in << "3\n" << "2\n" << "1\n";
+		p_in.close_write();
+		int status;
+		std::optional<std::string> read;
+		p_out >> read;
+
+		wait(&status);
+		test_result("1\n2\n3\n", read.value_or("<EMPTY>"));
+	}
+}
+
 int main() {
 	test1();
 	test2();
@@ -150,6 +178,7 @@ int main() {
 	testpipe();
 	testpipeobj();
 	testpipeobj2();
+	testpipeobj3();
 
 	return 0;
 }
