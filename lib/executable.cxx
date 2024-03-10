@@ -12,10 +12,8 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	//dup2(m_pstdout[0], exe.m_pstdin[1]);
-	m_redirected = &exe;
-	//close(m_pstdout[0]);
-	return *this;
+	m_syncer=std::thread(&Alchemist::Executable::consume_and_redirect, this, &exe);
+	return exe;
 }
 
 std::string& Alchemist::Executable::operator>>(std::string& str) {
@@ -36,7 +34,7 @@ Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& data
 }
 
 void Alchemist::Executable::operator<<(const _EoF&) {
-	eof();
+	close(m_pstdin[1]);
 }
 
 void Alchemist::Executable::run() {
@@ -103,25 +101,27 @@ std::optional<std::string> Alchemist::Executable::read(int handle) const {
 	char buffer[BUFFER_SIZE];
 	ssize_t bytes;
 	std::string data = "";
-	while ((bytes = ::read(handle, buffer, BUFFER_SIZE))) {
+	while ((bytes = ::read(handle, buffer, BUFFER_SIZE)) > 0) {
 		data += std::string(buffer, bytes);
 	};
 	if (!data.empty()) result = std::move(data);
 	return result;
 }
 
-void Alchemist::Executable::eof() {
-	close(m_pstdin[1]);
-	if (m_redirected) {
-		auto data = read_stdout();
-		if (data)
-			m_redirected.value()->write(*data);
-		close(m_redirected.value()->m_pstdin[1]);
-	}
-}
-
 int Alchemist::Executable::wait() {
 	int status;
 	waitpid(m_pid, &status, 0);
+	if (m_syncer) {
+		m_syncer.value().join();
+		m_syncer.reset();
+	}
 	return status;
+}
+
+void Alchemist::Executable::consume_and_redirect(Executable* exec) {
+	std::optional<std::string> data;
+	while((data = read_stdout())) {
+		exec->write(*data);
+	}
+	close(exec->m_pstdin[1]);
 }

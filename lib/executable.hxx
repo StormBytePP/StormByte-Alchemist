@@ -5,6 +5,7 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -35,8 +36,8 @@ namespace Alchemist {
 			inline std::optional<std::string> read_stdout() const;
 			inline std::optional<std::string> read_stderr() const;
 			std::optional<std::string> read(int) const;
-			void eof();
 			void run();
+			void consume_and_redirect(Executable*);
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
@@ -44,6 +45,6 @@ namespace Alchemist {
 			int m_pstdout[2], m_pstdin[2], m_pstderr[2];
 			std::optional<Executable*> m_redirected;
 			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
-			bool m_is_eof;
+			std::optional<std::thread> m_syncer;
 	};
 }

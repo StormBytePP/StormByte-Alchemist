@@ -49,10 +49,29 @@ void test3() {
 	test_result(expected, returned);
 }
 
+void test4() {
+	std::cout << "Test 4: " << std::flush;
+	Alchemist::Executable tr("/usr/bin/tr", {"-d", "\n"});
+	Alchemist::Executable sort("/usr/bin/sort", {"-"});
+	Alchemist::Executable sed("/usr/bin/sed", {"-e", "s/3/9/"});
+	const std::string expected = "129";
+	std::string returned;
+	sort >> tr >> sed;
+	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
+	
+	sort.wait();
+	tr.wait();
+	sed.wait();
+
+	sed >> returned;
+	test_result(expected, returned);
+}
+
 int main() {
 	test1();
 	test2();
 	test3();
+	//test4();
 
 	return 0;
 }
