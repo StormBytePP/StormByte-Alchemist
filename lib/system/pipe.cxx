@@ -52,7 +52,7 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	char buffer[MAX_BYTES];
 	ssize_t bytes;
 	std::string data = "";
-	while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) >= 0) {
+	while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
 		data += std::string(buffer, bytes);
 	};
 	if (!data.empty()) {

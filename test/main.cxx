@@ -2,6 +2,7 @@
 #include <system/pipe.hxx>
 
 #include <iostream>
+#include <sys/wait.h>
 
 void test_result(const std::string& expected, const std::string& real) {
 	if (expected == real)
@@ -67,7 +68,7 @@ void test4() {
 	sed >> returned;
 	test_result(expected, returned);
 }
-#include <sys/wait.h>
+
 void testpipe() {
 	int p[2];
 	pipe(p);
@@ -95,12 +96,37 @@ void testpipe() {
 	}
 }
 
+void testpipeobj() {
+	Alchemist::System::Pipe p;
+
+	if (fork() == 0) {
+		p.close_read();
+		std::cout << "Child closed read end" << std::endl;
+		p << "Test";
+		p.close_write();
+		std::cout << "Child closed write end" << std::endl;
+		exit(0);
+	}
+	else {
+		int status;
+		std::optional<std::string> read;
+		p.close_write();
+		std::cout << "Parent closed write end" << std::endl;
+		p >> read;
+		std::cout << "Read value is " << read.value_or("<EMPTY>") << std::endl;
+		wait(&status);
+		p.close_read();
+		std::cout << "Child exited with status " << status << std::endl;
+	}
+}
+
 int main() {
 	//test1();
 	//test2();
 	//test3();
 	//test4();
-	testpipe();
+	//testpipe();
+	testpipeobj();
 
 	return 0;
 }
