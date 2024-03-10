@@ -16,49 +16,42 @@ Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	return exe;
 }
 
-std::string& Alchemist::Executable::operator>>(std::string& str) {
-	auto data = read_stdout();
-	if (data) str += *data;
-	return str;
+std::optional<std::string>& Alchemist::Executable::operator>>(std::optional<std::string>& data) {
+	m_pstdout >> data;
+	return data;
 }
 
 std::ostream& DLL_PUBLIC Alchemist::operator<<(std::ostream& os, const Executable& exe) {
-	auto data = exe.read_stdout();
+	std::optional<std::string> data;
+	exe.m_pstdout >> data;
 	if (data) os << *data;
 	return os;
 }
 
 Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& data) {
-	write(data);
+	m_pstdin << data;
 	return *this;
 }
 
 void Alchemist::Executable::operator<<(const _EoF&) {
-	close(m_pstdin[1]);
+	m_pstdin.close_write();
 }
 
 void Alchemist::Executable::run() {
-	pipe(m_pstdin);
-	pipe(m_pstdout);
-	pipe(m_pstderr);
-
 	m_pid = fork();
 
 	if (m_pid == 0) {
 		/* STDIN: Child reads from STDIN but does not write to */
-		close(m_pstdin[1]);
-		dup2(m_pstdin[0], STDIN_FILENO);
-		close(m_pstdin[0]);
+		m_pstdin.close_write();
+		m_pstdin.bind_read(STDIN_FILENO);
 
 		/* STDOUT: Child writes to STDOUT but does not read from */
-		close(m_pstdout[0]);
-		dup2(m_pstdout[1], STDOUT_FILENO);
-		close(m_pstdout[1]);
+		m_pstdout.close_read();
+		m_pstdout.bind_write(STDOUT_FILENO);
 
 		/* STDERR: Child writes to STDERR but does not read from */
-		close(m_pstderr[0]);
-		dup2(m_pstderr[1], STDERR_FILENO);
-		close(m_pstderr[1]);
+		m_pstdout.close_read();
+		m_pstdout.bind_write(STDERR_FILENO);
 
 		std::string program_file = std::filesystem::path(m_program).filename().string();
 		std::vector<char*> argv;
@@ -74,38 +67,18 @@ void Alchemist::Executable::run() {
 	}
 	else {
 		/* STDIN: Parent writes to STDIN but does not read from */
-		close(m_pstdin[0]);
+		m_pstdin.close_read();
 
 		/* STDOUT: Parent reads from to STDOUT but does not write to */
-		close(m_pstdout[1]);
+		m_pstdout.close_write();
 
 		/* STDERR: Parent reads from to STDERR but does not write to */
-		close(m_pstderr[1]);
+		m_pstderr.close_write();
 	}
 }
 
 void Alchemist::Executable::write(const std::string& str) {
-	::write(m_pstdin[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
-}
-
-std::optional<std::string> Alchemist::Executable::read_stdout() const {
-	return read(m_pstdout[0]);
-}
-
-std::optional<std::string> Alchemist::Executable::read_stderr() const {
-	return read(m_pstderr[0]);
-}
-
-std::optional<std::string> Alchemist::Executable::read(int handle) const {
-	std::optional<std::string> result;
-	char buffer[BUFFER_SIZE];
-	ssize_t bytes;
-	std::string data = "";
-	while ((bytes = ::read(handle, buffer, BUFFER_SIZE)) > 0) {
-		data += std::string(buffer, bytes);
-	};
-	if (!data.empty()) result = std::move(data);
-	return result;
+	m_pstdin << str;
 }
 
 int Alchemist::Executable::wait() {
@@ -120,8 +93,6 @@ int Alchemist::Executable::wait() {
 
 void Alchemist::Executable::consume_and_redirect(Executable* exec) {
 	std::optional<std::string> data;
-	while((data = read_stdout())) {
-		exec->write(*data);
-	}
-	close(exec->m_pstdin[1]);
+	m_pstdout >> exec->m_pstdin;
+	exec->m_pstdin.close_write();
 }

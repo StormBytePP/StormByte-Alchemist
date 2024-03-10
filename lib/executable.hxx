@@ -1,6 +1,6 @@
 #pragma once
 
-#include "visibility.h"
+#include "system/pipe.hxx"
 
 #include <iostream>
 #include <optional>
@@ -26,23 +26,20 @@ namespace Alchemist {
 			static constexpr _EoF EoF = {};
 
 			Executable& operator>>(Executable&);
-			std::string& operator>>(std::string&);
+			std::optional<std::string>& operator>>(std::optional<std::string>&);
 			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
 			Executable& operator<<(const std::string&);
 			void operator<<(const _EoF&);
 
 		public:
 			void write(const std::string&);
-			inline std::optional<std::string> read_stdout() const;
-			inline std::optional<std::string> read_stderr() const;
-			std::optional<std::string> read(int) const;
 			void run();
 			void consume_and_redirect(Executable*);
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
 			pid_t m_pid;
-			int m_pstdout[2], m_pstdin[2], m_pstderr[2];
+			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::optional<Executable*> m_redirected;
 			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
 			std::optional<std::thread> m_syncer;

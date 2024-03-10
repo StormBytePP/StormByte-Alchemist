@@ -23,7 +23,9 @@ namespace Alchemist::System {
 
 
 			Pipe& operator<<(const std::string&);
+			Pipe& operator<<(Pipe&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
+			Pipe& operator>>(Pipe&) const;
 
 		private:
 			void write(const std::string&);

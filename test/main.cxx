@@ -12,11 +12,15 @@ void test_result(const std::string& expected, const std::string& real) {
 	std::cout << std::endl;
 }
 
+void test_result(const std::string& expected, const std::optional<std::string>& real) {
+	test_result(expected, real.value_or("<EMPTY>"));
+}
+
 void test1() {
 	std::cout << "Test 1: " << std::flush;
 	Alchemist::Executable exec1("/usr/bin/sort", {"-"});
 	const std::string expected = "1\n2\n3\n";
-	std::string returned;
+	std::optional<std::string> returned;
 	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 	exec1.wait();
 	exec1 >> returned;
@@ -27,7 +31,7 @@ void test2() {
 	std::cout << "Test 2: " << std::flush;
 	Alchemist::Executable exec2("/usr/bin/tr", {"-d", "\n"});
 	const std::string expected = "321";
-	std::string returned;
+	std::optional<std::string> returned;
 	
 	exec2 << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 
@@ -41,7 +45,7 @@ void test3() {
 	Alchemist::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::Executable sort("/usr/bin/sort", {"-"});
 	const std::string expected = "123";
-	std::string returned;
+	std::optional<std::string> returned;
 	sort >> tr;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 
@@ -57,7 +61,7 @@ void test4() {
 	Alchemist::Executable sort("/usr/bin/sort", {"-"});
 	Alchemist::Executable sed("/usr/bin/sed", {"-e", "s/3/9/"});
 	const std::string expected = "129";
-	std::string returned;
+	std::optional<std::string> returned;
 	sort >> tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 	

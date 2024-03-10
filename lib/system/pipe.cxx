@@ -32,6 +32,13 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& 
 	return *this;
 }
 
+Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(Pipe& p) {
+	std::optional<std::string> data = p.read();
+	if (data)
+		write(*data);
+	return *this;
+}
+
 std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<std::string>& out) const {
 	std::optional<std::string> data = read();
 	if (data) {
@@ -41,6 +48,13 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 			out = *data;
 	}
 	return out;
+}
+
+Alchemist::System::Pipe& Alchemist::System::Pipe::operator>>(Pipe& p) const {
+	std::optional<std::string> data = read();
+	if (data)
+		p.write(*data);
+	return p;
 }
 
 void Alchemist::System::Pipe::write(const std::string& str) {
