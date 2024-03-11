@@ -76,9 +76,9 @@ std::optional<std::string> Alchemist::System::Linux::Pipe::read() const {
 		poll(100);
 		ssize_t bytes;
 		if (has_read_event(POLLIN)) {
-			char buffer[MAX_BYTES];
+			char buffer[System::Pipe::READ_MAX_BYTES];
 			std::string data = "";
-			while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
+			while ((bytes = ::read(m_fd[0], buffer, System::Pipe::READ_MAX_BYTES)) > 0) {
 				data += std::string(buffer, bytes);
 			};
 			if (!data.empty()) {

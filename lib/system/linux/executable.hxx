@@ -39,6 +39,5 @@ namespace Alchemist::System::Linux {
 			pid_t m_pid;
 			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::unique_ptr<std::thread> m_forwarder;
-			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
 	};
 }
