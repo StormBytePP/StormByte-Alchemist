@@ -13,6 +13,7 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	// Do something here
+	exe.m_pstdin.close_write();
 	return exe;
 }
 

@@ -64,7 +64,7 @@ void test4() {
 	std::optional<std::string> returned;
 	sort >> tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
-	
+
 	sort.wait();
 	tr.wait();
 	sed.wait();
@@ -76,8 +76,8 @@ void test4() {
 int main() {
 	test1();
 	test2();
-	//test3();
-	//test4();
+	test3();
+	test4();
 
 	return 0;
 }
