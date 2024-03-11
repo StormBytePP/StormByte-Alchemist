@@ -174,6 +174,30 @@ void testpipeobj3() {
 	}
 }
 
+void testpipeobj4() {
+	std::cout << "Test PipeOBJ 4: " << std::flush;
+	Alchemist::System::Pipe p_in, p_out;
+
+	if (fork() == 0) {
+		p_in.close_write();
+		p_out.close_read();
+		p_in >> p_out;
+		exit(0);
+	}
+	else {
+		p_in.close_read();
+		p_out.close_write();
+		p_in << "3\n" << "2\n" << "1\n";
+		p_in.close_write();
+		int status;
+		std::optional<std::string> read;
+		p_out >> read;
+
+		wait(&status);
+		test_result("3\n2\n1\n", read.value_or("<EMPTY>"));
+	}
+}
+
 int main() {
 	test1();
 	test2();
@@ -183,6 +207,7 @@ int main() {
 	testpipeobj();
 	testpipeobj2();
 	testpipeobj3();
+	testpipeobj4();
 
 	return 0;
 }
