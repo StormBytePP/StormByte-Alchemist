@@ -29,6 +29,18 @@ void Alchemist::System::Pipe::close_write() {
 	close(m_fd[1]);
 }
 
+int Alchemist::System::Pipe::poll(int timeout) const {
+	return ::poll(m_fd_data, 2, timeout);
+}
+
+bool Alchemist::System::Pipe::has_read_event(unsigned short event) const {
+	return (m_fd_data[0].revents & event) == event;
+}
+
+bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
+	return (m_fd_data[1].revents & event) == event;
+}
+
 Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& data) {
 	write(data);
 	return *this;
@@ -48,13 +60,13 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 void Alchemist::System::Pipe::write(const std::string& str) {
 	bool retry = true;
 	do {
-		poll(m_fd_data, 2, -1);
-		if ((m_fd_data[1].revents & POLLOUT) == POLLOUT) {
+		poll(-1);
+		if (has_write_event(POLLOUT)) {
 			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
 			fflush(NULL);
 			retry = false;
 		}
-		else if ((m_fd_data[1].revents & POLLHUP) == POLLHUP) {
+		else if (has_write_event(POLLHUP)) {
 			retry = false;
 		}
 	} while (retry);
@@ -64,9 +76,9 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	std::optional<std::string> result;
 	bool retry = true;
 	do {
-		poll(m_fd_data, 2, -1);
+		poll(-1);
 		ssize_t bytes;
-		if ((m_fd_data[0].revents & POLLIN) == POLLIN) {
+		if (has_read_event(POLLIN)) {
 			char buffer[MAX_BYTES];
 			std::string data = "";
 			while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
@@ -78,7 +90,7 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 			fflush(NULL);
 			retry = false;
 		}
-		else if ((m_fd_data[0].revents & POLLHUP) == POLLHUP) {
+		else if (has_read_event(POLLHUP)) {
 			retry = false;
 		}
 	} while(retry);
