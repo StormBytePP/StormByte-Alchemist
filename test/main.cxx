@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sys/wait.h>
+#include <signal.h>
 
 void test_result(const std::string& expected, const std::string& real) {
 	if (expected == real)
@@ -59,10 +60,11 @@ void test4() {
 	std::cout << "Test 4: " << std::flush;
 	Alchemist::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::Executable sort("/usr/bin/sort", {"-"});
-	Alchemist::Executable sed("/usr/bin/sed", {"-e", "s/3/9/"});
+	Alchemist::Executable sed("/usr/bin/sed", {"-e", "'s/3/9/'"});
 	const std::string expected = "129";
 	std::optional<std::string> returned;
-	sort >> tr >> sed;
+	sort >> tr;
+	tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 
 	sort.wait();
@@ -74,6 +76,8 @@ void test4() {
 }
 
 int main() {
+	//signal(SIGPIPE, SIG_IGN);
+
 	test1();
 	test2();
 	test3();

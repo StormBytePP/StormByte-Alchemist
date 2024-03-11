@@ -2,8 +2,6 @@
 
 #include <unistd.h>
 
-#include <iostream>
-
 Alchemist::System::Pipe::Pipe() {
 	init();
 }
@@ -61,12 +59,11 @@ void Alchemist::System::Pipe::write(const std::string& str) {
 	bool retry = true;
 	do {
 		poll(-1);
-		if (has_write_event(POLLOUT)) {
-			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
-			fflush(NULL);
+		if (has_write_event(POLLHUP)) {
 			retry = false;
 		}
-		else if (has_write_event(POLLHUP)) {
+		else if (has_write_event(POLLOUT)) {
+			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
 			retry = false;
 		}
 	} while (retry);
@@ -87,7 +84,6 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 			if (!data.empty()) {
 				result = std::move(data);
 			}
-			fflush(NULL);
 			retry = false;
 		}
 		else if (has_read_event(POLLHUP)) {

@@ -84,9 +84,9 @@ void Alchemist::Executable::write(const std::string& str) {
 
 int Alchemist::Executable::wait() {
 	int status;
-	waitpid(m_pid, &status, 0);
 	if (m_forwarder)
 		m_forwarder->join();
+	waitpid(m_pid, &status, 0);
 	return status;
 }
 
@@ -95,9 +95,8 @@ void Alchemist::Executable::consume_and_forward(Executable& exec) {
 		std::optional<std::string> buffer;
 		m_pstdout.poll(-1);
 		m_pstdout >> buffer;
-		if (buffer) {
+		if (buffer)
 			exec.m_pstdin << *buffer;
-		}
 	} while (!m_pstdout.has_read_event(POLLHUP));
 	exec.m_pstdin.close_write();
 }
