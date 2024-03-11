@@ -40,5 +40,6 @@ namespace Alchemist::System::Linux {
 
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];
+			static constexpr ssize_t READ_MAX_BYTES = 1024 * 1024; // 1MB
 	};
 }

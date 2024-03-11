@@ -3,7 +3,6 @@
 #include "visibility.h"
 
 #include <optional>
-#include <stddef.h>
 #include <string>
 
 #if defined _WIN32 || defined __CYGWIN__
@@ -37,8 +36,6 @@ namespace Alchemist::System {
 
 			Pipe& operator<<(const std::string&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
-
-			static constexpr ssize_t READ_MAX_BYTES = 1024 * 1024; // 1MB
 
 		private:
 			std::unique_ptr<PipeImpl> m_pipe_impl;
