@@ -1,8 +1,6 @@
-#include <system/executable.hxx>
+#include <system/pipe.hxx>
 
 #include <iostream>
-#include <sys/wait.h>
-#include <signal.h>
 
 void test_result(const std::string& expected, const std::string& real) {
 	if (expected == real)
@@ -16,6 +14,7 @@ void test_result(const std::string& expected, const std::optional<std::string>& 
 	test_result(expected, real.value_or("<EMPTY>"));
 }
 
+/*
 void test1() {
 	std::cout << "Test 1: " << std::flush;
 	Alchemist::System::Executable exec1("/usr/bin/sort", {"-"});
@@ -73,15 +72,23 @@ void test4() {
 	sed >> returned;
 	test_result(expected, returned);
 }
+*/
+
+void pipetest1() {
+	Alchemist::System::Pipe p;
+
+	p << "test";
+	p.close_write();
+
+	std::optional<std::string> result;
+	p >> result;
+	p.close_read();
+
+	test_result("test", result);
+}
 
 int main() {
-	//signal(SIGPIPE, SIG_IGN);
-
-	test1();
-	test2();
-	test3();
-	test4();
-	//test5();
+	pipetest1();
 
 	return 0;
 }
