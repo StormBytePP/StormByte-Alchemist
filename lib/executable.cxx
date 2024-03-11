@@ -88,7 +88,5 @@ int Alchemist::Executable::wait() {
 }
 
 void Alchemist::Executable::consume_and_redirect(Executable* exec) {
-	std::optional<std::string> data;
-	m_pstdout >> exec->m_pstdin;
-	exec->m_pstdin.close_write();
+	// Do something here
 }

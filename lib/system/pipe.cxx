@@ -52,13 +52,6 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 	return out;
 }
 
-Alchemist::System::Pipe& Alchemist::System::Pipe::operator>>(Pipe& p) const {
-	std::optional<std::string> data = read();
-	if (data)
-		p.write(*data);
-	return p;
-}
-
 void Alchemist::System::Pipe::write(const std::string& str) {
 	bool retry = true;
 	do {
