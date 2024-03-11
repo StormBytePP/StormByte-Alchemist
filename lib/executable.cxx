@@ -87,6 +87,7 @@ int Alchemist::Executable::wait() {
 	return status;
 }
 
-void Alchemist::Executable::consume_and_redirect(Executable* exec) {
+void Alchemist::Executable::consume_and_redirect(Executable& exec) {
 	// Do something here
+
 }
