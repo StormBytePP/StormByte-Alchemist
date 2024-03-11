@@ -1,20 +1,13 @@
 #pragma once
 
-#include "visibility.h"
+#include "../pipe.hxx"
 
 #include <optional>
 #include <stddef.h>
 #include <string>
+#include <sys/poll.h>
 
-#if defined _WIN32 || defined __CYGWIN__
-	namespace Alchemist::System::Windows { class Pipe; }
-	using PipeImpl = Alchemist::System::Windows::Pipe;
-#else
-	namespace Alchemist::System::Linux { class Pipe; }
-	using PipeImpl = Alchemist::System::Linux::Pipe;
-#endif
-
-namespace Alchemist::System {
+namespace Alchemist::System::Linux {
 	class DLL_PUBLIC Pipe {
 		public:
 			Pipe();
@@ -39,7 +32,14 @@ namespace Alchemist::System {
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
 
 		private:
-			std::unique_ptr<PipeImpl> m_pipe_impl;
+			void write(const std::string&);
+			std::optional<std::string> read() const;
+			void bind(int&, int);
+			void close(int&);
+			void init();
+
+			int m_fd[2];
+			mutable pollfd m_fd_data[2];
 			static constexpr ssize_t MAX_BYTES = 1024 * 1024; // 1MB
 	};
 }

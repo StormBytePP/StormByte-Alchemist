@@ -1,6 +1,7 @@
 #pragma once
 
-#include "system/pipe.hxx"
+#include "../executable.hxx"
+#include "../pipe.hxx"
 
 #include <iostream>
 #include <optional>
@@ -9,8 +10,8 @@
 #include <unistd.h>
 #include <vector>
 
-namespace Alchemist {
-	class DLL_PUBLIC Executable {
+namespace Alchemist::System::Linux {
+	class DLL_LOCAL Executable {
 		public:
 			Executable(const std::string& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::string&&, std::vector<std::string>&&);
@@ -22,14 +23,11 @@ namespace Alchemist {
 
 			int wait();
 
-			struct _EoF {};
-			static constexpr _EoF EoF = {};
-
 			Executable& operator>>(Executable&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&);
-			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
+			friend std::ostream& DLL_LOCAL operator<<(std::ostream&, const Executable&);
 			Executable& operator<<(const std::string&);
-			void operator<<(const _EoF&);
+			void operator<<(const System::Executable::_EoF&);
 
 		public:
 			void write(const std::string&);

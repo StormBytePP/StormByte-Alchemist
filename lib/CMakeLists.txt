@@ -1,7 +1,6 @@
 set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
 
 set(ALCHEMY_SRCs
-	${ALCHEMY_DIR}/executable.cxx
 	${ALCHEMY_DIR}/info.cxx
 	${ALCHEMY_DIR}/media/codec.cxx
 	${ALCHEMY_DIR}/media/codec/audio.cxx
@@ -83,8 +82,24 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/file.cxx
 	${ALCHEMY_DIR}/media/info.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
+	${ALCHEMY_DIR}/system/executable.cxx
 	${ALCHEMY_DIR}/system/pipe.cxx
 )
+
+# We need to add the OS dependant files (onnly unix like and windows OSes are supported)
+if (UNIX)
+	list(APPEND
+		ALCHEMY_SRCs
+		${ALCHEMY_DIR}/system/linux/executable.cxx
+		${ALCHEMY_DIR}/system/linux/pipe.cxx
+	)
+else()
+	list(APPEND
+		ALCHEMY_SRCs
+		${ALCHEMY_DIR}/system/windows/executable.cxx
+		${ALCHEMY_DIR}/system/windows/pipe.cxx
+	)
+endif()
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PUBLIC cxx_std_20)

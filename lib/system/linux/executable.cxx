@@ -2,43 +2,43 @@
 
 #include <filesystem>
 #include <sys/wait.h>
+#include <sys/poll.h>
 
-Alchemist::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
+Alchemist::System::Linux::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
 	run();
 }
 
-Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
+Alchemist::System::Linux::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
 	run();
 }
 
-Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	// Do something here
-	m_forwarder.reset(new std::thread(&Alchemist::Executable::consume_and_forward, this, std::ref(exe)));
+Alchemist::System::Linux::Executable& Alchemist::System::Linux::Executable::operator>>(Executable& exe) {
+	m_forwarder.reset(new std::thread(&Alchemist::System::Linux::Executable::consume_and_forward, this, std::ref(exe)));
 	return exe;
 }
 
-std::optional<std::string>& Alchemist::Executable::operator>>(std::optional<std::string>& data) {
+std::optional<std::string>& Alchemist::System::Linux::Executable::operator>>(std::optional<std::string>& data) {
 	m_pstdout >> data;
 	return data;
 }
 
-std::ostream& DLL_PUBLIC Alchemist::operator<<(std::ostream& os, const Executable& exe) {
+std::ostream& Alchemist::System::Linux::operator<<(std::ostream& os, const Linux::Executable& exe) {
 	std::optional<std::string> data;
 	exe.m_pstdout >> data;
 	if (data) os << *data;
 	return os;
 }
 
-Alchemist::Executable& Alchemist::Executable::operator<<(const std::string& data) {
+Alchemist::System::Linux::Executable& Alchemist::System::Linux::Executable::operator<<(const std::string& data) {
 	m_pstdin << data;
 	return *this;
 }
 
-void Alchemist::Executable::operator<<(const _EoF&) {
+void Alchemist::System::Linux::Executable::operator<<(const System::Executable::_EoF&) {
 	m_pstdin.close_write();
 }
 
-void Alchemist::Executable::run() {
+void Alchemist::System::Linux::Executable::run() {
 	m_pid = fork();
 
 	if (m_pid == 0) {
@@ -78,11 +78,11 @@ void Alchemist::Executable::run() {
 	}
 }
 
-void Alchemist::Executable::write(const std::string& str) {
+void Alchemist::System::Linux::Executable::write(const std::string& str) {
 	m_pstdin << str;
 }
 
-int Alchemist::Executable::wait() {
+int Alchemist::System::Linux::Executable::wait() {
 	int status;
 	if (m_forwarder)
 		m_forwarder->join();
@@ -90,7 +90,7 @@ int Alchemist::Executable::wait() {
 	return status;
 }
 
-void Alchemist::Executable::consume_and_forward(Executable& exec) {
+void Alchemist::System::Linux::Executable::consume_and_forward(Executable& exec) {
 	do {
 		std::optional<std::string> buffer;
 		m_pstdout.poll(100);
