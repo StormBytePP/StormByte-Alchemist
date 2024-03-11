@@ -65,6 +65,10 @@ void Alchemist::System::Pipe::write(const std::string& str) {
 		poll(m_fd_data, 2, -1);
 		if ((m_fd_data[1].revents & POLLOUT) == POLLOUT) {
 			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
+			fflush(NULL);
+			retry = false;
+		}
+		else if ((m_fd_data[1].revents & POLLHUP) == POLLHUP) {
 			retry = false;
 		}
 	} while (retry);
@@ -76,7 +80,6 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	do {
 		poll(m_fd_data, 2, -1);
 		ssize_t bytes;
-		
 		if ((m_fd_data[0].revents & POLLIN) == POLLIN) {
 			char buffer[MAX_BYTES];
 			std::string data = "";
@@ -86,6 +89,10 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 			if (!data.empty()) {
 				result = std::move(data);
 			}
+			fflush(NULL);
+			retry = false;
+		}
+		else if ((m_fd_data[0].revents & POLLHUP) == POLLHUP) {
 			retry = false;
 		}
 	} while(retry);
