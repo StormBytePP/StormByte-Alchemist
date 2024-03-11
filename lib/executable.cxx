@@ -12,7 +12,7 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 }
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
-	m_syncer=std::thread(&Alchemist::Executable::consume_and_redirect, this, &exe);
+	// Do something here
 	return exe;
 }
 
@@ -84,10 +84,6 @@ void Alchemist::Executable::write(const std::string& str) {
 int Alchemist::Executable::wait() {
 	int status;
 	waitpid(m_pid, &status, 0);
-	if (m_syncer) {
-		m_syncer.value().join();
-		m_syncer.reset();
-	}
 	return status;
 }
 

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <optional>
 #include <string>
-#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -42,6 +41,5 @@ namespace Alchemist {
 			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::optional<Executable*> m_redirected;
 			static constexpr ssize_t BUFFER_SIZE = 1024 * 1024; // 1MiB
-			std::optional<std::thread> m_syncer;
 	};
 }
