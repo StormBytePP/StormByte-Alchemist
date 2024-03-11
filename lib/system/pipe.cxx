@@ -63,7 +63,7 @@ void Alchemist::System::Pipe::write(const std::string& str) {
 			retry = false;
 		}
 		else if (has_write_event(POLLOUT)) {
-			::write(m_fd[1], str.c_str(), sizeof(str.get_allocator()) * str.length());
+			::write(m_fd[1], str.c_str(), sizeof(char) * str.length());
 			retry = false;
 		}
 	} while (retry);
