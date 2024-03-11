@@ -58,7 +58,7 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 void Alchemist::System::Pipe::write(const std::string& str) {
 	bool retry = true;
 	do {
-		poll(-1);
+		poll(100);
 		if (has_write_event(POLLHUP)) {
 			retry = false;
 		}
@@ -73,7 +73,7 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	std::optional<std::string> result;
 	bool retry = true;
 	do {
-		poll(-1);
+		poll(100);
 		ssize_t bytes;
 		if (has_read_event(POLLIN)) {
 			char buffer[MAX_BYTES];

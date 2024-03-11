@@ -60,14 +60,14 @@ void test4() {
 	std::cout << "Test 4: " << std::flush;
 	Alchemist::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::Executable sort("/usr/bin/sort", {"-"});
-	Alchemist::Executable sed("/usr/bin/sed", {"-e", "'s/3/9/'"});
 	const std::string expected = "129";
 	std::optional<std::string> returned;
 	sort >> tr;
-	tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::Executable::EoF;
 
 	sort.wait();
+	Alchemist::Executable sed("/bin/sed", {"-e", "s/3/9/"});
+	tr >> sed;
 	tr.wait();
 	sed.wait();
 
@@ -82,6 +82,7 @@ int main() {
 	test2();
 	test3();
 	test4();
+	//test5();
 
 	return 0;
 }

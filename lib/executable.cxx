@@ -93,7 +93,7 @@ int Alchemist::Executable::wait() {
 void Alchemist::Executable::consume_and_forward(Executable& exec) {
 	do {
 		std::optional<std::string> buffer;
-		m_pstdout.poll(-1);
+		m_pstdout.poll(100);
 		m_pstdout >> buffer;
 		if (buffer)
 			exec.m_pstdin << *buffer;
