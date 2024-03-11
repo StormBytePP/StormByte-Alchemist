@@ -13,7 +13,7 @@ Alchemist::Executable::Executable(std::string&& prog, std::vector<std::string>&&
 
 Alchemist::Executable& Alchemist::Executable::operator>>(Executable& exe) {
 	// Do something here
-	exe.m_pstdin.close_write();
+	m_forwarder.reset(new std::thread(&Alchemist::Executable::consume_and_forward, this, std::ref(exe)));
 	return exe;
 }
 
@@ -85,10 +85,12 @@ void Alchemist::Executable::write(const std::string& str) {
 int Alchemist::Executable::wait() {
 	int status;
 	waitpid(m_pid, &status, 0);
+	if (m_forwarder)
+		m_forwarder->join();
 	return status;
 }
 
-void Alchemist::Executable::consume_and_redirect(Executable& exec) {
+void Alchemist::Executable::consume_and_forward(Executable& exec) {
 	// Do something here
-
+	exec.m_pstdin.close_write();
 }
