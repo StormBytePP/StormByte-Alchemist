@@ -35,5 +35,8 @@ namespace Alchemist::System::Windows {
 			void bind(int&, int);
 			void close(int&);
 			void init();
+
+			int m_fd[2];
+			static constexpr unsigned int MAX_BYTES = 1024 * 1024; // 1MB
 	};
 }
