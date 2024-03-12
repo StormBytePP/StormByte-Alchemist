@@ -3,9 +3,7 @@
 #include "../pipe.hxx"
 
 #include <optional>
-#include <stddef.h>
 #include <string>
-#include <sys/poll.h>
 
 namespace Alchemist::System::Windows {
 	class DLL_PUBLIC Pipe {
@@ -37,8 +35,5 @@ namespace Alchemist::System::Windows {
 			void bind(int&, int);
 			void close(int&);
 			void init();
-
-			int m_fd[2];
-			mutable pollfd m_fd_data[2];
 	};
 }

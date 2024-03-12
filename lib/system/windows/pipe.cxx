@@ -10,19 +10,19 @@ Alchemist::System::Windows::Pipe::~Pipe() {
 }
 
 void Alchemist::System::Windows::Pipe::bind_read(int dest) {
-	bind(m_fd[0], dest);
+	//bind(m_fd[0], dest);
 }
 
 void Alchemist::System::Windows::Pipe::bind_write(int dest) {
-	bind(m_fd[1], dest);
+	//bind(m_fd[1], dest);
 }
 
 void Alchemist::System::Windows::Pipe::close_read() {
-	close(m_fd[0]);
+	//close(m_fd[0]);
 }
 
 void Alchemist::System::Windows::Pipe::close_write() {
-	close(m_fd[1]);
+	//close(m_fd[1]);
 }
 
 int Alchemist::System::Windows::Pipe::poll(int timeout) const {
