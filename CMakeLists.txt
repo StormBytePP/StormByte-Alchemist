@@ -5,11 +5,6 @@ if(UNIX)
 	set(CMAKE_C_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang")
 	set(CMAKE_CXX_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang++")
 endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
-	add_compile_options(-g -ggdb)
-	set(CMAKE_CXX_FLAGS_DEBUG_INIT		"-g -ggdb -Wall -Wextra")
-endif()
 
 project("Alchemist"
 	VERSION 2.0.0
@@ -20,6 +15,14 @@ project("Alchemist"
 set(ALCHEMIST_MAIN_DIR ${PROJECT_SOURCE_DIR})
 set(ALCHEMIST_CMAKE_DIR ${PROJECT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${ALCHEMIST_CMAKE_DIR})
+
+if(MSVC)
+	add_compile_options(/wd4251)
+else()
+	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
+	add_compile_options(-g -ggdb)
+	set(CMAKE_CXX_FLAGS_DEBUG_INIT		"-g -ggdb -Wall -Wextra")
+endif()
 
 add_subdirectory(lib)
 add_subdirectory(test)
