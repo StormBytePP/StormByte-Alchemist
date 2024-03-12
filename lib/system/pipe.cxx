@@ -1,8 +1,4 @@
-#if defined _WIN32 || defined __CYGWIN__
-	#include "windows/pipe.hxx"
-#else
-	#include "linux/pipe.hxx"
-#endif
+#include "pipe.hxx"
 
 Alchemist::System::Pipe::Pipe() {
 	m_pipe_impl = std::make_unique<PipeImpl>();

@@ -2,14 +2,15 @@
 
 #include "visibility.h"
 
+#include <memory>
 #include <optional>
 #include <string>
 
 #if defined _WIN32 || defined __CYGWIN__
-	namespace Alchemist::System::Windows { class Pipe; }
+	#include "windows/pipe.hxx"
 	using PipeImpl = Alchemist::System::Windows::Pipe;
 #else
-	namespace Alchemist::System::Linux { class Pipe; }
+	#include "linux/pipe.hxx"
 	using PipeImpl = Alchemist::System::Linux::Pipe;
 #endif
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pipe.hxx"
+#include "visibility.h"
 
 #include <optional>
 #include <string>
