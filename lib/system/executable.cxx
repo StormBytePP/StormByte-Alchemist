@@ -30,7 +30,7 @@ std::optional<std::string>& Alchemist::System::Executable::operator>>(std::optio
 	return data;
 }
 
-std::ostream& DLL_PUBLIC Alchemist::System::operator<<(std::ostream& os, const System::Executable& exe) {
+std::ostream& Alchemist::System::operator<<(std::ostream& os, const System::Executable& exe) {
 	return operator<<(os, *exe.m_exec_impl);
 }
 

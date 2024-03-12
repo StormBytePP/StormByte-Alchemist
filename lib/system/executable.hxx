@@ -34,7 +34,7 @@ namespace Alchemist::System {
 
 			Executable& operator>>(Executable&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&);
-			friend std::ostream& DLL_PUBLIC operator<<(std::ostream&, const Executable&);
+			friend std::ostream& operator<<(std::ostream&, const Executable&);
 			Executable& operator<<(const std::string&);
 			void operator<<(const _EoF&);
 
