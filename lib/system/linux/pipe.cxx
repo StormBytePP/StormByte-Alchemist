@@ -1,5 +1,6 @@
 #include "pipe.hxx"
 
+#include <fcntl.h>
 #include <unistd.h>
 
 Alchemist::System::Linux::Pipe::Pipe() {
@@ -103,7 +104,7 @@ void Alchemist::System::Linux::Pipe::close(int& fd) {
 }
 
 void Alchemist::System::Linux::Pipe::init() {
-	pipe(m_fd);
+	pipe2(m_fd, O_CLOEXEC);
 	m_fd_data[0].fd = m_fd[0];
 	m_fd_data[0].events = POLLIN;
 	m_fd_data[0].revents = 0;
