@@ -1,7 +1,0 @@
-if(UNIX)
-	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
-	add_compile_options(-g -ggdb)
-	set(CMAKE_CXX_FLAGS_DEBUG_INIT		"-g -ggdb -Wall -Wextra")
-else()
-	add_compile_options(/EHsc)
-endif()
