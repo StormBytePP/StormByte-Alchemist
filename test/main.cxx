@@ -1,4 +1,4 @@
-//#include <system/executable.hxx>
+#include <system/executable.hxx>
 #include <system/pipe.hxx>
 
 #include <iostream>
@@ -15,7 +15,7 @@ void test_result(const std::string& expected, const std::optional<std::string>& 
 	test_result(expected, real.value_or("<EMPTY>"));
 }
 
-/*
+#ifdef LINUX
 void test1() {
 	std::cout << "Test 1: " << std::flush;
 	Alchemist::System::Executable exec1("/usr/bin/sort", {"-"});
@@ -72,9 +72,10 @@ void test4() {
 	sed >> returned;
 	test_result(expected, returned);
 }
-*/
+#endif
 
 void pipetest1() {
+	std::cout << "Test Pipe 1: " << std::flush;
 	Alchemist::System::Pipe p;
 
 	p << "test";
@@ -88,6 +89,12 @@ void pipetest1() {
 }
 
 int main() {
+	#ifdef LINUX
+	test1();
+	test2();
+	test3();
+	test4();
+	#endif
 	pipetest1();
 
 	return 0;
