@@ -94,10 +94,10 @@ target_include_directories(Alchemy PUBLIC
   $<INSTALL_INTERFACE:include/StormByte/Alchemist>
 )
 target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
-install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-include(include/CodecOptions)
-include(include/ConfigureFFmpeg)
-include(include/GenerateDefinitions)
+include(CodecOptions)
+include(ConfigureFFmpeg)
+include(GenerateDefinitions)
+
 add_subdirectory(thirdparty)
 

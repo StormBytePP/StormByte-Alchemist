@@ -1,5 +1,5 @@
 # Project and version info
-include(include/GetVersionFromGitTag)
+include(GetVersionFromGitTag)
 file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/version.h CONTENT "#pragma once
 
 #define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
