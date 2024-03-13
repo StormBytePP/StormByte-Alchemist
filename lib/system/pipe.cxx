@@ -120,13 +120,15 @@ void Alchemist::System::Pipe::bind(int& src, int dest) {
 }
 #endif
 
+#ifdef LINUX
 void Alchemist::System::Pipe::close(int& fd) {
-	#ifdef LINUX
 	::close(fd);
-	#else
-	CloseHandle(fd);
-	#endif
 }
+#else
+void Alchemist::System::Pipe::close(HANDLE& fd) {
+	CloseHandle(fd);
+}
+#endif
 
 void Alchemist::System::Pipe::init() {
 	#ifdef LINUX

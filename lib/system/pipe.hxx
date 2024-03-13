@@ -42,8 +42,10 @@ namespace Alchemist::System {
 			std::optional<std::string> read() const;
 			#ifdef LINUX
 			void bind(int&, int);
-			#endif
 			void close(int&);
+			#else
+			void close(HANDLE&);
+			#endif
 			void init();
 
 			#ifdef WINDOWS
