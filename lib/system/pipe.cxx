@@ -22,7 +22,7 @@ Alchemist::System::Pipe::Pipe() {
 	#else
 	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
 	#endif
-	m_buffer.reserve(MAX_BYTES);
+	m_buffer.reserve(MAX_READ_BYTES);
 }
 
 Alchemist::System::Pipe::~Pipe() {
@@ -50,6 +50,25 @@ bool Alchemist::System::Pipe::has_read_event(unsigned short event) const {
 bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 	return (m_fd_data[1].revents & event) == event;
 }
+
+ssize_t Alchemist::System::Pipe::write(const std::string& data) {
+	/* Beware, if we do return write(data.c_str()) it will be out of scope and UB */
+	size_t written = write(data.c_str(), data.length());
+	return written;
+}
+
+ssize_t Alchemist::System::Pipe::write(const char* data, ssize_t bytes) {
+	size_t written = 0;
+	poll(-1);
+	if (has_write_event(POLLOUT)) {
+		written = ::write(m_fd[1], data, sizeof(char) * bytes);
+	}
+	return written;
+}
+
+ssize_t Alchemist::System::Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
+	return ::read(m_fd[0], m_buffer.data(), MAX_READ_BYTES);
+}
 #else
 void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
 	set_handle_information(m_fd[0], mask, flags);
@@ -65,6 +84,23 @@ HANDLE Alchemist::System::Pipe::get_read_handle() const {
 
 HANDLE Alchemist::System::Pipe::get_write_handle() const {
 	return m_fd[1];
+}
+
+DWORD Alchemist::System::Pipe::write(const std::string& data) {
+	DWORD written = write(data.c_str(), data.length());
+	return written;
+}
+
+DWORD Alchemist::System::Pipe::write(const CHAR* data, DWORD bytes) {
+	DWORD dwWritten;
+	WriteFile(m_fd[1], str.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
+	return dwWritten;
+}
+
+DWORD Alchemist::System::Pipe::read(std::vector<CHAR>&, DWORD) const {
+	DWORD dwRead;
+	ReadFile(m_fd[0], m_buffer.data(), MAX_BYTES, &dwRead, NULL);
+	return dwRead;
 }
 #endif
 
@@ -82,54 +118,16 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& 
 }
 
 std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<std::string>& out) const {
-	std::optional<std::string> data = read();
-	if (data) {
-		if (out)
-			out = *out + *data;
-		else
-			out = *data;
+	ssize_t bytes;	
+	while((bytes = read(m_buffer, MAX_READ_BYTES))) {
+		if (bytes > 0) {
+			if (out)
+				out = *out + std::string(std::move(m_buffer.data()), bytes);
+			else
+				out = std::string(std::move(m_buffer.data()), bytes);
+		}
 	}
 	return out;
-}
-
-void Alchemist::System::Pipe::write(const std::string& str) {
-	#ifdef LINUX
-	bool retry = true;
-	do {
-		poll(100);
-		if (has_write_event(POLLHUP)) {
-			retry = false;
-		}
-		else if (has_write_event(POLLOUT)) {
-			::write(m_fd[1], str.c_str(), sizeof(char) * str.length());
-			retry = false;
-		}
-	} while (retry);
-	#else
-	DWORD dwWritten;
-	WriteFile(m_fd[1], str.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
-	#endif
-}
-
-std::optional<std::string> Alchemist::System::Pipe::read() const {
-	std::optional<std::string> result;
-	std::string data = "";
-	#ifdef LINUX
-	ssize_t bytes = 0;
-	do {
-		if ((bytes = ::read(m_fd[0], m_buffer.data(), MAX_BYTES)) > 0)
-			data += std::string(m_buffer.data(), bytes);
-	} while(bytes > 0);
-	#else
-	DWORD dwRead;
-	do {
-	
-		auto res = ReadFile(m_fd[0], m_buffer.data(), MAX_BYTES, &dwRead, NULL);
-		if (dwRead > 0) data += std::string(m_buffer.data(), dwRead);
-	} while (dwRead > 0);
-	#endif
-	if (!data.empty()) result = std::move(data);
-	return result;
 }
 
 #ifdef LINUX

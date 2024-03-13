@@ -23,6 +23,8 @@ namespace Alchemist::System {
 			Pipe& operator=(Pipe&&)			= default;
 			~Pipe();
 
+			static constexpr size_t MAX_READ_BYTES = 4 * 1024 * 1024; // 4MiB
+
 			#ifdef LINUX
 			void bind_read(int);
 			void bind_read(Pipe&);
@@ -31,11 +33,17 @@ namespace Alchemist::System {
 			int poll(int) const;
 			bool has_read_event(unsigned short) const;
 			bool has_write_event(unsigned short) const;
+			ssize_t write(const std::string&);
+			ssize_t write(const char*, ssize_t);
+			ssize_t read(std::vector<char>&, ssize_t) const;
 			#else
 			void set_read_handle_information(DWORD, DWORD);
 			void set_write_handle_information(DWORD, DWORD);
 			HANDLE get_read_handle() const;
 			HANDLE get_write_handle() const;
+			DWORD write(const std::string&);
+			DWORD write(const CHAR*, DWORD);
+			DWORD read(std::vector<CHAR>&, DWORD) const;
 			#endif
 			void close_read();
 			void close_write();
@@ -43,11 +51,7 @@ namespace Alchemist::System {
 			Pipe& operator<<(const std::string&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
 
-			static constexpr size_t MAX_BYTES = 4 * 1024 * 1024; // 4MiB
-
 		private:
-			void write(const std::string&);
-			std::optional<std::string> read() const;
 			#ifdef LINUX
 			void bind(int&, int);
 			void close(int&);
@@ -59,10 +63,12 @@ namespace Alchemist::System {
 			#ifdef WINDOWS
 			HANDLE m_fd[2];
 			static SECURITY_ATTRIBUTES m_sAttr;
+			mutable std::vector<CHAR> m_buffer;
 			#else
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];
-			#endif
 			mutable std::vector<char> m_buffer;
+			#endif
+			
 	};
 }
