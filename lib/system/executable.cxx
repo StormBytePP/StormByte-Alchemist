@@ -104,12 +104,6 @@ void Alchemist::System::Executable::run() {
 						NULL,				// use parent's current directory 
 						&m_siStartInfo,		// STARTUPINFO pointer 
 						&m_piProcInfo)) {
-		// Close handles to the child process and its primary thread.
-		// Some applications might keep these handles to monitor the status
-		// of the child process, for example. 
-		CloseHandle(m_piProcInfo.hProcess);
-		CloseHandle(m_piProcInfo.hThread);
-
 		// Set the rest of handles not inheritable by other execs
 		m_pstdout.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
 		m_pstderr.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
@@ -128,17 +122,28 @@ void Alchemist::System::Executable::send(const std::string& str) {
 	m_pstdin << str;
 }
 
+#ifdef LINUX
 int Alchemist::System::Executable::wait() {
-	int status = 0;
+	int status;
 	if (m_forwarder)
 		m_forwarder->join();
-	#ifdef LINUX
 	waitpid(m_pid, &status, 0);
-	#else
-	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
-	#endif
 	return status;
 }
+#else
+DWORD Alchemist::System::Executable::wait() {
+	DWORD status;
+	if (m_forwarder)
+		m_forwarder->join();
+	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
+	GetExitCodeThread(m_piProcInfo.hThread, &status);
+
+	// Close handlers
+	CloseHandle(m_piProcInfo.hProcess);
+	CloseHandle(m_piProcInfo.hThread);
+	return status;
+}
+#endif
 
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	#ifdef LINUX
@@ -155,7 +160,7 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 		m_pstdout >> buffer;
 		if (buffer) exec.m_pstdin << *buffer;
 		status = WaitForSingleObject(m_piProcInfo.hProcess, 100);
-	} while (status == WAIT_TIMEOUT);
+	} while (status != WAIT_OBJECT_0);
 	#endif
 	exec.m_pstdin.close_write();
 }

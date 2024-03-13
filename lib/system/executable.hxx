@@ -23,8 +23,11 @@ namespace Alchemist::System {
 			Executable& operator=(const Executable&)	= delete;
 			Executable& operator=(Executable&&)			= default;
 			~Executable()								= default;
-
+			#ifdef LINUX
 			int wait();
+			#else
+			DWORD wait();
+			#endif
 
 			Executable& operator>>(Executable&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&);
