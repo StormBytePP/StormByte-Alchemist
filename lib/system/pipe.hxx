@@ -61,6 +61,6 @@ namespace Alchemist::System {
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];
 			#endif
-			static constexpr size_t MAX_BYTES = 8 * 1024 * 1024; // 8MiB
+			static constexpr size_t MAX_BYTES = 1024 * 1024; // 1MiB
 	};
 }
