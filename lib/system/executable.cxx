@@ -147,12 +147,16 @@ DWORD Alchemist::System::Executable::wait() {
 
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	#ifdef LINUX
+	std::vector<char> buffer;
+	ssize_t bytes_read, bytes_write;
 	do {
-		std::optional<std::string> buffer;
+		buffer.reserve(PIPE_BUF);
 		m_pstdout.poll(100);
 		exec.m_pstdin.poll(100);
-		m_pstdout >> buffer;
-		if (buffer) exec.m_pstdin << *buffer;
+		bytes_read = m_pstdout.read(buffer, PIPE_BUF);
+		if (bytes_read > 0) {
+			exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+		}
 	} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
 	#else
 	DWORD status;
