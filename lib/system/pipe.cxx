@@ -6,6 +6,7 @@
 #else
 SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 #endif
+#include <vector>
 
 Alchemist::System::Pipe::Pipe() {
 	init();
@@ -118,11 +119,11 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	} while(retry);
 	#else
 	DWORD dwRead;
-	CHAR buffer[MAX_BYTES];
+	std::vector<CHAR> buffer(MAX_BYTES);
 	do {
 	
-		auto res = ReadFile(m_fd[0], buffer, 10, &dwRead, NULL);
-		if (dwRead > 0) data += std::string(buffer, dwRead);
+		auto res = ReadFile(m_fd[0], buffer.data(), MAX_BYTES, &dwRead, NULL);
+		if (dwRead > 0) data += std::string(buffer.data(), dwRead);
 	} while (dwRead > 0);
 	#endif
 	if (!data.empty()) result = std::move(data);
