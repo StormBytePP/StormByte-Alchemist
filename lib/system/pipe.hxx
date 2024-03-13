@@ -61,7 +61,6 @@ namespace Alchemist::System {
 			#ifdef WINDOWS
 			HANDLE m_fd[2];
 			static SECURITY_ATTRIBUTES m_sAttr;
-			mutable std::vector<CHAR> m_buffer;
 			#else
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];

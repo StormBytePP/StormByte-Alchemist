@@ -145,8 +145,8 @@ DWORD Alchemist::System::Executable::wait() {
 }
 #endif
 
+#ifdef LINUX
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
-	#ifdef LINUX
 	std::vector<char> buffer;
 	ssize_t bytes_read, bytes_write;
 	do {
@@ -158,7 +158,10 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 			exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
 		}
 	} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
-	#else
+	exec.m_pstdin.close_write();
+}
+#else
+void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	DWORD status;
 	do {
 		std::optional<std::string> buffer;
@@ -166,9 +169,9 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 		if (buffer) exec.m_pstdin << *buffer;
 		status = WaitForSingleObject(m_piProcInfo.hProcess, 100);
 	} while (status != WAIT_OBJECT_0);
-	#endif
 	exec.m_pstdin.close_write();
 }
+#endif
 
 #ifdef WINDOWS
 std::wstring Alchemist::System::Executable::full_command() const {
