@@ -8,17 +8,19 @@ if(WIN32)
 		message(FATAL_ERROR
 			"ALCHEMY_EXTRA is NOT set!\n"
 			"	For Windows builds, ALCHEMY_EXTRA must point to a directory containing extra binaries to run the program correctly where needed items are:\n"
-			"	ALCHEMY_EXTRA\\**\\hdr10plus_tool\\src\n"
-			"	ALCHEMY_EXTRA\\**\\ffmpeg\\bin"
+			"	ALCHEMY_EXTRA/**/hdr10plus_tool/src\n"
+			"	ALCHEMY_EXTRA/**/ffmpeg/bin"
 		)
 	else()
-		find_path(ALCHEMY_EXTRA_HDR10PLUS_TOOL			NAMES "src" PATHS "${ALCHEMY_EXTRA}\\hdr10plus_tool"				REQUIRED NO_DEFAULT_PATH)
+		find_path(ALCHEMY_EXTRA_HDR10PLUS_TOOL			NAMES "src" PATHS "${ALCHEMY_EXTRA}/hdr10plus_tool"				REQUIRED NO_DEFAULT_PATH)
 		message(STATUS "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}")
 		
 		add_custom_target(hdr10plus_tool ALL
-			cargo install -q --root "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}" --path "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}\\src"
-			BYPRODUCTS "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}\\bin\\hdr10plus_tool"
+			cargo install -q --root "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}" --path "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}/src"
+			BYPRODUCTS "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}/bin/hdr10plus_tool"
 		)
+		#install(FILES "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}/bin/hdr10plus_tool" TYPE BIN)
+		install(FILES "${ALCHEMY_EXTRA_HDR10PLUS_TOOL}/bin/hdr10plus_tool" DESTINATION bin)
 		add_dependencies(Myrddin hdr10plus_tool)
 	endif()
 endif()

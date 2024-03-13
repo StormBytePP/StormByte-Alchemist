@@ -98,6 +98,3 @@ target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
 include(CodecOptions)
 include(ConfigureFFmpeg)
 include(GenerateDefinitions)
-
-add_subdirectory(thirdparty)
-

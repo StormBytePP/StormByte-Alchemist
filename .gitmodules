@@ -1,0 +1,3 @@
+[submodule "thirdparty/hdr10plus_tool"]
+	path = thirdparty/hdr10plus_tool
+	url = https://github.com/quietvoid/hdr10plus_tool
