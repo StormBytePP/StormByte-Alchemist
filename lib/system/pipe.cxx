@@ -107,9 +107,9 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 		poll(100);
 		ssize_t bytes;
 		if (has_read_event(POLLIN)) {
-			char buffer[MAX_BYTES];
-			while ((bytes = ::read(m_fd[0], buffer, MAX_BYTES)) > 0) {
-				data += std::string(buffer, bytes);
+			std::vector<char> buffer(MAX_BYTES);
+			while ((bytes = ::read(m_fd[0], buffer.data(), MAX_BYTES)) > 0) {
+				data += std::string(buffer.data(), bytes);
 			};
 			retry = false;
 		}

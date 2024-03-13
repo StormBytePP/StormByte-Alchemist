@@ -150,9 +150,10 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	do {
 		std::optional<std::string> buffer;
 		m_pstdout.poll(100);
+		exec.m_pstdin.poll(100);
 		m_pstdout >> buffer;
 		if (buffer) exec.m_pstdin << *buffer;
-	} while (!m_pstdout.has_read_event(POLLHUP));
+	} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
 	#else
 	DWORD status;
 	do {
