@@ -1,4 +1,11 @@
+// Since only Windows and Linux OS is supported...
 #if defined _WIN32 || defined __CYGWIN__
+	#define WINDOWS
+#else
+	#define LINUX
+#endif
+
+#ifdef WINDOWS
 	#ifdef BUILDING_ALCHEMIST
 		#ifdef __GNUC__
     		#define DLL_PUBLIC __attribute__ ((dllexport))
@@ -14,11 +21,6 @@
   	#endif
   	#define DLL_LOCAL
 #else
-	#if __GNUC__ >= 4
-    	#define DLL_PUBLIC __attribute__ ((visibility ("default")))
-    	#define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
-  	#else
-    	#define DLL_PUBLIC
-    	#define DLL_LOCAL
-  	#endif
+    #define DLL_PUBLIC __attribute__ ((visibility ("default")))
+    #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
