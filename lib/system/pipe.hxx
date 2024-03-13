@@ -27,14 +27,12 @@ namespace Alchemist::System {
 			void bind_read(Pipe&);
 			void bind_write(int);
 			void bind_write(Pipe&);
-			#endif
-			void close_read();
-			void close_write();
-			#ifdef LINUX
 			int poll(int) const;
 			bool has_read_event(unsigned short) const;
 			bool has_write_event(unsigned short) const;
 			#endif
+			void close_read();
+			void close_write();
 
 			Pipe& operator<<(const std::string&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;

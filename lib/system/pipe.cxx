@@ -16,6 +16,7 @@ Alchemist::System::Pipe::~Pipe() {
 	close_write();
 }
 
+#ifdef LINUX
 void Alchemist::System::Pipe::bind_read(int dest) {
 	bind(m_fd[0], dest);
 }
@@ -32,7 +33,6 @@ void Alchemist::System::Pipe::close_write() {
 	close(m_fd[1]);
 }
 
-#ifdef LINUX
 int Alchemist::System::Pipe::poll(int timeout) const {
 	return ::poll(m_fd_data, 2, timeout);
 }
