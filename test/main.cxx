@@ -21,7 +21,7 @@ void test1() {
 	Alchemist::System::Executable exec1("/usr/bin/sort", {"-"});
 	const std::string expected = "1\n2\n3\n";
 	std::optional<std::string> returned;
-	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::System::Executable::EoF;
+	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 	exec1.wait();
 	exec1 >> returned;
 	test_result(expected, returned);
@@ -33,7 +33,7 @@ void test2() {
 	const std::string expected = "321";
 	std::optional<std::string> returned;
 	
-	exec2 << "3\n" << "2\n" << "1\n" << Alchemist::System::Executable::EoF;
+	exec2 << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
 	exec2.wait();
 	exec2 >> returned;
@@ -47,7 +47,7 @@ void test3() {
 	const std::string expected = "123";
 	std::optional<std::string> returned;
 	sort >> tr;
-	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::Executable::EoF;
+	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
 	sort.wait();
 	tr.wait();
@@ -63,7 +63,7 @@ void test4() {
 	const std::string expected = "129";
 	std::optional<std::string> returned;
 	sort >> tr >> sed;
-	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::Executable::EoF;
+	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
 	sort.wait();
 	tr.wait();
