@@ -19,6 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${ALCHEMIST_CMAKE_DIR})
 
 if(MSVC)
 	add_compile_options(/wd4251)
+	add_compile_definitions(UNICODE)
 else()
 	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
 	add_compile_options(-g -ggdb)

@@ -29,7 +29,7 @@ const std::filesystem::path Alchemist::Info::ffprobe_path() {
 
 #ifdef _WIN32
 const std::filesystem::path Alchemist::Info::current_path() {
-	char ownPth[MAX_PATH]; 
+	TCHAR ownPth[MAX_PATH]; 
 
 	// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
 	HMODULE hModule = GetModuleHandle(NULL);
