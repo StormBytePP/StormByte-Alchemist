@@ -98,6 +98,21 @@ void testchild() {
 	cmd.wait();
 	std::cout << "El programa dio:\n" << returned.value_or("<EMPTY>") << std::endl;
 }
+
+void testchild2() {
+	std::optional<std::string> returned1, returned2;
+	Alchemist::System::Executable dir("cmd.exe", { "/c", "dir", "C:" });
+	dir << Alchemist::System::EoF;
+	dir.wait();
+	dir >> returned1;
+
+	Alchemist::System::Executable sort("sort");
+	sort << *returned1 << Alchemist::System::EoF;
+	sort.wait();
+	sort >> returned2;
+	
+	std::cout << "El programa dio:\n" << returned2.value_or("<EMPTY>") << std::endl;
+}
 #endif
 
 int main() {
@@ -110,6 +125,7 @@ int main() {
 	pipetest1();
 	#ifdef WINDOWS
 	testchild();
+	testchild2();
 	#endif
 
 	return 0;

@@ -140,9 +140,14 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 		std::optional<std::string> buffer;
 		m_pstdout.poll(100);
 		m_pstdout >> buffer;
-		if (buffer)
-			exec.m_pstdin << *buffer;
+		if (buffer) exec.m_pstdin << *buffer;
 	} while (!m_pstdout.has_read_event(POLLHUP));
+	#else
+	do {
+		std::optional<std::string> buffer;
+		m_pstdout >> buffer;
+		if (buffer) exec.m_pstdin << *buffer;
+	} while (WaitForSingleObject(m_piProcInfo.hProcess, 0) == WAIT_OBJECT_0);
 	#endif
 	exec.m_pstdin.close_write();
 }
