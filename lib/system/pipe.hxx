@@ -34,7 +34,6 @@ namespace Alchemist::System {
 			bool has_read_event(unsigned short) const;
 			bool has_write_event(unsigned short) const;
 			ssize_t write(const std::string&);
-			ssize_t write(const char*, ssize_t);
 			ssize_t read(std::vector<char>&, ssize_t) const;
 			#else
 			void set_read_handle_information(DWORD, DWORD);
@@ -42,7 +41,6 @@ namespace Alchemist::System {
 			HANDLE get_read_handle() const;
 			HANDLE get_write_handle() const;
 			DWORD write(const std::string&);
-			DWORD write(const CHAR*, DWORD);
 			DWORD read(std::vector<CHAR>&, DWORD) const;
 			#endif
 			void close_read();

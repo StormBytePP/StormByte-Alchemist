@@ -52,16 +52,10 @@ bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 }
 
 ssize_t Alchemist::System::Pipe::write(const std::string& data) {
-	/* Beware, if we do return write(data.c_str()) it will be out of scope and UB */
-	size_t written = write(data.c_str(), data.length());
-	return written;
-}
-
-ssize_t Alchemist::System::Pipe::write(const char* data, ssize_t bytes) {
 	size_t written = 0;
 	poll(-1);
 	if (has_write_event(POLLOUT)) {
-		written = ::write(m_fd[1], data, sizeof(char) * bytes);
+		written = ::write(m_fd[1], data.c_str(), sizeof(char) * data.length());
 	}
 	return written;
 }
@@ -87,13 +81,8 @@ HANDLE Alchemist::System::Pipe::get_write_handle() const {
 }
 
 DWORD Alchemist::System::Pipe::write(const std::string& data) {
-	DWORD written = write(data.c_str(), data.length());
-	return written;
-}
-
-DWORD Alchemist::System::Pipe::write(const CHAR* data, DWORD bytes) {
 	DWORD dwWritten;
-	WriteFile(m_fd[1], str.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
+	WriteFile(m_fd[1], data.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
 	return dwWritten;
 }
 
