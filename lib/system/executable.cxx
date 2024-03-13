@@ -99,7 +99,7 @@ void Alchemist::System::Executable::run() {
 						NULL,				// process security attributes 
 						NULL,				// primary thread security attributes 
 						TRUE,				// handles are inherited 
-						0,					// creation flags 
+						CREATE_NO_WINDOW,	// creation flags 
 						NULL,				// use parent's environment 
 						NULL,				// use parent's current directory 
 						&m_siStartInfo,		// STARTUPINFO pointer 
