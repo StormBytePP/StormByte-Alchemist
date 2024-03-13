@@ -33,6 +33,8 @@ namespace Alchemist::System {
 			#else
 			void set_read_handle_information(DWORD, DWORD);
 			void set_write_handle_information(DWORD, DWORD);
+			HANDLE get_read_handle() const;
+			HANDLE get_write_handle() const;
 			#endif
 			void close_read();
 			void close_write();

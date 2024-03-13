@@ -78,6 +78,42 @@ void Alchemist::System::Executable::run() {
 		/* STDERR: Parent reads from to STDERR but does not write to */
 		m_pstderr.close_write();
 	}
+	#else
+	ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
+	ZeroMemory(&siStartInfo, sizeof(STARTUPINFO));
+	siStartInfo.cb = sizeof(STARTUPINFO);
+	siStartInfo.hStdError = m_pstderr.get_write_handle();
+	siStartInfo.hStdOutput = m_pstdout.get_write_handle();
+	siStartInfo.hStdInput = m_pstdin.get_read_handle();
+	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+
+	m_pstdout.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
+	m_pstderr.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
+	m_pstdin.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
+
+	//std::cout << "The result is: '" << s.str() << "'" << std::endl;
+
+	//if (CreateProcess(	NULL,
+	//					szCmdline,     // command line 
+	//					NULL,          // process security attributes 
+	//					NULL,          // primary thread security attributes 
+	//					TRUE,          // handles are inherited 
+	//					0,             // creation flags 
+	//					NULL,          // use parent's environment 
+	//					NULL,          // use parent's current directory 
+	//					&siStartInfo,  // STARTUPINFO pointer 
+	//					&piProcInfo)) {
+	//	// Close handles to the child process and its primary thread.
+	//	// Some applications might keep these handles to monitor the status
+	//	// of the child process, for example. 
+	//	CloseHandle(piProcInfo.hProcess);
+	//	CloseHandle(piProcInfo.hThread);
+	//
+	//	// Close handles to the stdin and stdout pipes no longer needed by the child process.
+	//	// If they are not explicitly closed, there is no way to recognize that the child process has ended.
+	//	m_pstdout.close_write();
+	//	m_pstdin.close_read();
+	//}
 	#endif
 }
 

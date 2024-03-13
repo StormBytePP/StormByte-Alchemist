@@ -40,8 +40,17 @@ bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
 	set_handle_information(m_fd[0], mask, flags);
 }
+
 void Alchemist::System::Pipe::set_write_handle_information(DWORD mask, DWORD flags) {
 	set_handle_information(m_fd[1], mask, flags);
+}
+
+HANDLE Alchemist::System::Pipe::get_read_handle() const {
+	return m_fd[0];
+}
+
+HANDLE Alchemist::System::Pipe::get_write_handle() const {
+	return m_fd[1];
 }
 #endif
 

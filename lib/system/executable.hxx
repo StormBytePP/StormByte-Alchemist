@@ -36,13 +36,17 @@ namespace Alchemist::System {
 			void send(const std::string&);
 			void run();
 			void consume_and_forward(Executable&);
+			#ifdef WINDOWS
+			std::wstring executable_command() const;
+			#endif
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
 			#ifdef LINUX
 			pid_t m_pid;
 			#else
-			int m_pid;
+			STARTUPINFO siStartInfo;
+			PROCESS_INFORMATION piProcInfo;
 			#endif
 			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::unique_ptr<std::thread> m_forwarder;
