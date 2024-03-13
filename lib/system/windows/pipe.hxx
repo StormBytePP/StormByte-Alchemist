@@ -4,6 +4,7 @@
 
 #include <optional>
 #include <string>
+#include <windows.h>
 
 namespace Alchemist::System::Windows {
 	class DLL_PUBLIC Pipe {
@@ -33,10 +34,11 @@ namespace Alchemist::System::Windows {
 			void write(const std::string&);
 			std::optional<std::string> read() const;
 			void bind(int&, int);
-			void close(int&);
+			void close(HANDLE&);
 			void init();
 
-			int m_fd[2];
-			static constexpr unsigned int MAX_BYTES = 1024 * 1024; // 1MB
+			HANDLE m_fd[2];
+			static SECURITY_ATTRIBUTES m_sAttr;
+			static constexpr unsigned int MAX_BYTES = 500 * 1024; // 500KB
 	};
 }

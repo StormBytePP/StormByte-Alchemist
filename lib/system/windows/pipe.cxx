@@ -1,7 +1,6 @@
 #include "pipe.hxx"
 
-#include <fcntl.h>
-#include <io.h>
+SECURITY_ATTRIBUTES Alchemist::System::Windows::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 
 Alchemist::System::Windows::Pipe::Pipe() {
 	init();
@@ -41,40 +40,47 @@ bool Alchemist::System::Windows::Pipe::has_write_event(unsigned short event) con
 }
 
 Alchemist::System::Windows::Pipe& Alchemist::System::Windows::Pipe::operator<<(const std::string& data) {
+	write(data);
 	return *this;
 }
 
 std::optional<std::string>& Alchemist::System::Windows::Pipe::operator>>(std::optional<std::string>& out) const {
+	std::optional<std::string> data = read();
+	if (data) {
+		if (out)
+			out = *out + *data;
+		else
+			out = *data;
+	}
 	return out;
 }
 
 void Alchemist::System::Windows::Pipe::write(const std::string& str) {
-	_write(m_fd[1], str.c_str(), sizeof(char) * static_cast<unsigned int>(str.length()));
+	DWORD dwWritten;
+	WriteFile(m_fd[1], str.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
 }
-#include <iostream>
+
 std::optional<std::string> Alchemist::System::Windows::Pipe::read() const {
 	std::optional<std::string> result;
 	std::string data = "";
-	int bytes;
+	DWORD dwRead;
+	CHAR buffer[MAX_BYTES];
 	do {
-		char buffer[MAX_BYTES];
-		bytes = _read(m_fd[0], buffer, MAX_BYTES);
-		if (bytes > 0)
-			data += std::string(buffer, bytes);
-		std::terminate();
-	} while (bytes > 0);
-	if (!data.empty())
-		result = data;
+	
+		auto res = ReadFile(m_fd[0], buffer, 10, &dwRead, NULL);
+		if (dwRead > 0) data += std::string(buffer, dwRead);
+	} while (dwRead > 0);
+	if (!data.empty()) result = data;
 	return result;
 }
 
 void Alchemist::System::Windows::Pipe::bind(int& src, int dest) {
 }
 
-void Alchemist::System::Windows::Pipe::close(int& fd) {
-	_close(fd);
+void Alchemist::System::Windows::Pipe::close(HANDLE& fd) {
+	CloseHandle(fd);
 }
 
 void Alchemist::System::Windows::Pipe::init() {
-	_pipe(m_fd, MAX_BYTES, O_BINARY);
+	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
 }

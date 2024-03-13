@@ -35,7 +35,7 @@ bool Alchemist::System::Pipe::has_read_event(unsigned short event) const {
 bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 	return m_pipe_impl->has_write_event(event);
 }
-
+#include <iostream>
 Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& data) {
 	m_pipe_impl->operator<<(data);
 	return *this;
