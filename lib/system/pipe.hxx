@@ -6,12 +6,10 @@
 #include <optional>
 #include <string>
 
-#if defined _WIN32 || defined __CYGWIN__
-	#include "windows/pipe.hxx"
-	using PipeImpl = Alchemist::System::Windows::Pipe;
+#ifdef WINDOWS
+#include <windows.h>
 #else
-	#include "linux/pipe.hxx"
-	using PipeImpl = Alchemist::System::Linux::Pipe;
+#include <sys/poll.h>
 #endif
 
 namespace Alchemist::System {
@@ -24,21 +22,39 @@ namespace Alchemist::System {
 			Pipe& operator=(Pipe&&)			= default;
 			~Pipe();
 
+			#ifdef LINUX
 			void bind_read(int);
 			void bind_read(Pipe&);
 			void bind_write(int);
 			void bind_write(Pipe&);
+			#endif
 			void close_read();
 			void close_write();
+			#ifdef LINUX
 			int poll(int) const;
 			bool has_read_event(unsigned short) const;
 			bool has_write_event(unsigned short) const;
-
+			#endif
 
 			Pipe& operator<<(const std::string&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
 
 		private:
-			std::unique_ptr<PipeImpl> m_pipe_impl;
+			void write(const std::string&);
+			std::optional<std::string> read() const;
+			#ifdef LINUX
+			void bind(int&, int);
+			#endif
+			void close(int&);
+			void init();
+
+			#ifdef WINDOWS
+			HANDLE m_fd[2];
+			static SECURITY_ATTRIBUTES m_sAttr;
+			#else
+			int m_fd[2];
+			mutable pollfd m_fd_data[2];
+			#endif
+			static constexpr size_t MAX_BYTES = 500 * 1024; // 500KB
 	};
 }
