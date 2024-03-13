@@ -1,12 +1,4 @@
 include(FetchContent)
-#set(SQLite3_VERSION 3.45.1)
-#
-#set(SQLite3_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${SQLite3_VERSION})
-#
-#add_library(sqlite3 STATIC ${SQLite3_DIR}/sqlite3.c)
-#target_include_directories(sqlite3 PRIVATE ${SQLite3_DIR})
-
-
 
 FetchContent_Declare(sqlite3
     URL      https://sqlite.org/2024/sqlite-amalgamation-3450200.zip

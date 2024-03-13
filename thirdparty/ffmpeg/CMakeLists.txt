@@ -1,11 +1,18 @@
-#include(FetchContent)
+include(FetchContent)
 
-ExternalProject_Add( [<option>...])
+FetchContent_Declare(ffmpeg
+    URL      https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
+    DOWNLOAD_EXTRACT_TIMESTAMP false
+)
+FetchContent_MakeAvailable(ffmpeg)
 
-#FetchContent_Declare(
-#  myCompanyIcons
-#  URL      https://intranet.mycompany.com/assets/iconset_1.12.tar.gz
-#  URL_HASH MD5=5588a7b18261c20068beabfb4f530b87
-#)
-#
-#FetchContent_MakeAvailable(googletest myCompanyIcons)
+if(NOT ffmpeg_POPULATED)
+  # Fetch the content using previously declared details
+  FetchContent_Populate(ffmpeg)
+endif()
+
+install(PROGRAMS
+    "${ffmpeg_SOURCE_DIR}/bin/ffmpeg.exe"
+    "${ffmpeg_SOURCE_DIR}/bin/ffprobe.exe"
+    DESTINATION bin
+)
