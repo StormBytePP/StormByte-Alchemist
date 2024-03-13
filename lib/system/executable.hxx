@@ -6,7 +6,9 @@
 #include <optional>
 #include <string>
 #include <thread>
+#ifdef LINUX
 #include <unistd.h>
+#endif
 #include <vector>
 
 namespace Alchemist::System {
@@ -31,13 +33,17 @@ namespace Alchemist::System {
 			void operator<<(const System::_EoF&);
 
 		public:
-			void write(const std::string&);
+			void send(const std::string&);
 			void run();
 			void consume_and_forward(Executable&);
 
 			std::string m_program;
 			std::vector<std::string> m_arguments;
+			#ifdef LINUX
 			pid_t m_pid;
+			#else
+			int m_pid;
+			#endif
 			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::unique_ptr<std::thread> m_forwarder;
 	};

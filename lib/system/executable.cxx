@@ -1,8 +1,9 @@
 #include "executable.hxx"
 
 #include <filesystem>
+#ifdef LINUX
 #include <sys/wait.h>
-#include <sys/poll.h>
+#endif
 
 Alchemist::System::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
 	run();
@@ -39,6 +40,7 @@ void Alchemist::System::Executable::operator<<(const System::_EoF&) {
 }
 
 void Alchemist::System::Executable::run() {
+	#ifdef LINUX
 	m_pid = fork();
 
 	if (m_pid == 0) {
@@ -76,9 +78,10 @@ void Alchemist::System::Executable::run() {
 		/* STDERR: Parent reads from to STDERR but does not write to */
 		m_pstderr.close_write();
 	}
+	#endif
 }
 
-void Alchemist::System::Executable::write(const std::string& str) {
+void Alchemist::System::Executable::send(const std::string& str) {
 	m_pstdin << str;
 }
 
@@ -86,11 +89,14 @@ int Alchemist::System::Executable::wait() {
 	int status;
 	if (m_forwarder)
 		m_forwarder->join();
+	#ifdef LINUX
 	waitpid(m_pid, &status, 0);
+	#endif
 	return status;
 }
 
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
+	#ifdef LINUX
 	do {
 		std::optional<std::string> buffer;
 		m_pstdout.poll(100);
@@ -98,5 +104,6 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 		if (buffer)
 			exec.m_pstdin << *buffer;
 	} while (!m_pstdout.has_read_event(POLLHUP));
+	#endif
 	exec.m_pstdin.close_write();
 }
