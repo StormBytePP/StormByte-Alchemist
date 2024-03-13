@@ -65,7 +65,6 @@ namespace Alchemist::System {
 			#else
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];
-			mutable std::vector<char> m_buffer;
 			#endif
 			
 	};

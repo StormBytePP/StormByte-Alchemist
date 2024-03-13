@@ -20,7 +20,6 @@ Alchemist::System::Pipe::Pipe() {
 	#else
 	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
 	#endif
-	m_buffer.reserve(MAX_READ_BYTES);
 }
 
 Alchemist::System::Pipe::~Pipe() {
@@ -59,7 +58,7 @@ ssize_t Alchemist::System::Pipe::write(const std::string& data) {
 }
 
 ssize_t Alchemist::System::Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
-	return ::read(m_fd[0], &m_buffer[0], MAX_READ_BYTES);
+	return ::read(m_fd[0], &buffer[0], bytes);
 }
 #else
 void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
@@ -105,13 +104,14 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& 
 }
 
 std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<std::string>& out) const {
-	ssize_t bytes;	
-	while((bytes = read(m_buffer, MAX_READ_BYTES))) {
+	ssize_t bytes;
+	std::vector<char> buffer(MAX_READ_BYTES);
+	while((bytes = read(buffer, MAX_READ_BYTES))) {
 		if (bytes > 0) {
 			if (out)
-				out = *out + std::string(&m_buffer[0], bytes);
+				out = *out + std::string(&buffer[0], bytes);
 			else
-				out = std::string(&m_buffer[0], bytes);
+				out = std::string(&buffer[0], bytes);
 		}
 	}
 	return out;
