@@ -137,9 +137,7 @@ void Alchemist::System::Pipe::bind(int& src, int dest) {
 	dup2(src, dest);
 	close(src);
 }
-#endif
 
-#ifdef LINUX
 void Alchemist::System::Pipe::close(int& fd) {
 	::close(fd);
 }

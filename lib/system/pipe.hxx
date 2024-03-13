@@ -43,6 +43,8 @@ namespace Alchemist::System {
 			Pipe& operator<<(const std::string&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
 
+			static constexpr size_t MAX_BYTES = 4 * 1024 * 1024; // 4MiB
+
 		private:
 			void write(const std::string&);
 			std::optional<std::string> read() const;
@@ -54,7 +56,6 @@ namespace Alchemist::System {
 			void set_handle_information(HANDLE, DWORD, DWORD);
 			#endif
 
-			static constexpr size_t MAX_BYTES = 4 * 1024 * 1024; // 4MiB
 			#ifdef WINDOWS
 			HANDLE m_fd[2];
 			static SECURITY_ATTRIBUTES m_sAttr;
