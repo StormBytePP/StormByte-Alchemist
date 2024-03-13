@@ -115,6 +115,27 @@ void testchild2() {
 }
 #endif
 
+void testfilm() {
+	std::cout << "Test film with HDR+ " << std::flush;
+	#ifdef LINUX
+	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
+	#else
+	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
+	#endif
+	ffmpeg >> hdr10plus_tool;
+	ffmpeg << Alchemist::System::EoF;
+	const std::string expected = "Dynamic HDR10+ metadata detected.\n";
+	ffmpeg.wait();
+	hdr10plus_tool.wait();
+
+	std::optional<std::string> result;
+	hdr10plus_tool >> result;
+
+	test_result(expected, result);
+}
+
 int main() {
 	#ifdef LINUX
 	test1();
