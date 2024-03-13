@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #else
-SECURITY_ATTRIBUTES Alchemist::System::Windows::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
+SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 #endif
 
 Alchemist::System::Pipe::Pipe() {
