@@ -37,7 +37,7 @@ namespace Alchemist::System {
 			void run();
 			void consume_and_forward(Executable&);
 			#ifdef WINDOWS
-			std::wstring executable_command() const;
+			std::wstring full_command() const;
 			#endif
 
 			std::string m_program;

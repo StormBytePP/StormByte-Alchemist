@@ -91,29 +91,30 @@ void Alchemist::System::Executable::run() {
 	m_pstderr.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
 	m_pstdin.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
 
-	//std::cout << "The result is: '" << s.str() << "'" << std::endl;
+	std::wstring command = full_command();
+	TCHAR* szCmdline = const_cast<TCHAR*>(command.c_str());
 
-	//if (CreateProcess(	NULL,
-	//					szCmdline,     // command line 
-	//					NULL,          // process security attributes 
-	//					NULL,          // primary thread security attributes 
-	//					TRUE,          // handles are inherited 
-	//					0,             // creation flags 
-	//					NULL,          // use parent's environment 
-	//					NULL,          // use parent's current directory 
-	//					&siStartInfo,  // STARTUPINFO pointer 
-	//					&piProcInfo)) {
-	//	// Close handles to the child process and its primary thread.
-	//	// Some applications might keep these handles to monitor the status
-	//	// of the child process, for example. 
-	//	CloseHandle(piProcInfo.hProcess);
-	//	CloseHandle(piProcInfo.hThread);
-	//
-	//	// Close handles to the stdin and stdout pipes no longer needed by the child process.
-	//	// If they are not explicitly closed, there is no way to recognize that the child process has ended.
-	//	m_pstdout.close_write();
-	//	m_pstdin.close_read();
-	//}
+	if (CreateProcess(	NULL,
+						szCmdline,			// command line 
+						NULL,				// process security attributes 
+						NULL,				// primary thread security attributes 
+						TRUE,				// handles are inherited 
+						0,					// creation flags 
+						NULL,				// use parent's environment 
+						NULL,				// use parent's current directory 
+						&m_siStartInfo,		// STARTUPINFO pointer 
+						&m_piProcInfo)) {
+		// Close handles to the child process and its primary thread.
+		// Some applications might keep these handles to monitor the status
+		// of the child process, for example. 
+		CloseHandle(m_piProcInfo.hProcess);
+		CloseHandle(m_piProcInfo.hThread);
+	
+		// Close handles to the stdin and stdout pipes no longer needed by the child process.
+		// If they are not explicitly closed, there is no way to recognize that the child process has ended.
+		m_pstdout.close_write();
+		m_pstdin.close_read();
+	}
 	#endif
 }
 
@@ -145,3 +146,17 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	#endif
 	exec.m_pstdin.close_write();
 }
+
+#ifdef WINDOWS
+std::wstring Alchemist::System::Executable::full_command() const {
+	std::stringstream ss;
+
+	std::vector<std::string> full = { m_program };
+	full.insert(full.end(), m_arguments.begin(), m_arguments.end());
+	std::copy(full.begin(), full.end(), std::ostream_iterator<std::string>(ss, " "));
+	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, ss.str().c_str(), -1, NULL, 0);
+	std::unique_ptr<wchar_t[]> wstr_buff = std::make_unique<wchar_t[]>(wchars_num);
+	MultiByteToWideChar(CP_UTF8, 0, ss.str().c_str(), -1, wstr_buff.get(), wchars_num);
+	return std::wstring(wstr_buff.get(), wchars_num);
+}
+#endif
