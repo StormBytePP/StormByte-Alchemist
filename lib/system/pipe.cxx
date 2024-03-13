@@ -25,14 +25,6 @@ void Alchemist::System::Pipe::bind_write(int dest) {
 	bind(m_fd[1], dest);
 }
 
-void Alchemist::System::Pipe::close_read() {
-	close(m_fd[0]);
-}
-
-void Alchemist::System::Pipe::close_write() {
-	close(m_fd[1]);
-}
-
 int Alchemist::System::Pipe::poll(int timeout) const {
 	return ::poll(m_fd_data, 2, timeout);
 }
@@ -45,6 +37,14 @@ bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 	return (m_fd_data[1].revents & event) == event;
 }
 #endif
+
+void Alchemist::System::Pipe::close_read() {
+	close(m_fd[0]);
+}
+
+void Alchemist::System::Pipe::close_write() {
+	close(m_fd[1]);
+}
 
 Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& data) {
 	write(data);
