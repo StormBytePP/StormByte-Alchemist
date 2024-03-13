@@ -1,3 +1,4 @@
+//#include <system/executable.hxx>
 #include <system/pipe.hxx>
 
 #include <iostream>
@@ -58,14 +59,13 @@ void test4() {
 	std::cout << "Test 4: " << std::flush;
 	Alchemist::System::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::System::Executable sort("/usr/bin/sort", {"-"});
+	Alchemist::System::Executable sed("/bin/sed", {"-e", "s/3/9/"});
 	const std::string expected = "129";
 	std::optional<std::string> returned;
-	sort >> tr;
+	sort >> tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::Executable::EoF;
 
 	sort.wait();
-	Alchemist::System::Executable sed("/bin/sed", {"-e", "s/3/9/"});
-	tr >> sed;
 	tr.wait();
 	sed.wait();
 
