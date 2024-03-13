@@ -36,6 +36,13 @@ bool Alchemist::System::Pipe::has_read_event(unsigned short event) const {
 bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
 	return (m_fd_data[1].revents & event) == event;
 }
+#else
+void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
+	set_handle_information(m_fd[0], mask, flags);
+}
+void Alchemist::System::Pipe::set_write_handle_information(DWORD mask, DWORD flags) {
+	set_handle_information(m_fd[1], mask, flags);
+}
 #endif
 
 void Alchemist::System::Pipe::close_read() {
@@ -127,6 +134,10 @@ void Alchemist::System::Pipe::close(int& fd) {
 #else
 void Alchemist::System::Pipe::close(HANDLE& fd) {
 	CloseHandle(fd);
+}
+
+void Alchemist::System::Pipe::set_handle_information(HANDLE handle, DWORD mask, DWORD flags) {
+	SetHandleInformation(handle, mask, flags);
 }
 #endif
 

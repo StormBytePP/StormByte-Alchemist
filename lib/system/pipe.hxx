@@ -30,6 +30,9 @@ namespace Alchemist::System {
 			int poll(int) const;
 			bool has_read_event(unsigned short) const;
 			bool has_write_event(unsigned short) const;
+			#else
+			void set_read_handle_information(DWORD, DWORD);
+			void set_write_handle_information(DWORD, DWORD);
 			#endif
 			void close_read();
 			void close_write();
@@ -45,6 +48,7 @@ namespace Alchemist::System {
 			void close(int&);
 			#else
 			void close(HANDLE&);
+			void set_handle_information(HANDLE, DWORD, DWORD);
 			#endif
 			void init();
 
