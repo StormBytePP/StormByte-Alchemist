@@ -13,3 +13,11 @@ if (WITH_BUNDLED_JSONCPP)
 else()
 	find_package (JsonCpp REQUIRED)
 endif()
+if (WIN32 AND ENABLE_X265)
+	add_custom_target(hdr10plus_tool ALL
+		cargo update -q --manifest-path "${CMAKE_CURRENT_LIST_DIR}/hdr10plus_tool/Cargo.toml"
+		COMMAND cargo install -q --root "${CMAKE_INSTALL_PREFIX}" --path "${CMAKE_CURRENT_LIST_DIR}/hdr10plus_tool"
+		BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/hdr10plus_tool"
+	)
+	add_dependencies(Myrddin hdr10plus_tool)
+endif()
