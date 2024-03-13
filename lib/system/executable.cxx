@@ -53,8 +53,8 @@ void Alchemist::System::Executable::run() {
 		m_pstdout.bind_write(STDOUT_FILENO);
 
 		/* STDERR: Child writes to STDERR but does not read from */
-		m_pstdout.close_read();
-		m_pstdout.bind_write(STDERR_FILENO);
+		m_pstderr.close_read();
+		m_pstderr.bind_write(STDERR_FILENO);
 
 		std::string program_file = std::filesystem::path(m_program).filename().string();
 		std::vector<char*> argv;
