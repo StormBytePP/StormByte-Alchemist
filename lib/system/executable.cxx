@@ -79,13 +79,13 @@ void Alchemist::System::Executable::run() {
 		m_pstderr.close_write();
 	}
 	#else
-	ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
-	ZeroMemory(&siStartInfo, sizeof(STARTUPINFO));
-	siStartInfo.cb = sizeof(STARTUPINFO);
-	siStartInfo.hStdError = m_pstderr.get_write_handle();
-	siStartInfo.hStdOutput = m_pstdout.get_write_handle();
-	siStartInfo.hStdInput = m_pstdin.get_read_handle();
-	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+	ZeroMemory(&m_piProcInfo,	sizeof(PROCESS_INFORMATION));
+	ZeroMemory(&m_siStartInfo,	sizeof(STARTUPINFO));
+	m_siStartInfo.cb = sizeof(STARTUPINFO);
+	m_siStartInfo.hStdError = m_pstderr.get_write_handle();
+	m_siStartInfo.hStdOutput = m_pstdout.get_write_handle();
+	m_siStartInfo.hStdInput = m_pstdin.get_read_handle();
+	m_siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
 	m_pstdout.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
 	m_pstderr.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
@@ -128,7 +128,7 @@ int Alchemist::System::Executable::wait() {
 	#ifdef LINUX
 	waitpid(m_pid, &status, 0);
 	#else
-	WaitForSingleObject(piProcInfo.hProcess, INFINITE);
+	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
 	#endif
 	return status;
 }

@@ -45,8 +45,8 @@ namespace Alchemist::System {
 			#ifdef LINUX
 			pid_t m_pid;
 			#else
-			STARTUPINFO siStartInfo;
-			PROCESS_INFORMATION piProcInfo;
+			STARTUPINFO m_siStartInfo;
+			PROCESS_INFORMATION m_piProcInfo;
 			#endif
 			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::unique_ptr<std::thread> m_forwarder;
