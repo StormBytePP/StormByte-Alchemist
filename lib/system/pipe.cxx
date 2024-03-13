@@ -10,8 +10,8 @@ SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBU
 #include <vector>
 
 Alchemist::System::Pipe::Pipe() {
-	signal(SIGPIPE, SIG_IGN);
 	#ifdef LINUX
+	signal(SIGPIPE, SIG_IGN);
 	pipe2(m_fd, O_CLOEXEC);
 	m_fd_data[0].fd = m_fd[0];
 	m_fd_data[0].events = POLLIN;
