@@ -3,13 +3,26 @@
 #ifdef LINUX
 #include <fcntl.h>
 #include <unistd.h>
+#include <signal.h>
 #else
 SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 #endif
 #include <vector>
 
 Alchemist::System::Pipe::Pipe() {
-	init();
+	signal(SIGPIPE, SIG_IGN);
+	#ifdef LINUX
+	pipe2(m_fd, O_CLOEXEC);
+	m_fd_data[0].fd = m_fd[0];
+	m_fd_data[0].events = POLLIN;
+	m_fd_data[0].revents = 0;
+	m_fd_data[1].fd = m_fd[1];
+	m_fd_data[1].events = POLLOUT;
+	m_fd_data[1].revents = 0;
+	#else
+	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
+	#endif
+	m_buffer.reserve(MAX_BYTES);
 }
 
 Alchemist::System::Pipe::~Pipe() {
@@ -102,28 +115,17 @@ std::optional<std::string> Alchemist::System::Pipe::read() const {
 	std::optional<std::string> result;
 	std::string data = "";
 	#ifdef LINUX
-	bool retry = true;
+	ssize_t bytes = 0;
 	do {
-		poll(100);
-		ssize_t bytes;
-		if (has_read_event(POLLIN)) {
-			std::vector<char> buffer(MAX_BYTES);
-			while ((bytes = ::read(m_fd[0], buffer.data(), MAX_BYTES)) > 0) {
-				data += std::string(buffer.data(), bytes);
-			};
-			retry = false;
-		}
-		else if (has_read_event(POLLHUP)) {
-			retry = false;
-		}
-	} while(retry);
+		if ((bytes = ::read(m_fd[0], m_buffer.data(), MAX_BYTES)) > 0)
+			data += std::string(m_buffer.data(), bytes);
+	} while(bytes > 0);
 	#else
 	DWORD dwRead;
-	std::vector<CHAR> buffer(MAX_BYTES);
 	do {
 	
-		auto res = ReadFile(m_fd[0], buffer.data(), MAX_BYTES, &dwRead, NULL);
-		if (dwRead > 0) data += std::string(buffer.data(), dwRead);
+		auto res = ReadFile(m_fd[0], m_buffer.data(), MAX_BYTES, &dwRead, NULL);
+		if (dwRead > 0) data += std::string(m_buffer.data(), dwRead);
 	} while (dwRead > 0);
 	#endif
 	if (!data.empty()) result = std::move(data);
@@ -151,16 +153,3 @@ void Alchemist::System::Pipe::set_handle_information(HANDLE handle, DWORD mask, 
 }
 #endif
 
-void Alchemist::System::Pipe::init() {
-	#ifdef LINUX
-	pipe2(m_fd, O_CLOEXEC);
-	m_fd_data[0].fd = m_fd[0];
-	m_fd_data[0].events = POLLIN;
-	m_fd_data[0].revents = 0;
-	m_fd_data[1].fd = m_fd[1];
-	m_fd_data[1].events = POLLOUT;
-	m_fd_data[1].revents = 0;
-	#else
-	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
-	#endif
-}

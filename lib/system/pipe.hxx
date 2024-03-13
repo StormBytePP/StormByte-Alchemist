@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -52,8 +53,8 @@ namespace Alchemist::System {
 			void close(HANDLE&);
 			void set_handle_information(HANDLE, DWORD, DWORD);
 			#endif
-			void init();
 
+			static constexpr size_t MAX_BYTES = 4 * 1024 * 1024; // 4MiB
 			#ifdef WINDOWS
 			HANDLE m_fd[2];
 			static SECURITY_ATTRIBUTES m_sAttr;
@@ -61,6 +62,6 @@ namespace Alchemist::System {
 			int m_fd[2];
 			mutable pollfd m_fd_data[2];
 			#endif
-			static constexpr size_t MAX_BYTES = 1024 * 1024; // 1MiB
+			mutable std::vector<char> m_buffer;
 	};
 }
