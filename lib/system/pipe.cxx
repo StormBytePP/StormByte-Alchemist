@@ -61,7 +61,7 @@ ssize_t Alchemist::System::Pipe::write(const std::string& data) {
 }
 
 ssize_t Alchemist::System::Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
-	return ::read(m_fd[0], m_buffer.data(), MAX_READ_BYTES);
+	return ::read(m_fd[0], &m_buffer[0], MAX_READ_BYTES);
 }
 #else
 void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
@@ -88,7 +88,7 @@ DWORD Alchemist::System::Pipe::write(const std::string& data) {
 
 DWORD Alchemist::System::Pipe::read(std::vector<CHAR>&, DWORD) const {
 	DWORD dwRead;
-	ReadFile(m_fd[0], m_buffer.data(), MAX_BYTES, &dwRead, NULL);
+	ReadFile(m_fd[0], &m_buffer[0], MAX_BYTES, &dwRead, NULL);
 	return dwRead;
 }
 #endif
@@ -111,9 +111,9 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 	while((bytes = read(m_buffer, MAX_READ_BYTES))) {
 		if (bytes > 0) {
 			if (out)
-				out = *out + std::string(std::move(m_buffer.data()), bytes);
+				out = *out + std::string(&m_buffer[0], bytes);
 			else
-				out = std::string(std::move(m_buffer.data()), bytes);
+				out = std::string(&m_buffer[0], bytes);
 		}
 	}
 	return out;
