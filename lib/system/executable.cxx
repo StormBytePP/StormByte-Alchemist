@@ -122,11 +122,13 @@ void Alchemist::System::Executable::send(const std::string& str) {
 }
 
 int Alchemist::System::Executable::wait() {
-	int status;
+	int status = 0;
 	if (m_forwarder)
 		m_forwarder->join();
 	#ifdef LINUX
 	waitpid(m_pid, &status, 0);
+	#else
+	WaitForSingleObject(piProcInfo.hProcess, INFINITE);
 	#endif
 	return status;
 }
