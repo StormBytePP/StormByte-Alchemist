@@ -87,9 +87,9 @@ void Alchemist::System::Executable::run() {
 	m_siStartInfo.hStdInput = m_pstdin.get_read_handle();
 	m_siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-	m_pstdout.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
-	m_pstderr.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
-	m_pstdin.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
+	m_pstdout.set_read_handle_information(HANDLE_FLAG_INHERIT, FALSE);
+	m_pstderr.set_read_handle_information(HANDLE_FLAG_INHERIT, FALSE);
+	m_pstdin.set_write_handle_information(HANDLE_FLAG_INHERIT, FALSE);
 
 	std::wstring command = full_command();
 	TCHAR* szCmdline = const_cast<TCHAR*>(command.c_str());
@@ -109,10 +109,16 @@ void Alchemist::System::Executable::run() {
 		// of the child process, for example. 
 		CloseHandle(m_piProcInfo.hProcess);
 		CloseHandle(m_piProcInfo.hThread);
+
+		// Set the rest of handles not inheritable by other execs
+		m_pstdout.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
+		m_pstderr.set_write_handle_information(HANDLE_FLAG_INHERIT, 0);
+		m_pstdin.set_read_handle_information(HANDLE_FLAG_INHERIT, 0);
 	
 		// Close handles to the stdin and stdout pipes no longer needed by the child process.
 		// If they are not explicitly closed, there is no way to recognize that the child process has ended.
 		m_pstdout.close_write();
+		m_pstderr.close_write();
 		m_pstdin.close_read();
 	}
 	#endif
@@ -143,11 +149,13 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 		if (buffer) exec.m_pstdin << *buffer;
 	} while (!m_pstdout.has_read_event(POLLHUP));
 	#else
+	DWORD status;
 	do {
 		std::optional<std::string> buffer;
 		m_pstdout >> buffer;
 		if (buffer) exec.m_pstdin << *buffer;
-	} while (WaitForSingleObject(m_piProcInfo.hProcess, 0) == WAIT_OBJECT_0);
+		status = WaitForSingleObject(m_piProcInfo.hProcess, 100);
+	} while (status == WAIT_TIMEOUT);
 	#endif
 	exec.m_pstdin.close_write();
 }

@@ -88,49 +88,23 @@ void pipetest1() {
 	test_result("test", result);
 }
 
-#ifdef WINDOWS
-void testchild() {
-	Alchemist::System::Executable cmd("cmd.exe", { "/k", "nslookup", "myip.opendns.com.resolver1.opendns.com" });
-	
-	std::optional<std::string> returned;
-	cmd << Alchemist::System::EoF;
-	cmd >> returned;
-	cmd.wait();
-	std::cout << "El programa dio:\n" << returned.value_or("<EMPTY>") << std::endl;
-}
-
-void testchild2() {
-	std::optional<std::string> returned1, returned2;
-	Alchemist::System::Executable dir("cmd.exe", { "/c", "dir", "C:" });
-	dir << Alchemist::System::EoF;
-	dir.wait();
-	dir >> returned1;
-
-	Alchemist::System::Executable sort("sort");
-	sort << *returned1 << Alchemist::System::EoF;
-	sort.wait();
-	sort >> returned2;
-	
-	std::cout << "El programa dio:\n" << returned2.value_or("<EMPTY>") << std::endl;
-}
-#endif
-
 void testfilm() {
-	std::cout << "Test film with HDR+ " << std::flush;
+	std::cout << "Test film with HDR+: " << std::flush;
 	#ifdef LINUX
 	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
 	#else
-	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
-	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", "-fs", std::to_string(1024 * 1024), "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
 	#endif
-	ffmpeg >> hdr10plus_tool;
 	ffmpeg << Alchemist::System::EoF;
+	ffmpeg >> hdr10plus_tool;
 	const std::string expected = "Dynamic HDR10+ metadata detected.\n";
 	ffmpeg.wait();
 	hdr10plus_tool.wait();
 
 	std::optional<std::string> result;
+	hdr10plus_tool << Alchemist::System::EoF;
 	hdr10plus_tool >> result;
 
 	test_result(expected, result);
@@ -144,10 +118,7 @@ int main() {
 	test4();
 	#endif
 	pipetest1();
-	#ifdef WINDOWS
-	testchild();
-	testchild2();
-	#endif
+	testfilm();
 
 	return 0;
 }
