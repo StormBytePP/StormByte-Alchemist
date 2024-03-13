@@ -79,7 +79,7 @@ HANDLE Alchemist::System::Pipe::get_write_handle() const {
 
 DWORD Alchemist::System::Pipe::write(const std::string& data) {
 	DWORD dwWritten;
-	WriteFile(m_fd[1], data.c_str(), static_cast<DWORD>(sizeof(char) * str.length()), &dwWritten, NULL);
+	WriteFile(m_fd[1], data.c_str(), static_cast<DWORD>(sizeof(char) * data.length()), &dwWritten, NULL);
 	return dwWritten;
 }
 
@@ -104,7 +104,11 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& 
 }
 
 std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<std::string>& out) const {
+	#ifdef LINUX
 	ssize_t bytes;
+	#else
+	DWORD bytes;
+	#endif
 	std::vector<char> buffer(MAX_READ_BYTES);
 	while((bytes = read(buffer, MAX_READ_BYTES))) {
 		if (bytes > 0) {
