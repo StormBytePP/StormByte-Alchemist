@@ -7,20 +7,12 @@
 
 #ifdef WINDOWS
 	#ifdef BUILDING_ALCHEMIST
-		#ifdef __GNUC__
-    		#define DLL_PUBLIC __attribute__ ((dllexport))
-		#else
-    		#define DLL_PUBLIC __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-    	#endif
+		#define DLL_PUBLIC	__declspec(dllexport)
   	#else
-    	#ifdef __GNUC__
-      		#define DLL_PUBLIC __attribute__ ((dllimport))
-    	#else
-      		#define DLL_PUBLIC __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
-    	#endif
+      	#define DLL_PUBLIC	__declspec(dllimport)
   	#endif
   	#define DLL_LOCAL
 #else
-    #define DLL_PUBLIC __attribute__ ((visibility ("default")))
-    #define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+    #define DLL_PUBLIC		__attribute__ ((visibility ("default")))
+    #define DLL_LOCAL		__attribute__ ((visibility ("hidden")))
 #endif
