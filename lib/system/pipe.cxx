@@ -2,6 +2,7 @@
 
 #ifdef LINUX
 #include <fcntl.h>
+#include <signal.h>
 #include <unistd.h>
 #else
 SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
@@ -10,6 +11,7 @@ SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBU
 
 Alchemist::System::Pipe::Pipe() {
 	#ifdef LINUX
+	signal(SIGPIPE, SIG_IGN);
 	pipe2(m_fd, O_CLOEXEC);
 	#else
 	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
