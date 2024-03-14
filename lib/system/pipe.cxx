@@ -11,12 +11,6 @@ SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBU
 Alchemist::System::Pipe::Pipe() {
 	#ifdef LINUX
 	pipe2(m_fd, O_CLOEXEC);
-	m_fd_data[0].fd = m_fd[0];
-	m_fd_data[0].events = POLLIN;
-	m_fd_data[0].revents = 0;
-	m_fd_data[1].fd = m_fd[1];
-	m_fd_data[1].events = POLLOUT;
-	m_fd_data[1].revents = 0;
 	#else
 	CreatePipe(&m_fd[0], &m_fd[1], &m_sAttr, 0);
 	#endif
@@ -36,29 +30,45 @@ void Alchemist::System::Pipe::bind_write(int dest) {
 	bind(m_fd[1], dest);
 }
 
-int Alchemist::System::Pipe::poll(int timeout) const {
-	return ::poll(m_fd_data, 2, timeout);
-}
-
-bool Alchemist::System::Pipe::has_read_event(unsigned short event) const {
-	return (m_fd_data[0].revents & event) == event;
-}
-
-bool Alchemist::System::Pipe::has_write_event(unsigned short event) const {
-	return (m_fd_data[1].revents & event) == event;
-}
-
 ssize_t Alchemist::System::Pipe::write(const std::string& data) {
-	size_t written = 0;
-	poll(-1);
-	if (has_write_event(POLLOUT)) {
-		written = ::write(m_fd[1], data.c_str(), sizeof(char) * data.length());
-	}
-	return written;
+	return ::write(m_fd[1], data.c_str(), sizeof(char) * data.length());
+}
+
+/** This function will write chunks until write HUPs taking ownership    **/
+/** of the provided data to write. Empty parameter is Undefined Behavior **/
+bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
+	std::string out = std::move(data);
+	bool can_continue;
+
+	do {
+		size_t chunk_size = (out.length() > PIPE_BUF) ? PIPE_BUF : out.length(), bytes_written = 0;
+		bytes_written = ::write(m_fd[1], out.c_str(), chunk_size);
+		out.erase(0, chunk_size);
+		can_continue = (chunk_size == bytes_written) && !write_eof();
+	} while(!out.empty() && can_continue);
+	return out.empty();
+}
+
+bool Alchemist::System::Pipe::write_eof() const {
+	pollfd poll_data;
+	poll_data.fd = m_fd[1];
+	poll_data.events = POLLOUT;
+	poll(&poll_data, 1, -1);
+
+	return !((poll_data.revents & POLLOUT) == POLLOUT) || ((poll_data.revents & POLLERR) == POLLERR);
 }
 
 ssize_t Alchemist::System::Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
 	return ::read(m_fd[0], &buffer[0], bytes);
+}
+
+bool Alchemist::System::Pipe::read_eof() const {
+	pollfd poll_data;
+	poll_data.fd = m_fd[0];
+	poll_data.events = POLLIN;
+	poll(&poll_data, 1, -1);
+
+	return ((poll_data.revents & POLLHUP) == POLLHUP) || ((poll_data.revents & POLLERR) == POLLERR);
 }
 #else
 void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {

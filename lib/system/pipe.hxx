@@ -16,6 +16,8 @@
 namespace Alchemist::System {
 	class DLL_PUBLIC Pipe {
 		public:
+			static constexpr size_t MAX_READ_BYTES		= 4 * 1024 * 1024; // 4MiB
+
 			Pipe();
 			Pipe(const Pipe&)				= delete;
 			Pipe(Pipe&&)					= default;
@@ -23,18 +25,16 @@ namespace Alchemist::System {
 			Pipe& operator=(Pipe&&)			= default;
 			~Pipe();
 
-			static constexpr size_t MAX_READ_BYTES = 4 * 1024 * 1024; // 4MiB
-
 			#ifdef LINUX
 			void bind_read(int);
 			void bind_read(Pipe&);
 			void bind_write(int);
 			void bind_write(Pipe&);
-			int poll(int) const;
-			bool has_read_event(unsigned short) const;
-			bool has_write_event(unsigned short) const;
 			ssize_t write(const std::string&);
+			bool write_atomic(std::string&&);
+			bool write_eof() const;
 			ssize_t read(std::vector<char>&, ssize_t) const;
+			bool read_eof() const;
 			#else
 			void set_read_handle_information(DWORD, DWORD);
 			void set_write_handle_information(DWORD, DWORD);
@@ -63,7 +63,6 @@ namespace Alchemist::System {
 			static SECURITY_ATTRIBUTES m_sAttr;
 			#else
 			int m_fd[2];
-			mutable pollfd m_fd_data[2];
 			#endif
 			
 	};

@@ -150,17 +150,29 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	m_forwarder = std::make_unique<std::thread>(
 		[&]{
 			std::vector<char> buffer;
-			ssize_t bytes_read, bytes_write;
+			ssize_t bytes_read;
+			bool chunks_written = true;
 			do {
-				buffer.reserve(PIPE_BUF);
-				m_pstdout.poll(100);
-				exec.m_pstdin.poll(100);
-				bytes_read = m_pstdout.read(buffer, PIPE_BUF);
+				buffer.reserve(Pipe::MAX_READ_BYTES);
+				bytes_read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
 				if (bytes_read > 0) {
-					exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+					chunks_written = exec.m_pstdin.write_atomic(std::string(buffer.data(), bytes_read));
 				}
-			} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
+			} while (!m_pstdout.read_eof() && chunks_written);
 			exec.m_pstdin.close_write();
+
+			/* If chunks_written is false then it means that target executable */
+			/* already processed our input and closed connection, so we assume */
+			/* that this process is no longer needed, we send SIGTERM and      */
+			/* consume all its output to unblock it                            */
+			if (!chunks_written) {
+				kill(m_pid, SIGTERM);
+				while(!m_pstdout.read_eof()) {
+					std::vector<char> buffer;
+					buffer.reserve(Pipe::MAX_READ_BYTES);
+					ssize_t read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
+				}
+			}
 		}
 	);
 }
