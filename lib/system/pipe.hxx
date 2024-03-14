@@ -41,8 +41,8 @@ namespace Alchemist::System {
 			HANDLE get_write_handle() const;
 			DWORD write(const std::string&);
 			DWORD read(std::vector<CHAR>&, DWORD) const;
-			bool write_atomic(std::string&&);
 			#endif
+			bool write_atomic(std::string&&);
 			void close_read();
 			void close_write();
 
