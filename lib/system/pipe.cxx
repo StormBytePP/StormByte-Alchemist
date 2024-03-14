@@ -34,21 +34,6 @@ ssize_t Alchemist::System::Pipe::write(const std::string& data) {
 	return ::write(m_fd[1], data.c_str(), sizeof(char) * data.length());
 }
 
-/** This function will write chunks until write HUPs taking ownership    **/
-/** of the provided data to write. Empty parameter is Undefined Behavior **/
-bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
-	std::string out = std::move(data);
-	bool can_continue;
-
-	do {
-		size_t chunk_size = (out.length() > PIPE_BUF) ? PIPE_BUF : out.length(), bytes_written = 0;
-		bytes_written = ::write(m_fd[1], out.c_str(), chunk_size);
-		out.erase(0, chunk_size);
-		can_continue = (chunk_size == bytes_written) && !write_eof();
-	} while(!out.empty() && can_continue);
-	return out.empty();
-}
-
 bool Alchemist::System::Pipe::write_eof() const {
 	pollfd poll_data;
 	poll_data.fd = m_fd[1];
@@ -97,6 +82,37 @@ DWORD Alchemist::System::Pipe::read(std::vector<CHAR>& buffer, DWORD size) const
 	DWORD dwRead;
 	ReadFile(m_fd[0], buffer.data(), size, &dwRead, NULL);
 	return dwRead;
+}
+#endif
+
+/** This function will write chunks until write HUPs taking ownership    **/
+/** of the provided data to write. Empty parameter is Undefined Behavior **/
+#ifdef LINUX
+bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
+	std::string out = std::move(data);
+	bool can_continue;
+
+	do {
+		size_t chunk_size = (out.length() > PIPE_BUF) ? PIPE_BUF : out.length(), bytes_written = 0;
+		bytes_written = ::write(m_fd[1], out.c_str(), chunk_size);
+		out.erase(0, chunk_size);
+		can_continue = (chunk_size == bytes_written) && !write_eof();
+	} while (!out.empty() && can_continue);
+	return out.empty();
+}
+#else
+bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
+	std::string out = std::move(data);
+	bool can_continue;
+
+	do {
+		size_t chunk_size = (out.length() > 4096) ? 4096 : out.length(), bytes_written = 0;
+		DWORD dwWritten;
+		WriteFile(m_fd[1], out.c_str(), static_cast<DWORD>(chunk_size), &dwWritten, NULL);
+		out.erase(0, chunk_size);
+		can_continue = chunk_size == dwWritten;
+	} while (!out.empty() && can_continue);
+	return out.empty();
 }
 #endif
 

@@ -31,7 +31,6 @@ namespace Alchemist::System {
 			void bind_write(int);
 			void bind_write(Pipe&);
 			ssize_t write(const std::string&);
-			bool write_atomic(std::string&&);
 			bool write_eof() const;
 			ssize_t read(std::vector<char>&, ssize_t) const;
 			bool read_eof() const;
@@ -42,6 +41,7 @@ namespace Alchemist::System {
 			HANDLE get_write_handle() const;
 			DWORD write(const std::string&);
 			DWORD read(std::vector<CHAR>&, DWORD) const;
+			bool write_atomic(std::string&&);
 			#endif
 			void close_read();
 			void close_write();

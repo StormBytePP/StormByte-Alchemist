@@ -186,13 +186,19 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 			DWORD status;
 			std::vector<CHAR> buffer(Pipe::MAX_READ_BYTES);
 			SSIZE_T bytes_read;
+			bool chunks_written = true;
 			do {
 				bytes_read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
 				if (bytes_read > 0) {
-					exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+					chunks_written = exec.m_pstdin.write_atomic(std::string(buffer.data(), bytes_read));
 				}
 				status = WaitForSingleObject(m_piProcInfo.hProcess, 0);
-			} while (status == WAIT_TIMEOUT);
+			} while (chunks_written && status == WAIT_TIMEOUT);
+			/* See Linux version comment above, except that in Windows we don't need */
+			/* to consume exceeding output before program can exit gracefully        */
+			if (!chunks_written) {
+				TerminateProcess(m_piProcInfo.hProcess, 0);
+			}
 			exec.m_pstdin.close_write();
 		}
 	);

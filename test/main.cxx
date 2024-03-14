@@ -102,7 +102,7 @@ void testfilm() {
 	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
 	#else
-	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
 	#endif
 	ffmpeg >> hdr10plus_tool;
@@ -122,7 +122,7 @@ void testfilm2() {
 	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
 #else
-	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
 #endif
 	ffmpeg >> hdr10plus_tool;
@@ -139,7 +139,7 @@ void testfilm3() {
 	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_sin.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
 #else
-	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_sin.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_sin.mkv", /*"-fs", "52428800",*/ "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
 	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
 #endif
 	ffmpeg >> hdr10plus_tool;
