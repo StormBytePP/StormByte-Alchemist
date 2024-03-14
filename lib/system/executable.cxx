@@ -14,7 +14,7 @@ Alchemist::System::Executable::Executable(std::string&& prog, std::vector<std::s
 }
 
 Alchemist::System::Executable& Alchemist::System::Executable::operator>>(Executable& exe) {
-	m_forwarder.reset(new std::thread(&Alchemist::System::Executable::consume_and_forward, this, std::ref(exe)));
+	consume_and_forward(exe);
 	return exe;
 }
 
@@ -147,32 +147,40 @@ DWORD Alchemist::System::Executable::wait() {
 
 #ifdef LINUX
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
-	std::vector<char> buffer;
-	ssize_t bytes_read, bytes_write;
-	do {
-		buffer.reserve(PIPE_BUF);
-		m_pstdout.poll(100);
-		exec.m_pstdin.poll(100);
-		bytes_read = m_pstdout.read(buffer, PIPE_BUF);
-		if (bytes_read > 0) {
-			exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+	m_forwarder = std::make_unique<std::thread>(
+		[&]{
+			std::vector<char> buffer;
+			ssize_t bytes_read, bytes_write;
+			do {
+				buffer.reserve(PIPE_BUF);
+				m_pstdout.poll(100);
+				exec.m_pstdin.poll(100);
+				bytes_read = m_pstdout.read(buffer, PIPE_BUF);
+				if (bytes_read > 0) {
+					exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+				}
+			} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
+			exec.m_pstdin.close_write();
 		}
-	} while (!m_pstdout.has_read_event(POLLHUP) && !exec.m_pstdin.has_write_event(POLLHUP));
-	exec.m_pstdin.close_write();
+	);
 }
 #else
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
-	DWORD status;
-	std::vector<CHAR> buffer(Pipe::MAX_READ_BYTES);
-	SSIZE_T bytes_read;
-	do {
-		bytes_read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
-		if (bytes_read > 0) {
-			exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+	m_forwarder = std::make_unique<std::thread>(
+		[&]{
+			DWORD status;
+			std::vector<CHAR> buffer(Pipe::MAX_READ_BYTES);
+			SSIZE_T bytes_read;
+			do {
+				bytes_read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
+				if (bytes_read > 0) {
+					exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+				}
+				status = WaitForSingleObject(m_piProcInfo.hProcess, 0);
+			} while (status == WAIT_TIMEOUT);
+			exec.m_pstdin.close_write();
 		}
-		status = WaitForSingleObject(m_piProcInfo.hProcess, 0);
-	} while (status == WAIT_TIMEOUT);
-	exec.m_pstdin.close_write();
+	);
 }
 #endif
 
