@@ -7,6 +7,7 @@ namespace Alchemist::Media::Codec::Video {
 		unsigned short width;
 		unsigned short height;
 	};
+	
 	class DLL_PUBLIC Base: public Codec::Base {
 		public:
 			Base(const Codec::Type&);

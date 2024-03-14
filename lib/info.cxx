@@ -2,17 +2,17 @@
 #include "generated/path.h"
 #include "generated/version.h"
 
-#ifdef _WIN32
+#ifdef WINDOWS
 #include <windows.h>
 #endif
 
-const std::string Alchemist::Info::Name = LIBRARY_NAME;
-const std::string Alchemist::Info::Author = LIBRARY_AUTHOR;
-const std::string Alchemist::Info::Version = LIBRARY_VERSION;
-const std::string Alchemist::Info::URI = PROJECT_URI;
+const std::string Alchemist::Info::Name 	= LIBRARY_NAME;
+const std::string Alchemist::Info::Author 	= LIBRARY_AUTHOR;
+const std::string Alchemist::Info::Version 	= LIBRARY_VERSION;
+const std::string Alchemist::Info::URI 		= PROJECT_URI;
 
 const std::filesystem::path Alchemist::Info::ffmpeg_path() {
-	#ifdef _WIN32
+	#ifdef WINDOWS
 	return current_path() / "bin" / std::filesystem::path("ffmpeg.exe");
 	#else
 	return FFMPEG_PATH;
@@ -20,7 +20,7 @@ const std::filesystem::path Alchemist::Info::ffmpeg_path() {
 }
 
 const std::filesystem::path Alchemist::Info::ffprobe_path() {
-	#ifdef _WIN32
+	#ifdef WINDOWS
 	return current_path() / "bin" / std::filesystem::path("ffprobe.exe");
 	#else
 	return FFPROBE_PATH;

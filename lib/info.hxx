@@ -6,7 +6,7 @@
 #include <string>
 
 namespace Alchemist {
-	class Info {
+	struct DLL_PUBLIC Info {
 		public:
 			static const std::string 			DLL_PUBLIC Name;
 			static const std::string 			DLL_PUBLIC Author;
@@ -17,7 +17,7 @@ namespace Alchemist {
 			static const std::filesystem::path  DLL_PUBLIC ffprobe_path();
 
 		private:
-			#ifdef _WIN32
+			#ifdef WINDOWS
 			static const std::filesystem::path DLL_LOCAL current_path();
 			#endif
 
