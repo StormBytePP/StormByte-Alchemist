@@ -163,8 +163,11 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 
 			/* If chunks_written is false then it means that target executable */
 			/* already processed our input and closed connection, so we assume */
-			/* that this process is no longer needed, we send SIGTERM and      */
-			/* consume all its output to unblock it                            */
+			/* that this process is no longer needed, we send SIGTERM because  */
+			/* since we did not directly connected the IPC pipes in-out, this  */
+			/* process can't know the other one closed its stdin.              */
+			/* Furthermore, output is consumed (and ignored) to unlock current */
+			/* process in case it is locked in a pipe write operation          */
 			if (!chunks_written) {
 				kill(m_pid, SIGTERM);
 				while(!m_pstdout.read_eof()) {
