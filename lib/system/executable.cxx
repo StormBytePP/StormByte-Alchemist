@@ -138,7 +138,6 @@ DWORD Alchemist::System::Executable::wait() {
 	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
 	GetExitCodeThread(m_piProcInfo.hThread, &status);
 
-	// Close handlers
 	CloseHandle(m_piProcInfo.hProcess);
 	CloseHandle(m_piProcInfo.hThread);
 	return status;
