@@ -31,11 +31,11 @@ namespace Alchemist::System {
 
 			Executable& operator>>(Executable&);
 			std::optional<std::string>& operator>>(std::optional<std::string>&);
-			friend std::ostream& DLL_LOCAL operator<<(std::ostream&, const Executable&);
+			friend std::ostream& operator<<(std::ostream&, const Executable&);
 			Executable& operator<<(const std::string&);
 			void operator<<(const System::_EoF&);
 
-		public:
+		private:
 			void send(const std::string&);
 			void run();
 			void consume_and_forward(Executable&);

@@ -15,6 +15,14 @@ void test_result(const std::string& expected, const std::optional<std::string>& 
 	test_result(expected, real.value_or("<EMPTY>"));
 }
 
+void test_exit_code(int expected, int real) {
+	if (expected == real)
+		std::cout << "OK";
+	else
+		std::cout << "ERROR (expected exit code: " << expected << ", got: " << real << ")";
+	std::cout << std::endl;
+}
+
 #ifdef LINUX
 void test1() {
 	std::cout << "Test 1: " << std::flush;
@@ -104,10 +112,45 @@ void testfilm() {
 	auto exit_code = hdr10plus_tool.wait();
 
 	std::optional<std::string> result;
-	hdr10plus_tool << Alchemist::System::EoF;
 	hdr10plus_tool >> result;
 	
 	test_result(expected, result);
+}
+
+void testfilm2() {
+	std::cout << "Test film with HDR+ (2): " << std::flush;
+#ifdef LINUX
+	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_con.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
+#else
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_con.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
+#endif
+	ffmpeg << Alchemist::System::EoF;
+	ffmpeg >> hdr10plus_tool;
+	const std::string expected = "Dynamic HDR10+ metadata detected.\n";
+	ffmpeg.wait();
+	auto exit_code = hdr10plus_tool.wait();
+
+	test_exit_code(0, exit_code);
+}
+
+void testfilm3() {
+	std::cout << "Test film without HDR+: " << std::flush;
+#ifdef LINUX
+	Alchemist::System::Executable ffmpeg("ffmpeg", { "-hide_banner", "-loglevel", "panic", "-i", "/StormWarehouse/PRUEBAPELI/prueba_sin.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("hdr10plus_tool", { "--verify", "extract", "-" });
+#else
+	Alchemist::System::Executable ffmpeg("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\ffmpeg.exe", { "-hide_banner", "-loglevel", "panic", "-i", "D:\\PRUEBAPELI\\prueba_sin.mkv", "-fs", "52428800", "-c:v", "copy", "-vbsf", "hevc_mp4toannexb", "-f", "hevc", "-" });
+	Alchemist::System::Executable hdr10plus_tool("C:\\Users\\Storm\\Desktop\\Alchemist\\install\\bin\\hdr10plus_tool.exe", { "--verify", "extract", "-" });
+#endif
+	ffmpeg << Alchemist::System::EoF;
+	ffmpeg >> hdr10plus_tool;
+	const std::string expected = "Dynamic HDR10+ metadata detected.\n";
+	ffmpeg.wait();
+	auto exit_code = hdr10plus_tool.wait();
+
+	test_exit_code(1, exit_code);
 }
 
 int main() {
@@ -119,6 +162,8 @@ int main() {
 	#endif
 	pipetest1();
 	testfilm();
+	testfilm2();
+	testfilm3();
 
 	return 0;
 }
