@@ -85,7 +85,7 @@ DWORD Alchemist::System::Pipe::write(const std::string& data) {
 
 DWORD Alchemist::System::Pipe::read(std::vector<CHAR>& buffer, DWORD size) const {
 	DWORD dwRead;
-	ReadFile(m_fd[0], &buffer[0], size, &dwRead, NULL);
+	ReadFile(m_fd[0], buffer.data(), size, &dwRead, NULL);
 	return dwRead;
 }
 #endif

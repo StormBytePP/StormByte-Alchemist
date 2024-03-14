@@ -163,12 +163,15 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 #else
 void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	DWORD status;
+	std::vector<CHAR> buffer(Pipe::MAX_READ_BYTES);
+	SSIZE_T bytes_read;
 	do {
-		std::optional<std::string> buffer;
-		m_pstdout >> buffer;
-		if (buffer) exec.m_pstdin << *buffer;
-		status = WaitForSingleObject(m_piProcInfo.hProcess, 100);
-	} while (status != WAIT_OBJECT_0);
+		bytes_read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
+		if (bytes_read > 0) {
+			exec.m_pstdin.write(std::string(buffer.data(), bytes_read));
+		}
+		status = WaitForSingleObject(m_piProcInfo.hProcess, 0);
+	} while (status == WAIT_TIMEOUT);
 	exec.m_pstdin.close_write();
 }
 #endif
