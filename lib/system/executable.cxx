@@ -128,7 +128,7 @@ int Alchemist::System::Executable::wait() {
 	if (m_forwarder)
 		m_forwarder->join();
 	waitpid(m_pid, &status, 0);
-	return status;
+	return WEXITSTATUS(status);
 }
 #else
 DWORD Alchemist::System::Executable::wait() {
