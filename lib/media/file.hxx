@@ -19,7 +19,7 @@ namespace Alchemist::Media {
 		private:
 			File(const std::filesystem::path&);
 			File(std::filesystem::path&&);
-			File& init();
+			File& check_features();
 
 			std::filesystem::path m_media_path;
 			unsigned int m_features:4;

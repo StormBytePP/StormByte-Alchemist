@@ -63,6 +63,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/stream.cxx
 	${ALCHEMY_DIR}/system/executable.cxx
 	${ALCHEMY_DIR}/system/ffmpeg.cxx
+	${ALCHEMY_DIR}/system/ffprobe.cxx
 	${ALCHEMY_DIR}/system/hdr10plus.cxx
 	${ALCHEMY_DIR}/system/pipe.cxx
 )
