@@ -1,3 +1,5 @@
 #include "dts_default.hxx"
 
-Alchemist::Media::Encoder::Audio::DTS_DEFAULT::DTS_DEFAULT():Base(Encoder::DTS_DEFAULT) { }
+Alchemist::Media::Encoder::Audio::DTS_DEFAULT::DTS_DEFAULT():Base(Encoder::DTS_DEFAULT) {
+	m_attrs = Attribute::DEFAULT;
+}

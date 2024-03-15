@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Video::H264::H264():Base(Codec::H264) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::H264::get_available_decoders() const {
 	return {
-		Decoder::H264_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::H264_CUVID,
 		#endif

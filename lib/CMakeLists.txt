@@ -35,30 +35,8 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/container/avi.cxx
 	${ALCHEMY_DIR}/media/decoder.cxx
 	${ALCHEMY_DIR}/media/decoder/audio.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/aac_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/ac3_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/dts_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/eac3_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/flac_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/mp2_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/mp3_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/opus_default.cxx
-	${ALCHEMY_DIR}/media/decoder/audio/vorbis_default.cxx
 	${ALCHEMY_DIR}/media/decoder/image.cxx
-	${ALCHEMY_DIR}/media/decoder/image/bmp_default.cxx
-	${ALCHEMY_DIR}/media/decoder/image/gif_default.cxx
-	${ALCHEMY_DIR}/media/decoder/image/jpg_default.cxx
-	${ALCHEMY_DIR}/media/decoder/image/png_default.cxx
-	${ALCHEMY_DIR}/media/decoder/image/tiff_default.cxx
-	${ALCHEMY_DIR}/media/decoder/image/webp_default.cxx
 	${ALCHEMY_DIR}/media/decoder/video.cxx
-	${ALCHEMY_DIR}/media/decoder/video/av1_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/h264_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/h265_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/mpeg2_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/vp8_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/vp9_default.cxx
-	${ALCHEMY_DIR}/media/decoder/video/mpeg4_default.cxx
 	${ALCHEMY_DIR}/media/encoder.cxx
 	${ALCHEMY_DIR}/media/encoder/audio.cxx
 	${ALCHEMY_DIR}/media/encoder/copy.cxx

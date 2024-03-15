@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.hxx"
+#include "attribute.hxx"
 
 #include <list>
 

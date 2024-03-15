@@ -1,11 +1,11 @@
 #include "mp2.hxx"
 
-Alchemist::Media::Codec::Audio::MP2::MP2():Base(Codec::MP2) { }
+Alchemist::Media::Codec::Audio::MP2::MP2():Base(Codec::MP2) {
+	m_attrs = Attribute::OLD;
+}
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::MP2::get_available_decoders() const {
-	return {
-		Decoder::MP2_DEFAULT,
-	};
+	return {};
 }
 
 std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Audio::MP2::get_available_encoders() const {

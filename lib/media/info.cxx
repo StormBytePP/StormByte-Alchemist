@@ -40,7 +40,6 @@ const std::list<Media::Info::Item> Media::Info::Codec::All = {
 
 const std::list<Media::Decoder::Type> Media::Info::Decoder::Available = {
 	// Video
-	Media::Decoder::AV1_DEFAULT,
 	#ifdef ENABLE_DAV1D
 	Media::Decoder::AV1_DAV1D,
 	#endif
@@ -50,112 +49,69 @@ const std::list<Media::Decoder::Type> Media::Info::Decoder::Available = {
 	#ifdef ENABLE_CUDA
 	Media::Decoder::AV1_CUVID,
 	#endif
-	Media::Decoder::H264_DEFAULT,
 	#ifdef ENABLE_OPENH264
 	Media::Decoder::H264_OPENH264,
 	#endif
 	#ifdef ENABLE_CUDA
 	Media::Decoder::H264_CUVID,
 	#endif
-	Media::Decoder::H265_DEFAULT,
 	#ifdef ENABLE_CUDA
 	Media::Decoder::H265_CUVID,
 	#endif
-	Media::Decoder::MPEG2_DEFAULT,
 	#ifdef ENABLE_CUDA
 	Media::Decoder::MPEG2_CUVID,
 	#endif
-	Media::Decoder::VP8_DEFAULT,
 	#ifdef ENABLE_LIBVPX
 	Media::Decoder::VP8_LIBVPX,
 	#endif
 	#ifdef ENABLE_CUDA
 	Media::Decoder::VP8_CUVID,
 	#endif
-	Media::Decoder::VP9_DEFAULT,
 	#ifdef ENABLE_LIBVPX
 	Media::Decoder::VP9_LIBVPX,
 	#endif
 	#ifdef ENABLE_CUDA
 	Media::Decoder::VP9_CUVID,
 	#endif
-	Media::Decoder::MPEG4_DEFAULT,
 	#ifdef ENABLE_CUDA
 	Media::Decoder::MPEG4_CUVID,
 	#endif
 
 	// Audio
-	Media::Decoder::AAC_DEFAULT,
 	#ifdef ENABLE_FDK
 	Media::Decoder::AAC_FRAUNHOFFER,
 	#endif
-	Media::Decoder::AC3_DEFAULT,
-	Media::Decoder::DTS_DEFAULT,
-	Media::Decoder::EAC3_DEFAULT,
-	Media::Decoder::FLAC_DEFAULT,
-	Media::Decoder::MP2_DEFAULT,
-	Media::Decoder::MP3_DEFAULT,
-	Media::Decoder::OPUS_DEFAULT,
 	#ifdef ENABLE_LIBOPUS
 	Media::Decoder::OPUS_LIBOPUS,
 	#endif
-	Media::Decoder::VORBIS_DEFAULT,
 	#ifdef ENABLE_LIBVORBIS
 	Media::Decoder::VORBIS_LIBVORBIS,
 	#endif
 
 	// Image
-	Media::Decoder::BMP_DEFAULT,
-	Media::Decoder::GIF_DEFAULT,
-	Media::Decoder::JPG_DEFAULT,
-	Media::Decoder::PNG_DEFAULT,
-	Media::Decoder::TIFF_DEFAULT,
-	Media::Decoder::WEBP_DEFAULT
 };
 
 const std::list<Media::Info::Item> Media::Info::Decoder::All = {
 	// Video
-	{Media::Decoder::AV1_DEFAULT,		"av1",				"FFmpeg AV1"			},
 	{Media::Decoder::AV1_DAV1D,			"libdav1d",			"DAV1D"					},
 	{Media::Decoder::AV1_LIBAOM,		"libaom-av1",		"AOM AV1"				},
 	{Media::Decoder::AV1_CUVID,			"av1_cuvid",		"CuVid AV1"				},
-	{Media::Decoder::H264_DEFAULT,		"h264",				"FFmpeg H264"			},
 	{Media::Decoder::H264_OPENH264,		"libopenh264",		"OpenH264"				},
 	{Media::Decoder::H264_CUVID,		"h264_cuvid",		"CuVid H264"			},
-	{Media::Decoder::H265_DEFAULT,		"hevc",				"FFmpeg H265(HEVC)"		},
 	{Media::Decoder::H265_CUVID,		"hevc_cuvid",		"CuVid H265(HEVC)"		},
-	{Media::Decoder::MPEG2_DEFAULT,		"mpeg2video",		"FFmpeg MPEG-2"			},
 	{Media::Decoder::MPEG2_CUVID,		"mpeg2_cuvid",		"CuVid MPEG-2"			},
-	{Media::Decoder::VP8_DEFAULT,		"vp8",				"FFmpeg VP8"			},
 	{Media::Decoder::VP8_LIBVPX,		"libvpx",			"VPX VP8"				},
 	{Media::Decoder::VP8_CUVID,			"vp8_cuvid",		"CuVid VP8"				},
-	{Media::Decoder::VP9_DEFAULT,		"vp9",				"FFmpeg VP9"			},
 	{Media::Decoder::VP9_LIBVPX,		"libvpx-vp9",		"VPX VP9"				},
 	{Media::Decoder::VP9_CUVID,			"vp9_cuvid",		"CuVid VP9"				},
-	{Media::Decoder::MPEG4_DEFAULT,		"mpeg4",			"FFmpeg MPEG-4"			},
 	{Media::Decoder::MPEG4_CUVID,		"mpeg4_cuvid",		"CuVid MPEG-4"			},
 
 	// Audio
-	{Media::Decoder::AAC_DEFAULT,		"aac",				"FFmpeg AAC"			},
 	{Media::Decoder::AAC_FRAUNHOFFER,	"libfdk_aac",		"Fraunhoffer AAC"		},
-	{Media::Decoder::AC3_DEFAULT,		"ac3",				"FFmpeg AC3"			},
-	{Media::Decoder::DTS_DEFAULT,		"dca",				"FFmpeg DTS"			},
-	{Media::Decoder::EAC3_DEFAULT,		"eac3",				"FFmpeg EAC3"			},
-	{Media::Decoder::FLAC_DEFAULT,		"flac",				"FFmpeg FLAC"			},
-	{Media::Decoder::MP2_DEFAULT,		"mp2",				"FFmpeg MP2"			},
-	{Media::Decoder::MP3_DEFAULT,		"mp3",				"FFmpeg mp3"			},
-	{Media::Decoder::OPUS_DEFAULT,		"opus",				"FFmpeg OPUS"			},
 	{Media::Decoder::OPUS_LIBOPUS,		"libopus",			"LibOpus"				},
-	{Media::Decoder::VORBIS_DEFAULT,	"vorbis",			"FFmpeg VORBIS"			},
 	{Media::Decoder::VORBIS_LIBVORBIS,	"libvorbis",		"LibVorbis"				},
 
 	// Image
-	{Media::Decoder::BMP_DEFAULT,		"bmp",				"FFmpeg BMP"			},
-	{Media::Decoder::GIF_DEFAULT,		"gif",				"FFmpeg GIF"			},
-	{Media::Decoder::JPG_DEFAULT,		"mjpeg",			"FFmpeg JPG"			},
-	{Media::Decoder::PNG_DEFAULT,		"png",				"FFmpeg PNG"			},
-	{Media::Decoder::TIFF_DEFAULT,		"tiff",				"FFmpeg TIFF"			},
-	{Media::Decoder::WEBP_DEFAULT,		"webp",				"FFmpeg WEBP"			}
 };
 
 const std::list<Media::Encoder::Type> Media::Info::Encoder::Available = {

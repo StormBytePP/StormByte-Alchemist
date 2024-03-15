@@ -3,9 +3,7 @@
 Alchemist::Media::Codec::Image::WEBP::WEBP():Base(Codec::WEBP) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Image::WEBP::get_available_decoders() const {
-	return {
-		Decoder::WEBP_DEFAULT,
-	};
+	return {};
 }
 
 std::list<Alchemist::Media::Encoder::Type> Alchemist::Media::Codec::Image::WEBP::get_available_encoders() const {

@@ -1,10 +1,11 @@
 #include "h265.hxx"
 
-Alchemist::Media::Codec::Video::H265::H265():Base(Codec::H265) { }
+Alchemist::Media::Codec::Video::H265::H265():Base(Codec::H265) {
+	m_attrs = Attribute::EXPENSIVE;
+}
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::H265::get_available_decoders() const {
 	return {
-		Decoder::H265_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::H265_CUVID,
 		#endif

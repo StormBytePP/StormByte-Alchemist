@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Audio::VORBIS::VORBIS():Base(Codec::VORBIS) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::VORBIS::get_available_decoders() const {
 	return {
-		Decoder::VORBIS_DEFAULT,
 		#ifdef ENABLE_LIBVORBIS
 		Decoder::VORBIS_LIBVORBIS,
 		#endif

@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Video::VP9::VP9():Base(Codec::VP9) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::VP9::get_available_decoders() const {
 	return {
-		Decoder::VP9_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::VP9_CUVID,
 		#endif

@@ -1,10 +1,11 @@
 #include "mpeg2.hxx"
 
-Alchemist::Media::Codec::Video::MPEG2::MPEG2():Base(Codec::MPEG2) { }
+Alchemist::Media::Codec::Video::MPEG2::MPEG2():Base(Codec::MPEG2) {
+	m_attrs = Attribute::OLD;
+}
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::MPEG2::get_available_decoders() const {
 	return {
-		Decoder::MPEG2_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::MPEG2_CUVID,
 		#endif

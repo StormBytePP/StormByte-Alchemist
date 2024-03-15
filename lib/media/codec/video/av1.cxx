@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Video::AV1::AV1():Base(Codec::AV1) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::AV1::get_available_decoders() const {
 	return {
-		Decoder::AV1_DEFAULT,
 		#ifdef ENABLE_LIBAOM
 		Decoder::AV1_LIBAOM,
 		#endif

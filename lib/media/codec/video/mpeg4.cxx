@@ -1,10 +1,11 @@
 #include "mpeg4.hxx"
 
-Alchemist::Media::Codec::Video::MPEG4::MPEG4():Base(Codec::MPEG4) { }
+Alchemist::Media::Codec::Video::MPEG4::MPEG4():Base(Codec::MPEG4) {
+	m_attrs = Attribute::OLD;
+}
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::MPEG4::get_available_decoders() const {
 	return {
-		Decoder::MPEG4_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::MPEG4_CUVID,
 		#endif

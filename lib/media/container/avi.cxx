@@ -1,6 +1,8 @@
 #include "avi.hxx"
 
-Alchemist::Media::Container::AVI::AVI(const std::filesystem::path& file):Base(file) { }
+Alchemist::Media::Container::AVI::AVI(const std::filesystem::path& file):Base(file) {
+	m_attrs = Attribute::OLD;
+}
 
 Alchemist::Media::Container::AVI::AVI(std::filesystem::path&& file):Base(std::move(file)) { }
 

@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Video::VP8::VP8():Base(Codec::VP8) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Video::VP8::get_available_decoders() const {
 	return {
-		Decoder::VP8_DEFAULT,
 		#ifdef ENABLE_CUDA
 		Decoder::VP8_CUVID,
 		#endif

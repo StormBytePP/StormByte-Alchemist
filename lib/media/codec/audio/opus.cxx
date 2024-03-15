@@ -4,7 +4,6 @@ Alchemist::Media::Codec::Audio::OPUS::OPUS():Base(Codec::OPUS) { }
 
 std::list<Alchemist::Media::Decoder::Type> Alchemist::Media::Codec::Audio::OPUS::get_available_decoders() const {
 	return {
-		Decoder::OPUS_DEFAULT,
 		#ifdef ENABLE_LIBOPUS
 		Decoder::OPUS_LIBOPUS,
 		#endif
