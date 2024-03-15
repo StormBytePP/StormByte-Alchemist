@@ -22,7 +22,7 @@ namespace Alchemist::System {
 			Executable(Executable&&)					= default;
 			Executable& operator=(const Executable&)	= delete;
 			Executable& operator=(Executable&&)			= default;
-			virtual ~Executable()						= default;
+			virtual ~Executable();
 			#ifdef LINUX
 			int wait();
 			#else

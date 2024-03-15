@@ -13,6 +13,10 @@ Alchemist::System::Executable::Executable(std::filesystem::path&& prog, std::vec
 	run();
 }
 
+Alchemist::System::Executable::~Executable() {
+	wait();
+}
+
 Alchemist::System::Executable& Alchemist::System::Executable::operator>>(Executable& exe) {
 	consume_and_forward(exe);
 	return exe;
