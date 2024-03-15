@@ -12,7 +12,7 @@ if(NOT ffmpeg_POPULATED)
 endif()
 
 install(PROGRAMS
-    "${ffmpeg_SOURCE_DIR}/bin/ffmpeg.exe"
-    "${ffmpeg_SOURCE_DIR}/bin/ffprobe.exe"
+    "${ffmpeg_SOURCE_DIR}/bin/external/ffmpeg.exe"
+    "${ffmpeg_SOURCE_DIR}/bin/external/ffprobe.exe"
     DESTINATION bin
 )

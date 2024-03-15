@@ -22,7 +22,7 @@ namespace Alchemist::System {
 			Executable(Executable&&)					= default;
 			Executable& operator=(const Executable&)	= delete;
 			Executable& operator=(Executable&&)			= default;
-			~Executable()								= default;
+			virtual ~Executable()						= default;
 			#ifdef LINUX
 			int wait();
 			#else
@@ -35,6 +35,15 @@ namespace Alchemist::System {
 			Executable& operator<<(const std::string&);
 			void operator<<(const System::_EoF&);
 
+		protected:
+			#ifdef LINUX
+			pid_t m_pid;
+			#else
+			STARTUPINFO m_siStartInfo;
+			PROCESS_INFORMATION m_piProcInfo;
+			#endif
+			System::Pipe m_pstdout, m_pstdin, m_pstderr;
+			
 		private:
 			void send(const std::string&);
 			void run();
@@ -45,13 +54,6 @@ namespace Alchemist::System {
 
 			std::filesystem::path m_program;
 			std::vector<std::string> m_arguments;
-			#ifdef LINUX
-			pid_t m_pid;
-			#else
-			STARTUPINFO m_siStartInfo;
-			PROCESS_INFORMATION m_piProcInfo;
-			#endif
-			System::Pipe m_pstdout, m_pstdin, m_pstderr;
 			std::unique_ptr<std::thread> m_forwarder;
 	};
 }

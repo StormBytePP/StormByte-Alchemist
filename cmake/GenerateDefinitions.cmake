@@ -12,6 +12,7 @@ file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/path.h CONTENT "#pragma once
 
 #define FFMPEG_PATH				\"${FFMPEG_EXECUTABLE}\"
 #define FFPROBE_PATH			\"${FFPROBE_EXECUTABLE}\"
+#define HDR10PLUS_TOOL_PATH		\"${FFMPEG_EXECUTABLE}\"
 
 ")
 

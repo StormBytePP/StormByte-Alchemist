@@ -62,6 +62,8 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/item.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
 	${ALCHEMY_DIR}/system/executable.cxx
+	${ALCHEMY_DIR}/system/ffmpeg.cxx
+	${ALCHEMY_DIR}/system/hdr10plus.cxx
 	${ALCHEMY_DIR}/system/pipe.cxx
 )
 
@@ -75,5 +77,5 @@ target_include_directories(Alchemy PUBLIC
 target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
 
 include(CodecOptions)
-include(ConfigureFFmpeg)
+include(ConfigureExternalPrograms)
 include(GenerateDefinitions)

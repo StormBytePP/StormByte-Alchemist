@@ -6,18 +6,20 @@
 #include <string>
 
 namespace Alchemist {
-	struct DLL_PUBLIC Info {
+	class DLL_PUBLIC Info {
 		public:
-			static const std::string 			DLL_PUBLIC Name;
-			static const std::string 			DLL_PUBLIC Author;
-			static const std::string 			DLL_PUBLIC Version;
-			static const std::string 			DLL_PUBLIC URI;
+			static const std::string 			Name;
+			static const std::string 			Author;
+			static const std::string 			Version;
+			static const std::string 			URI;
 
-			static const std::filesystem::path  DLL_PUBLIC ffmpeg_path();
-			static const std::filesystem::path  DLL_PUBLIC ffprobe_path();
+			static const std::filesystem::path  ffmpeg_path();
+			static const std::filesystem::path  ffprobe_path();
+			static const std::filesystem::path  hdr10plus_tool_path();
 
 		private:
 			#ifdef WINDOWS
+			static const std::filesystem::path DLL_LOCAL external_subfolder;
 			static const std::filesystem::path DLL_LOCAL current_path();
 			#endif
 

@@ -13,7 +13,7 @@ const std::string Alchemist::Info::URI 		= PROJECT_URI;
 
 const std::filesystem::path Alchemist::Info::ffmpeg_path() {
 	#ifdef WINDOWS
-	return current_path() / "bin" / std::filesystem::path("ffmpeg.exe");
+	return current_path() / external_subfolder / std::filesystem::path("ffmpeg.exe");
 	#else
 	return FFMPEG_PATH;
 	#endif
@@ -21,13 +21,23 @@ const std::filesystem::path Alchemist::Info::ffmpeg_path() {
 
 const std::filesystem::path Alchemist::Info::ffprobe_path() {
 	#ifdef WINDOWS
-	return current_path() / "bin" / std::filesystem::path("ffprobe.exe");
+	return current_path() / external_subfolder / std::filesystem::path("ffprobe.exe");
 	#else
 	return FFPROBE_PATH;
 	#endif
 }
 
+const std::filesystem::path Alchemist::Info::hdr10plus_tool_path() {
+	#ifdef WINDOWS
+	return current_path() / external_subfolder / std::filesystem::path("hdr10plus_tool.exe");
+	#else
+	return HDR10PLUS_TOOL_PATH;
+	#endif
+}
+
 #ifdef _WIN32
+const std::filesystem::path Alchemist::Info::external_subfolder = "external";
+
 const std::filesystem::path Alchemist::Info::current_path() {
 	TCHAR ownPth[MAX_PATH]; 
 
