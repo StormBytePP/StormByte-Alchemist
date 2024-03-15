@@ -6,23 +6,23 @@
 #include <json/json.h>
 #include <stdexcept>
 
-Alchemist::Media::File::File(const std::filesystem::path& file_path):m_media_path(file_path) { }
-
-Alchemist::Media::File::File(std::filesystem::path&& file_path):m_media_path(std::move(file_path)) { }
-
-Alchemist::Media::File Alchemist::Media::File::read(const std::filesystem::path& path) {
-	return File(path).check_features();
+Alchemist::Media::File::File(const std::filesystem::path& file_path):m_media_path(file_path) {
+	init();
 }
 
-Alchemist::Media::File Alchemist::Media::File::read(std::filesystem::path&& path) {
-	return File(std::move(path)).check_features();
+Alchemist::Media::File::File(std::filesystem::path&& file_path):m_media_path(std::move(file_path)) {
+	init();
 }
 
 bool Alchemist::Media::File::has_feature(const Feature& feature) const {
 	return (m_features & feature) == feature;
 }
 
-Alchemist::Media::File& Alchemist::Media::File::check_features() {
+void Alchemist::Media::File::init() {
+	check_features();
+}
+
+void Alchemist::Media::File::check_features() {
 	if (!std::filesystem::is_regular_file(m_media_path))
 		throw std::runtime_error("File " + m_media_path.string() + " is not a file but a path");
 	else if (!std::filesystem::exists(m_media_path))
@@ -57,6 +57,4 @@ Alchemist::Media::File& Alchemist::Media::File::check_features() {
 			if (result == 0) m_features |= Feature::HDR_PLUS;
 		}
 	}
-
-	return *this;
 }

@@ -163,18 +163,20 @@ int main() {
 	testfilm3();
 	*/
 
-	auto file1 = Alchemist::Media::File::read("/StormWarehouse/PRUEBAPELI/prueba_con.mkv");
+	std::unique_ptr<Alchemist::Media::File> f;
+
+	f = std::make_unique<Alchemist::Media::File>("/StormWarehouse/PRUEBAPELI/prueba_con.mkv");
 	std::cout << "File 1" << std::endl;
-	if (file1.has_feature(Alchemist::Media::Feature::HDR))
+	if (f->has_feature(Alchemist::Media::Feature::HDR))
 		std::cout << "* Has HDR" << std::endl;
-	if (file1.has_feature(Alchemist::Media::Feature::HDR_PLUS))
+	if (f->has_feature(Alchemist::Media::Feature::HDR_PLUS))
 		std::cout << "* Has HDR+" << std::endl;
 
-	auto file2 = Alchemist::Media::File::read("/StormWarehouse/PRUEBAPELI/prueba_sin.mkv");
+	f = std::make_unique<Alchemist::Media::File>("/StormWarehouse/PRUEBAPELI/prueba_sin.mkv");
 	std::cout << "File 2" << std::endl;
-	if (file2.has_feature(Alchemist::Media::Feature::HDR))
+	if (f->has_feature(Alchemist::Media::Feature::HDR))
 		std::cout << "* Has HDR" << std::endl;
-	if (file2.has_feature(Alchemist::Media::Feature::HDR_PLUS))
+	if (f->has_feature(Alchemist::Media::Feature::HDR_PLUS))
 		std::cout << "* Has HDR+" << std::endl;
 
 	return 0;
