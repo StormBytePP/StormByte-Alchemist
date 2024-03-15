@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CMAKE_CXX_STANDARD_REQUIRED 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Remove this on release
 if(UNIX)
@@ -21,8 +23,7 @@ if(MSVC)
 	add_compile_options(/wd4251)
 	add_compile_definitions(UNICODE)
 else()
-	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden)
-	add_compile_options(-g -ggdb)
+	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden -pipe)
 	set(CMAKE_CXX_FLAGS_DEBUG_INIT		"-g -ggdb -Wall -Wextra")
 endif()
 
