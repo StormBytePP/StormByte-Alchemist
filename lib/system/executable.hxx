@@ -2,9 +2,9 @@
 
 #include "pipe.hxx"
 
+#include <filesystem>
 #include <iostream>
 #include <optional>
-#include <string>
 #include <thread>
 #ifdef LINUX
 #include <unistd.h>
@@ -16,8 +16,8 @@ namespace Alchemist::System {
 	static constexpr _EoF EoF = {};
 	class DLL_LOCAL Executable {
 		public:
-			Executable(const std::string& prog, const std::vector<std::string>& args = std::vector<std::string>());
-			Executable(std::string&&, std::vector<std::string>&&);
+			Executable(const std::filesystem::path& prog, const std::vector<std::string>& args = std::vector<std::string>());
+			Executable(std::filesystem::path&&, std::vector<std::string>&&);
 			Executable(const Executable&)				= delete;
 			Executable(Executable&&)					= default;
 			Executable& operator=(const Executable&)	= delete;
@@ -43,7 +43,7 @@ namespace Alchemist::System {
 			std::wstring full_command() const;
 			#endif
 
-			std::string m_program;
+			std::filesystem::path m_program;
 			std::vector<std::string> m_arguments;
 			#ifdef LINUX
 			pid_t m_pid;

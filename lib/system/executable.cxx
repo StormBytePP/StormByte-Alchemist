@@ -5,11 +5,11 @@
 #include <sys/wait.h>
 #endif
 
-Alchemist::System::Executable::Executable(const std::string& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
+Alchemist::System::Executable::Executable(const std::filesystem::path& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
 	run();
 }
 
-Alchemist::System::Executable::Executable(std::string&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
+Alchemist::System::Executable::Executable(std::filesystem::path&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
 	run();
 }
 
@@ -56,15 +56,14 @@ void Alchemist::System::Executable::run() {
 		m_pstderr.close_read();
 		m_pstderr.bind_write(STDERR_FILENO);
 
-		std::string program_file = std::filesystem::path(m_program).filename().string();
 		std::vector<char*> argv;
 		argv.reserve(m_arguments.size() + 2);
-		argv.push_back(program_file.data());
+		argv.push_back(const_cast<char*>(m_program.c_str()));
 		for (size_t i = 0; i < m_arguments.size(); i++)
 			argv.push_back(m_arguments[i].data());
 		argv.push_back(NULL);
 		
-		execvp(m_program.data(), argv.data());
+		execvp(m_program.c_str(), argv.data());
 		// If we reach here then we failed to execute the program
 		exit(0);
 	}
