@@ -131,7 +131,7 @@ Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& 
 	return *this;
 }
 
-std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<std::string>& out) const {
+std::string& Alchemist::System::Pipe::operator>>(std::string& out) const {
 	#ifdef LINUX
 	ssize_t bytes;
 	#else
@@ -140,10 +140,7 @@ std::optional<std::string>& Alchemist::System::Pipe::operator>>(std::optional<st
 	std::vector<char> buffer(MAX_READ_BYTES);
 	while((bytes = read(buffer, MAX_READ_BYTES))) {
 		if (bytes > 0) {
-			if (out)
-				out = *out + std::string(&buffer[0], bytes);
-			else
-				out = std::string(&buffer[0], bytes);
+			out += std::string(&buffer[0], bytes);
 		}
 	}
 	return out;

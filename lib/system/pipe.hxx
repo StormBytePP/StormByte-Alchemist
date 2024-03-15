@@ -47,7 +47,7 @@ namespace Alchemist::System {
 			void close_write();
 
 			Pipe& operator<<(const std::string&);
-			std::optional<std::string>& operator>>(std::optional<std::string>&) const;
+			std::string& operator>>(std::string&) const;
 
 		private:
 			#ifdef LINUX

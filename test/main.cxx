@@ -11,10 +11,6 @@ void test_result(const std::string& expected, const std::string& real) {
 	std::cout << std::endl;
 }
 
-void test_result(const std::string& expected, const std::optional<std::string>& real) {
-	test_result(expected, real.value_or("<EMPTY>"));
-}
-
 void test_exit_code(int expected, int real) {
 	if (expected == real)
 		std::cout << "OK";
@@ -28,7 +24,7 @@ void test1() {
 	std::cout << "Test 1: " << std::flush;
 	Alchemist::System::Executable exec1("/usr/bin/sort", {"-"});
 	const std::string expected = "1\n2\n3\n";
-	std::optional<std::string> returned;
+	std::string returned;
 	exec1 << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 	exec1.wait();
 	exec1 >> returned;
@@ -39,7 +35,7 @@ void test2() {
 	std::cout << "Test 2: " << std::flush;
 	Alchemist::System::Executable exec2("/usr/bin/tr", {"-d", "\n"});
 	const std::string expected = "321";
-	std::optional<std::string> returned;
+	std::string returned;
 	
 	exec2 << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
@@ -53,7 +49,7 @@ void test3() {
 	Alchemist::System::Executable tr("/usr/bin/tr", {"-d", "\n"});
 	Alchemist::System::Executable sort("/usr/bin/sort", {"-"});
 	const std::string expected = "123";
-	std::optional<std::string> returned;
+	std::string returned;
 	sort >> tr;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
@@ -69,7 +65,7 @@ void test4() {
 	Alchemist::System::Executable sort("/usr/bin/sort", {"-"});
 	Alchemist::System::Executable sed("/bin/sed", {"-e", "s/3/9/"});
 	const std::string expected = "129";
-	std::optional<std::string> returned;
+	std::string returned;
 	sort >> tr >> sed;
 	sort << "3\n" << "2\n" << "1\n" << Alchemist::System::EoF;
 
@@ -89,7 +85,7 @@ void pipetest1() {
 	p << "test";
 	p.close_write();
 
-	std::optional<std::string> result;
+	std::string result;
 	p >> result;
 	p.close_read();
 
@@ -110,7 +106,7 @@ void testfilm() {
 	ffmpeg.wait();
 	hdr10plus_tool.wait();
 
-	std::optional<std::string> result;
+	std::string result;
 	hdr10plus_tool >> result;
 	
 	test_result(expected, result);

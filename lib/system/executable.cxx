@@ -1,6 +1,5 @@
 #include "executable.hxx"
 
-#include <filesystem>
 #ifdef LINUX
 #include <sys/wait.h>
 #endif
@@ -22,16 +21,15 @@ Alchemist::System::Executable& Alchemist::System::Executable::operator>>(Executa
 	return exe;
 }
 
-std::optional<std::string>& Alchemist::System::Executable::operator>>(std::optional<std::string>& data) {
+std::string& Alchemist::System::Executable::operator>>(std::string& data) {
 	m_pstdout >> data;
 	return data;
 }
 
 std::ostream& Alchemist::System::operator<<(std::ostream& os, const Executable& exe) {
-	std::optional<std::string> data;
+	std::string data;
 	exe.m_pstdout >> data;
-	if (data) os << *data;
-	return os;
+	return os << data;
 }
 
 Alchemist::System::Executable& Alchemist::System::Executable::operator<<(const std::string& data) {

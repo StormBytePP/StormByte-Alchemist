@@ -4,7 +4,6 @@
 
 #include <filesystem>
 #include <iostream>
-#include <optional>
 #include <thread>
 #ifdef LINUX
 #include <unistd.h>
@@ -30,7 +29,7 @@ namespace Alchemist::System {
 			#endif
 
 			Executable& operator>>(Executable&);
-			std::optional<std::string>& operator>>(std::optional<std::string>&);
+			std::string& operator>>(std::string&);
 			friend std::ostream& operator<<(std::ostream&, const Executable&);
 			Executable& operator<<(const std::string&);
 			void operator<<(const System::_EoF&);
