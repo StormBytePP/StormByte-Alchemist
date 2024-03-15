@@ -128,8 +128,10 @@ void Alchemist::System::Executable::send(const std::string& str) {
 #ifdef LINUX
 int Alchemist::System::Executable::wait() {
 	int status;
-	if (m_forwarder)
+	if (m_forwarder) {
 		m_forwarder->join();
+		m_forwarder.release();
+	}
 	waitpid(m_pid, &status, 0);
 	return WEXITSTATUS(status);
 }

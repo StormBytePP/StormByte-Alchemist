@@ -14,7 +14,7 @@
 #endif
 
 namespace Alchemist::System {
-	class DLL_LOCAL Pipe {
+	class DLL_PUBLIC Pipe {
 		public:
 			static constexpr size_t MAX_READ_BYTES		= 4 * 1024 * 1024; // 4MiB
 

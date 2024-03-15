@@ -23,7 +23,6 @@ void test_exit_code(int expected, int real) {
 	std::cout << std::endl;
 }
 
-/*
 #ifdef LINUX
 void test1() {
 	std::cout << "Test 1: " << std::flush;
@@ -150,10 +149,10 @@ void testfilm3() {
 
 	test_exit_code(1, exit_code);
 }
-*/
+
 
 int main() {
-	/*
+	
 	#ifdef LINUX
 	test1();
 	test2();
@@ -164,7 +163,7 @@ int main() {
 	testfilm();
 	testfilm2();
 	testfilm3();
-	*/
+	
 
 	return 0;
 }
