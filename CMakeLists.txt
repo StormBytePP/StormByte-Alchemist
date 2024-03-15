@@ -22,6 +22,6 @@ else()
 endif()
 
 add_subdirectory(lib)
-add_subdirectory(test)
+add_subdirectory(Myrddin)
 add_subdirectory(thirdparty)
 include(InstallConfiguration)
