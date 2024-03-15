@@ -1,7 +1,7 @@
 #include "file.hxx"
-#include "../system/ffmpeg.hxx"
-#include "../system/ffprobe.hxx"
-#include "../system/hdr10plus.hxx"
+#include "../system/executable/ffmpeg.hxx"
+#include "../system/executable/ffprobe.hxx"
+#include "../system/executable/hdr10plus.hxx"
 
 #include <json/json.h>
 #include <stdexcept>

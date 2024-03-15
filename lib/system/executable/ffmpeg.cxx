@@ -1,4 +1,4 @@
-#include "../info.hxx"
+#include "../../info.hxx"
 #include "ffmpeg.hxx"
 
 Alchemist::System::FFmpeg::FFmpeg(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) {

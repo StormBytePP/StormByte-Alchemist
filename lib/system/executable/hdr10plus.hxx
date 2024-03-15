@@ -1,6 +1,6 @@
 #pragma once
 
-#include "executable.hxx"
+#include "../executable.hxx"
 
 #include <memory>
 

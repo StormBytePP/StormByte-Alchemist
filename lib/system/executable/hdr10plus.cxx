@@ -1,4 +1,4 @@
-#include "../info.hxx"
+#include "../../info.hxx"
 #include "hdr10plus.hxx"
 
 Alchemist::System::HDR10Plus::HDR10Plus(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
