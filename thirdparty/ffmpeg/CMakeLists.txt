@@ -11,8 +11,8 @@ if(NOT ffmpeg_POPULATED)
   FetchContent_Populate(ffmpeg)
 endif()
 
-install(PROGRAMS
-    "${ffmpeg_SOURCE_DIR}/bin/external/ffmpeg.exe"
-    "${ffmpeg_SOURCE_DIR}/bin/external/ffprobe.exe"
-    DESTINATION bin
+install(FILES
+    "${ffmpeg_SOURCE_DIR}/bin/ffmpeg.exe"
+    "${ffmpeg_SOURCE_DIR}/bin/ffprobe.exe"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/external"
 )

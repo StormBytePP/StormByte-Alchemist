@@ -207,7 +207,7 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 std::wstring Alchemist::System::Executable::full_command() const {
 	std::stringstream ss;
 
-	std::vector<std::string> full = { m_program };
+	std::vector<std::string> full = { m_program.string() };
 	full.insert(full.end(), m_arguments.begin(), m_arguments.end());
 	std::copy(full.begin(), full.end(), std::ostream_iterator<std::string>(ss, " "));
 	int wchars_num = MultiByteToWideChar(CP_UTF8, 0, ss.str().c_str(), -1, NULL, 0);
