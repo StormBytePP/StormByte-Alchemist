@@ -5,7 +5,7 @@
 #include <filesystem>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC File {
+	class DLL_PUBLIC File:: public Item {
 		public:
 			File(const File&)					= default;
 			File(File&&)						= default;

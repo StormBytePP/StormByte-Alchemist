@@ -13,7 +13,7 @@ namespace Alchemist::Media::Container {
 		BMP, GIF, JPG, PNG, TIFF, WEBP // Image
 	};
 	
-	class DLL_PUBLIC Base {
+	class DLL_PUBLIC Base: public Item {
 		public:
 			Base(const std::filesystem::path&);
 			Base(std::filesystem::path&&);

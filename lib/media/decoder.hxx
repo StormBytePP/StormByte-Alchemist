@@ -1,6 +1,6 @@
 #pragma once
 
-#include "visibility.h"
+#include "item.hxx"
 
 #include <list>
 #include <memory>
@@ -36,7 +36,7 @@ namespace Alchemist::Media::Decoder {
 		WEBP_DEFAULT
 	};
 
-	class DLL_PUBLIC Base {
+	class DLL_PUBLIC Base: public Item {
 		public:
 			Base(const Type&);
 			Base(Type&&);

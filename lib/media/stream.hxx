@@ -5,7 +5,7 @@
 #include <list>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Stream {
+	class DLL_PUBLIC Stream: public Item {
 		public:
 			Stream()							= default;
 			Stream(const Stream&)				= default;

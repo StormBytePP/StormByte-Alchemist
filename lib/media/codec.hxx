@@ -1,5 +1,6 @@
 #pragma once
 
+#include "item.hxx"
 #include "decoder.hxx"
 #include "encoder.hxx"
 
@@ -19,7 +20,7 @@ namespace Alchemist::Media::Codec {
 		COPY_IMAGE	= std::numeric_limits<unsigned short>::max()
 	};
 
-	class DLL_PUBLIC Base {
+	class DLL_PUBLIC Base: public Item {
 		public:
 			Base(const Type&);
 			Base(Type&&);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "visibility.h"
+#include "item.hxx"
 
 #include <limits>
 #include <list>
@@ -39,7 +39,7 @@ namespace Alchemist::Media::Encoder {
 		COPY = std::numeric_limits<unsigned short>::max()
 	};
 
-	class DLL_PUBLIC Base {
+	class DLL_PUBLIC Base: public Item {
 		public:
 			Base(const Type&);
 			Base(Type&&);

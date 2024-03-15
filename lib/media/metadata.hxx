@@ -6,7 +6,7 @@
 #include <list>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Metadata {
+	class DLL_PUBLIC Metadata: public Item {
 		public:
 			Metadata(const Metadata&)				= default;
 			Metadata(Metadata&&)					= default;
