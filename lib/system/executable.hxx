@@ -14,7 +14,7 @@
 namespace Alchemist::System {
 	struct {} typedef _EoF;
 	static constexpr _EoF EoF = {};
-	class DLL_PUBLIC Executable {
+	class DLL_LOCAL Executable {
 		public:
 			Executable(const std::string& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::string&&, std::vector<std::string>&&);
