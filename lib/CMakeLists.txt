@@ -57,7 +57,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/encoder/video.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg2_default.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg4_default.cxx
-	#${ALCHEMY_DIR}/media/file.cxx
+	${ALCHEMY_DIR}/media/file.cxx
 	${ALCHEMY_DIR}/media/info.cxx
 	${ALCHEMY_DIR}/media/item.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
