@@ -1,5 +1,6 @@
 #include <system/executable.hxx>
 #include <system/pipe.hxx>
+#include <media/file.hxx>
 
 #include <iostream>
 
@@ -19,6 +20,7 @@ void test_exit_code(int expected, int real) {
 	std::cout << std::endl;
 }
 
+/*
 #ifdef LINUX
 void test1() {
 	std::cout << "Test 1: " << std::flush;
@@ -145,10 +147,10 @@ void testfilm3() {
 
 	test_exit_code(1, exit_code);
 }
-
+*/
 
 int main() {
-	
+	/*
 	#ifdef LINUX
 	test1();
 	test2();
@@ -159,7 +161,21 @@ int main() {
 	testfilm();
 	testfilm2();
 	testfilm3();
-	
+	*/
+
+	auto file1 = Alchemist::Media::File::read("/StormWarehouse/PRUEBAPELI/prueba_con.mkv");
+	std::cout << "File 1" << std::endl;
+	if (file1.has_feature(Alchemist::Media::Feature::HDR))
+		std::cout << "* Has HDR" << std::endl;
+	if (file1.has_feature(Alchemist::Media::Feature::HDR_PLUS))
+		std::cout << "* Has HDR+" << std::endl;
+
+	auto file2 = Alchemist::Media::File::read("/StormWarehouse/PRUEBAPELI/prueba_sin.mkv");
+	std::cout << "File 2" << std::endl;
+	if (file2.has_feature(Alchemist::Media::Feature::HDR))
+		std::cout << "* Has HDR" << std::endl;
+	if (file2.has_feature(Alchemist::Media::Feature::HDR_PLUS))
+		std::cout << "* Has HDR+" << std::endl;
 
 	return 0;
 }

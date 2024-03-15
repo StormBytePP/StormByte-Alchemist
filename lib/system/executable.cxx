@@ -128,7 +128,7 @@ int Alchemist::System::Executable::wait() {
 	int status;
 	if (m_forwarder) {
 		m_forwarder->join();
-		m_forwarder.release();
+		m_forwarder.reset();
 	}
 	waitpid(m_pid, &status, 0);
 	return WEXITSTATUS(status);
@@ -138,7 +138,7 @@ DWORD Alchemist::System::Executable::wait() {
 	DWORD status;
 	if (m_forwarder) {
 		m_forwarder->join();
-		m_forwarder.release();
+		m_forwarder.reset();
 	}
 	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
 	GetExitCodeThread(m_piProcInfo.hThread, &status);

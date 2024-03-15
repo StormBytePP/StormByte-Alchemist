@@ -18,9 +18,9 @@ namespace Alchemist::System {
 			Executable(const std::filesystem::path& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::filesystem::path&&, std::vector<std::string>&&);
 			Executable(const Executable&)				= delete;
-			Executable(Executable&&)					= default;
+			Executable(Executable&&)					= delete;
 			Executable& operator=(const Executable&)	= delete;
-			Executable& operator=(Executable&&)			= default;
+			Executable& operator=(Executable&&)			= delete;
 			virtual ~Executable();
 			#ifdef LINUX
 			int wait();

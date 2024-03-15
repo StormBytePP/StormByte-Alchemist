@@ -1,5 +1,6 @@
 #pragma once
 
+#include "feature.hxx"
 #include "item.hxx"
 
 #include <filesystem>
@@ -15,6 +16,8 @@ namespace Alchemist::Media {
 
 			static File read(const std::filesystem::path&);
 			static File read(std::filesystem::path&&);
+
+			bool has_feature(const Feature&) const;
 
 		private:
 			File(const std::filesystem::path&);
