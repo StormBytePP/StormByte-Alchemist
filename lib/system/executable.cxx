@@ -136,8 +136,10 @@ int Alchemist::System::Executable::wait() {
 #else
 DWORD Alchemist::System::Executable::wait() {
 	DWORD status;
-	if (m_forwarder)
+	if (m_forwarder) {
 		m_forwarder->join();
+		m_forwarder.release();
+	}
 	WaitForSingleObject(m_piProcInfo.hProcess, INFINITE);
 	GetExitCodeThread(m_piProcInfo.hThread, &status);
 
