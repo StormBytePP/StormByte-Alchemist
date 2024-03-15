@@ -3,12 +3,6 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Remove this on release
-if(UNIX)
-	set(CMAKE_C_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang")
-	set(CMAKE_CXX_COMPILER			"/usr/lib/ccache/bin/x86_64-pc-linux-gnu-clang++")
-endif()
-
 project("Alchemist"
 	VERSION 2.0.0
 	DESCRIPTION "This is a program to handle automated multimedia conversions with one or more nodes to process data"
@@ -24,7 +18,7 @@ if(MSVC)
 	add_compile_definitions(UNICODE)
 else()
 	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden -pipe)
-	set(CMAKE_CXX_FLAGS_DEBUG_INIT		"-g -ggdb -Wall -Wextra")
+	set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Wextra -Wno-unneeded-internal-declaration")
 endif()
 
 add_subdirectory(lib)

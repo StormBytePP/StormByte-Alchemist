@@ -172,7 +172,7 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 				while(!m_pstdout.read_eof()) {
 					std::vector<char> buffer;
 					buffer.reserve(Pipe::MAX_READ_BYTES);
-					ssize_t read = m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
+					m_pstdout.read(buffer, Pipe::MAX_READ_BYTES);
 				}
 			}
 		}

@@ -108,7 +108,7 @@ void testfilm() {
 	ffmpeg >> hdr10plus_tool;
 	const std::string expected = "Dynamic HDR10+ metadata detected.\n";
 	ffmpeg.wait();
-	auto exit_code = hdr10plus_tool.wait();
+	hdr10plus_tool.wait();
 
 	std::optional<std::string> result;
 	hdr10plus_tool >> result;
