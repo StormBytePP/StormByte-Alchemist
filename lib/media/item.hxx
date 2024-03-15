@@ -14,6 +14,10 @@ namespace Alchemist::Media {
 			Item& operator=(Item&&)			= default;
 			virtual ~Item()					= 0;
 
-			virtual const std::list<Feature> get_features() const;
+			unsigned short get_attributes() const;
+			bool has_attribute(const Attribute&) const;
+
+		protected:
+			unsigned int m_attrs: 5;
 	};
 }

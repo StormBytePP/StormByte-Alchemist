@@ -2,6 +2,10 @@
 
 Alchemist::Media::Item::~Item() { }
 
-const std::list<Alchemist::Media::Feature> Alchemist::Media::Item::get_features() const {
-	return {};
+unsigned short Alchemist::Media::Item::get_attributes() const {
+	return m_attrs;
+}
+
+bool Alchemist::Media::Item::has_attribute(const Attribute& attr) const {
+	return (m_attrs & attr) == attr;
 }
