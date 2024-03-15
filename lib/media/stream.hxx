@@ -2,10 +2,12 @@
 
 #include "codec.hxx"
 
-#include <list>
+#include <memory>
+#include <optional>
+#include <string>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Stream: public Item {
+	class DLL_PUBLIC Stream final: public Item {
 		public:
 			Stream()							= default;
 			Stream(const Stream&)				= default;
@@ -14,7 +16,14 @@ namespace Alchemist::Media {
 			Stream& operator=(Stream&&)			= default;
 			~Stream()							= default;
 
-		private:
-			std::list<Codec::Base> m_in_codecs, m_out_codecs;
+			std::shared_ptr<Codec::Base> get_codec() const;
+			void set_codec(std::unique_ptr<Codec::Base>);
+			const std::optional<std::string>& get_language() const;
+			void set_language(const std::string&);
+			void set_language(std::string&&);
+
+		protected:
+			std::shared_ptr<Codec::Base> m_codec;
+			std::optional<std::string> m_language;
 	};
 }

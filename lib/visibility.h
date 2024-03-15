@@ -6,7 +6,7 @@
 #endif
 
 #ifdef WINDOWS
-	#ifdef BUILDING_ALCHEMIST
+	#ifdef Alchemy_EXPORTS
 		#define DLL_PUBLIC	__declspec(dllexport)
   	#else
       	#define DLL_PUBLIC	__declspec(dllimport)
