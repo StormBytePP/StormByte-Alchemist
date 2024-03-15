@@ -76,6 +76,9 @@ target_include_directories(Alchemy PUBLIC
   $<INSTALL_INTERFACE:include/StormByte/Alchemist>
 )
 target_compile_definitions(Alchemy PRIVATE BUILDING_ALCHEMIST)
+if (NOT WIN32)
+	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
+endif()
 
 include(CodecOptions)
 include(ConfigureExternalPrograms)
