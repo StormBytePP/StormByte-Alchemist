@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-	std::cout << "Path to programs:" << std::endl;
+	std::cout << "Path to programs (prefix " << Alchemist::Info::prefix() << ")" << std::endl;
 	std::cout << "* ffmpeg: " << Alchemist::Info::ffmpeg_path() << std::endl;;
 	std::cout << "* ffprobe: " << Alchemist::Info::ffprobe_path() << std::endl;;
 	std::cout << "* hdr10plus_tool: " << Alchemist::Info::hdr10plus_tool_path() << std::endl;;

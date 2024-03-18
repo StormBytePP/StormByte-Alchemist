@@ -18,6 +18,7 @@ namespace Alchemist {
 			static const std::filesystem::path  hdr10plus_tool_path();
 
 		private:
-			static const std::filesystem::path DLL_LOCAL prefix();
+		public:
+			static const std::filesystem::path prefix();
 	};
 }
