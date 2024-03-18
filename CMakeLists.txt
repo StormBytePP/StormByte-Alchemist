@@ -23,5 +23,6 @@ endif()
 
 add_subdirectory(lib)
 add_subdirectory(Myrddin)
+add_subdirectory(Alchemist)
 add_subdirectory(thirdparty)
 include(InstallConfiguration)
