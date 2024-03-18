@@ -17,7 +17,7 @@ if(MSVC)
 	add_compile_options(/wd4251 /std:c++20)
 	add_compile_definitions(UNICODE)
 else()
-	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden -pipe)
+	add_compile_options(-fvisibility=hidden -fvisibility-inlines-hidden -pipe -std:c++20)
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -Wall -Wextra -Werror -Wno-unneeded-internal-declaration -Wnon-virtual-dtor -pedantic -pedantic-errors -O0")
 endif()
 

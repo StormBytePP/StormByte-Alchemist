@@ -22,7 +22,7 @@ int main() {
 		std::cout << err.what() << std::endl;
 	}
 
-	std::cout << "File 2" << std::endl;
+	std::cout << "File 2:" << std::endl;
 	try {
 		#ifdef LINUX
 		f = std::make_unique<Alchemist::Media::File>("/StormWarehouse/PRUEBAPELI/prueba_sin.mkv");
