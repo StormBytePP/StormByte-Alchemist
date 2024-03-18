@@ -18,11 +18,9 @@ const std::filesystem::path Alchemist::Info::ffprobe_path() {
 	return prefix() / FFPROBE_PATH;
 }
 
-#ifdef ENABLE_X265
 const std::filesystem::path Alchemist::Info::hdr10plus_tool_path() {
 	return prefix() / HDR10PLUS_TOOL_PATH;
 }
-#endif
 
 const std::filesystem::path Alchemist::Info::prefix() {
 	#ifdef WINDOWS

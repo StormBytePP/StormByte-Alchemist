@@ -15,9 +15,7 @@ namespace Alchemist {
 
 			static const std::filesystem::path  ffmpeg_path();
 			static const std::filesystem::path  ffprobe_path();
-			#ifdef ENABLE_X265
 			static const std::filesystem::path  hdr10plus_tool_path();
-			#endif
 
 		private:
 			static const std::filesystem::path DLL_LOCAL prefix();

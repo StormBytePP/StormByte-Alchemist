@@ -5,9 +5,9 @@
 
 int main() {
 	std::cout << "Path to programs:" << std::endl;
-	std::cout << "* ffmpeg: " << Alchemist::Info::ffmpeg_path();
-	std::cout << "* ffprobe: " << Alchemist::Info::ffprobe_path();
-	std::cout << "* hdr10plus_tool: " << Alchemist::Info::hdr10plus_tool_path();
+	std::cout << "* ffmpeg: " << Alchemist::Info::ffmpeg_path() << std::endl;;
+	std::cout << "* ffprobe: " << Alchemist::Info::ffprobe_path() << std::endl;;
+	std::cout << "* hdr10plus_tool: " << Alchemist::Info::hdr10plus_tool_path() << std::endl;;
 
 	/*
 	std::unique_ptr<Alchemist::Media::File> f;
