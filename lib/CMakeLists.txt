@@ -75,9 +75,21 @@ target_include_directories(Alchemy PUBLIC
   $<BUILD_INTERFACE:${ALCHEMY_DIR}>
   $<INSTALL_INTERFACE:include/StormByte/Alchemist>
 )
+
 if (NOT WIN32)
 	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
 endif()
 
 include(CodecOptions)
-include(GenerateDefinitions)
+
+include(GetVersionFromGitTag)
+file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/definitions.h CONTENT "#pragma once
+
+#define PROJECT_URI			\"${PROJECT_HOMEPAGE_URL}\"
+#define LIBRARY_NAME			\"${PROJECT_NAME}\"
+#define LIBRARY_AUTHOR			\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"
+#define LIBRARY_VERSION			\"${${PROJECT_NAME}_VERSION_STRING}\"
+
+
+")
+target_include_directories(Alchemy PRIVATE ${CMAKE_BINARY_DIR})

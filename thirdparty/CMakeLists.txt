@@ -1,4 +1,4 @@
-option(WITH_SYSTEM_SQLITE		"Use system sqlite library"				ON)
+option(WITH_SYSTEM_SQLITE		"Use system sqlite library"		ON)
 option(WITH_SYSTEM_JSONCPP		"Use system library jsoncpp library"	ON)
 
 add_subdirectory(ffmpeg)

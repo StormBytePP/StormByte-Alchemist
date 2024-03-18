@@ -1,4 +1,4 @@
 add_executable(Myrddin
 	main.cxx
 )
-target_link_libraries(Myrddin Alchemy jsoncpp sqlite3)
+target_link_libraries(Myrddin Alchemy)
