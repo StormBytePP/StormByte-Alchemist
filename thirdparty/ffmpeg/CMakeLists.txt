@@ -17,8 +17,8 @@ if(WIN32)
 		"${ffmpeg_SOURCE_DIR}/bin/ffprobe.exe"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/thirdparty"
 	)
-	set(FFMPEG_EXECUTABLE	"\\\\thirdparty\\\\ffmpeg.exe")
-	set(FFPROBE_EXECUTABLE	"\\\\thirdparty\\\\ffprobe.exe")
+	set(FFMPEG_EXECUTABLE	"thirdparty\\\\ffmpeg.exe")
+	set(FFPROBE_EXECUTABLE	"thirdparty\\\\ffprobe.exe")
 else()
 	find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
 	find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)

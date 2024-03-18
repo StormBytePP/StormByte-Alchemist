@@ -23,10 +23,10 @@ void Alchemist::Media::File::init() {
 }
 
 void Alchemist::Media::File::check_features() {
-	if (!std::filesystem::is_regular_file(m_media_path))
-		throw std::runtime_error("File " + m_media_path.string() + " is not a file but a path");
-	else if (!std::filesystem::exists(m_media_path))
-		throw std::runtime_error("File " + m_media_path.string() + " do not exist");
+	if (!std::filesystem::exists(m_media_path))
+		throw std::runtime_error(m_media_path.string() + " does not exist");
+	else if (!std::filesystem::is_regular_file(m_media_path))
+		throw std::runtime_error(m_media_path.string() + " is not a file but a path");
 
 	std::unique_ptr<System::FFprobe> ffprobe;
 	std::unique_ptr<System::FFmpeg> ffmpeg;
