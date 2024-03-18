@@ -7,10 +7,10 @@ namespace Alchemist::Media::Codec::Video {
 		public:
 			VP9();
 			VP9(const VP9&)					= default;
-			VP9(VP9&&)						= default;
+			VP9(VP9&&) noexcept				= default;
 			VP9& operator=(const VP9&)		= default;
-			VP9& operator=(VP9&&)			= default;
-			~VP9()							= default;
+			VP9& operator=(VP9&&) noexcept	= default;
+			~VP9() noexcept					= default;
 
 			std::list<Decoder::Type> get_available_decoders() const;
 			std::list<Encoder::Type> get_available_encoders() const;

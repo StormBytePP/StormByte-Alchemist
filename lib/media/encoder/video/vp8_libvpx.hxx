@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Video {
 		public:
 			VP8_LIBVPX();
 			VP8_LIBVPX(const VP8_LIBVPX&)				= default;
-			VP8_LIBVPX(VP8_LIBVPX&&)					= default;
+			VP8_LIBVPX(VP8_LIBVPX&&) noexcept			= default;
 			VP8_LIBVPX& operator=(const VP8_LIBVPX&)	= default;
-			VP8_LIBVPX& operator=(VP8_LIBVPX&&)		= default;
-			~VP8_LIBVPX()							= default;
+			VP8_LIBVPX& operator=(VP8_LIBVPX&&) noexcept= default;
+			~VP8_LIBVPX() noexcept						= default;
 	};
 }

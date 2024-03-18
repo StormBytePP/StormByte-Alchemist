@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Video {
 		public:
 			H265_NVENC();
 			H265_NVENC(const H265_NVENC&)				= default;
-			H265_NVENC(H265_NVENC&&)					= default;
+			H265_NVENC(H265_NVENC&&) noexcept			= default;
 			H265_NVENC& operator=(const H265_NVENC&)	= default;
-			H265_NVENC& operator=(H265_NVENC&&)		= default;
-			~H265_NVENC()							= default;
+			H265_NVENC& operator=(H265_NVENC&&) noexcept= default;
+			~H265_NVENC() noexcept						= default;
 	};
 }

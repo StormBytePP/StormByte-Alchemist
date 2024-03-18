@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Audio {
 		public:
 			FLAC_DEFAULT();
 			FLAC_DEFAULT(const FLAC_DEFAULT&)				= default;
-			FLAC_DEFAULT(FLAC_DEFAULT&&)					= default;
+			FLAC_DEFAULT(FLAC_DEFAULT&&) noexcept			= default;
 			FLAC_DEFAULT& operator=(const FLAC_DEFAULT&)	= default;
-			FLAC_DEFAULT& operator=(FLAC_DEFAULT&&)			= default;
-			~FLAC_DEFAULT()									= default;
+			FLAC_DEFAULT& operator=(FLAC_DEFAULT&&) noexcept= default;
+			~FLAC_DEFAULT() noexcept						= default;
 	};
 }

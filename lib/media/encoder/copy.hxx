@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder {
 		public:
 			Copy();
 			Copy(const Copy&)				= default;
-			Copy(Copy&&)					= default;
+			Copy(Copy&&) noexcept			= default;
 			Copy& operator=(const Copy&)	= default;
-			Copy& operator=(Copy&&)			= default;
-			~Copy()							= default;
+			Copy& operator=(Copy&&) noexcept= default;
+			~Copy() noexcept				= default;
 	};
 }

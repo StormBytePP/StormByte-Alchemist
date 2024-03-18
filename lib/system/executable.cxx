@@ -12,7 +12,7 @@ Alchemist::System::Executable::Executable(std::filesystem::path&& prog, std::vec
 	run();
 }
 
-Alchemist::System::Executable::~Executable() {
+Alchemist::System::Executable::~Executable() noexcept {
 	wait();
 }
 
@@ -124,7 +124,7 @@ void Alchemist::System::Executable::send(const std::string& str) {
 }
 
 #ifdef LINUX
-int Alchemist::System::Executable::wait() {
+int Alchemist::System::Executable::wait() noexcept {
 	int status;
 	if (m_forwarder) {
 		m_forwarder->join();
@@ -134,7 +134,7 @@ int Alchemist::System::Executable::wait() {
 	return WEXITSTATUS(status);
 }
 #else
-DWORD Alchemist::System::Executable::wait() {
+DWORD Alchemist::System::Executable::wait() noexcept {
 	DWORD status;
 	if (m_forwarder) {
 		m_forwarder->join();

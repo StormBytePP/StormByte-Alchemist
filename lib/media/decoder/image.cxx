@@ -4,4 +4,4 @@ Alchemist::Media::Decoder::Image::Base::Base(const Type& decoder_type):Decoder::
 
 Alchemist::Media::Decoder::Image::Base::Base(Type&& decoder_type):Decoder::Base(std::move(decoder_type)) { }
 
-Alchemist::Media::Decoder::Image::Base::~Base() { }
+Alchemist::Media::Decoder::Image::Base::~Base() noexcept { }

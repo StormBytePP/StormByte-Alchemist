@@ -7,10 +7,10 @@ namespace Alchemist::Media::Codec::Audio {
 		public:
 			AAC();
 			AAC(const AAC&)					= default;
-			AAC(AAC&&)						= default;
+			AAC(AAC&&) noexcept				= default;
 			AAC& operator=(const AAC&)		= default;
-			AAC& operator=(AAC&&)			= default;
-			~AAC()							= default;
+			AAC& operator=(AAC&&) noexcept	= default;
+			~AAC() noexcept					= default;
 
 			std::list<Decoder::Type> get_available_decoders() const;
 			std::list<Encoder::Type> get_available_encoders() const;

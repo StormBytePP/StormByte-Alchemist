@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Image {
 		public:
 			TIFF_DEFAULT();
 			TIFF_DEFAULT(const TIFF_DEFAULT&)				= default;
-			TIFF_DEFAULT(TIFF_DEFAULT&&)					= default;
+			TIFF_DEFAULT(TIFF_DEFAULT&&) noexcept			= default;
 			TIFF_DEFAULT& operator=(const TIFF_DEFAULT&)	= default;
-			TIFF_DEFAULT& operator=(TIFF_DEFAULT&&)			= default;
-			~TIFF_DEFAULT()									= default;
+			TIFF_DEFAULT& operator=(TIFF_DEFAULT&&) noexcept= default;
+			~TIFF_DEFAULT() noexcept						= default;
 	};
 }

@@ -11,12 +11,12 @@ namespace Alchemist::Media {
 			File(const std::filesystem::path&);
 			File(std::filesystem::path&&);
 			File(const File&)					= default;
-			File(File&&)						= default;
+			File(File&&) noexcept				= default;
 			File& operator=(const File&)		= default;
-			File& operator=(File&&)				= default;
-			~File()								= default;
+			File& operator=(File&&) noexcept	= default;
+			~File() noexcept					= default;
 
-			bool has_feature(const Feature&) const;
+			bool has_feature(const Feature&) const noexcept;
 
 		private:
 			void init();

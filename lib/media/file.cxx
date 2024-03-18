@@ -14,7 +14,7 @@ Alchemist::Media::File::File(std::filesystem::path&& file_path):m_media_path(std
 	init();
 }
 
-bool Alchemist::Media::File::has_feature(const Feature& feature) const {
+bool Alchemist::Media::File::has_feature(const Feature& feature) const noexcept {
 	return (m_features & feature) == feature;
 }
 

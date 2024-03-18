@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Audio {
 		public:
 			OPUS_LIBOPUS();
 			OPUS_LIBOPUS(const OPUS_LIBOPUS&)				= default;
-			OPUS_LIBOPUS(OPUS_LIBOPUS&&)					= default;
+			OPUS_LIBOPUS(OPUS_LIBOPUS&&) noexcept			= default;
 			OPUS_LIBOPUS& operator=(const OPUS_LIBOPUS&)	= default;
-			OPUS_LIBOPUS& operator=(OPUS_LIBOPUS&&)			= default;
-			~OPUS_LIBOPUS()									= default;
+			OPUS_LIBOPUS& operator=(OPUS_LIBOPUS&&) noexcept= default;
+			~OPUS_LIBOPUS() noexcept						= default;
 	};
 }

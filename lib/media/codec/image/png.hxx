@@ -7,10 +7,10 @@ namespace Alchemist::Media::Codec::Image {
 		public:
 			PNG();
 			PNG(const PNG&)					= default;
-			PNG(PNG&&)						= default;
+			PNG(PNG&&) noexcept				= default;
 			PNG& operator=(const PNG&)		= default;
-			PNG& operator=(PNG&&)			= default;
-			~PNG()							= default;
+			PNG& operator=(PNG&&) noexcept	= default;
+			~PNG() noexcept					= default;
 
 			std::list<Decoder::Type> get_available_decoders() const;
 			std::list<Encoder::Type> get_available_encoders() const;

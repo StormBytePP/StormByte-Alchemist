@@ -13,7 +13,7 @@
 namespace Alchemist::System {
 	struct {} typedef _EoF;
 	static constexpr _EoF EoF = {};
-	class DLL_PUBLIC Executable {
+	class DLL_LOCAL Executable {
 		public:
 			Executable(const std::filesystem::path& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::filesystem::path&&, std::vector<std::string>&&);
@@ -21,11 +21,11 @@ namespace Alchemist::System {
 			Executable(Executable&&)					= delete;
 			Executable& operator=(const Executable&)	= delete;
 			Executable& operator=(Executable&&)			= delete;
-			virtual ~Executable();
+			virtual ~Executable() noexcept;
 			#ifdef LINUX
-			int wait();
+			int wait() noexcept;
 			#else
-			DWORD wait();
+			DWORD wait() noexcept;
 			#endif
 
 			Executable& operator>>(Executable&);

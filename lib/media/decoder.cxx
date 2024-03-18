@@ -52,9 +52,9 @@ Alchemist::Media::Decoder::Base::Base(const Type& decoder_type):m_decoder_type(d
 
 Alchemist::Media::Decoder::Base::Base(Type&& decoder_type):m_decoder_type(std::move(decoder_type)) { }
 
-Alchemist::Media::Decoder::Base::~Base() { }
+Alchemist::Media::Decoder::Base::~Base() noexcept { }
 
-Alchemist::Media::Decoder::Type Alchemist::Media::Decoder::Base::get_decoder_type() const {
+Alchemist::Media::Decoder::Type Alchemist::Media::Decoder::Base::get_decoder_type() const noexcept {
 	return m_decoder_type;
 }
 

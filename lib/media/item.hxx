@@ -9,13 +9,13 @@ namespace Alchemist::Media {
 		public:
 			Item()							= default;
 			Item(const Item&)				= default;
-			Item(Item&&)					= default;
+			Item(Item&&) noexcept			= default;
 			Item& operator=(const Item&)	= default;
-			Item& operator=(Item&&)			= default;
-			virtual ~Item()					= 0;
+			Item& operator=(Item&&) noexcept= default;
+			virtual ~Item() noexcept		= 0;
 
-			unsigned short get_attributes() const;
-			bool has_attribute(const Attribute&) const;
+			unsigned short get_attributes() const noexcept;
+			bool has_attribute(const Attribute&) const noexcept;
 
 		protected:
 			unsigned int m_attrs: 5;

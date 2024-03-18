@@ -25,19 +25,19 @@ namespace Alchemist::Media::Codec {
 			Base(const Type&);
 			Base(Type&&);
 			Base(const Base&)												= default;
-			Base(Base&&)													= default;
+			Base(Base&&) noexcept											= default;
 			Base& operator=(const Base&)									= default;
-			Base& operator=(Base&&)											= default;
-			virtual ~Base()													= default;
+			Base& operator=(Base&&) noexcept								= default;
+			virtual ~Base() noexcept										= default;
 
-			virtual bool is_video() const									= 0;
-			virtual bool is_audio() const									= 0;
-			virtual bool is_image() const									= 0;
+			virtual bool is_video() const noexcept							= 0;
+			virtual bool is_audio() const noexcept							= 0;
+			virtual bool is_image() const noexcept							= 0;
 
-			Type get_codec_type() const;
-			const std::optional<std::string>& get_language() const;
+			Type get_codec_type() const noexcept;
+			const std::optional<std::string>& get_language() const noexcept;
 			void set_language(const std::string&);
-			void set_language(std::string&&);
+			void set_language(std::string&&) noexcept;
 			virtual std::list<Decoder::Type> get_available_decoders() const	= 0;
 			virtual std::list<Encoder::Type> get_available_encoders() const	= 0;
 

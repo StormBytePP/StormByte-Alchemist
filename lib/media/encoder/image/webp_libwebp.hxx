@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Image {
 		public:
 			WEBP_LIBWEBP();
 			WEBP_LIBWEBP(const WEBP_LIBWEBP&)				= default;
-			WEBP_LIBWEBP(WEBP_LIBWEBP&&)					= default;
+			WEBP_LIBWEBP(WEBP_LIBWEBP&&) noexcept			= default;
 			WEBP_LIBWEBP& operator=(const WEBP_LIBWEBP&)	= default;
-			WEBP_LIBWEBP& operator=(WEBP_LIBWEBP&&)			= default;
-			~WEBP_LIBWEBP()											= default;
+			WEBP_LIBWEBP& operator=(WEBP_LIBWEBP&&) noexcept= default;
+			~WEBP_LIBWEBP() noexcept						= default;
 	};
 }

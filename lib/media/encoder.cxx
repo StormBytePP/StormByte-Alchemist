@@ -73,9 +73,9 @@ Alchemist::Media::Encoder::Base::Base(const Type& encoder_type):m_encoder_type(e
 
 Alchemist::Media::Encoder::Base::Base(Type&& encoder_type):m_encoder_type(std::move(encoder_type)) { }
 
-Alchemist::Media::Encoder::Base::~Base() { }
+Alchemist::Media::Encoder::Base::~Base() noexcept { }
 
-Alchemist::Media::Encoder::Type Alchemist::Media::Encoder::Base::get_encoder_type() const {
+Alchemist::Media::Encoder::Type Alchemist::Media::Encoder::Base::get_encoder_type() const noexcept {
 	return m_encoder_type;
 }
 

@@ -4,4 +4,4 @@ Alchemist::Media::Decoder::Audio::Base::Base(const Type& decoder_type):Decoder::
 
 Alchemist::Media::Decoder::Audio::Base::Base(Type&& decoder_type):Decoder::Base(std::move(decoder_type)) { }
 
-Alchemist::Media::Decoder::Audio::Base::~Base() { }
+Alchemist::Media::Decoder::Audio::Base::~Base() noexcept { }

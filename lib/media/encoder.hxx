@@ -44,12 +44,12 @@ namespace Alchemist::Media::Encoder {
 			Base(const Type&);
 			Base(Type&&);
 			Base(const Base&)				= default;
-			Base(Base&&)					= default;
+			Base(Base&&) noexcept			= default;
 			Base& operator=(const Base&)	= default;
-			Base& operator=(Base&&)			= default;
-			virtual ~Base()					= 0;
+			Base& operator=(Base&&) noexcept= default;
+			virtual ~Base() noexcept		= 0;
 
-			Type get_encoder_type() const;
+			Type get_encoder_type() const noexcept;
 
 		protected:
 			Type m_encoder_type;

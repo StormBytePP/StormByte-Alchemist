@@ -7,9 +7,9 @@ namespace Alchemist::Media::Encoder::Audio {
 		public:
 			MP3_LAME();
 			MP3_LAME(const MP3_LAME&)				= default;
-			MP3_LAME(MP3_LAME&&)					= default;
+			MP3_LAME(MP3_LAME&&) noexcept			= default;
 			MP3_LAME& operator=(const MP3_LAME&)	= default;
-			MP3_LAME& operator=(MP3_LAME&&)			= default;
-			~MP3_LAME()								= default;
+			MP3_LAME& operator=(MP3_LAME&&) noexcept= default;
+			~MP3_LAME() noexcept					= default;
 	};
 }

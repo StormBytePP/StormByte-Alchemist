@@ -13,18 +13,18 @@ namespace Alchemist::Media::Codec::Video {
 			Base(const Codec::Type&);
 			Base(Codec::Type&&);
 			Base(const Base&)				= default;
-			Base(Base&&)					= default;
+			Base(Base&&) noexcept			= default;
 			Base& operator=(const Base&)	= default;
-			Base& operator=(Base&&)			= default;
-			virtual ~Base()					= default;
+			Base& operator=(Base&&) noexcept= default;
+			virtual ~Base() noexcept		= default;
 
-			bool is_video() const;
-			bool is_audio() const;
-			bool is_image() const;
+			bool is_video() const noexcept;
+			bool is_audio() const noexcept;
+			bool is_image() const noexcept;
 
-			const std::optional<Resolution>& get_resolution() const;
+			const std::optional<Resolution>& get_resolution() const noexcept;
 			void set_resolution(const unsigned short&, const unsigned short&);
-			void set_resolution(unsigned short&&, unsigned short&&);
+			void set_resolution(unsigned short&&, unsigned short&&) noexcept;
 
 		protected:
 			std::optional<Resolution> m_resolution;

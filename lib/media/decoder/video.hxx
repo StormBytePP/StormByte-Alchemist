@@ -11,6 +11,6 @@ namespace Alchemist::Media::Decoder::Video {
 			Base(Base&&)					= default;
 			Base& operator=(const Base&)	= default;
 			Base& operator=(Base&&)			= default;
-			virtual ~Base()					= 0;
+			virtual ~Base() noexcept		= 0;
 	};
 }

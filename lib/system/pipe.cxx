@@ -18,17 +18,17 @@ Alchemist::System::Pipe::Pipe() {
 	#endif
 }
 
-Alchemist::System::Pipe::~Pipe() {
+Alchemist::System::Pipe::~Pipe() noexcept {
 	close_read();
 	close_write();
 }
 
 #ifdef LINUX
-void Alchemist::System::Pipe::bind_read(int dest) {
+void Alchemist::System::Pipe::bind_read(int dest) noexcept {
 	bind(m_fd[0], dest);
 }
 
-void Alchemist::System::Pipe::bind_write(int dest) {
+void Alchemist::System::Pipe::bind_write(int dest) noexcept {
 	bind(m_fd[1], dest);
 }
 
@@ -118,11 +118,11 @@ bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
 }
 #endif
 
-void Alchemist::System::Pipe::close_read() {
+void Alchemist::System::Pipe::close_read() noexcept {
 	close(m_fd[0]);
 }
 
-void Alchemist::System::Pipe::close_write() {
+void Alchemist::System::Pipe::close_write() noexcept {
 	close(m_fd[1]);
 }
 
@@ -147,16 +147,16 @@ std::string& Alchemist::System::Pipe::operator>>(std::string& out) const {
 }
 
 #ifdef LINUX
-void Alchemist::System::Pipe::bind(int& src, int dest) {
+void Alchemist::System::Pipe::bind(int& src, int dest) noexcept {
 	dup2(src, dest);
 	close(src);
 }
 
-void Alchemist::System::Pipe::close(int& fd) {
+void Alchemist::System::Pipe::close(int& fd) noexcept {
 	::close(fd);
 }
 #else
-void Alchemist::System::Pipe::close(HANDLE& fd) {
+void Alchemist::System::Pipe::close(HANDLE& fd) noexcept {
 	CloseHandle(fd);
 }
 

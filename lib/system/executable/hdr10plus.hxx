@@ -11,7 +11,7 @@ namespace Alchemist::System {
 			HDR10Plus(HDR10Plus&&)					= delete;
 			HDR10Plus& operator=(const HDR10Plus&)	= delete;
 			HDR10Plus& operator=(HDR10Plus&&)		= delete;
-			~HDR10Plus()							= default;
+			~HDR10Plus() noexcept					= default;
 
 			static std::unique_ptr<HDR10Plus> hdr_plus_detect();
 

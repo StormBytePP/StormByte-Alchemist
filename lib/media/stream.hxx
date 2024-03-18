@@ -11,16 +11,16 @@ namespace Alchemist::Media {
 		public:
 			Stream()							= default;
 			Stream(const Stream&)				= default;
-			Stream(Stream&&)					= default;
+			Stream(Stream&&) noexcept			= default;
 			Stream& operator=(const Stream&)	= default;
-			Stream& operator=(Stream&&)			= default;
-			~Stream()							= default;
+			Stream& operator=(Stream&&) noexcept= default;
+			~Stream() noexcept					= default;
 
-			std::shared_ptr<Codec::Base> get_codec() const;
-			void set_codec(std::unique_ptr<Codec::Base>);
-			const std::optional<std::string>& get_language() const;
+			std::shared_ptr<Codec::Base> get_codec() const noexcept;
+			void set_codec(std::unique_ptr<Codec::Base>) noexcept;
+			const std::optional<std::string>& get_language() const noexcept;
 			void set_language(const std::string&);
-			void set_language(std::string&&);
+			void set_language(std::string&&) noexcept;
 
 		protected:
 			std::shared_ptr<Codec::Base> m_codec;

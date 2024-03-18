@@ -8,9 +8,9 @@ namespace Alchemist::Media::Decoder::Audio {
 			Base(const Type&);
 			Base(Type&&);
 			Base(const Base&)				= default;
-			Base(Base&&)					= default;
+			Base(Base&&) noexcept			= default;
 			Base& operator=(const Base&)	= default;
-			Base& operator=(Base&&)			= default;
-			virtual ~Base()					= 0;
+			Base& operator=(Base&&) noexcept= default;
+			virtual ~Base() noexcept		= 0;
 	};
 }
