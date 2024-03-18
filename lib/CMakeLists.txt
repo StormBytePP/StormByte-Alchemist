@@ -80,5 +80,4 @@ if (NOT WIN32)
 endif()
 
 include(CodecOptions)
-include(ConfigureExternalPrograms)
 include(GenerateDefinitions)

@@ -12,33 +12,19 @@ const std::string Alchemist::Info::Version 	= LIBRARY_VERSION;
 const std::string Alchemist::Info::URI 		= PROJECT_URI;
 
 const std::filesystem::path Alchemist::Info::ffmpeg_path() {
-	#ifdef WINDOWS
-	return current_path() / external_subfolder / std::filesystem::path("ffmpeg.exe");
-	#else
-	return FFMPEG_PATH;
-	#endif
+	return prefix() / FFMPEG_PATH;
 }
 
 const std::filesystem::path Alchemist::Info::ffprobe_path() {
-	#ifdef WINDOWS
-	return current_path() / external_subfolder / std::filesystem::path("ffprobe.exe");
-	#else
-	return FFPROBE_PATH;
-	#endif
+	return prefix() / FFPROBE_PATH;
 }
 
 const std::filesystem::path Alchemist::Info::hdr10plus_tool_path() {
-	#ifdef WINDOWS
-	return current_path() / external_subfolder / std::filesystem::path("hdr10plus_tool.exe");
-	#else
-	return HDR10PLUS_TOOL_PATH;
-	#endif
+	return prefix() / HDR10PLUS_TOOL_PATH;
 }
 
-#ifdef _WIN32
-const std::filesystem::path Alchemist::Info::external_subfolder = "external";
-
-const std::filesystem::path Alchemist::Info::current_path() {
+const std::filesystem::path Alchemist::Info::prefix() {
+	#ifdef WINDOWS
 	TCHAR ownPth[MAX_PATH]; 
 
 	// When NULL is passed to GetModuleHandle, the handle of the exe itself is returned
@@ -48,7 +34,6 @@ const std::filesystem::path Alchemist::Info::current_path() {
 		GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
 		return std::filesystem::path(ownPth).remove_filename();
 	}
-	else
-		return std::filesystem::path();
+	#endif
+	return std::filesystem::path();
 }
-#endif

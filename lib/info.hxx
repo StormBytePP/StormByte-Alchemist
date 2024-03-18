@@ -18,10 +18,6 @@ namespace Alchemist {
 			static const std::filesystem::path  hdr10plus_tool_path();
 
 		private:
-			#ifdef WINDOWS
-			static const std::filesystem::path DLL_LOCAL external_subfolder;
-			static const std::filesystem::path DLL_LOCAL current_path();
-			#endif
-
+			static const std::filesystem::path DLL_LOCAL prefix();
 	};
 }
