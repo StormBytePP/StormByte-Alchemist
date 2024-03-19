@@ -1,6 +1,5 @@
 #include "infile.hxx"
 
-#include "base.hxx"
 #include "../../system/executable/ffmpeg.hxx"
 #include "../../system/executable/ffprobe.hxx"
 #include "../../system/executable/hdr10plus.hxx"
@@ -22,7 +21,7 @@ void Alchemist::Media::File::InFile::update() {
 
 	update_readability();
 
-	if (m_status == Status::NO_ERROR) {
+	if (m_status == Status::OK) {
 		update_features();
 		update_streams();
 	}

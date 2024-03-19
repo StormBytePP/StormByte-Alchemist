@@ -2,8 +2,6 @@
 
 #include "base.hxx"
 
-#include <filesystem>
-
 namespace Alchemist::Media::File {
 	class DLL_PUBLIC InFile final: public Base {
 		public:

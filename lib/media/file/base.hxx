@@ -7,11 +7,9 @@
 #include <list>
 #include <memory>
 
-namespace Alchemist::Media::Stream { class Base; }
-
 namespace Alchemist::Media::File {
 	enum DLL_PUBLIC Status: unsigned short {
-		NO_ERROR			= 0x0000,
+		OK					= 0x0000,
 		NOT_EXISTS			= 0x0001,
 		NOT_READABLE		= 0x0002,
 		NOT_WRITABLE		= 0x0004,
@@ -28,11 +26,11 @@ namespace Alchemist::Media::File {
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;
 
-			const std::list<std::unique_ptr<Media::Stream::Base>>& get_streams() const noexcept;
+			const std::list<std::shared_ptr<Media::Stream::Base>>& get_streams() const noexcept;
 
 		protected:
 			std::filesystem::path m_media_path;
-			std::list<std::unique_ptr<Media::Stream::Base>> m_streams;
+			std::list<std::shared_ptr<Media::Stream::Base>> m_streams;
 			unsigned int m_features:2;
 			unsigned int m_status:5;
 
