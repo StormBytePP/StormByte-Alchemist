@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Alchemist</Name>
+    <Version>2.0.0-alpha</Version>
+    <Title>Alchemist 2.0.0-alpha</Title>
+    <Publisher>StormByte &lt;stormbyte@gmail.com&gt;</Publisher>
+    <StartMenuDir>Alchemist</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Alchemist</TargetDir>
+	<AllowSpaceInPath>true</AllowSpaceInPath>
+	<WizardStyle>Aero</WizardStyle>
+	<Translations>
+        <Translation>es.qm</Translation>
+    </Translations>
+</Installer>

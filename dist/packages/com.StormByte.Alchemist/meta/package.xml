@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+	<DisplayName>Alchemist</DisplayName>
+	<Description>Install Alchemist</Description>
+	<Version>2.0.0-alpha</Version>
+	<ReleaseDate>2024-03-19</ReleaseDate>
+	<Licenses>
+		<License name="GNU General Public License v3.0" file="license.txt" />
+	</Licenses>
+	<Default>script</Default>
+	<Script>installscript.qs</Script>
+	<UserInterfaces>
+		<UserInterface>page.ui</UserInterface>
+	</UserInterfaces>
+	<RequiresAdminRights>true</RequiresAdminRights>
+</Package>
