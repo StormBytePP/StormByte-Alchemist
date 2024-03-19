@@ -16,6 +16,8 @@ Component.prototype.createOperations = function()
     {
         component.addElevatedOperation("Execute", "{0,1,256}", "@TargetDir@/bin/vc_redist.x64.exe", "/install", "/quiet", "/norestart");
         component.addElevatedOperation("Delete", "@TargetDir@/bin/vc_redist.x64.exe");
+		component.addOperation("CreateShortcut", "@TargetDir@/bin/Alchemist.exe", "@StartMenuDir@/Alchemist.lnk", "workingDirectory=@TargetDir@");
+        component.addOperation("CreateShortcut", "@TargetDir@/bin/Alchemist.exe", "@HomeDir@/Desktop/Alchemist.lnk");
     }
 }
 

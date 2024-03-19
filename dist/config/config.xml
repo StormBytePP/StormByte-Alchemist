@@ -8,7 +8,4 @@
     <TargetDir>@ApplicationsDir@/Alchemist</TargetDir>
 	<AllowSpaceInPath>true</AllowSpaceInPath>
 	<WizardStyle>Aero</WizardStyle>
-	<Translations>
-        <Translation>es.qm</Translation>
-    </Translations>
 </Installer>

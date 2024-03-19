@@ -5,15 +5,15 @@
     <name>Page</name>
     <message>
         <source>This is a program to handle automated multimedia conversions with one or more nodes to process data</source>
-        <translation>Este es un programa para manejar conversiones multimedia automáticas con uno o más nodos para procesar datos</translation>
+        <translation type="vanished">Este es un programa para manejar conversiones multimedia automáticas con uno o más nodos para procesar datos</translation>
     </message>
-	<message>
+    <message>
         <source>Install Alchemist</source>
-        <translation>Instalar Alchemist</translation>
+        <translation type="vanished">Instalar Alchemist</translation>
     </message>
-	<message>
+    <message>
         <source>GNU General Public License v3.0</source>
-        <translation>Licencia General para el Público de GNU v3.0</translation>
+        <translation type="vanished">Licencia General para el Público de GNU v3.0</translation>
     </message>
 </context>
 </TS>
