@@ -10,11 +10,12 @@ Component.prototype.isDefault = function()
 
 Component.prototype.createOperations = function()
 {
-    try {
-        // call the base create operations function
-        component.createOperations();
-    } catch (e) {
-        console.log(e);
+    component.createOperations();
+
+    if (systemInfo.productType === "windows")
+    {
+        component.addElevatedOperation("Execute", "{0,1,256}", "@TargetDir@/bin/vc_redist.x64.exe", "/install", "/quiet", "/norestart");
+        component.addElevatedOperation("Delete", "@TargetDir@/bin/vc_redist.x64.exe");
     }
 }
 
