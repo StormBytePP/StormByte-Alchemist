@@ -4,8 +4,10 @@
 #include "../stream/base.hxx"
 
 #include <filesystem>
-#include <vector>
+#include <list>
 #include <memory>
+
+namespace Alchemist::Media::Stream { class Base; }
 
 namespace Alchemist::Media::File {
 	enum DLL_PUBLIC Status: unsigned short {

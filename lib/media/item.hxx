@@ -2,8 +2,6 @@
 
 #include "attribute.hxx"
 
-#include <list>
-
 namespace Alchemist::Media {
 	class DLL_PUBLIC Item {
 		public:
