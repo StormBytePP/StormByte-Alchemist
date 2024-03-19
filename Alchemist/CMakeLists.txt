@@ -1,9 +1,43 @@
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC 	ON)
+set(CMAKE_AUTOMOC 	ON)
+set(CMAKE_AUTORCC 	ON)
+set(DIST_DIR		"${CMAKE_BINARY_DIR}/dist"
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+
+file(CONFIGURE OUTPUT "${DIST_DIR}/config/config.xml" CONTENT
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Installer>
+    <Name>${PROJECT_NAME}</Name>
+    <Version>${${PROJECT_NAME}_VERSION_STRING}</Version>
+    <Title>${PROJECT_DESCRIPTION}</Title>
+    <Publisher>StormByte &lt;stormbyte@gmail.com&gt;</Publisher>
+    <StartMenuDir>${PROJECT_NAME}</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Alchemist</TargetDir>
+	<AllowSpaceInPath>true</AllowSpaceInPath>
+</Installer>"
+)
+file(CONFIGURE OUTPUT "${DIST_DIR/packages/com.StormByte.Alchemist/meta/package.xml" CONTENT
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Package>
+	<DisplayName>${PROJECT_NAME}</DisplayName>
+	<Description>Install Alchemist</Description>
+	<Version>0.1.0-1</Version>
+	<ReleaseDate>2010-09-21</ReleaseDate>
+	<Licenses>
+		<License name="GNU General Public License v3.0" file="license.txt" />
+	</Licenses>
+	<Default>script</Default>
+	<Script>installscript.qs</Script>
+	<UserInterfaces>
+		<UserInterface>page.ui</UserInterface>
+	</UserInterfaces>
+	<Translations>
+        <Translation>es.qm</Translation>
+    </Translations>
+</Package>"
+)
 
 set(TS_FILES Alchemist_es_ES.ts)
 

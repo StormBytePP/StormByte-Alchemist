@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Alchemist</Name>
+    <Version>2.0.0</Version>
+    <Title>Alchemist blasafel</Title>
+    <Publisher>David C. Manuelda a.k.a StormByte &lt;stormbyte@gmail.com&gt;</Publisher>
+    <StartMenuDir>Alchemist</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Alchemist</TargetDir>
+	<AllowSpaceInPath>true</AllowSpaceInPath>
+</Installer>
