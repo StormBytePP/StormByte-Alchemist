@@ -3,3 +3,4 @@ install/
 extra/
 .vscode/
 .vs/
+dist/
