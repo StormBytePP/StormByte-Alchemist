@@ -3,11 +3,12 @@ file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/installer/config.xml" CONTENT
 <Installer>
     <Name>${PROJECT_NAME}</Name>
     <Version>${${PROJECT_NAME}_VERSION_STRING}</Version>
-    <Title>${PROJECT_DESCRIPTION}</Title>
+    <Title>${PROJECT_NAME}</Title>
     <Publisher>StormByte &lt;stormbyte@gmail.com&gt;</Publisher>
     <StartMenuDir>${PROJECT_NAME}</StartMenuDir>
     <TargetDir>@ApplicationsDir@/Alchemist</TargetDir>
 	<AllowSpaceInPath>true</AllowSpaceInPath>
+	<WizardStyle>Aero</WizardStyle>
 </Installer>"
 )
 install(FILES "${CMAKE_BINARY_DIR}/installer/config.xml" DESTINATION "${CMAKE_INSTALL_PREFIX}/../../../config" )
