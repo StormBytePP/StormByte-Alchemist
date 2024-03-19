@@ -3,7 +3,7 @@
 	<DisplayName>Alchemist</DisplayName>
 	<Description>Install Alchemist Components</Description>
 	<Description xml:lang="es_ES">Instalar Componentes de Alchemist</Description>
-	<Version>2.0.0-alpha1</Version>
+	<Version>2.0.0-alpha2</Version>
 	<ReleaseDate>2024-03-19</ReleaseDate>
 	<Licenses>
 		<License name="GNU General Public License v3.0" file="license.txt" />
