@@ -1,9 +1,11 @@
 #pragma once
 
 #include "../feature.hxx"
-#include "../item.hxx"
+#include "../stream/base.hxx"
 
 #include <filesystem>
+#include <vector>
+#include <memory>
 
 namespace Alchemist::Media::File {
 	enum DLL_PUBLIC Status: unsigned short {
@@ -13,6 +15,7 @@ namespace Alchemist::Media::File {
 		NOT_WRITABLE		= 0x0004,
 		DECODER_DISABLED	= 0x0008,
 		ENCODER_DISABLED	= 0x0010,
+		STREAM_ERROR		= 0x0012
 	};
 
 	class DLL_PUBLIC Base: public Item {
@@ -28,12 +31,15 @@ namespace Alchemist::Media::File {
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;
 
+			const std::list<std::unique_ptr<Media::Stream::Base>>& get_streams() const noexcept;
+
 		protected:
 			std::filesystem::path m_media_path;
+			std::list<std::unique_ptr<Media::Stream::Base>> m_streams;
 			unsigned int m_features:2;
 			unsigned int m_status:5;
 
-		protected:
-			virtual bool check()				= 0;
+		private:
+			virtual void update()				= 0;
 	};
 }

@@ -16,6 +16,9 @@ namespace Alchemist::Media::File {
 			~InFile() noexcept						= default;
 
 		private:
-			bool check() override;
+			void update() override;
+			void update_readability();
+			void update_features();
+			void update_streams();
 	};
 }

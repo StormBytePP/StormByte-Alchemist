@@ -11,3 +11,7 @@ bool Alchemist::Media::File::Base::has_feature(const Feature& feature) const noe
 bool Alchemist::Media::File::Base::has_status(const Status& status) const noexcept {
 	return (m_status & status) == status;
 }
+
+const std::list<std::unique_ptr<Alchemist::Media::Stream:::Base>>& Alchemist::Media::File::Base::get_streams() const noexcept {
+	return m_streams;
+}
