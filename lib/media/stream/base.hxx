@@ -10,13 +10,6 @@
 namespace Alchemist::Media::Stream {
 	class DLL_PUBLIC Base final: public Item {
 		public:
-			Base()							= default;
-			Base(const Base&)				= default;
-			Base(Base&&) noexcept			= default;
-			Base& operator=(const Base&)	= default;
-			Base& operator=(Base&&) noexcept= default;
-			~Base() noexcept				= default;
-
 			const std::unique_ptr<Codec::Base>& get_codec() const noexcept;
 			void set_codec(std::unique_ptr<Codec::Base>) noexcept;
 			const std::optional<std::string>& get_language() const noexcept;

@@ -9,11 +9,6 @@ namespace Alchemist::Media::File {
 		public:
 			InFile(const std::filesystem::path&);
 			InFile(std::filesystem::path&&);
-			InFile(const InFile&)					= default;
-			InFile(InFile&&) noexcept				= default;
-			InFile& operator=(const InFile&)		= default;
-			InFile& operator=(InFile&&) noexcept	= default;
-			~InFile() noexcept						= default;
 
 		private:
 			void update() override;

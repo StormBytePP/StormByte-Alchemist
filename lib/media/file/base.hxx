@@ -22,11 +22,6 @@ namespace Alchemist::Media::File {
 		public:
 			Base(const std::filesystem::path&);
 			Base(std::filesystem::path&&);
-			Base(const Base&)					= default;
-			Base(Base&&) noexcept				= default;
-			Base& operator=(const Base&)		= default;
-			Base& operator=(Base&&) noexcept	= default;
-			~Base() noexcept					= default;
 
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;

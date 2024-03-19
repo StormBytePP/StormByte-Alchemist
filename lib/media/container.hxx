@@ -17,11 +17,6 @@ namespace Alchemist::Media::Container {
 		public:
 			Base(const std::filesystem::path&);
 			Base(std::filesystem::path&&);
-			Base(const Base&)											= default;
-			Base(Base&&) noexcept										= default;
-			Base& operator=(const Base&)								= default;
-			Base& operator=(Base&&) noexcept							= default;
-			virtual ~Base() noexcept									= default;
 
 			std::filesystem::path get_file_path() const;
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;

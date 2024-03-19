@@ -7,11 +7,6 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Item {
 		public:
-			Item()							= default;
-			Item(const Item&)				= default;
-			Item(Item&&) noexcept			= default;
-			Item& operator=(const Item&)	= default;
-			Item& operator=(Item&&) noexcept= default;
 			virtual ~Item() noexcept		= 0;
 
 			unsigned short get_attributes() const noexcept;

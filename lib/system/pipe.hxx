@@ -20,9 +20,7 @@ namespace Alchemist::System {
 
 			Pipe();
 			Pipe(const Pipe&)				= delete;
-			Pipe(Pipe&&) noexcept			= default;
 			Pipe& operator=(const Pipe&)	= delete;
-			Pipe& operator=(Pipe&&) noexcept= default;
 			~Pipe() noexcept;
 
 			#ifdef LINUX

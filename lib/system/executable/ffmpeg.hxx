@@ -11,7 +11,6 @@ namespace Alchemist::System {
 			FFmpeg(FFmpeg&&)					= delete;
 			FFmpeg& operator=(const FFmpeg&)	= delete;
 			FFmpeg& operator=(FFmpeg&&)			= delete;
-			~FFmpeg() noexcept					= default;
 
 			static std::unique_ptr<FFmpeg> hdr_plus(const std::filesystem::path&);
 

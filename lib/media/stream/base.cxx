@@ -1,6 +1,6 @@
 #include "base.hxx"
 
-const std::shared_ptr<Alchemist::Media::Codec::Base>& Alchemist::Media::Stream::Base::get_codec() const noexcept {
+const std::unique_ptr<Alchemist::Media::Codec::Base>& Alchemist::Media::Stream::Base::get_codec() const noexcept {
 	return m_codec;
 }
 
