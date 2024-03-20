@@ -23,6 +23,9 @@
 #include "codec/video/mpeg4.hxx"
 #include "codec/video/vp8.hxx"
 #include "codec/video/vp9.hxx"
+#include "media/info.hxx"
+
+#include <algorithm>
 
 Alchemist::Media::Codec::Base::Base(const Codec::Type& codec_type):Item(), m_codec_type(codec_type) { }
 
@@ -38,8 +41,8 @@ void Alchemist::Media::Codec::Base::set_language(const std::string& lang) { m_la
 
 void Alchemist::Media::Codec::Base::set_language(std::string&& lang) noexcept { m_language.emplace(std::move(lang)); }
 
-std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const Codec::Type& codec) {
-	std::shared_ptr<Codec::Base> result;
+std::unique_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const Codec::Type& codec) {
+	std::unique_ptr<Codec::Base> result;
 	
 	switch(codec) {
 		case Codec::AAC:
@@ -142,6 +145,23 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 			result.reset(new Codec::Video::Copy());
 			break;
 	}
+
+	return result;
+}
+
+std::unique_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec) {
+	std::unique_ptr<Base> result;
+
+	const auto& all_codecs = Info::Codec::All;
+
+	const auto iterator = std::find_if(
+		all_codecs.begin(),
+		all_codecs.end(),
+		[&](const Alchemist::Media::Info::Item& item) { return item.short_name == codec; }
+	);
+
+	if (iterator != all_codecs.end())
+		result = Codec::Instance(static_cast<Codec::Type>(iterator->id));
 
 	return result;
 }

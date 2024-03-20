@@ -41,5 +41,6 @@ namespace Alchemist::Media::Codec {
 			std::optional<std::string> m_language;
 	};
 
-	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
+	std::unique_ptr<Base> DLL_PUBLIC Instance(const Type&);
+	std::unique_ptr<Base> DLL_PUBLIC Instance(const std::string&);
 }
