@@ -2,6 +2,9 @@
 
 #include "base.hxx"
 
+namespace Json { class Value; }
+namespace Alchemist::Media::Codec { class Base; }
+
 namespace Alchemist::Media::File {
 	class DLL_PUBLIC InFile final: public Base {
 		public:
@@ -13,5 +16,9 @@ namespace Alchemist::Media::File {
 			void update_readability();
 			void update_features();
 			void update_streams();
+
+			std::shared_ptr<Codec::Base> parse_video_stream_codec(const Json::Value&);
+			std::shared_ptr<Codec::Base> parse_audio_stream_codec(const Json::Value&);
+			std::shared_ptr<Codec::Base> parse_subtitle_stream_codec(const Json::Value&);
 	};
 }

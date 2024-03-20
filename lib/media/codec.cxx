@@ -41,8 +41,8 @@ void Alchemist::Media::Codec::Base::set_language(const std::string& lang) { m_la
 
 void Alchemist::Media::Codec::Base::set_language(std::string&& lang) noexcept { m_language.emplace(std::move(lang)); }
 
-std::unique_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const Codec::Type& codec) {
-	std::unique_ptr<Codec::Base> result;
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const Codec::Type& codec) {
+	std::shared_ptr<Codec::Base> result;
 	
 	switch(codec) {
 		case Codec::AAC:
@@ -149,8 +149,8 @@ std::unique_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 	return result;
 }
 
-std::unique_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec) {
-	std::unique_ptr<Base> result;
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec) {
+	std::shared_ptr<Base> result;
 
 	const auto& all_codecs = Info::Codec::All;
 

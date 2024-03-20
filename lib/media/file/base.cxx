@@ -12,6 +12,6 @@ bool Alchemist::Media::File::Base::has_status(const Status& status) const noexce
 	return (m_status & status) == status;
 }
 
-const std::list<std::shared_ptr<Alchemist::Media::Stream::Base>>& Alchemist::Media::File::Base::get_streams() const noexcept {
+const std::list<std::shared_ptr<Alchemist::Media::Stream>>& Alchemist::Media::File::Base::get_streams() const noexcept {
 	return m_streams;
 }

@@ -1,5 +1,7 @@
 #include "infile.hxx"
 
+#include "../codec/audio.hxx"
+#include "../codec/video.hxx"
 #include "../../system/executable/ffmpeg.hxx"
 #include "../../system/executable/ffprobe.hxx"
 #include "../../system/executable/hdr10plus.hxx"
@@ -69,7 +71,7 @@ void Alchemist::Media::File::InFile::update_features() {
 		}
 	}
 }
-
+#include <iostream>
 void Alchemist::Media::File::InFile::update_streams() {
 	m_streams.clear();
 
@@ -84,10 +86,41 @@ void Alchemist::Media::File::InFile::update_streams() {
 	Json::Value root;
     Json::Reader reader;
     if (reader.parse(buffer, root)) {
-		for (auto iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
-			
+		for (Json::Value::const_iterator iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
+			const Json::Value item = *iter;
+			std::shared_ptr<Codec::Base> codec;
+			if (item["codec_type"] == "video") {
+				codec = parse_video_stream_codec(item);
+			}
+			else if (item["codec_type"] == "audio") {
+				codec = parse_audio_stream_codec(item);
+			}
+			else if (item["codec_type"] == "subtitle") {
+				codec = parse_subtitle_stream_codec(item);
+			}
+			std::shared_ptr<Stream> stream = std::make_shared<Stream>();
+			stream->set_codec(codec);
+			m_streams.push_back(stream);
 		}
 	}
 	else
 		m_status |= Status::STREAM_ERROR;
+}
+
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_video_stream_codec(const Json::Value& item) {
+	std::shared_ptr<Codec::Video::Base> codec = std::dynamic_pointer_cast<Codec::Video::Base>(Codec::Instance(item["codec_name"].asString()));
+
+	return codec;
+}
+
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_audio_stream_codec(const Json::Value& item) {
+	std::shared_ptr<Codec::Audio::Base> codec = std::dynamic_pointer_cast<Codec::Audio::Base>(Codec::Instance(item["codec_name"].asString()));
+
+	return codec;
+}
+
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_subtitle_stream_codec(const Json::Value&) {
+	std::shared_ptr<Codec::Audio::Base> codec;
+
+	return codec;
 }

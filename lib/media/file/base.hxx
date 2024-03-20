@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../feature.hxx"
-#include "../stream/base.hxx"
+#include "../stream.hxx"
 
 #include <filesystem>
 #include <list>
@@ -26,11 +26,11 @@ namespace Alchemist::Media::File {
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;
 
-			const std::list<std::shared_ptr<Media::Stream::Base>>& get_streams() const noexcept;
+			const std::list<std::shared_ptr<Stream>>& get_streams() const noexcept;
 
 		protected:
 			std::filesystem::path m_media_path;
-			std::list<std::shared_ptr<Media::Stream::Base>> m_streams;
+			std::list<std::shared_ptr<Stream>> m_streams;
 			unsigned int m_features:2;
 			unsigned int m_status:5;
 
