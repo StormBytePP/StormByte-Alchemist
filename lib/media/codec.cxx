@@ -144,6 +144,10 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 		case Codec::COPY_VIDEO:
 			result.reset(new Codec::Video::Copy());
 			break;
+
+		case Codec::COPY_SUBTITLE:
+			result.reset(new Codec::Video::Copy());
+			break;
 	}
 
 	return result;

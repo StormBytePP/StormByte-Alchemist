@@ -10,32 +10,32 @@ const std::list<Media::Codec::Type> Media::Info::Codec::Available = {
 
 const std::list<Media::Info::Item> Media::Info::Codec::All = {
 	// Video
-	{Media::Codec::AV1,		"AV1",				"AOMedia Video 1"							},
-	{Media::Codec::H264,	"H264/AVC",			"Advanced Video Coding"						},
-	{Media::Codec::H265,	"H265/HEVC",		"High Efficiency Video Coding"				},
-	{Media::Codec::MPEG2,	"MPEG2",			"Moving Picture Experts Group 2"			},
-	{Media::Codec::VP8,		"VP8",				"Video Processor 8"							},
-	{Media::Codec::VP9,		"VP9",				"Video Processor 9"							},
-	{Media::Codec::MPEG4,	"XVID",				"MPEG-4 Video"								},
+	{	Media::Codec::AV1,		"av1",		"AOMedia Video 1"							},
+	{	Media::Codec::H264,		"h264",		"Advanced Video Coding"						},
+	{	Media::Codec::H265,		"hevc",		"High Efficiency Video Coding"				},
+	{	Media::Codec::MPEG2,	"mpeg2",	"Moving Picture Experts Group 2"			},
+	{	Media::Codec::VP8,		"vp8",		"Video Processor 8"							},
+	{	Media::Codec::VP9,		"vp9",		"Video Processor 9"							},
+	{	Media::Codec::MPEG4,	"mpeg4",	"MPEG-4 Video"								},
 	
 	//Audio
-	{Media::Codec::AAC,		"AAC",				"Advanced Audio Codec"						},
-	{Media::Codec::AC3,		"AC-3",				"Dolby AC-3"								},
-	{Media::Codec::DTS,		"DTS",				"DTS"										},
-	{Media::Codec::EAC3,	"E-AC3",			"Dolby Digital Plus"						},
-	{Media::Codec::FLAC,	"FLAC",				"Free Lossless Audio Codec"					},
-	{Media::Codec::MP2,		"MP2",				"MPEG-1 Audio Layer II"						},
-	{Media::Codec::MP3,		"MP3",				"MPEG-1 Audio Layer III"					},
-	{Media::Codec::OPUS,	"OPUS",				"Opus"										},
-	{Media::Codec::VORBIS,	"VORBIS",			"Vorbis Audio Codec"						},
+	{	Media::Codec::AAC,		"aac",		"Advanced Audio Codec"						},
+	{	Media::Codec::AC3,		"ac3",		"Dolby AC-3"								},
+	{	Media::Codec::DTS,		"dts",		"DTS"										},
+	{	Media::Codec::EAC3,		"eac3",		"Dolby Digital Plus"						},
+	{	Media::Codec::FLAC,		"flac",		"Free Lossless Audio Codec"					},
+	{	Media::Codec::MP2,		"mp3",		"MPEG-1 Audio Layer II"						},
+	{	Media::Codec::MP3,		"mp3",		"MPEG-1 Audio Layer III"					},
+	{	Media::Codec::OPUS,		"opus",		"Opus"										},
+	{	Media::Codec::VORBIS,	"vorbis",	"Vorbis Audio Codec"						},
 	
 	//Image
-	{Media::Codec::BMP,		"BMP",				"Microsoft Windows Bitmap Format"			},
-	{Media::Codec::GIF,		"GIF",				"Graphics Interchange Format"				},
-	{Media::Codec::JPG,		"JPG",				"Joint Photographic Experts Group"			},
-	{Media::Codec::PNG,		"PNG",				"Portable Network Graphic"					},
-	{Media::Codec::TIFF,	"TIFF",				"Tag Image File Format"						},
-	{Media::Codec::WEBP,	"WEBP",				"WEBP Format"								}
+	{	Media::Codec::BMP,		"bmp",		"Microsoft Windows Bitmap Format"			},
+	{	Media::Codec::GIF,		"gif",		"Graphics Interchange Format"				},
+	{	Media::Codec::JPG,		"jpg",		"Joint Photographic Experts Group"			},
+	{	Media::Codec::PNG,		"png",		"Portable Network Graphic"					},
+	{	Media::Codec::TIFF,		"tiff",		"Tag Image File Format"						},
+	{	Media::Codec::WEBP,		"webp",		"WEBP Format"								}
 };
 
 const std::list<Media::Decoder::Type> Media::Info::Decoder::Available = {

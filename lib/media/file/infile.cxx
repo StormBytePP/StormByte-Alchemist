@@ -2,6 +2,7 @@
 
 #include "../codec/audio.hxx"
 #include "../codec/video.hxx"
+#include "../codec/subtitle/copy.hxx"
 #include "../../system/executable/ffmpeg.hxx"
 #include "../../system/executable/ffprobe.hxx"
 #include "../../system/executable/hdr10plus.hxx"
@@ -71,7 +72,7 @@ void Alchemist::Media::File::InFile::update_features() {
 		}
 	}
 }
-#include <iostream>
+
 void Alchemist::Media::File::InFile::update_streams() {
 	m_streams.clear();
 
@@ -88,7 +89,11 @@ void Alchemist::Media::File::InFile::update_streams() {
     if (reader.parse(buffer, root)) {
 		for (Json::Value::const_iterator iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
 			const Json::Value item = *iter;
+			std::unique_ptr<Stream> stream = std::make_unique<Stream>();
 			std::shared_ptr<Codec::Base> codec;
+			if (codec.get() == nullptr)
+				break;
+
 			if (item["codec_type"] == "video") {
 				codec = parse_video_stream_codec(item);
 			}
@@ -98,9 +103,27 @@ void Alchemist::Media::File::InFile::update_streams() {
 			else if (item["codec_type"] == "subtitle") {
 				codec = parse_subtitle_stream_codec(item);
 			}
-			std::shared_ptr<Stream> stream = std::make_shared<Stream>();
 			stream->set_codec(codec);
-			m_streams.push_back(stream);
+			if (item["tags"]) {
+				Json::Value tags = item["tags"];
+				if (tags.isMember("language"))
+					stream->set_language(tags["language"].asString());
+				if (tags.isMember("title"))
+					stream->set_title(tags["title"].asString());
+				if (tags.isMember("NUMBER_OF_FRAMES")) {
+					stream->set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
+				}
+				if (tags.isMember("NUMBER_OF_BYTES")) {
+					std::cout << "T: " << tags["NUMBER_OF_BYTES"].asString() << std::endl;
+					stream->set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
+				}
+				if (tags.isMember("DURATION")) {
+					std::string duration = tags["NUMBER_OF_BYTES"].asString();
+					duration.erase(duration.begin() + 8, duration.end());
+					stream->set_duration(std::move(duration));
+				}
+			}
+			m_streams.insert(m_streams.begin() + item["index"].asInt(), std::move(stream));
 		}
 	}
 	else
@@ -108,19 +131,23 @@ void Alchemist::Media::File::InFile::update_streams() {
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_video_stream_codec(const Json::Value& item) {
-	std::shared_ptr<Codec::Video::Base> codec = std::dynamic_pointer_cast<Codec::Video::Base>(Codec::Instance(item["codec_name"].asString()));
+	auto codec = std::dynamic_pointer_cast<Codec::Video::Base>(Codec::Instance(item["codec_name"].asString()));
+	codec->set_resolution(item["width"].asInt(), item["height"].asInt());
 
 	return codec;
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_audio_stream_codec(const Json::Value& item) {
-	std::shared_ptr<Codec::Audio::Base> codec = std::dynamic_pointer_cast<Codec::Audio::Base>(Codec::Instance(item["codec_name"].asString()));
+	auto codec = std::dynamic_pointer_cast<Codec::Audio::Base>(Codec::Instance(item["codec_name"].asString()));
 
 	return codec;
 }
 
-std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_subtitle_stream_codec(const Json::Value&) {
-	std::shared_ptr<Codec::Audio::Base> codec;
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_subtitle_stream_codec(const Json::Value& item) {
+	auto codec = std::make_shared<Codec::Subtitle::Copy>();
+
+	codec->set_name(item["codec_name"].asString());
+	codec->set_long_name(item["codec_long_name"].asString());
 
 	return codec;
 }

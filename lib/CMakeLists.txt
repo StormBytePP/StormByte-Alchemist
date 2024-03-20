@@ -22,6 +22,8 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/image/png.cxx
 	${ALCHEMY_DIR}/media/codec/image/tiff.cxx
 	${ALCHEMY_DIR}/media/codec/image/webp.cxx
+	${ALCHEMY_DIR}/media/codec/subtitle/copy.cxx
+	${ALCHEMY_DIR}/media/codec/subtitle.cxx
 	${ALCHEMY_DIR}/media/codec/video.cxx
 	${ALCHEMY_DIR}/media/codec/video/av1.cxx
 	${ALCHEMY_DIR}/media/codec/video/copy.cxx

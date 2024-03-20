@@ -12,7 +12,7 @@ namespace Alchemist::Media {
 	struct DLL_PUBLIC Info {
 		struct DLL_PUBLIC Item {
 			unsigned short id;
-			std::string short_name;
+			std::string short_name; // ffmpeg's name
 			std::string long_name;
 		};
 		class DLL_PUBLIC Codec {
