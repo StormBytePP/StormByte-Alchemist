@@ -1,6 +1,7 @@
 #pragma once
 
 #include "codec.hxx"
+#include "container.hxx"
 #include "decoder.hxx"
 #include "encoder.hxx"
 
@@ -17,18 +18,23 @@ namespace Alchemist::Media {
 		};
 		class DLL_PUBLIC Codec {
 			public:
-				static const std::list<Media::Codec::Type>		Available;
 				static const std::list<Item>					All;
+				static const std::list<Media::Codec::Type>		Available;
+		};
+		class DLL_PUBLIC Container {
+			public:
+				static const std::list<Item>					All;
+				static const std::list<Media::Container::Type>	Available;
 		};
 		class DLL_PUBLIC Decoder {
 			public:
-				static const std::list<Media::Decoder::Type>	Available;
 				static const std::list<Item>					All;
+				static const std::list<Media::Decoder::Type>	Available;
 		};
 		class DLL_PUBLIC Encoder {
 			public:
-				static const std::list<Media::Encoder::Type>	Available;
 				static const std::list<Item>					All;
+				static const std::list<Media::Encoder::Type>	Available;
 		};
 	};
 }

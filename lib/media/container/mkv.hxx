@@ -3,9 +3,9 @@
 #include "../container.hxx"
 
 namespace Alchemist::Media::Container {
-	class DLL_PUBLIC AVI final: public Base {
+	class DLL_PUBLIC MKV final: public Base {
 		public:
-			AVI();
+			MKV();
 
 			std::list<Codec::Type> get_supported_codecs() const override;
 	};

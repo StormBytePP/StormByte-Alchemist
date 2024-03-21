@@ -38,6 +38,37 @@ const std::list<Media::Info::Item> Media::Info::Codec::All = {
 	{	Media::Codec::WEBP,		"webp",		"WEBP Format"								}
 };
 
+const std::list<Media::Info::Item> Media::Info::Container::All = {
+	
+};
+
+const std::list<Media::Container::Type> Media::Info::Container::Available = {
+
+};
+
+const std::list<Media::Info::Item> Media::Info::Decoder::All = {
+	// Video
+	{Media::Decoder::AV1_DAV1D,			"libdav1d",			"DAV1D"					},
+	{Media::Decoder::AV1_LIBAOM,		"libaom-av1",		"AOM AV1"				},
+	{Media::Decoder::AV1_CUVID,			"av1_cuvid",		"CuVid AV1"				},
+	{Media::Decoder::H264_OPENH264,		"libopenh264",		"OpenH264"				},
+	{Media::Decoder::H264_CUVID,		"h264_cuvid",		"CuVid H264"			},
+	{Media::Decoder::H265_CUVID,		"hevc_cuvid",		"CuVid H265(HEVC)"		},
+	{Media::Decoder::MPEG2_CUVID,		"mpeg2_cuvid",		"CuVid MPEG-2"			},
+	{Media::Decoder::VP8_LIBVPX,		"libvpx",			"VPX VP8"				},
+	{Media::Decoder::VP8_CUVID,			"vp8_cuvid",		"CuVid VP8"				},
+	{Media::Decoder::VP9_LIBVPX,		"libvpx-vp9",		"VPX VP9"				},
+	{Media::Decoder::VP9_CUVID,			"vp9_cuvid",		"CuVid VP9"				},
+	{Media::Decoder::MPEG4_CUVID,		"mpeg4_cuvid",		"CuVid MPEG-4"			},
+
+	// Audio
+	{Media::Decoder::AAC_FRAUNHOFFER,	"libfdk_aac",		"Fraunhoffer AAC"		},
+	{Media::Decoder::OPUS_LIBOPUS,		"libopus",			"LibOpus"				},
+	{Media::Decoder::VORBIS_LIBVORBIS,	"libvorbis",		"LibVorbis"				},
+
+	// Image
+};
+
 const std::list<Media::Decoder::Type> Media::Info::Decoder::Available = {
 	// Video
 	#ifdef ENABLE_DAV1D
@@ -91,27 +122,45 @@ const std::list<Media::Decoder::Type> Media::Info::Decoder::Available = {
 	// Image
 };
 
-const std::list<Media::Info::Item> Media::Info::Decoder::All = {
+const std::list<Media::Info::Item> Media::Info::Encoder::All = {
 	// Video
-	{Media::Decoder::AV1_DAV1D,			"libdav1d",			"DAV1D"					},
-	{Media::Decoder::AV1_LIBAOM,		"libaom-av1",		"AOM AV1"				},
-	{Media::Decoder::AV1_CUVID,			"av1_cuvid",		"CuVid AV1"				},
-	{Media::Decoder::H264_OPENH264,		"libopenh264",		"OpenH264"				},
-	{Media::Decoder::H264_CUVID,		"h264_cuvid",		"CuVid H264"			},
-	{Media::Decoder::H265_CUVID,		"hevc_cuvid",		"CuVid H265(HEVC)"		},
-	{Media::Decoder::MPEG2_CUVID,		"mpeg2_cuvid",		"CuVid MPEG-2"			},
-	{Media::Decoder::VP8_LIBVPX,		"libvpx",			"VPX VP8"				},
-	{Media::Decoder::VP8_CUVID,			"vp8_cuvid",		"CuVid VP8"				},
-	{Media::Decoder::VP9_LIBVPX,		"libvpx-vp9",		"VPX VP9"				},
-	{Media::Decoder::VP9_CUVID,			"vp9_cuvid",		"CuVid VP9"				},
-	{Media::Decoder::MPEG4_CUVID,		"mpeg4_cuvid",		"CuVid MPEG-4"			},
+	{Media::Encoder::AV1_LIBAOM,			"libaom-av1",		"AOM AV1"					},
+	{Media::Encoder::AV1_RAV1E,				"librav1e",			"RAV1E AV1"					},
+	{Media::Encoder::AV1_SVT,				"libsvtav1",		"SVT AV1"					},
+	{Media::Encoder::AV1_NVENC,				"av1_nvenc",		"NvEnc AV1"					},
+	{Media::Encoder::H264_X264,				"libx264",			"x264"						},
+	{Media::Encoder::H264_OPENH264,			"libopenh264",		"OpenH264"					},
+	{Media::Encoder::H264_NVENC,			"h264_nvenc",		"NvEnc H264"				},
+	{Media::Encoder::H265_X265,				"libx265",			"x265"						},
+	{Media::Encoder::H265_NVENC,			"hevc_nvenc",		"NvEnc H265/HEVC"			},
+	{Media::Encoder::MPEG2_DEFAULT,			"mpeg2video",		"FFmpeg MPEG2"				},
+	{Media::Encoder::VP8_LIBVPX,			"libvpx",			"VPX VP8"					},
+	{Media::Encoder::VP9_LIBVPX,			"libvpx-vp9",		"VPX VP9"					},
+	{Media::Encoder::MPEG4_DEFAULT,			"mpeg4",			"FFmpeg MPEG4(DIVX)"		},
+	{Media::Encoder::MPEG4_LIBXVID,			"libxvid",			"XVID MPEG4(DIVX)"			},
 
 	// Audio
-	{Media::Decoder::AAC_FRAUNHOFFER,	"libfdk_aac",		"Fraunhoffer AAC"		},
-	{Media::Decoder::OPUS_LIBOPUS,		"libopus",			"LibOpus"				},
-	{Media::Decoder::VORBIS_LIBVORBIS,	"libvorbis",		"LibVorbis"				},
+	{Media::Encoder::AAC_DEFAULT,			"aac",				"FFmpeg AAC"				},
+	{Media::Encoder::AAC_FRAUNHOFFER,		"libfdk_aac",		"Fraunhoffer AAC encoder"	},
+	{Media::Encoder::AC3_DEFAULT,			"ac3",				"FFmpeg AC-3"				},
+	{Media::Encoder::DTS_DEFAULT,			"dca",				"FFmpeg DTS"				},
+	{Media::Encoder::EAC3_DEFAULT,			"eac3",				"FFmpeg E-AC3"				},
+	{Media::Encoder::FLAC_DEFAULT,			"flac",				"FFmpeg FLACe"				},
+	{Media::Encoder::MP2_DEFAULT,			"mp2",				"FFmpeg MP2"				},
+	{Media::Encoder::MP2_TWOLAME,			"libtwolame",		"Twolame MP2"				},
+	{Media::Encoder::MP3_LAME,				"libmp3lame",		"Lame MP3"					},
+	{Media::Encoder::OPUS_DEFAULT,			"opus",				"FFmpeg OPUS"				},
+	{Media::Encoder::OPUS_LIBOPUS,			"libopus",			"LibOPUS"					},
+	{Media::Encoder::VORBIS_DEFAULT,		"vorbis",			"FFmpeg VORBIS"				},
+	{Media::Encoder::VORBIS_LIBVORBIS,		"libvorbis",		"LibVORBIS"					},
 
 	// Image
+	{Media::Encoder::BMP_DEFAULT,			"bmp",				"FFmpeg BMP"				},
+	{Media::Encoder::GIF_DEFAULT,			"gif",				"FFmpg GIF"					},
+	{Media::Encoder::JPG_DEFAULT,			"mjpeg",			"FFmpeg JPG"				},
+	{Media::Encoder::PNG_DEFAULT,			"png",				"FFmpeg PNG"				},
+	{Media::Encoder::TIFF_DEFAULT,			"tiff",				"FFmpeg TIFF"				},
+	{Media::Encoder::WEBP_LIBWEBP,			"libwebp",			"libWEBP"					}
 };
 
 const std::list<Media::Encoder::Type> Media::Info::Encoder::Available = {
@@ -187,45 +236,4 @@ const std::list<Media::Encoder::Type> Media::Info::Encoder::Available = {
 	#ifdef ENABLE_WEBP
 	Media::Encoder::WEBP_LIBWEBP
 	#endif
-};
-
-const std::list<Media::Info::Item> Media::Info::Encoder::All = {
-	// Video
-	{Media::Encoder::AV1_LIBAOM,			"libaom-av1",		"AOM AV1"					},
-	{Media::Encoder::AV1_RAV1E,				"librav1e",			"RAV1E AV1"					},
-	{Media::Encoder::AV1_SVT,				"libsvtav1",		"SVT AV1"					},
-	{Media::Encoder::AV1_NVENC,				"av1_nvenc",		"NvEnc AV1"					},
-	{Media::Encoder::H264_X264,				"libx264",			"x264"						},
-	{Media::Encoder::H264_OPENH264,			"libopenh264",		"OpenH264"					},
-	{Media::Encoder::H264_NVENC,			"h264_nvenc",		"NvEnc H264"				},
-	{Media::Encoder::H265_X265,				"libx265",			"x265"						},
-	{Media::Encoder::H265_NVENC,			"hevc_nvenc",		"NvEnc H265/HEVC"			},
-	{Media::Encoder::MPEG2_DEFAULT,			"mpeg2video",		"FFmpeg MPEG2"				},
-	{Media::Encoder::VP8_LIBVPX,			"libvpx",			"VPX VP8"					},
-	{Media::Encoder::VP9_LIBVPX,			"libvpx-vp9",		"VPX VP9"					},
-	{Media::Encoder::MPEG4_DEFAULT,			"mpeg4",			"FFmpeg MPEG4(DIVX)"		},
-	{Media::Encoder::MPEG4_LIBXVID,			"libxvid",			"XVID MPEG4(DIVX)"			},
-
-	// Audio
-	{Media::Encoder::AAC_DEFAULT,			"aac",				"FFmpeg AAC"				},
-	{Media::Encoder::AAC_FRAUNHOFFER,		"libfdk_aac",		"Fraunhoffer AAC encoder"	},
-	{Media::Encoder::AC3_DEFAULT,			"ac3",				"FFmpeg AC-3"				},
-	{Media::Encoder::DTS_DEFAULT,			"dca",				"FFmpeg DTS"				},
-	{Media::Encoder::EAC3_DEFAULT,			"eac3",				"FFmpeg E-AC3"				},
-	{Media::Encoder::FLAC_DEFAULT,			"flac",				"FFmpeg FLACe"				},
-	{Media::Encoder::MP2_DEFAULT,			"mp2",				"FFmpeg MP2"				},
-	{Media::Encoder::MP2_TWOLAME,			"libtwolame",		"Twolame MP2"				},
-	{Media::Encoder::MP3_LAME,				"libmp3lame",		"Lame MP3"					},
-	{Media::Encoder::OPUS_DEFAULT,			"opus",				"FFmpeg OPUS"				},
-	{Media::Encoder::OPUS_LIBOPUS,			"libopus",			"LibOPUS"					},
-	{Media::Encoder::VORBIS_DEFAULT,		"vorbis",			"FFmpeg VORBIS"				},
-	{Media::Encoder::VORBIS_LIBVORBIS,		"libvorbis",		"LibVORBIS"					},
-
-	// Image
-	{Media::Encoder::BMP_DEFAULT,			"bmp",				"FFmpeg BMP"				},
-	{Media::Encoder::GIF_DEFAULT,			"gif",				"FFmpg GIF"					},
-	{Media::Encoder::JPG_DEFAULT,			"mjpeg",			"FFmpeg JPG"				},
-	{Media::Encoder::PNG_DEFAULT,			"png",				"FFmpeg PNG"				},
-	{Media::Encoder::TIFF_DEFAULT,			"tiff",				"FFmpeg TIFF"				},
-	{Media::Encoder::WEBP_LIBWEBP,			"libwebp",			"libWEBP"					}
 };

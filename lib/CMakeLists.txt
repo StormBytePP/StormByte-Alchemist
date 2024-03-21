@@ -35,6 +35,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/video/vp9.cxx
 	${ALCHEMY_DIR}/media/container.cxx
 	${ALCHEMY_DIR}/media/container/avi.cxx
+	${ALCHEMY_DIR}/media/container/mkv.cxx
 	${ALCHEMY_DIR}/media/decoder.cxx
 	${ALCHEMY_DIR}/media/decoder/audio.cxx
 	${ALCHEMY_DIR}/media/decoder/image.cxx
