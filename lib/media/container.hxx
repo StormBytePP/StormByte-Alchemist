@@ -18,7 +18,7 @@ namespace Alchemist::Media::Container {
 		public:
 			Base(const std::string&);
 			Base(std::string&&);
-			virtual ~Base() = default;
+			virtual ~Base() noexcept 									= default;
 
 			const std::string& get_extension() const;
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;

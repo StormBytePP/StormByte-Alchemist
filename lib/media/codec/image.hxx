@@ -7,7 +7,7 @@ namespace Alchemist::Media::Codec::Image {
 		public:
 			Base(const Codec::Type&);
 			Base(Codec::Type&&);
-			virtual ~Base() = 0;
+			virtual ~Base() noexcept = 0;
 
 			bool is_video() 	const noexcept override;
 			bool is_audio() 	const noexcept override;

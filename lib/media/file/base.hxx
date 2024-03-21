@@ -22,6 +22,7 @@ namespace Alchemist::Media::File {
 		public:
 			Base(const std::filesystem::path&);
 			Base(std::filesystem::path&&);
+			virtual ~Base() noexcept			= default;
 
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;

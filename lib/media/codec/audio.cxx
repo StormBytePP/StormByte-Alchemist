@@ -4,7 +4,7 @@ Alchemist::Media::Codec::Audio::Base::Base(const Codec::Type& codec_type):Codec:
 
 Alchemist::Media::Codec::Audio::Base::Base(Codec::Type&& codec_type):Codec::Base(std::move(codec_type)) { }
 
-Alchemist::Media::Codec::Audio::Base::~Base() { }
+Alchemist::Media::Codec::Audio::Base::~Base() noexcept { }
 
 bool Alchemist::Media::Codec::Audio::Base::is_video() const noexcept { return false; }
 

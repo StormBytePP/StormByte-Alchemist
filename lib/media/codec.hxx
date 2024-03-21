@@ -25,6 +25,7 @@ namespace Alchemist::Media::Codec {
 		public:
 			Base(const Type&);
 			Base(Type&&);
+			virtual ~Base()	noexcept											= default;
 
 			virtual bool is_video() 	const noexcept							= 0;
 			virtual bool is_audio() 	const noexcept							= 0;
