@@ -89,7 +89,7 @@ void Alchemist::Media::File::InFile::update_streams() {
     if (reader.parse(buffer, root)) {
 		for (Json::Value::const_iterator iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
 			const Json::Value item = *iter;
-			std::shared_ptr<Stream> stream = parse_stream_info(item);
+			std::unique_ptr<Stream> stream = parse_stream_info(item);
 			std::shared_ptr<Codec::Base> codec;
 
 			if (item["codec_type"] == "video") {
@@ -108,8 +108,8 @@ void Alchemist::Media::File::InFile::update_streams() {
 	}
 }
 
-std::shared_ptr<Alchemist::Media::Stream> Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
-	std::shared_ptr<Stream> stream = std::make_shared<Stream>();
+std::unique_ptr<Alchemist::Media::Stream> Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
+	std::unique_ptr<Stream> stream = std::make_unique<Stream>();
 	if (item.isMember("tags")) {
 		Json::Value tags = item["tags"];
 		if (tags.isMember("language"))
