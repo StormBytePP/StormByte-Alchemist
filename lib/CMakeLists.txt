@@ -13,6 +13,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/audio/mp2.cxx
 	${ALCHEMY_DIR}/media/codec/audio/mp3.cxx
 	${ALCHEMY_DIR}/media/codec/audio/opus.cxx
+	${ALCHEMY_DIR}/media/codec/audio/unknown.cxx
 	${ALCHEMY_DIR}/media/codec/audio/vorbis.cxx
 	${ALCHEMY_DIR}/media/codec/image.cxx
 	${ALCHEMY_DIR}/media/codec/image/bmp.cxx
@@ -21,9 +22,11 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/image/jpg.cxx
 	${ALCHEMY_DIR}/media/codec/image/png.cxx
 	${ALCHEMY_DIR}/media/codec/image/tiff.cxx
+	${ALCHEMY_DIR}/media/codec/image/unknown.cxx
 	${ALCHEMY_DIR}/media/codec/image/webp.cxx
-	${ALCHEMY_DIR}/media/codec/subtitle/copy.cxx
 	${ALCHEMY_DIR}/media/codec/subtitle.cxx
+	${ALCHEMY_DIR}/media/codec/subtitle/copy.cxx
+	${ALCHEMY_DIR}/media/codec/subtitle/unknown.cxx
 	${ALCHEMY_DIR}/media/codec/video.cxx
 	${ALCHEMY_DIR}/media/codec/video/av1.cxx
 	${ALCHEMY_DIR}/media/codec/video/copy.cxx
@@ -31,6 +34,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/codec/video/h265.cxx
 	${ALCHEMY_DIR}/media/codec/video/mpeg2.cxx
 	${ALCHEMY_DIR}/media/codec/video/mpeg4.cxx
+	${ALCHEMY_DIR}/media/codec/video/unknown.cxx
 	${ALCHEMY_DIR}/media/codec/video/vp8.cxx
 	${ALCHEMY_DIR}/media/codec/video/vp9.cxx
 	${ALCHEMY_DIR}/media/container.cxx

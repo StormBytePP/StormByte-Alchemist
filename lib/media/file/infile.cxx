@@ -1,8 +1,8 @@
 #include "infile.hxx"
 
-#include "../codec/audio.hxx"
-#include "../codec/video.hxx"
-#include "../codec/subtitle/copy.hxx"
+#include "../codec/audio/unknown.hxx"
+#include "../codec/video/unknown.hxx"
+#include "../codec/subtitle/unknown.hxx"
 #include "../../system/executable/ffmpeg.hxx"
 #include "../../system/executable/ffprobe.hxx"
 #include "../../system/executable/hdr10plus.hxx"
@@ -114,7 +114,6 @@ void Alchemist::Media::File::InFile::update_streams() {
 					stream->set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
 				}
 				if (tags.isMember("NUMBER_OF_BYTES")) {
-					std::cout << "T: " << tags["NUMBER_OF_BYTES"].asString() << std::endl;
 					stream->set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
 				}
 				if (tags.isMember("DURATION")) {
@@ -131,23 +130,29 @@ void Alchemist::Media::File::InFile::update_streams() {
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_video_stream_codec(const Json::Value& item) {
-	auto codec = std::dynamic_pointer_cast<Codec::Video::Base>(Codec::Instance(item["codec_name"].asString()));
+	const std::string codec_name = item["codec_name"].asString(), codec_long_name = item["codec_long_name"].asString();
+	std::shared_ptr<Codec::Base> fallback(new Codec::Video::Unknown(codec_name, codec_long_name));
+	
+	auto codec = std::dynamic_pointer_cast<Codec::Video::Base>(Codec::Instance(codec_name, fallback));
 	codec->set_resolution(item["width"].asInt(), item["height"].asInt());
 
 	return codec;
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_audio_stream_codec(const Json::Value& item) {
-	auto codec = std::dynamic_pointer_cast<Codec::Audio::Base>(Codec::Instance(item["codec_name"].asString()));
+	const std::string codec_name = item["codec_name"].asString(), codec_long_name = item["codec_long_name"].asString();
+	std::shared_ptr<Codec::Base> fallback(new Codec::Audio::Unknown(codec_name, codec_long_name));
+
+	auto codec = std::dynamic_pointer_cast<Codec::Audio::Base>(Codec::Instance(codec_name, fallback));
 
 	return codec;
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_subtitle_stream_codec(const Json::Value& item) {
-	auto codec = std::make_shared<Codec::Subtitle::Copy>();
-
-	codec->set_name(item["codec_name"].asString());
-	codec->set_long_name(item["codec_long_name"].asString());
+	const std::string codec_name = item["codec_name"].asString(), codec_long_name = item["codec_long_name"].asString();
+	std::shared_ptr<Codec::Base> fallback(new Codec::Subtitle::Unknown(codec_name, codec_long_name));
+	
+	auto codec = std::dynamic_pointer_cast<Codec::Subtitle::Base>(Codec::Instance(codec_name, fallback));
 
 	return codec;
 }

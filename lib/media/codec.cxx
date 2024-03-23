@@ -7,6 +7,7 @@
 #include "codec/audio/mp2.hxx"
 #include "codec/audio/mp3.hxx"
 #include "codec/audio/opus.hxx"
+#include "codec/audio/unknown.hxx"
 #include "codec/audio/vorbis.hxx"
 #include "codec/image/bmp.hxx"
 #include "codec/image/copy.hxx"
@@ -14,13 +15,17 @@
 #include "codec/image/jpg.hxx"
 #include "codec/image/png.hxx"
 #include "codec/image/tiff.hxx"
+#include "codec/image/unknown.hxx"
 #include "codec/image/webp.hxx"
+#include "codec/subtitle/copy.hxx"
+#include "codec/subtitle/unknown.hxx"
 #include "codec/video/av1.hxx"
 #include "codec/video/copy.hxx"
 #include "codec/video/h264.hxx"
 #include "codec/video/h265.hxx"
 #include "codec/video/mpeg2.hxx"
 #include "codec/video/mpeg4.hxx"
+#include "codec/video/unknown.hxx"
 #include "codec/video/vp8.hxx"
 #include "codec/video/vp9.hxx"
 #include "media/info.hxx"
@@ -30,6 +35,30 @@
 Alchemist::Media::Codec::Base::Base(const Codec::Type& codec_type):Item(), m_codec_type(codec_type) { }
 
 Alchemist::Media::Codec::Base::Base(Codec::Type&& codec_type):Item(), m_codec_type(std::move(codec_type)) { }
+
+std::string Alchemist::Media::Codec::Base::get_name() const {
+	const auto& all_codecs = Info::Codec::All;
+
+	const auto iterator = std::find_if(
+		all_codecs.begin(),
+		all_codecs.end(),
+		[&](const Alchemist::Media::Info::Item& item) { return item.id == m_codec_type; }
+	);
+
+	return (iterator != all_codecs.end()) ? iterator->short_name : "";
+}
+
+std::string Alchemist::Media::Codec::Base::get_long_name() const {
+	const auto& all_codecs = Info::Codec::All;
+
+	const auto iterator = std::find_if(
+		all_codecs.begin(),
+		all_codecs.end(),
+		[&](const Alchemist::Media::Info::Item& item) { return item.id == m_codec_type; }
+	);
+
+	return (iterator != all_codecs.end()) ? iterator->long_name : "";
+}
 
 Alchemist::Media::Codec::Type Alchemist::Media::Codec::Base::get_codec_type() const noexcept {
 	return m_codec_type;
@@ -45,6 +74,7 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 	std::shared_ptr<Codec::Base> result;
 	
 	switch(codec) {
+		/** Audio **/
 		case Codec::AAC:
 			result.reset(new Codec::Audio::AAC());
 			break;
@@ -84,7 +114,12 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 		case Codec::COPY_AUDIO:
 			result.reset(new Codec::Audio::Copy());
 			break;
+			
+		case Codec::UNKNOWN_AUDIO:
+			/*** UNUSED HERE ***/
+			break;
 
+		/** Image **/
 		case Codec::BMP:
 			result.reset(new Codec::Image::BMP());
 			break;
@@ -113,6 +148,11 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 			result.reset(new Codec::Image::Copy());
 			break;
 
+		case Codec::UNKNOWN_IMAGE:
+			/*** UNUSED HERE ***/
+			break;
+
+		/** Video **/
 		case Codec::AV1:
 			result.reset(new Codec::Video::AV1());
 			break;
@@ -144,16 +184,25 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 		case Codec::COPY_VIDEO:
 			result.reset(new Codec::Video::Copy());
 			break;
+		
+		case Codec::UNKNOWN_VIDEO:
+			/*** UNUSED HERE ***/
+			break;
 
+		/** Subtitles **/
 		case Codec::COPY_SUBTITLE:
-			result.reset(new Codec::Video::Copy());
+			result.reset(new Codec::Subtitle::Copy());
+			break;
+
+		case Codec::UNKNOWN_SUBTITLE:
+			/*** UNUSED HERE ***/
 			break;
 	}
 
 	return result;
 }
 
-std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec) {
+std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec, std::shared_ptr<Base> fallback) {
 	std::shared_ptr<Base> result;
 
 	const auto& all_codecs = Info::Codec::All;
@@ -166,6 +215,8 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 
 	if (iterator != all_codecs.end())
 		result = Codec::Instance(static_cast<Codec::Type>(iterator->id));
+	else
+		result = fallback;
 
 	return result;
 }
