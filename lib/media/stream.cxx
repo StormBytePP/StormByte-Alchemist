@@ -1,5 +1,11 @@
 #include "stream.hxx"
 
+Alchemist::Media::Stream::Stream(unsigned short index):m_index(index) { }
+
+unsigned short Alchemist::Media::Stream::get_index() const noexcept {
+	return m_index;
+}
+
 const std::shared_ptr<Alchemist::Media::Codec::Base>& Alchemist::Media::Stream::get_codec() const noexcept {
 	return m_codec;
 }

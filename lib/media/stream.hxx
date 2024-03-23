@@ -11,6 +11,9 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Stream final: public Item {
 		public:
+			Stream(unsigned short);
+
+			unsigned short get_index() const noexcept;
 			const std::shared_ptr<Codec::Base>& get_codec() const noexcept;
 			void set_codec(std::shared_ptr<Codec::Base>) noexcept;
 			const std::optional<std::string>& get_language() const noexcept;

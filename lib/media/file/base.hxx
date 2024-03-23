@@ -4,7 +4,7 @@
 #include "../stream.hxx"
 
 #include <filesystem>
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace Alchemist::Media::File {
@@ -27,11 +27,11 @@ namespace Alchemist::Media::File {
 			bool has_feature(const Feature&) const noexcept;
 			bool has_status(const Status&) const noexcept;
 
-			const std::vector<std::unique_ptr<Stream>>& get_streams() const noexcept;
+			const std::list<Stream>& get_streams() const noexcept;
 
 		protected:
 			std::filesystem::path m_media_path;
-			std::vector<std::unique_ptr<Stream>> m_streams;
+			std::list<Stream> m_streams;
 			unsigned int m_features:2;
 			unsigned int m_status:5;
 

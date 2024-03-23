@@ -89,9 +89,8 @@ void Alchemist::Media::File::InFile::update_streams() {
     if (reader.parse(buffer, root)) {
 		for (Json::Value::const_iterator iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
 			const Json::Value item = *iter;
-			std::unique_ptr<Stream> stream = parse_stream_info(item);
+			Stream stream = parse_stream_info(item);
 			std::shared_ptr<Codec::Base> codec;
-
 			if (item["codec_type"] == "video") {
 				codec = parse_video_stream_codec(item);
 			}
@@ -101,31 +100,30 @@ void Alchemist::Media::File::InFile::update_streams() {
 			else if (item["codec_type"] == "subtitle") {
 				codec = parse_subtitle_stream_codec(item);
 			}
-
-			stream->set_codec(codec);
-			m_streams.insert(m_streams.begin() + item["index"].asInt(), std::move(stream));
+			stream.set_codec(codec);
+			m_streams.push_back(std::move(stream));
 		}
 	}
 }
 
-std::unique_ptr<Alchemist::Media::Stream> Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
-	std::unique_ptr<Stream> stream = std::make_unique<Stream>();
+Alchemist::Media::Stream Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
+	Stream stream(item["index"].asUInt());
 	if (item.isMember("tags")) {
 		Json::Value tags = item["tags"];
 		if (tags.isMember("language"))
-			stream->set_language(tags["language"].asString());
+			stream.set_language(tags["language"].asString());
 		if (tags.isMember("title"))
-			stream->set_title(tags["title"].asString());
+			stream.set_title(tags["title"].asString());
 		if (tags.isMember("NUMBER_OF_FRAMES")) {
-			stream->set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
+			stream.set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
 		}
 		if (tags.isMember("NUMBER_OF_BYTES")) {
-			stream->set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
+			stream.set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
 		}
 		if (tags.isMember("DURATION")) {
 			std::string duration = tags["DURATION"].asString();
 			duration.erase(duration.begin() + 8, duration.end());
-			stream->set_duration(std::move(duration));
+			stream.set_duration(std::move(duration));
 		}
 	}
 	else {
