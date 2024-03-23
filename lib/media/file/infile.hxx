@@ -17,8 +17,9 @@ namespace Alchemist::Media::File {
 			void update_features();
 			void update_streams();
 
-			std::shared_ptr<Codec::Base> parse_video_stream_codec(const Json::Value&);
-			std::shared_ptr<Codec::Base> parse_audio_stream_codec(const Json::Value&);
-			std::shared_ptr<Codec::Base> parse_subtitle_stream_codec(const Json::Value&);
+			std::shared_ptr<Stream>			parse_stream_info(const Json::Value&);
+			std::shared_ptr<Codec::Base> 	parse_video_stream_codec(const Json::Value&);
+			std::shared_ptr<Codec::Base> 	parse_audio_stream_codec(const Json::Value&);
+			std::shared_ptr<Codec::Base> 	parse_subtitle_stream_codec(const Json::Value&);
 	};
 }

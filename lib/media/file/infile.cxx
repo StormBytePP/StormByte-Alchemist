@@ -89,7 +89,7 @@ void Alchemist::Media::File::InFile::update_streams() {
     if (reader.parse(buffer, root)) {
 		for (Json::Value::const_iterator iter = root["streams"].begin(); iter != root["streams"].end(); iter++) {
 			const Json::Value item = *iter;
-			std::unique_ptr<Stream> stream = std::make_unique<Stream>();
+			std::shared_ptr<Stream> stream = parse_stream_info(item);
 			std::shared_ptr<Codec::Base> codec;
 			if (codec.get() == nullptr)
 				break;
@@ -104,29 +104,35 @@ void Alchemist::Media::File::InFile::update_streams() {
 				codec = parse_subtitle_stream_codec(item);
 			}
 			stream->set_codec(codec);
-			if (item["tags"]) {
-				Json::Value tags = item["tags"];
-				if (tags.isMember("language"))
-					stream->set_language(tags["language"].asString());
-				if (tags.isMember("title"))
-					stream->set_title(tags["title"].asString());
-				if (tags.isMember("NUMBER_OF_FRAMES")) {
-					stream->set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
-				}
-				if (tags.isMember("NUMBER_OF_BYTES")) {
-					stream->set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
-				}
-				if (tags.isMember("DURATION")) {
-					std::string duration = tags["NUMBER_OF_BYTES"].asString();
-					duration.erase(duration.begin() + 8, duration.end());
-					stream->set_duration(std::move(duration));
-				}
-			}
 			m_streams.insert(m_streams.begin() + item["index"].asInt(), std::move(stream));
 		}
 	}
-	else
+}
+
+std::shared_ptr<Alchemist::Media::Stream> Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
+	std::shared_ptr<Stream> stream = std::make_shared<Stream>();
+	if (item.isMember("tags")) {
+		Json::Value tags = item["tags"];
+		if (tags.isMember("language"))
+			stream->set_language(tags["language"].asString());
+		if (tags.isMember("title"))
+			stream->set_title(tags["title"].asString());
+		if (tags.isMember("NUMBER_OF_FRAMES")) {
+			stream->set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
+		}
+		if (tags.isMember("NUMBER_OF_BYTES")) {
+			stream->set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
+		}
+		if (tags.isMember("DURATION")) {
+			std::string duration = tags["NUMBER_OF_BYTES"].asString();
+			duration.erase(duration.begin() + 8, duration.end());
+			stream->set_duration(std::move(duration));
+		}
+	}
+	else {
 		m_status |= Status::STREAM_ERROR;
+	}
+	return stream;
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::File::InFile::parse_video_stream_codec(const Json::Value& item) {
