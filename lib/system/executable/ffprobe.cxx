@@ -7,7 +7,16 @@ std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::all_info
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
-			{ "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", "-sexagesimal", file.string() }
+			{ "-v", "quiet", "-print_format", "json", "-show_streams", "-sexagesimal", file.string() }
+		)
+	);
+}
+
+std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::format_info(const std::filesystem::path& file) {
+	return std::unique_ptr<FFprobe>(
+		new FFprobe(
+			Alchemist::Info::ffprobe_path(),
+			{ "-v", "quiet", "-print_format", "json", "-show_format", "-sexagesimal", file.string() }
 		)
 	);
 }

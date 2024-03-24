@@ -13,6 +13,7 @@ namespace Alchemist::System {
 			FFprobe& operator=(FFprobe&&)		= delete;
 
 			static std::unique_ptr<FFprobe> all_info(const std::filesystem::path&);
+			static std::unique_ptr<FFprobe> format_info(const std::filesystem::path&);
 			static std::unique_ptr<FFprobe> video_info(const std::filesystem::path&);
 
 		private:

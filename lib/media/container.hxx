@@ -1,6 +1,6 @@
 #pragma once
 
-#include "codec.hxx"
+#include "stream.hxx"
 
 #include <list>
 #include <memory>
@@ -16,15 +16,19 @@ namespace Alchemist::Media::Container {
 	
 	class DLL_PUBLIC Base: public Item {
 		public:
-			Base(const std::string&);
-			Base(std::string&&);
 			virtual ~Base() noexcept 									= default;
 
-			const std::string& get_extension() const;
+			virtual const std::string get_extension() const				= 0;
 			virtual std::list<Codec::Type> get_supported_codecs() const	= 0;
+			const std::list<Stream>& get_streams() const;
+			void add_stream(const Stream&);
+			void add_stream(Stream&&);
 
 		protected:
-			std::string m_extension;
+			std::list<Stream> m_streams;
+
+		private:
+			void sort_streams();
 	};
 
 	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);

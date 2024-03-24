@@ -7,6 +7,7 @@ namespace Alchemist::Media::Container {
 		public:
 			AVI();
 
+			const std::string get_extension() const override;
 			std::list<Codec::Type> get_supported_codecs() const override;
 	};
 }
