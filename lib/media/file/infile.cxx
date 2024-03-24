@@ -108,26 +108,11 @@ void Alchemist::Media::File::InFile::update_streams() {
 
 Alchemist::Media::Stream Alchemist::Media::File::InFile::parse_stream_info(const Json::Value& item) {
 	Stream stream(item["index"].asUInt());
+	
 	if (item.isMember("tags")) {
 		Json::Value tags = item["tags"];
 		if (tags.isMember("language"))
 			stream.set_language(tags["language"].asString());
-		if (tags.isMember("title"))
-			stream.set_title(tags["title"].asString());
-		if (tags.isMember("NUMBER_OF_FRAMES")) {
-			stream.set_frame_number(std::stoi(tags["NUMBER_OF_FRAMES"].asString()));
-		}
-		if (tags.isMember("NUMBER_OF_BYTES")) {
-			stream.set_bytes(std::stoul(tags["NUMBER_OF_BYTES"].asString()));
-		}
-		if (tags.isMember("DURATION")) {
-			std::string duration = tags["DURATION"].asString();
-			duration.erase(duration.begin() + 8, duration.end());
-			stream.set_duration(std::move(duration));
-		}
-	}
-	else {
-		m_status |= Status::STREAM_ERROR;
 	}
 	return stream;
 }

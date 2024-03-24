@@ -38,38 +38,14 @@ void Alchemist::Media::Stream::set_title(std::string&& title) noexcept {
 	m_title = std::move(title);
 }
 
-const std::optional<unsigned int>& Alchemist::Media::Stream::get_frame_number() const noexcept {
-	return m_frame_number;
+const std::optional<std::string>& Alchemist::Media::Stream::get_bitrate() const noexcept {
+	return m_bitrate;
 }
 
-void Alchemist::Media::Stream::set_frame_number(const unsigned int& frames) {
-	m_frame_number = frames;
+void Alchemist::Media::Stream::set_bitrate(const std::string& bitrate) {
+	m_bitrate = bitrate;
 }
 
-void Alchemist::Media::Stream::set_frame_number(unsigned int&& frames) noexcept {
-	m_frame_number = std::move(frames);
-}
-
-const std::optional<unsigned long>& Alchemist::Media::Stream::get_bytes() const noexcept {
-	return m_bytes;
-}
-
-void Alchemist::Media::Stream::set_bytes(const unsigned long& bytes) {
-	m_bytes = bytes;
-}
-
-void Alchemist::Media::Stream::set_bytes(unsigned long&& bytes) noexcept {
-	m_bytes = std::move(bytes);
-}
-
-const std::optional<std::string>& Alchemist::Media::Stream::get_duration() const noexcept {
-	return m_duration;
-}
-
-void Alchemist::Media::Stream::set_duration(const std::string& duration) {
-	m_duration = duration;
-}
-
-void Alchemist::Media::Stream::set_duration(std::string&& duration) noexcept {
-	m_duration = std::move(duration);
+void Alchemist::Media::Stream::set_bitrate(std::string&& bitrate) noexcept {
+	m_bitrate = std::move(bitrate);
 }

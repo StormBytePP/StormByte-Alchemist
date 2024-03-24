@@ -7,7 +7,7 @@ std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::all_info
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
-			{ "-v", "quiet", "-print_format", "json", "-show_streams", file.string() }
+			{ "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", "-sexagesimal", file.string() }
 		)
 	);
 }
@@ -17,24 +17,6 @@ std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::video_in
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
 			{ "-v", "quiet", "-print_format", "json", "-show_streams", "-select_streams", "v:0", file.string() }
-		)
-	);
-}
-
-std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::audio_info(const std::filesystem::path& file) {
-	return std::unique_ptr<FFprobe>(
-		new FFprobe(
-			Alchemist::Info::ffprobe_path(),
-			{ "-v", "quiet", "-print_format", "json", "-show_streams", "-select_streams", "a", file.string() }
-		)
-	);
-}
-
-std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::subtitle_info(const std::filesystem::path& file) {
-	return std::unique_ptr<FFprobe>(
-		new FFprobe(
-			Alchemist::Info::ffprobe_path(),
-			{ "-v", "quiet", "-print_format", "json", "-show_streams", "-select_streams", "s", file.string() }
 		)
 	);
 }
