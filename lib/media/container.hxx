@@ -9,9 +9,9 @@
 namespace Alchemist::Media::Container {
 	enum DLL_PUBLIC Type:unsigned short {
 		AVI, MKV, MP4, OGG, // Video
-		AAC, DTS, MP2, MP3, OPUS, // Audio
-		BMP, GIF, JPG, PNG, TIFF, WEBP, // Image
-		GENERIC = std::numeric_limits<unsigned short>::max()
+		AAC, DTS, MP3, OPUS, // Audio
+		// Image containers unsupported
+		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 	
 	class DLL_PUBLIC Base: public Item {
@@ -32,5 +32,5 @@ namespace Alchemist::Media::Container {
 	};
 
 	std::shared_ptr<Base> DLL_PUBLIC Instance(const Type&);
-	std::shared_ptr<Base> DLL_PUBLIC Instance(const std::string&);
+	std::shared_ptr<Base> DLL_PUBLIC Instance(const std::string&, std::shared_ptr<Base>);
 }

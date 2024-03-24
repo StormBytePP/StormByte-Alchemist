@@ -203,7 +203,7 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 }
 
 std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance(const std::string& codec, std::shared_ptr<Base> fallback) {
-	std::shared_ptr<Base> result;
+	std::shared_ptr<Base> result = fallback;
 
 	const auto& all_codecs = Info::Codec::All;
 
@@ -214,9 +214,7 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 	);
 
 	if (iterator != all_codecs.end())
-		result = Codec::Instance(static_cast<Codec::Type>(iterator->id));
-	else
-		result = fallback;
+		result = Codec::Instance(static_cast<Type>(iterator->id));
 
 	return result;
 }
