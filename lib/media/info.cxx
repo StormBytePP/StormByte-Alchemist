@@ -46,7 +46,6 @@ const std::list<Media::Info::Item> Media::Info::Container::All = {
 	{ Media::Container::MKV,	"matroska,webm",			"Matroska / WebM" },
 	{ Media::Container::MP4,	"mov,mp4,m4a,3gp,3g2,mj2",	"QuickTime / MOV" },
 	{ Media::Container::OGG,	"ogg",						"Ogg Vorbis" },
-	{ Media::Container::WMV,	"asf",						"ASF (Advanced / Active Streaming Format)" },
 
 	// Audio
 	{ Media::Container::AAC,	"aac",						"raw ADTS AAC (Advanced Audio Coding)" },
@@ -56,7 +55,7 @@ const std::list<Media::Info::Item> Media::Info::Container::All = {
 };
 
 const std::list<Media::Container::Type> Media::Info::Container::Available = {
-	Media::Container::AVI, Media::Container::MKV, Media::Container::MP4, Media::Container::OGG, Media::Container::WMV, // Video
+	Media::Container::AVI, Media::Container::MKV, Media::Container::MP4, Media::Container::OGG, // Video
 	Media::Container::AAC, Media::Container::DTS, Media::Container::MP3, Media::Container::OPUS // Audio
 };
 

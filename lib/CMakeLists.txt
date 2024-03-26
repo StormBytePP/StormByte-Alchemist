@@ -47,7 +47,6 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/container/mp4.cxx
 	${ALCHEMY_DIR}/media/container/ogg.cxx
 	${ALCHEMY_DIR}/media/container/opus.cxx
-	${ALCHEMY_DIR}/media/container/wmv.cxx
 	${ALCHEMY_DIR}/media/decoder.cxx
 	${ALCHEMY_DIR}/media/decoder/audio.cxx
 	${ALCHEMY_DIR}/media/decoder/image.cxx

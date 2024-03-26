@@ -1,5 +1,12 @@
+#include "container/aac.hxx"
+#include "container/ac3.hxx"
 #include "container/avi.hxx"
+#include "container/dts.hxx"
 #include "container/mkv.hxx"
+#include "container/mp3.hxx"
+#include "container/mp4.hxx"
+#include "container/ogg.hxx"
+#include "container/opus.hxx"
 #include "media/info.hxx"
 
 Alchemist::Media::Container::Base::Base(const Type& type, std::string&& ext):m_type(type), m_extension(std::move(ext)) { }
@@ -36,22 +43,33 @@ std::shared_ptr<Alchemist::Media::Container::Base> Alchemist::Media::Container::
 	std::shared_ptr<Container::Base> result;
 
 	switch(container) {
+		case AAC:
+			result.reset(new class Container::AAC());
+			break;
+		case AC3:
+			result.reset(new class Container::AC3());
+			break;
 		case AVI:
 			result.reset(new class Container::AVI());
 			break;
-
+		case DTS:
+			result.reset(new class Container::DTS());
+			break;
 		case MKV:
 			result.reset(new class Container::MKV());
 			break;
-
-		case MP4:
-		case OGG:
-		case WMV:
-		case AAC:
-		case AC3:
-		case DTS:
 		case MP3:
+			result.reset(new class Container::MP3());
+			break;
+		case MP4:
+			result.reset(new class Container::MP4());
+			break;
+		case OGG:
+			result.reset(new class Container::OGG());
+			break;
 		case OPUS:
+			result.reset(new class Container::Opus());
+			break;
 		case UNKNOWN:
 			/* Unused here */
 			break;

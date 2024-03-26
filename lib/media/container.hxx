@@ -9,7 +9,7 @@
 
 namespace Alchemist::Media::Container {
 	enum DLL_PUBLIC Type:unsigned short {
-		AVI, MKV, MP4, OGG, WMV,	// ALL
+		AVI, MKV, MP4, OGG,	// ALL
 		AAC, AC3, DTS, MP3, OPUS, 	// Audio
 									// Image containers unimplemented
 		UNKNOWN = std::numeric_limits<unsigned short>::max()
