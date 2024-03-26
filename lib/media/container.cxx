@@ -2,11 +2,11 @@
 #include "container/mkv.hxx"
 #include "media/info.hxx"
 
-Alchemist::Media::Container::Base::Base(const Type& type):m_type(type) { }
+Alchemist::Media::Container::Base::Base(const Type& type, std::string&& ext):m_type(type), m_extension(std::move(ext)) { }
 
-const std::list<Alchemist::Media::Stream>& Alchemist::Media::Container::Base::get_streams() const {
-	return m_streams;
-}
+Alchemist::Media::Container::Base::Base(const Type& type, std::string&& ext, const unsigned short& max):m_type(type), m_extension(std::move(ext)), m_max_streams(max) { }
+
+Alchemist::Media::Container::Base::~Base() noexcept { }
 
 void Alchemist::Media::Container::Base::add_stream(const Stream& stream) {
 	m_streams.push_back(stream);
@@ -16,6 +16,22 @@ void Alchemist::Media::Container::Base::add_stream(const Stream& stream) {
 void Alchemist::Media::Container::Base::add_stream(Stream&& stream) {
 	m_streams.push_back(std::move(stream));
 	sort_streams();
+}
+
+const std::list<Alchemist::Media::Stream>& Alchemist::Media::Container::Base::get_streams() const {
+	return m_streams;
+}
+
+const std::string& Alchemist::Media::Container::Base::get_extension() const noexcept {
+	return m_extension;
+}
+
+const std::list<Alchemist::Media::Codec::Type>& Alchemist::Media::Container::Base::get_supported_codecs() const noexcept {
+	return m_supported_codecs;
+}
+
+const std::optional<unsigned short>& Alchemist::Media::Container::Base::get_max_streams() const noexcept {
+	return m_max_streams;
 }
 
 void Alchemist::Media::Container::Base::sort_streams() {

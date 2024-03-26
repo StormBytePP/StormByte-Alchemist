@@ -6,8 +6,5 @@ namespace Alchemist::Media::Container {
 	class DLL_PUBLIC AAC final: public Base {
 		public:
 			AAC();
-
-			const std::string get_extension() const override;
-			std::list<Codec::Type> get_supported_codecs() const override;
 	};
 }
