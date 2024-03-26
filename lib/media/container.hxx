@@ -19,24 +19,23 @@ namespace Alchemist::Media::Container {
 		public:
 			Base(const Type&, std::string&&);
 			Base(const Type&, std::string&&, const unsigned short&);
-			virtual ~Base() noexcept 									= 0;
+			virtual ~Base() noexcept 											= default;
 
 			void add_stream(const Stream&);
 			void add_stream(Stream&&);
 			const std::list<Stream>& get_streams() const;
 
 			const std::string& get_extension() const noexcept;
-			const std::list<Codec::Type>& get_supported_codecs() const noexcept;
 			const std::optional<unsigned short>& get_max_streams() const noexcept;
+			virtual const std::list<Codec::Type> get_supported_codecs() const			= 0;
 
 		protected:
-			Type m_type;
-			std::string m_extension;
-			std::optional<unsigned short> m_max_streams;
-			const std::list<Codec::Type> m_supported_codecs;
-			std::list<Stream> m_streams;
+			const Type m_type;
+			const std::string m_extension;
+			const std::optional<unsigned short> m_max_streams;
 
 		private:
+			std::list<Stream> m_streams;
 			void sort_streams();
 	};
 

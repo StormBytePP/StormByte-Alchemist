@@ -6,5 +6,7 @@ namespace Alchemist::Media::Container {
 	class DLL_PUBLIC MKV final: public Base {
 		public:
 			MKV();
+
+			const std::list<Codec::Type> get_supported_codecs() const override;
 	};
 }

@@ -6,8 +6,6 @@ Alchemist::Media::Container::Base::Base(const Type& type, std::string&& ext):m_t
 
 Alchemist::Media::Container::Base::Base(const Type& type, std::string&& ext, const unsigned short& max):m_type(type), m_extension(std::move(ext)), m_max_streams(max) { }
 
-Alchemist::Media::Container::Base::~Base() noexcept { }
-
 void Alchemist::Media::Container::Base::add_stream(const Stream& stream) {
 	m_streams.push_back(stream);
 	sort_streams();
@@ -24,10 +22,6 @@ const std::list<Alchemist::Media::Stream>& Alchemist::Media::Container::Base::ge
 
 const std::string& Alchemist::Media::Container::Base::get_extension() const noexcept {
 	return m_extension;
-}
-
-const std::list<Alchemist::Media::Codec::Type>& Alchemist::Media::Container::Base::get_supported_codecs() const noexcept {
-	return m_supported_codecs;
 }
 
 const std::optional<unsigned short>& Alchemist::Media::Container::Base::get_max_streams() const noexcept {
