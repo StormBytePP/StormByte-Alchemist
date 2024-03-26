@@ -55,12 +55,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/encoder/audio/mp2_default.cxx
 	${ALCHEMY_DIR}/media/encoder/audio/opus_default.cxx
 	${ALCHEMY_DIR}/media/encoder/audio/vorbis_default.cxx
-	${ALCHEMY_DIR}/media/encoder/image.cxx
-	${ALCHEMY_DIR}/media/encoder/image/bmp_default.cxx
-	${ALCHEMY_DIR}/media/encoder/image/gif_default.cxx
-	${ALCHEMY_DIR}/media/encoder/image/jpg_default.cxx
-	${ALCHEMY_DIR}/media/encoder/image/png_default.cxx
-	${ALCHEMY_DIR}/media/encoder/image/tiff_default.cxx
+	# Image encoders are set on demand
 	${ALCHEMY_DIR}/media/encoder/video.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg2_default.cxx
 	${ALCHEMY_DIR}/media/encoder/video/mpeg4_default.cxx
@@ -88,7 +83,7 @@ if (NOT WIN32)
 	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
 endif()
 
-include(CodecOptions)
+include(OptionalFeatures)
 
 include(GetVersionFromGitTag)
 file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/definitions.h CONTENT "#pragma once

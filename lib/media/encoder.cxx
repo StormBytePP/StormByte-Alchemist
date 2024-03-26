@@ -22,6 +22,7 @@
 #ifdef ENABLE_LIBVORBIS
 #include "encoder/audio/vorbis_libvorbis.hxx"
 #endif
+#ifdef ENABLE_IMAGE_PROCESS
 #include "encoder/image/bmp_default.hxx"
 #include "encoder/image/gif_default.hxx"
 #include "encoder/image/jpg_default.hxx"
@@ -29,6 +30,7 @@
 #include "encoder/image/tiff_default.hxx"
 #ifdef ENABLE_WEBP
 #include "encoder/image/webp_libwebp.hxx"
+#endif
 #endif
 #ifdef ENABLE_LIBAOM
 #include "encoder/video/av1_libaom.hxx"
@@ -156,30 +158,50 @@ std::shared_ptr<Alchemist::Media::Encoder::Base> Alchemist::Media::Encoder::Inst
 			break;
 
 		case Encoder::BMP_DEFAULT:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Encoder::Image::BMP_DEFAULT());
+			#else
+			throw std::runtime_error("Image processing is not compiled in");
+			#endif
 			break;
 
 		case Encoder::GIF_DEFAULT:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Encoder::Image::GIF_DEFAULT());
+			#else
+			throw std::runtime_error("Image processing is not compiled in");
+			#endif
 			break;
 
 		case Encoder::JPG_DEFAULT:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Encoder::Image::JPG_DEFAULT());
+			#else
+			throw std::runtime_error("Image processing is not compiled in");
+			#endif
 			break;
 
 		case Encoder::PNG_DEFAULT:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Encoder::Image::PNG_DEFAULT());
+			#else
+			throw std::runtime_error("Image processing is not compiled in");
+			#endif
 			break;
 
 		case Encoder::TIFF_DEFAULT:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Encoder::Image::TIFF_DEFAULT());
+			#else
+			throw std::runtime_error("Image processing is not compiled in");
+			#endif
 			break;
 
 		case Encoder::WEBP_LIBWEBP:
-			#ifdef ENABLE_WEBP
+			#if defined(ENABLE_IMAGE_PROCESS) and defined(ENABLE_WEBP)
 			result.reset(new Encoder::Image::WEBP_LIBWEBP());
 			#else
-			throw std::runtime_error("Encoder libwebp not compiled in");
+			throw std::runtime_error("Image processing is not compiled in");
 			#endif
 			break;
 

@@ -121,11 +121,15 @@ std::shared_ptr<Alchemist::Media::Codec::Base> Alchemist::Media::Codec::Instance
 
 		/** Image **/
 		case Codec::BMP:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Codec::Image::BMP());
+			#endif
 			break;
 
 		case Codec::GIF:
+			#ifdef ENABLE_IMAGE_PROCESS
 			result.reset(new Codec::Image::GIF());
+			#endif
 			break;
 
 		case Codec::JPG:

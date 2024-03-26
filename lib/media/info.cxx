@@ -22,7 +22,7 @@ const std::list<Media::Info::Item> Media::Info::Codec::All = {
 	{	Media::Codec::MP3,		"mp3",		"MPEG-1 Audio Layer III"					},
 	{	Media::Codec::OPUS,		"opus",		"Opus"										},
 	{	Media::Codec::VORBIS,	"vorbis",	"Vorbis Audio Codec"						},
-	
+
 	//Image
 	{	Media::Codec::BMP,		"bmp",		"Microsoft Windows Bitmap Format"			},
 	{	Media::Codec::GIF,		"gif",		"Graphics Interchange Format"				},
@@ -35,7 +35,9 @@ const std::list<Media::Info::Item> Media::Info::Codec::All = {
 const std::list<Media::Codec::Type> Media::Info::Codec::Available = {
 	Media::Codec::AV1,	Media::Codec::H264,	Media::Codec::H265,	Media::Codec::MPEG2,Media::Codec::VP8,	Media::Codec::VP9,	Media::Codec::MPEG4,											// Video
 	Media::Codec::AAC,	Media::Codec::AC3,	Media::Codec::DTS,	Media::Codec::EAC3,	Media::Codec::FLAC,	Media::Codec::MP2,	Media::Codec::MP3,	Media::Codec::OPUS,	Media::Codec::VORBIS,	// Audio
+	#ifdef ENABLE_IMAGE_PROCESS
 	Media::Codec::BMP,	Media::Codec::GIF,	Media::Codec::JPG,	Media::Codec::PNG,	Media::Codec::TIFF,	Media::Codec::WEBP																	// Image
+	#endif
 };
 
 const std::list<Media::Info::Item> Media::Info::Container::All = {
@@ -229,6 +231,7 @@ const std::list<Media::Encoder::Type> Media::Info::Encoder::Available = {
 	#endif
 
 	// Image
+	#ifdef ENABLE_IMAGE_PROCESS
 	Media::Encoder::BMP_DEFAULT,
 	Media::Encoder::GIF_DEFAULT,
 	Media::Encoder::JPG_DEFAULT,
@@ -236,5 +239,6 @@ const std::list<Media::Encoder::Type> Media::Info::Encoder::Available = {
 	Media::Encoder::TIFF_DEFAULT,
 	#ifdef ENABLE_WEBP
 	Media::Encoder::WEBP_LIBWEBP
+	#endif
 	#endif
 };
