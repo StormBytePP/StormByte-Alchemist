@@ -3,10 +3,10 @@
 #include "../container.hxx"
 
 namespace Alchemist::Media::Container {
-	class DLL_PUBLIC MKV final: public Base {
+	class DLL_PUBLIC DTS final: public Base {
 		public:
-			MKV();
-			
+			DTS();
+
 			const std::string get_extension() const override;
 			std::list<Codec::Type> get_supported_codecs() const override;
 	};

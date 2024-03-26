@@ -1,6 +1,6 @@
 #include "avi.hxx"
 
-Alchemist::Media::Container::AVI::AVI():Base() {
+Alchemist::Media::Container::AVI::AVI():Base(Container::AVI) {
 	m_attrs = Attribute::OLD;
 }
 

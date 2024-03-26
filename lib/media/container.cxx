@@ -2,6 +2,8 @@
 #include "container/mkv.hxx"
 #include "media/info.hxx"
 
+Alchemist::Media::Container::Base::Base(const Type& type):m_type(type) { }
+
 const std::list<Alchemist::Media::Stream>& Alchemist::Media::Container::Base::get_streams() const {
 	return m_streams;
 }
@@ -34,6 +36,7 @@ std::shared_ptr<Alchemist::Media::Container::Base> Alchemist::Media::Container::
 
 		case MP4:
 		case OGG:
+		case WMV:
 		case AAC:
 		case DTS:
 		case MP3:

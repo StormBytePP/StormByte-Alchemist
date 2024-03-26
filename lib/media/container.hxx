@@ -8,14 +8,15 @@
 
 namespace Alchemist::Media::Container {
 	enum DLL_PUBLIC Type:unsigned short {
-		AVI, MKV, MP4, OGG, // Video
-		AAC, DTS, MP3, OPUS, // Audio
-		// Image containers unsupported
+		AVI, MKV, MP4, OGG, WMV,// ALL
+		AAC, DTS, MP3, OPUS, 	// Audio
+								// Image containers unimplemented
 		UNKNOWN = std::numeric_limits<unsigned short>::max()
 	};
 	
 	class DLL_PUBLIC Base: public Item {
 		public:
+			Base(const Type&);
 			virtual ~Base() noexcept 									= default;
 
 			virtual const std::string get_extension() const				= 0;
@@ -26,6 +27,7 @@ namespace Alchemist::Media::Container {
 
 		protected:
 			std::list<Stream> m_streams;
+			Type m_type;
 
 		private:
 			void sort_streams();
