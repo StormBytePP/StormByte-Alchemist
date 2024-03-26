@@ -2,12 +2,6 @@
 
 using namespace Alchemist;
 
-const std::list<Media::Codec::Type> Media::Info::Codec::Available = {
-	Media::Codec::AV1,	Media::Codec::H264,	Media::Codec::H265,	Media::Codec::MPEG2,Media::Codec::VP8,	Media::Codec::VP9,	Media::Codec::MPEG4,											// Video
-	Media::Codec::AAC,	Media::Codec::AC3,	Media::Codec::DTS,	Media::Codec::EAC3,	Media::Codec::FLAC,	Media::Codec::MP2,	Media::Codec::MP3,	Media::Codec::OPUS,	Media::Codec::VORBIS,	// Audio
-	Media::Codec::BMP,	Media::Codec::GIF,	Media::Codec::JPG,	Media::Codec::PNG,	Media::Codec::TIFF,	Media::Codec::WEBP																	// Image
-};
-
 const std::list<Media::Info::Item> Media::Info::Codec::All = {
 	// Video
 	{	Media::Codec::AV1,		"av1",		"AOMedia Video 1"							},
@@ -38,12 +32,19 @@ const std::list<Media::Info::Item> Media::Info::Codec::All = {
 	{	Media::Codec::WEBP,		"webp",		"WEBP Format"								}
 };
 
+const std::list<Media::Codec::Type> Media::Info::Codec::Available = {
+	Media::Codec::AV1,	Media::Codec::H264,	Media::Codec::H265,	Media::Codec::MPEG2,Media::Codec::VP8,	Media::Codec::VP9,	Media::Codec::MPEG4,											// Video
+	Media::Codec::AAC,	Media::Codec::AC3,	Media::Codec::DTS,	Media::Codec::EAC3,	Media::Codec::FLAC,	Media::Codec::MP2,	Media::Codec::MP3,	Media::Codec::OPUS,	Media::Codec::VORBIS,	// Audio
+	Media::Codec::BMP,	Media::Codec::GIF,	Media::Codec::JPG,	Media::Codec::PNG,	Media::Codec::TIFF,	Media::Codec::WEBP																	// Image
+};
+
 const std::list<Media::Info::Item> Media::Info::Container::All = {
-	
+
 };
 
 const std::list<Media::Container::Type> Media::Info::Container::Available = {
-
+	Media::Container::AVI, Media::Container::MKV, Media::Container::MP4, Media::Container::OGG, // Video
+	Media::Container::AAC, Media::Container::DTS, Media::Container::MP3, Media::Container::OPUS // Audio
 };
 
 const std::list<Media::Info::Item> Media::Info::Decoder::All = {
