@@ -38,6 +38,7 @@ std::shared_ptr<Alchemist::Media::Container::Base> Alchemist::Media::Container::
 		case OGG:
 		case WMV:
 		case AAC:
+		case AC3:
 		case DTS:
 		case MP3:
 		case OPUS:
