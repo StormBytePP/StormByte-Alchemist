@@ -74,7 +74,7 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 
 /********************************* HEVC *************************************/
 const std::string Stream::Video::HEVC::DEFAULT_BUFFSIZE 	= "200M";
-const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:crf=26:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=0:selective-sao=0:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:deblock=-4,-4:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
+const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:crf=26:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=0:selective-sao=0:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
 const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMAX);
 
 Stream::Video::HEVC::HEVC(const unsigned short& stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::film::stream::VIDEO_HEVC) { }
@@ -84,11 +84,10 @@ Stream::Video::HEVC::HEVC(unsigned short&& stream_id):Stream::Video::Base(std::m
 
 std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
-	std::string x265_params;
+	std::string x265_params = "\"" + X265_PARAMS + ":" + (m_is_animation ? "deblock=-2,-2" : "deblock=-4,-4");
 	if (m_hdr)
-		x265_params = "\"" + (X265_PARAMS + ":" + m_hdr->ffmpeg_parameters()) + "\"";
-	else
-		x265_params = "\"" + X265_PARAMS + "\"";
+		x265_params += ":" + m_hdr->ffmpeg_parameters()
+	x265_params += "\"";
 
 	result.push_back("-profile:"		+ ffmpeg_stream_id());		result.push_back("main10");
 	result.push_back("-level:"			+ ffmpeg_stream_id());		result.push_back("5.1");
