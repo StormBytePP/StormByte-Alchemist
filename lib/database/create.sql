@@ -21,6 +21,7 @@ CREATE TABLE streams(
 	is_animation BOOL DEFAULT FALSE,
 	max_rate VARCHAR DEFAULT NULL,
 	bitrate VARCHAR DEFAULT NULL,
+	channels SMALLINT DEFAULT NULL,
 	PRIMARY KEY(id, film_id, codec),
 	FOREIGN KEY(film_id) REFERENCES films(id) ON DELETE CASCADE
 );
