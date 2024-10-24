@@ -290,7 +290,7 @@ std::list<Database::Data::film::stream> Database::SQLite3::get_film_streams(cons
 		stream.m_is_animation	= sqlite3_column_int(stmt, 2);
 		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.m_max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
 		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.m_bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-		if (sqlite3_column_type(stmt, 5) != SQLITE_NULL) stream.m_channels 	= sqlite3_column_int(stmt, 5));
+		if (sqlite3_column_type(stmt, 5) != SQLITE_NULL) stream.m_channels 	= sqlite3_column_int(stmt, 5);
 		set_film_stream_HDR(film_id, stream);
 		result.push_back(std::move(stream));
 	}
