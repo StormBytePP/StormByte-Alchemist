@@ -16,6 +16,11 @@ std::list<std::string> Stream::Audio::Base::ffmpeg_parameters() const {
   if (m_channels) {
 		result.push_back("-ac:" + ffmpeg_stream_pos());
 		result.push_back(std::to_string(*m_channels));
+
+    if (*m_channels >= 6) {
+      result.push_back("-filter:" + ffmpeg_stream_pos());
+      result.push_back("channelmap=channel_layout=" + std::to_string(*m_channels - 1) + ".1");
+    }
 	}
   
   return result;
