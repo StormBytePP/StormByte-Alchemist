@@ -13,7 +13,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			Base& operator=(Base&& base) noexcept = default;
 			virtual ~Base() = default;
 
-			void SetChannels(const int& channels);
+			virtual void SetChannels(const int& channels);
 
 		protected:
 			std::optional<int> m_channels;
