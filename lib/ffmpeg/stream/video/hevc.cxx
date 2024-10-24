@@ -86,7 +86,7 @@ std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	std::list<std::string> result = Stream::Video::Base::ffmpeg_parameters();
 	std::string x265_params = "\"" + X265_PARAMS + ":" + (m_is_animation ? "deblock=-2,-2" : "deblock=-4,-4");
 	if (m_hdr)
-		x265_params += ":" + m_hdr->ffmpeg_parameters()
+		x265_params += ":" + m_hdr->ffmpeg_parameters();
 	x265_params += "\"";
 
 	result.push_back("-profile:"		+ ffmpeg_stream_id());		result.push_back("main10");
