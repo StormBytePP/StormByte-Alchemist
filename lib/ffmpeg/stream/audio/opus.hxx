@@ -14,6 +14,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			~Opus() = default;
 
 			void SetChannels(const int&) override;
+			std::list<std::string> ffmpeg_parameters() const override;
 
 		private:
 			static const std::string OPUS_DEFAULT_ENCODER;
