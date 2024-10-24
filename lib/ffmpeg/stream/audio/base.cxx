@@ -15,7 +15,7 @@ std::list<std::string> Stream::Audio::Base::ffmpeg_parameters() const {
 
   if (m_channels) {
 		result.push_back("-ac:" + ffmpeg_stream_pos());
-		result.push_back(*m_channels);
+		result.push_back(std::to_string(*m_channels));
 	}
   
   return params;
