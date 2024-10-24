@@ -18,5 +18,5 @@ std::list<std::string> Stream::Audio::Base::ffmpeg_parameters() const {
 		result.push_back(std::to_string(*m_channels));
 	}
   
-  return params;
+  return result;
 }
