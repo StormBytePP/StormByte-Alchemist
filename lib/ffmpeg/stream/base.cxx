@@ -19,6 +19,11 @@ std::list<std::string> Stream::Base::ffmpeg_parameters() const {
 		result.push_back(*m_bitrate);
 	}
 
+	if (m_channels) {
+		result.push_back("-ac:" + ffmpeg_stream_pos());
+		result.push_back(*m_channels);
+	}
+
 	return result;
 }
 
