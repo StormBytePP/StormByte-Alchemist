@@ -409,7 +409,7 @@ void Database::SQLite3::insert_stream(const unsigned int& film_id, const Data::f
 	else
 		sqlite3_bind_null(stmt, 6);
 	if (stream.m_channels)
-		sqlite3_bind_int(stmt, 7, stream.m_channels);
+		sqlite3_bind_int(stmt, 7, *stream.m_channels);
 	else
 		sqlite3_bind_null(stmt, 7);
 	sqlite3_step(stmt); // No result
