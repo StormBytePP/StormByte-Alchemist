@@ -11,12 +11,12 @@ const std::map<std::string, std::string> Database::SQLite3::DATABASE_PREPARED_SE
 	{"setUnsupportedStatusForFilm",	"UPDATE films SET unsupported = ? WHERE id = ?"},
 	{"deleteFilmStreamHDR",			"DELETE FROM stream_hdr WHERE film_id = ?"},
 	{"getFilmData",					"SELECT file, prio, title, processing, unsupported, group_id FROM films WHERE id = ?"},
-	{"getFilmStreams",				"SELECT id, codec, is_animation, max_rate, bitrate FROM streams WHERE film_id = ?"},
+	{"getFilmStreams",				"SELECT id, codec, is_animation, max_rate, bitrate, channels FROM streams WHERE film_id = ?"},
 	{"hasStreamHDR?",				"SELECT COUNT(*)>0 FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getFilmStreamHDR",			"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average FROM stream_hdr WHERE film_id = ? AND stream_id = ? AND codec = ?"},
 	{"getGroupData",				"SELECT folder FROM groups WHERE id = ?"},
 	{"insertFilm",					"INSERT INTO films(file, prio, title, group_id) VALUES (?, ?, ?, ?) RETURNING id"},
-	{"insertStream",				"INSERT INTO streams(id, film_id, codec, is_animation, max_rate, bitrate) VALUES (?, ?, ?, ?, ?, ?)"},
+	{"insertStream",				"INSERT INTO streams(id, film_id, codec, is_animation, max_rate, bitrate, channels) VALUES (?, ?, ?, ?, ?, ?, ?)"},
 	{"insertHDR",					"INSERT INTO stream_hdr(film_id, stream_id, codec, red_x, red_y, green_x, green_y, blue_x, blue_y, white_point_x, white_point_y, luminance_min, luminance_max, light_level_content, light_level_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"},
 	{"insertGroup",					"INSERT INTO groups(folder) VALUES (?) RETURNING id"},
 	{"resetProcessingFilms",		"UPDATE films SET processing = FALSE, unsupported = FALSE"},
@@ -290,6 +290,7 @@ std::list<Database::Data::film::stream> Database::SQLite3::get_film_streams(cons
 		stream.m_is_animation	= sqlite3_column_int(stmt, 2);
 		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL) stream.m_max_rate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
 		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL) stream.m_bitrate 	= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+		if (sqlite3_column_type(stmt, 5) != SQLITE_NULL) stream.m_channels 	= sqlite3_column_inttext(stmt, 5));
 		set_film_stream_HDR(film_id, stream);
 		result.push_back(std::move(stream));
 	}
@@ -407,6 +408,10 @@ void Database::SQLite3::insert_stream(const unsigned int& film_id, const Data::f
 		sqlite3_bind_text(stmt, 6, stream.m_bitrate->c_str(), -1, SQLITE_STATIC);
 	else
 		sqlite3_bind_null(stmt, 6);
+	if (stream.m_channels)
+		sqlite3_bind_int(stmt, 7, stream.m_channels);
+	else
+		sqlite3_bind_null(stmt, 7);
 	sqlite3_step(stmt); // No result
 	reset_stmt(stmt);
 
