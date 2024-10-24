@@ -18,7 +18,6 @@ std::list<std::string> Stream::Audio::FDKAAC::ffmpeg_parameters() const {
 
 	if (m_profile) {
 		result.push_back("-profile:" + ffmpeg_stream_pos());			result.push_back(*m_profile);
-		result.push_back("-cutoff:" + ffmpeg_stream_pos());				result.push_back("15000");
 	}
 
 	return result;
