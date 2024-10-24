@@ -275,7 +275,7 @@ void Frontend::Task::Interactive::ask_stream([[maybe_unused]]const FFprobe& prob
 		#endif
 	}
 	else if (strm_id.first == FFprobe::stream::AUDIO) {
-		// Nothing yet
+		stream.m_channels = probe.get_stream(strm_id.first)[strm_id.second].channels;
 	}
 	else if (strm_id.first == FFprobe::stream::SUBTITLE) {
 		// Nothing yet
