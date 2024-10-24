@@ -123,7 +123,8 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 						#ifdef ENABLE_OPUS
 						// For the moment we only care for channels when using opus
 						auto stream = Stream::Audio::Opus(it->m_id);
-						stream.SetChannels(it->m_channels);
+						if (it->m_channels)
+							stream.SetChannels(*(it->m_channels));
 						film.add_stream(stream);
 						#else
 						unsupported_codecs.push_back(it->m_codec);
