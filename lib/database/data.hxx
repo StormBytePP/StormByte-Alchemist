@@ -69,6 +69,7 @@ namespace StormByte::VideoConvert::Database::Data {
 			bool m_is_animation = false;
 			std::optional<std::string> m_max_rate, m_bitrate;
 			std::optional<hdr> m_hdr;
+			std::optional<int> m_channels;
 		};
 
 		std::optional<unsigned int> m_id; //No value means not in database or not queried
