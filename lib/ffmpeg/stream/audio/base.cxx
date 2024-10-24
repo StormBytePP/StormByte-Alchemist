@@ -9,3 +9,14 @@ Stream::Audio::Base::Base(unsigned short&& stream_id, std::string&& encoder, Dat
 void Stream::Audio::Base::SetChannels(const int& channels) {
   m_channels = channels;
 }
+
+std::list<std::string> Stream::Audio::Base::ffmpeg_parameters() const {
+  std::list<std::string> result = Stream::Base::ffmpeg_parameters();
+
+  if (m_channels) {
+		result.push_back("-ac:" + ffmpeg_stream_pos());
+		result.push_back(*m_channels);
+	}
+  
+  return params;
+}
