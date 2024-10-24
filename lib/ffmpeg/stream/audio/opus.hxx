@@ -15,6 +15,7 @@ namespace StormByte::VideoConvert::Stream::Audio {
 
 		private:
 			static const std::string OPUS_DEFAULT_ENCODER;
+			static const int OPUS_DEFAULT_BITRATE_PER_CHANNEL;
 
 			inline Opus* copy() const override { return new Opus(*this); }
 	};
