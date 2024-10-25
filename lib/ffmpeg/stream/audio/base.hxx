@@ -13,9 +13,11 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			Base& operator=(Base&& base) noexcept = default;
 			virtual ~Base() = default;
 
-			virtual void SetChannels(const int& channels);
+			void SetChannels(const int& channels);
+			virtual std::list<std::string> ffmpeg_parameters() const override;
 
 		protected:
 			std::optional<int> m_channels;
+			std::optional<int> m_bitrate_per_channel;
 	};
 }

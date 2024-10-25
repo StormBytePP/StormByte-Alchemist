@@ -13,12 +13,10 @@ namespace StormByte::VideoConvert::Stream::Audio {
 			Opus& operator=(Opus&& opus) noexcept = default;
 			~Opus() = default;
 
-			void SetChannels(const int&) override;
 			std::list<std::string> ffmpeg_parameters() const override;
 
 		private:
 			static const std::string OPUS_DEFAULT_ENCODER;
-			static const int OPUS_DEFAULT_BITRATE_PER_CHANNEL;
 
 			inline Opus* copy() const override { return new Opus(*this); }
 	};

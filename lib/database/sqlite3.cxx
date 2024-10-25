@@ -93,7 +93,10 @@ std::optional<FFmpeg> Database::SQLite3::get_film_for_process() {
 					}
 					case Data::film::stream::AUDIO_FDKAAC: {
 						#ifdef ENABLE_FDKAAC
-						film.add_stream(Stream::Audio::FDKAAC(it->m_id));
+						auto stream = Stream::Audio::FDKAAC(it->m_id);
+						if (it->m_channels)
+							stream.SetChannels(*(it->m_channels));
+						film.add_stream(stream);
 						#else
 						unsupported_codecs.push_back(it->m_codec);
 						#endif

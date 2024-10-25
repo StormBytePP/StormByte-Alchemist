@@ -6,11 +6,11 @@ const std::string Stream::Audio::FDKAAC::FDKAAC_DEFAULT_ENCODER	= "libfdk_aac";
 const std::string Stream::Audio::FDKAAC::FDKAAC_DEFAULT_PROFILE	= "aac_he";
 
 Stream::Audio::FDKAAC::FDKAAC(const unsigned short& stream_id):Stream::Audio::Base(stream_id, FDKAAC_DEFAULT_ENCODER, Database::Data::film::stream::AUDIO_FDKAAC), m_profile(FDKAAC_DEFAULT_PROFILE) {
-	m_bitrate = "512k";
+	m_bitrate_per_channel = 128;
 }
 
 Stream::Audio::FDKAAC::FDKAAC(unsigned short&& stream_id):Stream::Audio::Base(std::move(stream_id), FDKAAC_DEFAULT_ENCODER, Database::Data::film::stream::AUDIO_FDKAAC), m_profile(FDKAAC_DEFAULT_PROFILE) {
-	m_bitrate = "512k";
+	m_bitrate_per_channel = 128;
 }
 
 std::list<std::string> Stream::Audio::FDKAAC::ffmpeg_parameters() const {
