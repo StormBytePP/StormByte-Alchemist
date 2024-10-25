@@ -51,8 +51,7 @@ void Frontend::Application::signal_handler(int signal) {
 			assert(instance.m_task);
 			instance.m_task->ask_stop();
 			if (instance.m_worker) {
-				kill(*instance.m_worker, SIGINT);
-				kill(*instance.m_worker, SIGQUIT);
+				kill(*instance.m_worker, SIGKILL);
 			}
 			break;
 
