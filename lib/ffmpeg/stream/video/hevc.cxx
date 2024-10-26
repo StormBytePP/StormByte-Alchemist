@@ -74,7 +74,7 @@ std::string Stream::Video::HEVC::HDR::ffmpeg_parameters() const {
 
 /********************************* HEVC *************************************/
 const std::string Stream::Video::HEVC::DEFAULT_BUFFSIZE 	= "200M";
-const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
+const std::string Stream::Video::HEVC::X265_PARAMS 			= "level=5.1:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
 const Stream::Video::HEVC::HDR Stream::Video::HEVC::DEFAULT_HDR = HDR(HDR::DEFAULT_REDX, HDR::DEFAULT_REDY, HDR::DEFAULT_GREENX, HDR::DEFAULT_GREENY, HDR::DEFAULT_BLUEX, HDR::DEFAULT_BLUEY, HDR::DEFAULT_WHITEPOINTX, HDR::DEFAULT_WHITEPOINTY, HDR::DEFAULT_LUMINANCEMIN, HDR::DEFAULT_LUMINANCEMAX);
 
 Stream::Video::HEVC::HEVC(const unsigned short& stream_id):Stream::Video::Base(stream_id, "libx265", Database::Data::film::stream::VIDEO_HEVC) { }
@@ -94,7 +94,6 @@ std::list<std::string> Stream::Video::HEVC::ffmpeg_parameters() const {
 	result.push_back("-x265-params:"	+ ffmpeg_stream_id());		result.push_back(x265_params);
 	result.push_back("-pix_fmt:" 		+ ffmpeg_stream_id());		result.push_back("yuv420p10le");
 	result.push_back("-bufsize:" 		+ ffmpeg_stream_id());		result.push_back(DEFAULT_BUFFSIZE);
-	result.push_back("-crf:" 			+ ffmpeg_stream_id());		result.push_back("24");
 	if (m_is_animation) {
 		result.push_back("-tune:"		+ ffmpeg_stream_id());		result.push_back("animation");
 	}
