@@ -8,13 +8,15 @@ namespace Alchemist::Media::Metadata {
 	class DLL_PUBLIC Audio {
 		public:
 			Audio(const unsigned short&, const unsigned short&);
-			Audio(const Audio&)				= default;
-			Audio(Audio&&)					= default;
-			Audio& operator=(const Audio&)	= default;
-			Audio& operator=(Audio&&)		= default;
+			Audio(unsigned short&&, unsigned short&&) noexcept;
+			Audio(const Audio&)					= default;
+			Audio(Audio&&) noexcept				= default;
+			Audio& operator=(const Audio&)		= default;
+			Audio& operator=(Audio&&) noexcept	= default;
+			~Audio() noexcept					= default;
 
-			const unsigned short& GetChannels() const;
-			const unsigned short& GetSampleRate() const;
+			const unsigned short& GetChannels() const noexcept;
+			const unsigned short& GetSampleRate() const noexcept;
 			/**
 			 * This function will return something like "Mono (44100Hz)", etc
 			 */

@@ -2,12 +2,15 @@
 
 using namespace Alchemist::Media::Metadata;
 
-Audio::Audio(const unsigned short& sample_rate, const unsigned short& channels)
-:m_channels(channels), m_sample_rate(sample_rate) {}
+Audio::Audio(const unsigned short& sample_rate, const unsigned short& channels):
+m_channels(channels), m_sample_rate(sample_rate) {}
 
-const unsigned short& Audio::GetChannels() const { return m_channels; }
+Audio::Audio(unsigned short&& sample_rate, unsigned short&& channels) noexcept:
+m_channels(std::move(channels)), m_sample_rate(std::move(sample_rate)) {}
 
-const unsigned short& Audio::GetSampleRate() const { return m_sample_rate; }
+const unsigned short& Audio::GetChannels() const noexcept { return m_channels; }
+
+const unsigned short& Audio::GetSampleRate() const noexcept { return m_sample_rate; }
 
 std::string Audio::GetFriendlyName() const {
 	std::string channel_name;

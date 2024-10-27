@@ -10,17 +10,17 @@ namespace Alchemist::Media::Metadata {
 			Video(const Atomic::Resolution&, const Atomic::Color&, const unsigned int&);
 			Video(const Atomic::Resolution&, const Atomic::Color&, const unsigned int&, const Atomic::HDR10&);
 			Video(Atomic::Resolution&&, Atomic::Color&&, unsigned int&&);
-			Video(Atomic::Resolution&&, Atomic::Color&&, unsigned int&&, Atomic::HDR10&&);
-			Video(const Video&)				= default;
-			Video(Video&&)					= default;
-			Video& operator=(const Video&)	= default;
-			Video& operator=(Video&&)		= default;
-			~Video()						= default;
+			Video(Atomic::Resolution&&, Atomic::Color&&, unsigned int&&, Atomic::HDR10&&) noexcept;
+			Video(const Video&)					= default;
+			Video(Video&&) noexcept				= default;
+			Video& operator=(const Video&)		= default;
+			Video& operator=(Video&&) noexcept	= default;
+			~Video() noexcept					= default;
 
-			const Atomic::Resolution& 			GetResolution() const;
-			const Atomic::Color& 				GetColor() const;
-			const unsigned int&					GetFrames() const;
-			const std::optional<Atomic::HDR10>&	GetHDR10() const;
+			const Atomic::Resolution& 			GetResolution() const noexcept;
+			const Atomic::Color& 				GetColor() const noexcept;
+			const unsigned int&					GetFrames() const noexcept;
+			const std::optional<Atomic::HDR10>&	GetHDR10() const noexcept;
 
 		private:
 			Atomic::Resolution m_resolution;

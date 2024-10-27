@@ -8,14 +8,15 @@ namespace Alchemist::Media::Metadata::Atomic {
 	class DLL_PUBLIC Resolution {
 		public:
 			Resolution(const unsigned short&, const unsigned short&);
-			Resolution(const Resolution&)				= default;
-			Resolution(Resolution&&)					= default;
-			Resolution& operator=(const Resolution&)	= default;
-			Resolution& operator=(Resolution&&)			= default;
-			~Resolution()								= default;
+			Resolution(unsigned short&&, unsigned short&&) noexcept;
+			Resolution(const Resolution&)					= default;
+			Resolution(Resolution&&) noexcept				= default;
+			Resolution& operator=(const Resolution&)		= default;
+			Resolution& operator=(Resolution&&) noexcept	= default;
+			~Resolution() noexcept							= default;
 
-			const unsigned short& GetWidth() const;
-			const unsigned short& GetHeight() const;
+			const unsigned short& GetWidth() const noexcept;
+			const unsigned short& GetHeight() const noexcept;
 			std::string GetName() const;
 			/**
 			 * This function will return resolution name like "720p", "FullHD", "UHD", etc

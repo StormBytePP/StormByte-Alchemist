@@ -7,14 +7,14 @@ namespace Alchemist::Media {
 	class DLL_PUBLIC Subtitle: public Stream {
 		public:
 			Subtitle(std::shared_ptr<Codec>, const Metadata::Subtitle&);
-			Subtitle(std::shared_ptr<Codec>&&, Metadata::Subtitle&&);
-			Subtitle(const Subtitle&)				= default;
-			Subtitle(Subtitle&&)					= default;
-			Subtitle& operator=(const Subtitle&)	= default;
-			Subtitle& operator=(Subtitle&&)			= default;
-			~Subtitle()								= default;
+			Subtitle(std::shared_ptr<Codec>&&, Metadata::Subtitle&&) noexcept;
+			Subtitle(const Subtitle&)					= default;
+			Subtitle(Subtitle&&) noexcept				= default;
+			Subtitle& operator=(const Subtitle&)		= default;
+			Subtitle& operator=(Subtitle&&) noexcept	= default;
+			~Subtitle() noexcept						= default;
 
-			const Metadata::Subtitle& GetMetadata() const;
+			const Metadata::Subtitle& GetMetadata() const noexcept;
 
 		private:
 			Metadata::Subtitle m_metadata;

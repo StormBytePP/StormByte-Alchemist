@@ -38,19 +38,19 @@ namespace Alchemist::Media::Metadata::Atomic {
 				std::pair<unsigned short, unsigned int>&&,
 				std::pair<unsigned short, unsigned short>&&,
 				std::optional<std::string>&& hdr10plus = std::make_optional<std::string>());
-			HDR10(const HDR10&)				= default;
-			HDR10(HDR10&&)					= default;
-			HDR10& operator=(const HDR10&)	= default;
-			HDR10& operator=(HDR10&&)		= default;
-			~HDR10()						= default;
+			HDR10(const HDR10&)					= default;
+			HDR10(HDR10&&) noexcept				= default;
+			HDR10& operator=(const HDR10&)		= default;
+			HDR10& operator=(HDR10&&) noexcept	= default;
+			~HDR10() noexcept					= default;
 
-			const std::pair<unsigned short, unsigned short>& 				GetRedPoint() const;
-			const std::pair<unsigned short, unsigned short>& 				GetGreenPoint() const;
-			const std::pair<unsigned short, unsigned short>& 				GetBluePoint() const;
-			const std::pair<unsigned short, unsigned short>& 				GetWhitePoint() const;
-			const std::pair<unsigned short, unsigned int>& 					GetLuminance() const;
-			const std::optional<std::pair<unsigned short, unsigned short>>& GetLightLevel() const;
-			const std::optional<std::string>&								GetPlusFile() const;
+			const std::pair<unsigned short, unsigned short>& 				GetRedPoint() const noexcept;
+			const std::pair<unsigned short, unsigned short>& 				GetGreenPoint() const noexcept;
+			const std::pair<unsigned short, unsigned short>& 				GetBluePoint() const noexcept;
+			const std::pair<unsigned short, unsigned short>& 				GetWhitePoint() const noexcept;
+			const std::pair<unsigned short, unsigned int>& 					GetLuminance() const noexcept;
+			const std::optional<std::pair<unsigned short, unsigned short>>& GetLightLevel() const noexcept;
+			const std::optional<std::string>&								GetPlusFile() const noexcept;
 			std::list<std::string>											GetParameters() const;
 
 		private:
