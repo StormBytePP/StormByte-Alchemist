@@ -1,15 +1,17 @@
 #include "pipe.hxx"
 
+using namespace Alchemist::System;
+
 #ifdef LINUX
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
 #else
-SECURITY_ATTRIBUTES Alchemist::System::Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
+SECURITY_ATTRIBUTES Pipe::m_sAttr = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 #endif
 #include <vector>
 
-Alchemist::System::Pipe::Pipe() {
+Pipe::Pipe() {
 	#ifdef LINUX
 	signal(SIGPIPE, SIG_IGN);
 	pipe2(m_fd, O_CLOEXEC);
@@ -18,25 +20,25 @@ Alchemist::System::Pipe::Pipe() {
 	#endif
 }
 
-Alchemist::System::Pipe::~Pipe() noexcept {
+Pipe::~Pipe() noexcept {
 	close_read();
 	close_write();
 }
 
 #ifdef LINUX
-void Alchemist::System::Pipe::bind_read(int dest) noexcept {
+void Pipe::bind_read(int dest) noexcept {
 	bind(m_fd[0], dest);
 }
 
-void Alchemist::System::Pipe::bind_write(int dest) noexcept {
+void Pipe::bind_write(int dest) noexcept {
 	bind(m_fd[1], dest);
 }
 
-ssize_t Alchemist::System::Pipe::write(const std::string& data) {
+ssize_t Pipe::write(const std::string& data) {
 	return ::write(m_fd[1], data.c_str(), sizeof(char) * data.length());
 }
 
-bool Alchemist::System::Pipe::write_eof() const {
+bool Pipe::write_eof() const {
 	pollfd poll_data;
 	poll_data.fd = m_fd[1];
 	poll_data.events = POLLOUT;
@@ -45,11 +47,11 @@ bool Alchemist::System::Pipe::write_eof() const {
 	return !((poll_data.revents & POLLOUT) == POLLOUT) || ((poll_data.revents & POLLERR) == POLLERR);
 }
 
-ssize_t Alchemist::System::Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
+ssize_t Pipe::read(std::vector<char>& buffer, ssize_t bytes) const {
 	return ::read(m_fd[0], &buffer[0], bytes);
 }
 
-bool Alchemist::System::Pipe::read_eof() const {
+bool Pipe::read_eof() const {
 	pollfd poll_data;
 	poll_data.fd = m_fd[0];
 	poll_data.events = POLLIN;
@@ -58,29 +60,29 @@ bool Alchemist::System::Pipe::read_eof() const {
 	return ((poll_data.revents & POLLHUP) == POLLHUP) || ((poll_data.revents & POLLERR) == POLLERR);
 }
 #else
-void Alchemist::System::Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
+void Pipe::set_read_handle_information(DWORD mask, DWORD flags) {
 	set_handle_information(m_fd[0], mask, flags);
 }
 
-void Alchemist::System::Pipe::set_write_handle_information(DWORD mask, DWORD flags) {
+void Pipe::set_write_handle_information(DWORD mask, DWORD flags) {
 	set_handle_information(m_fd[1], mask, flags);
 }
 
-HANDLE Alchemist::System::Pipe::get_read_handle() const {
+HANDLE Pipe::get_read_handle() const {
 	return m_fd[0];
 }
 
-HANDLE Alchemist::System::Pipe::get_write_handle() const {
+HANDLE Pipe::get_write_handle() const {
 	return m_fd[1];
 }
 
-DWORD Alchemist::System::Pipe::write(const std::string& data) {
+DWORD Pipe::write(const std::string& data) {
 	DWORD dwWritten;
 	WriteFile(m_fd[1], data.c_str(), static_cast<DWORD>(sizeof(char) * data.length()), &dwWritten, NULL);
 	return dwWritten;
 }
 
-DWORD Alchemist::System::Pipe::read(std::vector<CHAR>& buffer, DWORD size) const {
+DWORD Pipe::read(std::vector<CHAR>& buffer, DWORD size) const {
 	DWORD dwRead;
 	ReadFile(m_fd[0], buffer.data(), size, &dwRead, NULL);
 	return dwRead;
@@ -90,7 +92,7 @@ DWORD Alchemist::System::Pipe::read(std::vector<CHAR>& buffer, DWORD size) const
 /** This function will write chunks until write HUPs taking ownership    **/
 /** of the provided data to write. Empty parameter is Undefined Behavior **/
 #ifdef LINUX
-bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
+bool Pipe::write_atomic(std::string&& data) {
 	std::string out = std::move(data);
 	bool can_continue;
 
@@ -103,7 +105,7 @@ bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
 	return out.empty();
 }
 #else
-bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
+bool Pipe::write_atomic(std::string&& data) {
 	std::string out = std::move(data);
 	bool can_continue;
 
@@ -118,20 +120,20 @@ bool Alchemist::System::Pipe::write_atomic(std::string&& data) {
 }
 #endif
 
-void Alchemist::System::Pipe::close_read() noexcept {
+void Pipe::close_read() noexcept {
 	close(m_fd[0]);
 }
 
-void Alchemist::System::Pipe::close_write() noexcept {
+void Pipe::close_write() noexcept {
 	close(m_fd[1]);
 }
 
-Alchemist::System::Pipe& Alchemist::System::Pipe::operator<<(const std::string& data) {
+Pipe& Pipe::operator<<(const std::string& data) {
 	write(data);
 	return *this;
 }
 
-std::string& Alchemist::System::Pipe::operator>>(std::string& out) const {
+std::string& Pipe::operator>>(std::string& out) const {
 	#ifdef LINUX
 	ssize_t bytes;
 	#else
@@ -147,20 +149,20 @@ std::string& Alchemist::System::Pipe::operator>>(std::string& out) const {
 }
 
 #ifdef LINUX
-void Alchemist::System::Pipe::bind(int& src, int dest) noexcept {
+void Pipe::bind(int& src, int dest) noexcept {
 	dup2(src, dest);
 	close(src);
 }
 
-void Alchemist::System::Pipe::close(int& fd) noexcept {
+void Pipe::close(int& fd) noexcept {
 	::close(fd);
 }
 #else
-void Alchemist::System::Pipe::close(HANDLE& fd) noexcept {
+void Pipe::close(HANDLE& fd) noexcept {
 	CloseHandle(fd);
 }
 
-void Alchemist::System::Pipe::set_handle_information(HANDLE handle, DWORD mask, DWORD flags) {
+void Pipe::set_handle_information(HANDLE handle, DWORD mask, DWORD flags) {
 	SetHandleInformation(handle, mask, flags);
 }
 #endif

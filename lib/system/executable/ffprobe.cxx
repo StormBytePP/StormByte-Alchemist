@@ -1,9 +1,11 @@
 #include "../../info.hxx"
 #include "ffprobe.hxx"
 
-Alchemist::System::FFprobe::FFprobe(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
+using namespace Alchemist::System;
 
-std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::all_info(const std::filesystem::path& file) {
+FFprobe::FFprobe(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
+
+std::unique_ptr<FFprobe> FFprobe::all_info(const std::filesystem::path& file) {
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
@@ -12,7 +14,7 @@ std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::all_info
 	);
 }
 
-std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::format_info(const std::filesystem::path& file) {
+std::unique_ptr<FFprobe> FFprobe::format_info(const std::filesystem::path& file) {
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
@@ -21,7 +23,7 @@ std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::format_i
 	);
 }
 
-std::unique_ptr<Alchemist::System::FFprobe> Alchemist::System::FFprobe::video_info(const std::filesystem::path& file) {
+std::unique_ptr<FFprobe> FFprobe::video_info(const std::filesystem::path& file) {
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),

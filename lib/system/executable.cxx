@@ -4,24 +4,26 @@
 #include <sys/wait.h>
 #endif
 
-Alchemist::System::Executable::Executable(const std::filesystem::path& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
+using namespace Alchemist::System;
+
+Executable::Executable(const std::filesystem::path& prog, const std::vector<std::string>& args):m_program(prog), m_arguments(args) {
 	run();
 }
 
-Alchemist::System::Executable::Executable(std::filesystem::path&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
+Executable::Executable(std::filesystem::path&& prog, std::vector<std::string>&& args):m_program(std::move(prog)), m_arguments(std::move(args)) {
 	run();
 }
 
-Alchemist::System::Executable::~Executable() noexcept {
+Executable::~Executable() noexcept {
 	wait();
 }
 
-Alchemist::System::Executable& Alchemist::System::Executable::operator>>(Executable& exe) {
+Executable& Executable::operator>>(Executable& exe) {
 	consume_and_forward(exe);
 	return exe;
 }
 
-std::string& Alchemist::System::Executable::operator>>(std::string& data) {
+std::string& Executable::operator>>(std::string& data) {
 	m_pstdout >> data;
 	return data;
 }
@@ -32,16 +34,16 @@ std::ostream& Alchemist::System::operator<<(std::ostream& os, const Executable& 
 	return os << data;
 }
 
-Alchemist::System::Executable& Alchemist::System::Executable::operator<<(const std::string& data) {
+Executable& Executable::operator<<(const std::string& data) {
 	m_pstdin << data;
 	return *this;
 }
 
-void Alchemist::System::Executable::operator<<(const System::_EoF&) {
+void Executable::operator<<(const System::_EoF&) {
 	m_pstdin.close_write();
 }
 
-void Alchemist::System::Executable::run() {
+void Executable::run() {
 	#ifdef LINUX
 	m_pid = fork();
 
@@ -119,12 +121,12 @@ void Alchemist::System::Executable::run() {
 	#endif
 }
 
-void Alchemist::System::Executable::send(const std::string& str) {
+void Executable::send(const std::string& str) {
 	m_pstdin << str;
 }
 
 #ifdef LINUX
-int Alchemist::System::Executable::wait() noexcept {
+int Executable::wait() noexcept {
 	int status;
 	if (m_forwarder) {
 		m_forwarder->join();
@@ -134,7 +136,7 @@ int Alchemist::System::Executable::wait() noexcept {
 	return WEXITSTATUS(status);
 }
 #else
-DWORD Alchemist::System::Executable::wait() noexcept {
+DWORD Executable::wait() noexcept {
 	DWORD status;
 	if (m_forwarder) {
 		m_forwarder->join();
@@ -150,7 +152,7 @@ DWORD Alchemist::System::Executable::wait() noexcept {
 #endif
 
 #ifdef LINUX
-void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
+void Executable::consume_and_forward(Executable& exec) {
 	m_forwarder = std::make_unique<std::thread>(
 		[&]{
 			std::vector<char> buffer;
@@ -184,7 +186,7 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 	);
 }
 #else
-void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
+void Executable::consume_and_forward(Executable& exec) {
 	m_forwarder = std::make_unique<std::thread>(
 		[&]{
 			DWORD status;
@@ -210,7 +212,7 @@ void Alchemist::System::Executable::consume_and_forward(Executable& exec) {
 #endif
 
 #ifdef WINDOWS
-std::wstring Alchemist::System::Executable::full_command() const {
+std::wstring Executable::full_command() const {
 	std::stringstream ss;
 
 	std::vector<std::string> full = { m_program.string() };
