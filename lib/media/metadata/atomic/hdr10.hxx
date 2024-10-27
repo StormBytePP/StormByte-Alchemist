@@ -2,6 +2,7 @@
 
 #include "visibility.h"
 
+#include <list>
 #include <optional>
 #include <string>
 #include <utility>
@@ -50,7 +51,7 @@ namespace Alchemist::Media::Metadata::Atomic {
 			const std::pair<unsigned short, unsigned int>& 					GetLuminance() const;
 			const std::optional<std::pair<unsigned short, unsigned short>>& GetLightLevel() const;
 			const std::optional<std::string>&								GetPlusFile() const;
-			std::string														GetString() const;
+			std::list<std::string>											GetParameters() const;
 
 		private:
 			std::pair<unsigned short, unsigned short> m_red, m_green, m_blue, m_white;

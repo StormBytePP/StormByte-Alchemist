@@ -18,9 +18,10 @@ const std::string& Color::GetTransfer() const { return m_transfer; }
 
 const std::string& Color::GetPixelFormat() const { return m_pix_fmt; }
 
-std::string Color::GetString() const {
-	return
-		"colorprim=" + m_prim + ":" +
-		"colormatrix=" + m_matrix + ":" +
-		"transfer=" + m_transfer;
+std::list<std::string> Color::GetParameters() const {
+	return {
+		{ "colorprim=" + m_prim },
+		{ "colormatrix=" + m_matrix },
+		{ "transfer=" + m_transfer }
+	};
 }

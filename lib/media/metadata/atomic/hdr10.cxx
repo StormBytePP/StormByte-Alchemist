@@ -60,21 +60,24 @@ const std::optional<std::pair<unsigned short, unsigned short>>& HDR10::GetLightL
 
 const std::optional<std::string>& HDR10::GetPlusFile() const { return m_hdr10plus; }
 
-std::string HDR10::GetString() const {
-	std::string result = "master-display=";
-	result += "G("	+ std::to_string(m_green.first) 		+ "," + std::to_string(m_green.second) 			+ ")";
-	result += "B("	+ std::to_string(m_blue.first)			+ "," + std::to_string(m_blue.second) 			+ ")";
-	result += "R("	+ std::to_string(m_red.first)			+ "," + std::to_string(m_red.second) 			+ ")";
-	result += "WP("	+ std::to_string(m_white.first)			+ "," + std::to_string(m_white.second) 			+ ")";
-	result += "L("	+ std::to_string(m_luminance.first)		+ "," + std::to_string(m_luminance.second) 		+ ")";
+std::list<std::string> HDR10::GetParameters() const {
+	std::list<std::string> parameters;
+	
+	parameters.push_back("master-display=" +
+		std::string("G(")	+ std::to_string(m_green.first) 		+ "," + std::to_string(m_green.second) 			+ ")" +
+		std::string("B(")	+ std::to_string(m_blue.first)			+ "," + std::to_string(m_blue.second) 			+ ")" +
+		std::string("R(")	+ std::to_string(m_red.first)			+ "," + std::to_string(m_red.second) 			+ ")" +
+		std::string("WP(")	+ std::to_string(m_white.first)			+ "," + std::to_string(m_white.second) 			+ ")" +
+		std::string("L(")	+ std::to_string(m_luminance.first)		+ "," + std::to_string(m_luminance.second) 		+ ")"
+	);
 
 	if (m_light_level)
-		result += ":max-cll=" + std::to_string(m_light_level->first) + "," + std::to_string(m_light_level->second);
+		parameters.push_back("max-cll=" + std::to_string(m_light_level->first) + "," + std::to_string(m_light_level->second));
 	
-	result += ":hdr10=1"; // Without this HDR will be ignored
+	parameters.push_back("hdr10=1"); // Without this HDR will be ignored
 
 	if (m_hdr10plus)
-		result += ":dhdr10-info=" + *m_hdr10plus;
+		parameters.push_back("dhdr10-info=" + *m_hdr10plus);
 
-	return result;
+	return parameters;
 }
