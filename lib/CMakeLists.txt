@@ -23,6 +23,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/video/resolution.cxx
 	${ALCHEMY_DIR}/media/video/stream.cxx
 
+	# System internals
 	${ALCHEMY_DIR}/system/executable/ffmpeg.cxx
 	${ALCHEMY_DIR}/system/executable/ffprobe.cxx
 	${ALCHEMY_DIR}/system/executable/hdr10plus.cxx
