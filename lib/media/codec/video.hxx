@@ -5,7 +5,7 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC VideoCodec: public Codec {
 		public:
-			VideoCodec(std::string&&, std::string&&) noexcept;
+			VideoCodec(std::string&&, std::string&&, std::string&&) noexcept;
 			VideoCodec(const VideoCodec&)				= default;
 			VideoCodec(VideoCodec&&) noexcept			= default;
 			VideoCodec& operator=(const VideoCodec&)	= default;

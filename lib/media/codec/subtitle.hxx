@@ -5,7 +5,7 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC SubtitleCodec: public Codec {
 		public:
-			SubtitleCodec(std::string&&, std::string&&) noexcept;
+			SubtitleCodec(std::string&&, std::string&&, std::string&&) noexcept;
 			SubtitleCodec(const SubtitleCodec&)				= default;
 			SubtitleCodec(SubtitleCodec&&) noexcept			= default;
 			SubtitleCodec& operator=(const SubtitleCodec&)	= default;
