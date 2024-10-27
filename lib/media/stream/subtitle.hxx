@@ -1,18 +1,19 @@
 #pragma once
 
+#include "../codec/subtitle.hxx"
 #include "../metadata/subtitle.hxx"
 #include "../stream.hxx"
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Subtitle: public Stream {
+	class DLL_PUBLIC SubtitleStream: public Stream {
 		public:
-			Subtitle(std::unique_ptr<Codec>&&, const Metadata::Subtitle&);
-			Subtitle(std::unique_ptr<Codec>&&, Metadata::Subtitle&&) noexcept;
-			Subtitle(const Subtitle&)					= delete;
-			Subtitle(Subtitle&&) noexcept				= default;
-			Subtitle& operator=(const Subtitle&)		= delete;
-			Subtitle& operator=(Subtitle&&) noexcept	= default;
-			~Subtitle() noexcept						= default;
+			SubtitleStream(std::unique_ptr<SubtitleCodec>&&, const Metadata::Subtitle&);
+			SubtitleStream(std::unique_ptr<SubtitleCodec>&&, Metadata::Subtitle&&) noexcept;
+			SubtitleStream(const SubtitleStream&)					= delete;
+			SubtitleStream(SubtitleStream&&) noexcept				= default;
+			SubtitleStream& operator=(const SubtitleStream&)		= delete;
+			SubtitleStream& operator=(SubtitleStream&&) noexcept	= default;
+			~SubtitleStream() noexcept								= default;
 
 			const Metadata::Subtitle& GetMetadata() const noexcept;
 

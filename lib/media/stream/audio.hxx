@@ -1,18 +1,19 @@
 #pragma once
 
+#include "../codec/audio.hxx"
 #include "../metadata/audio.hxx"
 #include "../stream.hxx"
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Audio: public Stream {
+	class DLL_PUBLIC AudioStream: public Stream {
 		public:
-			Audio(std::unique_ptr<Codec>&&, const Metadata::Audio&);
-			Audio(std::unique_ptr<Codec>&&, Metadata::Audio&&) noexcept;
-			Audio(const Audio&)					= delete;
-			Audio(Audio&&) noexcept				= default;
-			Audio& operator=(const Audio&)		= delete;
-			Audio& operator=(Audio&&) noexcept	= default;
-			~Audio() noexcept					= default;
+			AudioStream(std::unique_ptr<AudioCodec>&&, const Metadata::Audio&);
+			AudioStream(std::unique_ptr<AudioCodec>&&, Metadata::Audio&&) noexcept;
+			AudioStream(const AudioStream&)					= delete;
+			AudioStream(AudioStream&&) noexcept				= default;
+			AudioStream& operator=(const AudioStream&)		= delete;
+			AudioStream& operator=(AudioStream&&) noexcept	= default;
+			~AudioStream() noexcept							= default;
 
 			const Metadata::Audio& GetMetadata() const noexcept;
 

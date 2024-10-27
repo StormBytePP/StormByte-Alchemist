@@ -1,18 +1,19 @@
 #pragma once
 
+#include "../codec/video.hxx"
 #include "../metadata/video.hxx"
 #include "../stream.hxx"
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Video: public Stream {
+	class DLL_PUBLIC VideoStream: public Stream {
 		public:
-			Video(std::unique_ptr<Codec>&&, const Metadata::Video&);
-			Video(std::unique_ptr<Codec>&&, Metadata::Video&&) noexcept;
-			Video(const Video&)					= delete;
-			Video(Video&&) noexcept				= default;
-			Video& operator=(const Video&)		= delete;
-			Video& operator=(Video&&) noexcept	= default;
-			~Video() noexcept					= default;
+			VideoStream(std::unique_ptr<VideoCodec>&&, const Metadata::Video&);
+			VideoStream(std::unique_ptr<VideoCodec>&&, Metadata::Video&&) noexcept;
+			VideoStream(const VideoStream&)					= delete;
+			VideoStream(VideoStream&&) noexcept				= default;
+			VideoStream& operator=(const VideoStream&)		= delete;
+			VideoStream& operator=(VideoStream&&) noexcept	= default;
+			~VideoStream() noexcept							= default;
 
 			const Metadata::Video& GetMetadata() const noexcept;
 

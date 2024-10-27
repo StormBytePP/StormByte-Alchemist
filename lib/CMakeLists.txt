@@ -6,6 +6,9 @@ set(ALCHEMY_SRCs
 
 	# Media handling
 	${ALCHEMY_DIR}/media/codec.cxx
+	${ALCHEMY_DIR}/media/codec/audio.cxx
+	${ALCHEMY_DIR}/media/codec/subtitle.cxx
+	${ALCHEMY_DIR}/media/codec/video.cxx
 	${ALCHEMY_DIR}/media/metadata/audio.cxx
 	${ALCHEMY_DIR}/media/metadata/subtitle.cxx
 	${ALCHEMY_DIR}/media/metadata/video.cxx

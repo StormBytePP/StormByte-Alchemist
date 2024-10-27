@@ -2,8 +2,8 @@
 
 using namespace Alchemist::Media;
 
-Audio::Audio(std::unique_ptr<Codec>&& codec, const Metadata::Audio& metadata):Stream(std::move(codec)), m_metadata(metadata) {}
+AudioStream::AudioStream(std::unique_ptr<AudioCodec>&& codec, const Metadata::Audio& metadata):Stream(std::move(codec)), m_metadata(metadata) {}
 
-Audio::Audio(std::unique_ptr<Codec>&& codec, Metadata::Audio&& metadata) noexcept:Stream(std::move(codec)), m_metadata(std::move(metadata)) {}
+AudioStream::AudioStream(std::unique_ptr<AudioCodec>&& codec, Metadata::Audio&& metadata) noexcept:Stream(std::move(codec)), m_metadata(std::move(metadata)) {}
 
-const Metadata::Audio& Audio::GetMetadata() const noexcept { return m_metadata; }
+const Metadata::Audio& AudioStream::GetMetadata() const noexcept { return m_metadata; }

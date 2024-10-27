@@ -2,10 +2,10 @@
 
 using namespace Alchemist::Media;
 
-Subtitle::Subtitle(std::unique_ptr<Codec>&& codec, const Metadata::Subtitle& metadata):
+SubtitleStream::SubtitleStream(std::unique_ptr<SubtitleCodec>&& codec, const Metadata::Subtitle& metadata):
 Stream(std::move(codec)), m_metadata(metadata) {}
 
-Subtitle::Subtitle(std::unique_ptr<Codec>&& codec, Metadata::Subtitle&& metadata) noexcept:
+SubtitleStream::SubtitleStream(std::unique_ptr<SubtitleCodec>&& codec, Metadata::Subtitle&& metadata) noexcept:
 Stream(std::move(codec)), m_metadata(std::move(metadata)) {}
 
-const Metadata::Subtitle& Subtitle::GetMetadata() const noexcept { return m_metadata; }
+const Metadata::Subtitle& SubtitleStream::GetMetadata() const noexcept { return m_metadata; }
