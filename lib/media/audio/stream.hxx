@@ -9,15 +9,11 @@ namespace Alchemist::Media::Audio {
 		public:
 			Stream(std::shared_ptr<Codec>, const Metadata&);
 			Stream(std::shared_ptr<Codec>, Metadata&&) noexcept;
+			Stream(std::shared_ptr<Codec>, std::shared_ptr<Metadata>) noexcept;
 			Stream(const Stream&)					= default;
 			Stream(Stream&&) noexcept				= default;
 			Stream& operator=(const Stream&)		= default;
 			Stream& operator=(Stream&&) noexcept	= default;
 			~Stream() noexcept						= default;
-
-			const Metadata& GetMetadata() const noexcept;
-
-		private:
-			Metadata m_metadata;
 	};
 }

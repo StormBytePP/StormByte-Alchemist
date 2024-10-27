@@ -3,16 +3,16 @@
 using namespace Alchemist::Media::Audio;
 
 Metadata::Metadata(const unsigned short& sample_rate, const unsigned short& channels):
-m_channels(channels), m_sample_rate(sample_rate) {}
+Media::Metadata(), m_channels(channels), m_sample_rate(sample_rate) {}
 
 Metadata::Metadata(unsigned short&& sample_rate, unsigned short&& channels) noexcept:
-m_channels(std::move(channels)), m_sample_rate(std::move(sample_rate)) {}
+Media::Metadata(), m_channels(std::move(channels)), m_sample_rate(std::move(sample_rate)) {}
 
 const unsigned short& Metadata::GetChannels() const noexcept { return m_channels; }
 
 const unsigned short& Metadata::GetSampleRate() const noexcept { return m_sample_rate; }
 
-std::string Metadata::GetFriendlyName() const {
+std::string Metadata::GetString() const {
 	std::string channel_name;
 
 	if (m_channels == 1)

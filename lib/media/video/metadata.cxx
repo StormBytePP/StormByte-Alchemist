@@ -21,3 +21,15 @@ const Color& Metadata::GetColor() const noexcept { return m_color; }
 const unsigned int& Metadata::GetFrames() const noexcept { return m_frames; }
 
 const std::optional<HDR10>&	Metadata::GetHDR10() const noexcept { return m_hdr10; }
+
+std::string Metadata::GetString() const {
+	std::string str = m_resolution.GetFriendlyName();
+
+	if (m_hdr10) {
+		str += "(HDR10";
+		if (m_hdr10->GetPlusFile()) str += "+";
+		str += ")";
+	}
+
+	return str;
+}

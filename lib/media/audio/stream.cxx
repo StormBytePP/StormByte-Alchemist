@@ -3,9 +3,11 @@
 using namespace Alchemist::Media::Audio;
 
 Stream::Stream(std::shared_ptr<Codec> codec, const Metadata& metadata):
-Media::Stream(codec), m_metadata(metadata) {}
+Media::Stream(codec, std::make_shared<Metadata>(metadata)) {}
 
 Stream::Stream(std::shared_ptr<Codec> codec, Metadata&& metadata) noexcept:
-Media::Stream(codec), m_metadata(std::move(metadata)) {}
+Media::Stream(codec, std::make_shared<Metadata>(std::move(metadata))) {}
 
-const Metadata& Stream::GetMetadata() const noexcept { return m_metadata; }
+Stream::Stream(std::shared_ptr<Codec> codec, std::shared_ptr<Metadata> metadata) noexcept:
+Media::Stream(codec, metadata) {}
+

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "visibility.h"
+#include "../metadata.hxx"
 
 #include <string>
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC Metadata {
+	class DLL_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const std::string&);
 			Metadata(std::string&&) noexcept;
@@ -15,7 +15,7 @@ namespace Alchemist::Media::Subtitle {
 			Metadata& operator=(Metadata&&) noexcept	= default;
 			~Metadata() noexcept						= default;
 
-			const std::string& GetEncoding() const noexcept;
+			std::string GetString() const final;
 
 		private:
 			std::string m_encoding;

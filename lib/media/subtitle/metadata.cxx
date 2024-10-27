@@ -6,4 +6,4 @@ Metadata::Metadata(const std::string& encoding):m_encoding(encoding) {}
 
 Metadata::Metadata(std::string&& encoding) noexcept:m_encoding(std::move(encoding)) {}
 
-const std::string& Metadata::GetEncoding() const noexcept { return m_encoding; }
+std::string Metadata::GetString() const { return m_encoding; }

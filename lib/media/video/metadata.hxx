@@ -3,9 +3,10 @@
 #include "color.hxx"
 #include "hdr10.hxx"
 #include "resolution.hxx"
+#include "../metadata.hxx"
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC Metadata {
+	class DLL_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const Resolution&, const Color&, const unsigned int&);
 			Metadata(const Resolution&, const Color&, const unsigned int&, const HDR10&);
@@ -21,6 +22,7 @@ namespace Alchemist::Media::Video {
 			const Color& 				GetColor() const noexcept;
 			const unsigned int&			GetFrames() const noexcept;
 			const std::optional<HDR10>&	GetHDR10() const noexcept;
+			std::string					GetString() const override;
 
 		private:
 			Resolution m_resolution;
