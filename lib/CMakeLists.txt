@@ -1,7 +1,21 @@
 set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
 
 set(ALCHEMY_SRCs
+	# Library informations
 	${ALCHEMY_DIR}/info.cxx
+
+	# Media handling
+	${ALCHEMY_DIR}/media/codec.cxx
+	${ALCHEMY_DIR}/media/metadata/audio.cxx
+	${ALCHEMY_DIR}/media/metadata/subtitle.cxx
+	${ALCHEMY_DIR}/media/metadata/video.cxx
+	${ALCHEMY_DIR}/media/metadata/atomic/color.cxx
+	${ALCHEMY_DIR}/media/metadata/atomic/hdr10.cxx
+	${ALCHEMY_DIR}/media/metadata/atomic/resolution.cxx
+	${ALCHEMY_DIR}/media/stream.cxx
+	${ALCHEMY_DIR}/media/stream/audio.cxx
+	${ALCHEMY_DIR}/media/stream/subtitle.cxx
+	${ALCHEMY_DIR}/media/stream/video.cxx
 	
 	${ALCHEMY_DIR}/system/executable/ffmpeg.cxx
 	${ALCHEMY_DIR}/system/executable/ffprobe.cxx
@@ -27,7 +41,7 @@ include(OptionalFeatures)
 include(GetVersionFromGitTag)
 file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/definitions.h CONTENT "#pragma once
 
-#define PROJECT_URI			\"${PROJECT_HOMEPAGE_URL}\"
+#define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
 #define LIBRARY_NAME			\"${PROJECT_NAME}\"
 #define LIBRARY_AUTHOR			\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"
 #define LIBRARY_VERSION			\"${${PROJECT_NAME}_VERSION_STRING}\"

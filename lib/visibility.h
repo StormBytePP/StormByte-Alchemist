@@ -1,3 +1,5 @@
+#pragma once
+
 // Since only Windows and Linux OS is supported...
 #if defined _WIN32 || defined __CYGWIN__
 	#define WINDOWS
