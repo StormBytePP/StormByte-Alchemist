@@ -1,25 +1,21 @@
-# Decoder/Encoder support
-option(ENABLE_DAV1D	 		"Enable DAV1D AV1 decoder"					ON)
-option(ENABLE_LIBAOM 		"Enable AV1 libAOM"							ON)
-option(ENABLE_CUDA 			"Enable CUDA decoding" 						ON)
-option(ENABLE_OPENH264 		"Enable OpenH264" 							ON)
+# Codec support
 option(ENABLE_LIBVPX 		"Enable LibVPX" 							ON)
 option(ENABLE_FDK 			"Enable FDK" 								ON)
 option(ENABLE_LIBOPUS 		"Enable LibOpus" 							ON)
 option(ENABLE_LIBVORBIS 	"Enable LibVorbis" 							ON)
-option(ENABLE_RAV1E 		"Enable RAV1E" 								ON)
-option(ENABLE_SVT_AV1 		"Enable SVT AV1" 							ON)
-option(ENABLE_NVENC 		"Enable NVEnc" 								ON)
 option(ENABLE_X264 			"Enable x264" 								ON)
 option(ENABLE_X265 			"Enable x265" 								ON)
 option(ENABLE_XVID 			"Enable XVID" 								ON)
-option(ENABLE_TWOLAME 		"Enable TwoLame MP2 encoder" 				ON)
 option(ENABLE_LAME 			"Enable Lame MP3 encoder" 					ON)
-# Image support
-option(ENABLE_WEBP 			"Enable WebP" 								ON)
-option(ENABLE_IMAGE_PROCESS	"Enable image processing (experimental)"	OFF)
 
-# Decoder/Encoder configuration
+# Codec configuration
+if (ENABLE_FDK)
+	message(STATUS "Enabled Fraunhoffer AAC")
+	target_compile_definitions(Alchemy PRIVATE ENABLE_FDK)
+	target_sources(Alchemy PRIVATE ${ALCHEMY_DIR}/media/audio/codec/aac.cxx)
+else()
+	message(STATUS "Disabled x264")
+endif()
 if (ENABLE_X264)
 	message(STATUS "Enabled x264")
 	target_compile_definitions(Alchemy PRIVATE ENABLE_X264)

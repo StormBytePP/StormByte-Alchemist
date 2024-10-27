@@ -5,21 +5,24 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/info.cxx
 
 	# Media handling
+	${ALCHEMY_DIR}/media/audio/codec.cxx
+	${ALCHEMY_DIR}/media/audio/codec/copy.cxx
+	${ALCHEMY_DIR}/media/audio/metadata.cxx
+	${ALCHEMY_DIR}/media/audio/stream.cxx
 	${ALCHEMY_DIR}/media/codec.cxx
-	${ALCHEMY_DIR}/media/codec/audio.cxx
-	${ALCHEMY_DIR}/media/codec/subtitle.cxx
-	${ALCHEMY_DIR}/media/codec/video.cxx
-	${ALCHEMY_DIR}/media/metadata/audio.cxx
-	${ALCHEMY_DIR}/media/metadata/subtitle.cxx
-	${ALCHEMY_DIR}/media/metadata/video.cxx
-	${ALCHEMY_DIR}/media/metadata/atomic/color.cxx
-	${ALCHEMY_DIR}/media/metadata/atomic/hdr10.cxx
-	${ALCHEMY_DIR}/media/metadata/atomic/resolution.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
-	${ALCHEMY_DIR}/media/stream/audio.cxx
-	${ALCHEMY_DIR}/media/stream/subtitle.cxx
-	${ALCHEMY_DIR}/media/stream/video.cxx
-	
+	${ALCHEMY_DIR}/media/subtitle/codec.cxx
+	${ALCHEMY_DIR}/media/subtitle/codec/copy.cxx
+	${ALCHEMY_DIR}/media/subtitle/metadata.cxx
+	${ALCHEMY_DIR}/media/subtitle/stream.cxx
+	${ALCHEMY_DIR}/media/video/codec.cxx
+	${ALCHEMY_DIR}/media/video/codec/copy.cxx
+	${ALCHEMY_DIR}/media/video/color.cxx
+	${ALCHEMY_DIR}/media/video/hdr10.cxx
+	${ALCHEMY_DIR}/media/video/metadata.cxx
+	${ALCHEMY_DIR}/media/video/resolution.cxx
+	${ALCHEMY_DIR}/media/video/stream.cxx
+
 	${ALCHEMY_DIR}/system/executable/ffmpeg.cxx
 	${ALCHEMY_DIR}/system/executable/ffprobe.cxx
 	${ALCHEMY_DIR}/system/executable/hdr10plus.cxx
