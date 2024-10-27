@@ -7,11 +7,11 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC AudioStream: public Stream {
 		public:
-			AudioStream(std::unique_ptr<AudioCodec>&&, const Metadata::Audio&);
-			AudioStream(std::unique_ptr<AudioCodec>&&, Metadata::Audio&&) noexcept;
-			AudioStream(const AudioStream&)					= delete;
+			AudioStream(std::shared_ptr<AudioCodec>, const Metadata::Audio&);
+			AudioStream(std::shared_ptr<AudioCodec>, Metadata::Audio&&) noexcept;
+			AudioStream(const AudioStream&)					= default;
 			AudioStream(AudioStream&&) noexcept				= default;
-			AudioStream& operator=(const AudioStream&)		= delete;
+			AudioStream& operator=(const AudioStream&)		= default;
 			AudioStream& operator=(AudioStream&&) noexcept	= default;
 			~AudioStream() noexcept							= default;
 

@@ -12,6 +12,6 @@ namespace Alchemist::Media {
 			SubtitleCodec& operator=(SubtitleCodec&&)			= default;
 			virtual ~SubtitleCodec() noexcept				= 0;
 
-			static std::list<std::shared_ptr<Codec>> All();
+			static const std::list<std::shared_ptr<Codec>> All;
 	};
 }

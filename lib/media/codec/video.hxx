@@ -12,6 +12,6 @@ namespace Alchemist::Media {
 			VideoCodec& operator=(VideoCodec&&)			= default;
 			virtual ~VideoCodec() noexcept				= 0;
 
-			static std::list<std::shared_ptr<Codec>> All();
+			static const std::list<std::shared_ptr<Codec>> All;
 	};
 }

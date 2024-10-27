@@ -7,8 +7,8 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC SubtitleStream: public Stream {
 		public:
-			SubtitleStream(std::unique_ptr<SubtitleCodec>&&, const Metadata::Subtitle&);
-			SubtitleStream(std::unique_ptr<SubtitleCodec>&&, Metadata::Subtitle&&) noexcept;
+			SubtitleStream(std::shared_ptr<SubtitleCodec>, const Metadata::Subtitle&);
+			SubtitleStream(std::shared_ptr<SubtitleCodec>, Metadata::Subtitle&&) noexcept;
 			SubtitleStream(const SubtitleStream&)					= delete;
 			SubtitleStream(SubtitleStream&&) noexcept				= default;
 			SubtitleStream& operator=(const SubtitleStream&)		= delete;

@@ -7,8 +7,8 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC VideoStream: public Stream {
 		public:
-			VideoStream(std::unique_ptr<VideoCodec>&&, const Metadata::Video&);
-			VideoStream(std::unique_ptr<VideoCodec>&&, Metadata::Video&&) noexcept;
+			VideoStream(std::shared_ptr<VideoCodec>, const Metadata::Video&);
+			VideoStream(std::shared_ptr<VideoCodec>, Metadata::Video&&) noexcept;
 			VideoStream(const VideoStream&)					= delete;
 			VideoStream(VideoStream&&) noexcept				= default;
 			VideoStream& operator=(const VideoStream&)		= delete;

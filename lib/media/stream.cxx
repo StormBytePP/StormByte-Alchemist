@@ -2,7 +2,7 @@
 
 using namespace Alchemist::Media;
 
-Stream::Stream(std::unique_ptr<Codec>&& codec):m_default(false), m_forced(false), m_codec(std::move(codec)) {}
+Stream::Stream(std::shared_ptr<Codec> codec):m_default(false), m_forced(false), m_codec(codec) {}
 
 Stream::~Stream() noexcept {}
 
@@ -22,4 +22,4 @@ bool Stream::IsForced() const noexcept { return m_forced; }
 
 void Stream::SetForcedStatus(bool forced) { m_forced = forced; }
 
-const std::unique_ptr<Codec>& Stream::GetCodec() const noexcept { return m_codec; }
+const std::shared_ptr<Codec>& Stream::GetCodec() const noexcept { return m_codec; }

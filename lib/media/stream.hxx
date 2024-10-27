@@ -8,10 +8,10 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Stream {
 		public:
-			Stream(std::unique_ptr<Media::Codec>&&);
-			Stream(const Stream&)					= delete;
+			Stream(std::shared_ptr<Media::Codec>);
+			Stream(const Stream&)					= default;
 			Stream(Stream&&) noexcept				= default;
-			Stream& operator=(const Stream&)		= delete;
+			Stream& operator=(const Stream&)		= default;
 			Stream& operator=(Stream&&) noexcept	= default;
 			virtual ~Stream() noexcept				= 0;
 
@@ -23,11 +23,11 @@ namespace Alchemist::Media {
 			void SetDefaultStatus(bool);
 			bool IsForced() const noexcept;
 			void SetForcedStatus(bool);
-			const std::unique_ptr<Codec>& GetCodec() const noexcept;
+			const std::shared_ptr<Codec>& GetCodec() const noexcept;
 			
 		protected:
 			std::optional<std::string> m_language, m_title;
 			bool m_default, m_forced;
-			std::unique_ptr<Codec> m_codec;
+			std::shared_ptr<Codec> m_codec;
 	};
 }
