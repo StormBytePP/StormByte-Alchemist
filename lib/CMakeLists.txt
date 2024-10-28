@@ -8,6 +8,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/audio/codec.cxx
 	${ALCHEMY_DIR}/media/audio/codec/aac.cxx
 	${ALCHEMY_DIR}/media/audio/codec/ac3.cxx
+	${ALCHEMY_DIR}/media/audio/codec/atmos.cxx
 	${ALCHEMY_DIR}/media/audio/codec/copy.cxx
 	${ALCHEMY_DIR}/media/audio/codec/dts.cxx
 	${ALCHEMY_DIR}/media/audio/codec/fdk_aac.cxx

@@ -1,5 +1,6 @@
 #include "codec/aac.hxx"
 #include "codec/ac3.hxx"
+#include "codec/atmos.hxx"
 #include "codec/copy.hxx"
 #include "codec/dts.hxx"
 #include "codec/fdk_aac.hxx"
@@ -20,5 +21,6 @@ const std::map<std::string, std::shared_ptr<Codec>> Codec::All = {
 	{ "dts",		std::make_shared<DTS>()			},
 	{ "fdk_aac",	std::make_shared<FDK_AAC>()		},
 	{ "mp3",		std::make_shared<MP3>()			},
+	{ "truehd",		std::make_shared<Atmos>()		},
 	{ "wav",		std::make_shared<WAV>()			}
 };
