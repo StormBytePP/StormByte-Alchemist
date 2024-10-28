@@ -84,7 +84,10 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo([[maybe_unused]]const Json::Value
 
 std::shared_ptr<Stream> InFile::ParseSubtitleInfo([[maybe_unused]]const Json::Value& json_part) {
 	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>(json_part["index"].asUInt());
-	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-	}
+	std::shared_ptr<Codec> codec;
+	for (auto it = json_part.begin(); it != json_part.end(); it++)
+		if (it.key() == "codec_name")
+			codec = Subtitle::Codec::All.at(it->asString());
+	stream->SetCodec(codec);
 	return stream;
 }
