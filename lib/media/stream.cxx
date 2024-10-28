@@ -2,9 +2,6 @@
 
 using namespace Alchemist::Media;
 
-Stream::Stream(std::shared_ptr<Codec> codec, std::shared_ptr<Metadata> metadata):m_default(false), m_forced(false),
-m_codec(codec), m_metadata(metadata) {}
-
 Stream::~Stream() noexcept {}
 
 const std::optional<std::string>& Stream::GetLanguage() const noexcept { return m_language; }
@@ -24,5 +21,7 @@ bool Stream::IsForced() const noexcept { return m_forced; }
 void Stream::SetForcedStatus(bool forced) { m_forced = forced; }
 
 const std::shared_ptr<Codec>& Stream::GetCodec() const noexcept { return m_codec; }
+
+void Stream::SetCodec(std::shared_ptr<Codec> codec) noexcept { m_codec = codec; }
 
 const std::shared_ptr<Metadata>& Stream::GetMetadata() const noexcept { return m_metadata; }

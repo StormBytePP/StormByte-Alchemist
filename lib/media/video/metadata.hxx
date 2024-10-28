@@ -8,26 +8,31 @@
 namespace Alchemist::Media::Video {
 	class DLL_PUBLIC Metadata: public Media::Metadata {
 		public:
-			Metadata(const Resolution&, const Color&, const unsigned int&);
-			Metadata(const Resolution&, const Color&, const unsigned int&, const HDR10&);
-			Metadata(Resolution&&, Color&&, unsigned int&&);
-			Metadata(Resolution&&, Color&&, unsigned int&&, HDR10&&) noexcept;
+			Metadata() noexcept							= default;
 			Metadata(const Metadata&)					= default;
 			Metadata(Metadata&&) noexcept				= default;
 			Metadata& operator=(const Metadata&)		= default;
 			Metadata& operator=(Metadata&&) noexcept	= default;
 			~Metadata() noexcept						= default;
 
-			const Resolution& 			GetResolution() const noexcept;
-			const Color& 				GetColor() const noexcept;
-			const unsigned int&			GetFrames() const noexcept;
-			const std::optional<HDR10>&	GetHDR10() const noexcept;
-			std::string					GetString() const override;
+			const std::optional<Resolution>& 	GetResolution() const noexcept;
+			void								SetResolution(const Resolution&);
+			void								SetResolution(Resolution&&) noexcept;
+			const std::optional<Color>&			GetColor() const noexcept;
+			void								SetColor(const Color&);
+			void								SetColor(Color&&) noexcept;
+			const std::optional<unsigned int>&	GetFrames() const noexcept;
+			void								SetFrames(const unsigned int&);
+			void								SetFrames(unsigned int&&) noexcept;
+			const std::optional<HDR10>&			GetHDR10() const noexcept;
+			void								SetHDR10(const HDR10&);
+			void								SetHDR10(HDR10&&) noexcept;
+			std::string							GetString() const override;
 
 		private:
-			Resolution m_resolution;
-			Color m_color;
-			unsigned int m_frames;
+			std::optional<Resolution> m_resolution;
+			std::optional<Color> m_color;
+			std::optional<unsigned int> m_frames;
 			std::optional<HDR10> m_hdr10;
 	};
 }

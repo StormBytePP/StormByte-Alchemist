@@ -14,6 +14,6 @@ namespace Alchemist::Media {
 			Metadata& operator=(Metadata&&) noexcept	= default;
 			virtual ~Metadata() noexcept				= default;
 
-			virtual std::string GetString() const			= 0;
+			virtual std::string GetString() const		= 0;
 	};
 }
