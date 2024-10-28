@@ -36,9 +36,9 @@ void InFile::InitStreams() {
 			if (stream_type == "audio")
 				stream = ParseAudioInfo(stream_json[i]);
 			else if (stream_type == "video")
-				stream = ParseAudioInfo(stream_json[i]);
+				stream = ParseVideoInfo(stream_json[i]);
 			else if (stream_type == "subtitle")
-				stream = ParseAudioInfo(stream_json[i]);
+				stream = ParseSubtitleInfo(stream_json[i]);
 
 			// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
 			if (stream_json[i].isMember("disposition")) {
@@ -61,14 +61,17 @@ void InFile::InitStreams() {
 std::shared_ptr<Stream> InFile::ParseAudioInfo(const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
+	std::cout << "Parsing audio info..." << std::endl;
 	unsigned short channels, sample_rate;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-		if (it.key() == "codec_name")
-			codec = Video::Codec::All.at(it->asString());
+		if (it.key() == "codec_name") {
+			std::cout << "Looking for codec: '" << it->asString() << "'" << std::endl;
+			codec = Audio::Codec::All.at(it->asString());
+		}
 		else if (it.key() == "channels")
-			channels = it->asUInt();
+			channels = std::stoul(it->asString()); //JsonCPP bug converting to uint
 		else if (it.key() == "sample_rate")
-			sample_rate = it->asUInt();
+			sample_rate = std::stoul(it->asString()); //JsonCPP bug converting to uint
 	}
 	stream->SetCodec(codec);
 	stream->SetMetadata({sample_rate, channels});
@@ -80,11 +83,13 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 	std::shared_ptr<Codec> codec;
 	Video::Metadata metadata;
 	Video::Color color;
-	std::string color_prim, color_matrix, color_trans, color_pixfmt;
+	std::cout << "Parsing video info..." << std::endl;
 	unsigned short width, height;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-		if (it.key() == "codec_name")
+		if (it.key() == "codec_name") {
+			std::cout << "Looking for codec: '" << it->asString() << "'" << std::endl;
 			codec = Video::Codec::All.at(it->asString());
+		}
 		else if (it.key() == "width")
 			width = it->asUInt();
 		else if (it.key() == "height")
@@ -110,6 +115,7 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 std::shared_ptr<Stream> InFile::ParseSubtitleInfo(const Json::Value& json_part) {
 	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
+	std::cout << "Parsing subtitle info..." << std::endl;
 	for (auto it = json_part.begin(); it != json_part.end(); it++)
 		if (it.key() == "codec_name")
 			codec = Subtitle::Codec::All.at(it->asString());
