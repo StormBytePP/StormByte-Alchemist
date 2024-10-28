@@ -58,7 +58,7 @@ void InFile::InitStreams() {
 	}
 }
 
-std::shared_ptr<Stream> InFile::ParseAudioInfo([[maybe_unused]]const Json::Value& json_part) {
+std::shared_ptr<Stream> InFile::ParseAudioInfo(const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
 	unsigned short channels, sample_rate;
@@ -75,14 +75,39 @@ std::shared_ptr<Stream> InFile::ParseAudioInfo([[maybe_unused]]const Json::Value
 	return stream;
 }
 
-std::shared_ptr<Stream> InFile::ParseVideoInfo([[maybe_unused]]const Json::Value& json_part) {
+std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 	std::shared_ptr<Video::Stream> stream = std::make_shared<Video::Stream>(json_part["index"].asUInt());
+	std::shared_ptr<Codec> codec;
+	Video::Metadata metadata;
+	Video::Color color;
+	std::string color_prim, color_matrix, color_trans, color_pixfmt;
+	unsigned short width, height;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
+		if (it.key() == "codec_name")
+			codec = Video::Codec::All.at(it->asString());
+		else if (it.key() == "width")
+			width = it->asUInt();
+		else if (it.key() == "height")
+			height = it->asUInt();
+		else if (it.key() == "color_space")
+			color.SetMatrix(std::move(it->asString()));
+		else if (it.key() == "color_transfer")
+			color.SetTransfer(std::move(it->asString()));
+		else if (it.key() == "color_transfer")
+			color.SetTransfer(std::move(it->asString()));
+		else if (it.key() == "color_primaries")
+			color.SetPrimaries(std::move(it->asString()));
+		else if (it.key() == "pix_fmt")
+			color.SetPixelFormat(std::move(it->asString()));
 	}
+	stream->SetCodec(codec);
+	metadata.SetResolution({width, height});
+	metadata.SetColor(std::move(color));
+	stream->SetMetadata(std::move(metadata));
 	return stream;
 }
 
-std::shared_ptr<Stream> InFile::ParseSubtitleInfo([[maybe_unused]]const Json::Value& json_part) {
+std::shared_ptr<Stream> InFile::ParseSubtitleInfo(const Json::Value& json_part) {
 	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
 	for (auto it = json_part.begin(); it != json_part.end(); it++)
