@@ -37,19 +37,17 @@ void InFile::InitStreams() {
 				stream = ParseAudioInfo(stream_json[i]);
 
 			// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
-			Json::Value disposition = stream_json[i].find("disposition");
-			if (disposition) {
-				if (disposition.find("default"))
-					stream->SetDefaultStatus(disposition.find("default")->asBool());
-				if (disposition.find("forced"))
-					stream->SetDefaultStatus(disposition.find("forced")->asBool());
+			if (stream_json[i].isMember("disposition")) {
+				if (stream_json[i]["disposition"].isMember("default"))
+					stream->SetDefaultStatus(stream_json[i]["disposition"].find("default")->asBool());
+				if (stream_json[i]["disposition"].isMember("forced"))
+					stream->SetDefaultStatus(stream_json[i]["disposition"].find("forced")->asBool());
 			}
-			Json::Value tags = stream_json[i].find("tags");
-			if (tags) {
-				if (tags.find("language"))
-					stream->SetLanguage(tags.find("language")->asString());
-				if (tags.find("title"))
-					stream->SetTitle(tags.find("title")->asString());
+			if (stream_json[i].isMember("tags")) {
+				if (stream_json[i]["tags"].isMember("language"))
+					stream->SetLanguage(stream_json[i]["tags"].find("language")->asString());
+				if (stream_json[i]["tags"].isMember("title"))
+					stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
 			}
 			m_streams.push_back({stream, i});
 		}
