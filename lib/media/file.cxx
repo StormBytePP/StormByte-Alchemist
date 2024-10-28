@@ -10,4 +10,4 @@ File::~File() {}
 
 const std::filesystem::path& File::GetFileName() const noexcept { return m_filename; }
 
-const std::list<std::pair<unsigned short, std::shared_ptr<Stream>>>& File::GetStreams() const noexcept { return m_streams; }
+const std::list<std::pair<std::shared_ptr<Stream>, unsigned short>>& File::GetStreams() const noexcept { return m_streams; }

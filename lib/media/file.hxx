@@ -19,10 +19,10 @@ namespace Alchemist::Media {
 			virtual ~File()					= 0;
 
 			const std::filesystem::path&											GetFileName() const noexcept;
-			const std::list<std::pair<unsigned short, std::shared_ptr<Stream>>>&	GetStreams() const noexcept;
+			const std::list<std::pair<std::shared_ptr<Stream>, unsigned short>>&	GetStreams() const noexcept;
 
 		protected:
 			std::filesystem::path m_filename;
-			std::list<std::pair<unsigned short, std::shared_ptr<Stream>>> m_streams;
+			std::list<std::pair<std::shared_ptr<Stream>, unsigned short>> m_streams;
 	};
 }
