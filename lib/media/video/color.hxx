@@ -33,6 +33,7 @@ namespace Alchemist::Media::Video {
 			void								SetPixelFormat(const std::string&);
 			void								SetPixelFormat(std::string&&) noexcept;
 			std::list<std::string>				GetParameters() const;
+			bool								IsHDR10() const noexcept;
 
 		private:
 			std::optional<std::string> m_prim, m_matrix, m_transfer, m_pix_fmt;

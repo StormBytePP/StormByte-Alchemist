@@ -2,6 +2,7 @@
 #include "../audio/codec.hxx"
 #include "../audio/stream.hxx"
 #include "../video/codec.hxx"
+#include "../video/hdr10.hxx"
 #include "../video/stream.hxx"
 #include "../subtitle/codec.hxx"
 #include "../subtitle/stream.hxx"
@@ -101,6 +102,15 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 	}
 	stream->SetCodec(codec);
 	metadata.SetResolution({width, height});
+
+	// Check for HDR10 information only if neccesary
+	if (color.GetPixelFormat() == Video::Color::DEFAULT.GetPixelFormat() &&
+		color.GetMatrix() == Video::Color::DEFAULT.GetMatrix() &&
+		color.GetPrimaries() == Video::Color::DEFAULT.GetPrimaries() &&
+		color.GetTransfer() == Video::Color::DEFAULT.GetTransfer()) {
+			std::cout << "Tengo HDR parece" << std::endl;
+	}
+
 	metadata.SetColor(std::move(color));
 	stream->SetMetadata(std::move(metadata));
 	return stream;
@@ -114,4 +124,9 @@ std::shared_ptr<Stream> InFile::ParseSubtitleInfo(const Json::Value& json_part) 
 			codec = Subtitle::Codec::All.at(it->asString());
 	stream->SetCodec(codec);
 	return stream;
+}
+
+std::shared_ptr<Video::HDR10> InFile::GetHDR10Info() {
+
+	return nullptr;
 }

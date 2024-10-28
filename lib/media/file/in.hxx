@@ -5,6 +5,8 @@
 #include <jsoncpp/json/json.h>
 
 namespace Alchemist::Media {
+	namespace Video { class HDR10; }
+
 	class DLL_PUBLIC InFile: public File {
 		public:
 			InFile(const std::filesystem::path&);
@@ -17,8 +19,9 @@ namespace Alchemist::Media {
 
 		private:
 			void InitStreams();
-			std::shared_ptr<Stream> ParseVideoInfo(const Json::Value&);
-			std::shared_ptr<Stream> ParseAudioInfo(const Json::Value&);
-			std::shared_ptr<Stream> ParseSubtitleInfo(const Json::Value&);
+			std::shared_ptr<Stream> 		ParseVideoInfo(const Json::Value&);
+			std::shared_ptr<Stream> 		ParseAudioInfo(const Json::Value&);
+			std::shared_ptr<Stream> 		ParseSubtitleInfo(const Json::Value&);
+			std::shared_ptr<Video::HDR10>	GetHDR10Info();
 	};
 }

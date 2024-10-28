@@ -46,3 +46,8 @@ std::list<std::string> Color::GetParameters() const {
 
 	return parameters;
 }
+
+bool Color::IsHDR10() const noexcept {
+	return m_prim == DEFAULT.m_prim && m_matrix == DEFAULT.m_matrix
+	&& m_transfer == DEFAULT.m_transfer && m_pix_fmt == DEFAULT.m_pix_fmt;
+}
