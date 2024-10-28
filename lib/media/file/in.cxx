@@ -58,6 +58,7 @@ void InFile::InitStreams() {
 std::shared_ptr<Stream> InFile::ParseAudioInfo([[maybe_unused]]const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
+		//if (it.key() == "codec_name")
 	}
 	return stream;
 }

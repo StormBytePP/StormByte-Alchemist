@@ -2,4 +2,4 @@
 
 using namespace Alchemist::Media::Audio;
 
-AAC::AAC() noexcept:Codec("AAC", "fdk_aac", "Fraunhoffer Institute AAC") {}
+AAC::AAC() noexcept:Codec("AAC", "aac", "Advanced Audio Codec") {}

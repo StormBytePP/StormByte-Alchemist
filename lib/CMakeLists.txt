@@ -6,6 +6,7 @@ set(ALCHEMY_SRCs
 
 	# Media handling
 	${ALCHEMY_DIR}/media/audio/codec.cxx
+	${ALCHEMY_DIR}/media/audio/codec/aac.cxx
 	${ALCHEMY_DIR}/media/audio/codec/copy.cxx
 	${ALCHEMY_DIR}/media/audio/metadata.cxx
 	${ALCHEMY_DIR}/media/audio/stream.cxx
