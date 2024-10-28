@@ -24,6 +24,8 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/stream.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec/copy.cxx
+	${ALCHEMY_DIR}/media/subtitle/codec/pgs.cxx
+	${ALCHEMY_DIR}/media/subtitle/codec/subrip.cxx
 	${ALCHEMY_DIR}/media/subtitle/metadata.cxx
 	${ALCHEMY_DIR}/media/subtitle/stream.cxx
 	${ALCHEMY_DIR}/media/video/codec.cxx
