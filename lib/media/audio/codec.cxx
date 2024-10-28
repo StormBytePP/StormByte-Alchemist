@@ -1,7 +1,10 @@
-#ifdef ENABLE_FDK
 #include "codec/aac.hxx"
-#endif
+#include "codec/ac3.hxx"
 #include "codec/copy.hxx"
+#include "codec/dts.hxx"
+#include "codec/fdk_aac.hxx"
+#include "codec/mp3.hxx"
+#include "codec/wav.hxx"
 
 using namespace Alchemist::Media::Audio;
 
@@ -10,9 +13,12 @@ Media::Codec(std::move(name), std::move(ffmpeg_name), std::move(desc)) {}
 
 Codec::~Codec() noexcept {}
 
-const std::list<std::shared_ptr<Codec>> Codec::All = {
-	#ifdef ENABLE_FDK
-	std::make_shared<AAC>(),
-	#endif
-	std::make_shared<Copy>(),
+const std::map<std::string, std::shared_ptr<Codec>> Codec::All = {
+	{ "aac",		std::make_shared<AAC>()			},
+	{ "ac3",		std::make_shared<AC3>()			},
+	{ "copy",		std::make_shared<Copy>()		},
+	{ "dts",		std::make_shared<DTS>()			},
+	{ "fdk_aac",	std::make_shared<FDK_AAC>()		},
+	{ "mp3",		std::make_shared<MP3>()			},
+	{ "wav",		std::make_shared<WAV>()			}
 };

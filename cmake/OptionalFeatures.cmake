@@ -1,6 +1,6 @@
 # Codec support
 option(ENABLE_LIBVPX 		"Enable LibVPX" 							ON)
-option(ENABLE_FDK 			"Enable FDK" 								ON)
+option(ENABLE_FDK_AAC		"Enable FDK" 								ON)
 option(ENABLE_LIBOPUS 		"Enable LibOpus" 							ON)
 option(ENABLE_LIBVORBIS 	"Enable LibVorbis" 							ON)
 option(ENABLE_X264 			"Enable x264" 								ON)
@@ -9,9 +9,9 @@ option(ENABLE_XVID 			"Enable XVID" 								ON)
 option(ENABLE_LAME 			"Enable Lame MP3 encoder" 					ON)
 
 # Codec configuration
-if (ENABLE_FDK)
+if (ENABLE_FDK_AAC)
 	message(STATUS "Enabled Fraunhoffer AAC")
-	target_compile_definitions(Alchemy PRIVATE ENABLE_FDK)
+	target_compile_definitions(Alchemy PRIVATE ENABLE_FDK_AAC)
 else()
 	message(STATUS "Disabled x264")
 endif()

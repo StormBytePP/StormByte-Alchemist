@@ -2,6 +2,8 @@
 
 #include "../codec.hxx"
 
+#include <map>
+
 namespace Alchemist::Media::Audio {
 	class DLL_PUBLIC Codec: public Media::Codec {
 		public:
@@ -12,6 +14,6 @@ namespace Alchemist::Media::Audio {
 			Codec& operator=(Codec&&)		= default;
 			virtual ~Codec() noexcept		= 0;
 
-			static const std::list<std::shared_ptr<Codec>> All;
+			static const std::map<std::string, std::shared_ptr<Codec>> All;
 	};
 }

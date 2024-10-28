@@ -7,7 +7,13 @@ set(ALCHEMY_SRCs
 	# Media handling
 	${ALCHEMY_DIR}/media/audio/codec.cxx
 	${ALCHEMY_DIR}/media/audio/codec/aac.cxx
+	${ALCHEMY_DIR}/media/audio/codec/ac3.cxx
 	${ALCHEMY_DIR}/media/audio/codec/copy.cxx
+	${ALCHEMY_DIR}/media/audio/codec/dts.cxx
+	${ALCHEMY_DIR}/media/audio/codec/fdk_aac.cxx
+	${ALCHEMY_DIR}/media/audio/codec/mp3.cxx
+	${ALCHEMY_DIR}/media/audio/codec/opus.cxx
+	${ALCHEMY_DIR}/media/audio/codec/wav.cxx
 	${ALCHEMY_DIR}/media/audio/metadata.cxx
 	${ALCHEMY_DIR}/media/audio/stream.cxx
 	${ALCHEMY_DIR}/media/codec.cxx

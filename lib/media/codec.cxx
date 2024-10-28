@@ -3,7 +3,7 @@
 using namespace Alchemist::Media;
 
 Codec::Codec(std::string&& name, std::string&& ffmpeg_name, std::string&& desc) noexcept:
-m_name(std::move(name)), m_encoder_name(std::move(ffmpeg_name)), m_description(std::move(desc)), m_supported(true) {}
+m_supported(true), m_name(std::move(name)), m_encoder_name(std::move(ffmpeg_name)), m_description(std::move(desc)) {}
 
 Codec::~Codec() noexcept {}
 

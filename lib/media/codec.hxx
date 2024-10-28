@@ -20,8 +20,10 @@ namespace Alchemist::Media {
 			const std::string& 	GetDescription() const noexcept;
 			bool				IsSupported() const noexcept;
 
+		protected:
+			bool m_supported;
+
 		private:
 			std::string m_name, m_encoder_name, m_description;
-			bool m_supported;
 	};
 }
