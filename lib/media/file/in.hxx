@@ -2,6 +2,8 @@
 
 #include "../file.hxx"
 
+#include <jsoncpp/json/json.h>
+
 namespace Alchemist::Media {
 	class DLL_PUBLIC InFile: public File {
 		public:
@@ -15,5 +17,8 @@ namespace Alchemist::Media {
 
 		private:
 			void InitStreams();
+			std::shared_ptr<Stream> ParseVideoInfo(const Json::Value&);
+			std::shared_ptr<Stream> ParseAudioInfo(const Json::Value&);
+			std::shared_ptr<Stream> ParseSubtitleInfo(const Json::Value&);
 	};
 }
