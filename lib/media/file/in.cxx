@@ -39,22 +39,21 @@ void InFile::InitStreams() {
 				stream = ParseVideoInfo(stream_json[i]);
 			else if (stream_type == "subtitle")
 				stream = ParseSubtitleInfo(stream_json[i]);
-			if (stream) {
-				// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
-				if (stream_json[i].isMember("disposition")) {
-					if (stream_json[i]["disposition"].isMember("default"))
-						stream->SetDefaultStatus(stream_json[i]["disposition"].find("default")->asBool());
-					if (stream_json[i]["disposition"].isMember("forced"))
-						stream->SetDefaultStatus(stream_json[i]["disposition"].find("forced")->asBool());
-				}
-				if (stream_json[i].isMember("tags")) {
-					if (stream_json[i]["tags"].isMember("language"))
-						stream->SetLanguage(stream_json[i]["tags"].find("language")->asString());
-					if (stream_json[i]["tags"].isMember("title"))
-						stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
-				}
-				m_streams.push_back(stream);
+
+			// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
+			if (stream_json[i].isMember("disposition")) {
+				if (stream_json[i]["disposition"].isMember("default"))
+					stream->SetDefaultStatus(stream_json[i]["disposition"].find("default")->asBool());
+				if (stream_json[i]["disposition"].isMember("forced"))
+					stream->SetDefaultStatus(stream_json[i]["disposition"].find("forced")->asBool());
 			}
+			if (stream_json[i].isMember("tags")) {
+				if (stream_json[i]["tags"].isMember("language"))
+					stream->SetLanguage(stream_json[i]["tags"].find("language")->asString());
+				if (stream_json[i]["tags"].isMember("title"))
+					stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
+			}
+			m_streams.push_back(stream);
 		}
 	}
 }
