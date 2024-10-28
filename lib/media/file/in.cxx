@@ -1,6 +1,9 @@
 #include "in.hxx"
+#include "../audio/codec.hxx"
 #include "../audio/stream.hxx"
+#include "../video/codec.hxx"
 #include "../video/stream.hxx"
+#include "../subtitle/codec.hxx"
 #include "../subtitle/stream.hxx"
 #include "../../system/executable/ffprobe.hxx"
 
@@ -57,9 +60,18 @@ void InFile::InitStreams() {
 
 std::shared_ptr<Stream> InFile::ParseAudioInfo([[maybe_unused]]const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
+	std::shared_ptr<Codec> codec;
+	unsigned short channels, sample_rate;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-		//if (it.key() == "codec_name")
+		if (it.key() == "codec_name")
+			codec = Video::Codec::All.at(it->asString());
+		else if (it.key() == "channels")
+			channels = it->asUInt();
+		else if (it.key() == "sample_rate")
+			sample_rate = it->asUInt();
 	}
+	stream->SetCodec(codec);
+	stream->SetMetadata({sample_rate, channels});
 	return stream;
 }
 
