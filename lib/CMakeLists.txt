@@ -23,6 +23,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/metadata.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec.cxx
+	${ALCHEMY_DIR}/media/subtitle/codec/ass.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec/copy.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec/pgs.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec/subrip.cxx
@@ -30,6 +31,9 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/subtitle/stream.cxx
 	${ALCHEMY_DIR}/media/video/codec.cxx
 	${ALCHEMY_DIR}/media/video/codec/copy.cxx
+	${ALCHEMY_DIR}/media/video/codec/h264.cxx
+	${ALCHEMY_DIR}/media/video/codec/h265.cxx
+	${ALCHEMY_DIR}/media/video/codec/xvid.cxx
 	${ALCHEMY_DIR}/media/video/color.cxx
 	${ALCHEMY_DIR}/media/video/hdr10.cxx
 	${ALCHEMY_DIR}/media/video/metadata.cxx

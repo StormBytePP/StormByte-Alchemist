@@ -1,5 +1,5 @@
-#include "pgs.hxx"
+#include "ass.hxx"
 
 using namespace Alchemist::Media::Subtitle;
 
-PGS::PGS() noexcept:Codec("PGS", "hdmv_pgs_subtitle", "HDMV Presentation Graphic Stream subtitles") { m_supported = false; }
+ASS::ASS() noexcept:Codec("ASS", "ass", "ASS (Advanced SSA) subtitle") { m_supported = false; }

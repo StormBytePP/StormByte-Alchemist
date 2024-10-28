@@ -3,13 +3,13 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC PGS: public Codec {
+	class DLL_PUBLIC ASS: public Codec {
 		public:
-			PGS() noexcept;
-			PGS(const PGS&)				= default;
-			PGS(PGS&&)					= default;
-			PGS& operator=(const PGS&)	= default;
-			PGS& operator=(PGS&&)		= default;
-			~PGS() noexcept				= default;
+			ASS() noexcept;
+			ASS(const ASS&)				= default;
+			ASS(ASS&&)					= default;
+			ASS& operator=(const ASS&)	= default;
+			ASS& operator=(ASS&&)		= default;
+			~ASS() noexcept				= default;
 	};
 }
