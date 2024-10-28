@@ -3,8 +3,8 @@
 #include "visibility.h"
 
 #include <filesystem>
-#include <list>
 #include <utility>
+#include <vector>
 
 namespace Alchemist::Media {
 	class Stream;
@@ -18,11 +18,11 @@ namespace Alchemist::Media {
 			File& operator=(File&&)			= default;
 			virtual ~File()					= 0;
 
-			const std::filesystem::path&											GetFileName() const noexcept;
-			const std::list<std::pair<std::shared_ptr<Stream>, unsigned short>>&	GetStreams() const noexcept;
+			const std::filesystem::path&				GetFileName() const noexcept;
+			const std::vector<std::shared_ptr<Stream>>&	GetStreams() const noexcept;
 
 		protected:
 			std::filesystem::path m_filename;
-			std::list<std::pair<std::shared_ptr<Stream>, unsigned short>> m_streams;
+			std::vector<std::shared_ptr<Stream>> m_streams;
 	};
 }

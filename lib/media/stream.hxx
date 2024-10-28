@@ -9,13 +9,15 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Stream {
 		public:
-			Stream() noexcept						= default;
+			Stream(const unsigned short&) noexcept;
 			Stream(const Stream&)					= default;
 			Stream(Stream&&) noexcept				= default;
 			Stream& operator=(const Stream&)		= default;
 			Stream& operator=(Stream&&) noexcept	= default;
 			virtual ~Stream() noexcept				= 0;
 
+			const unsigned short&						GetIndex() const noexcept;
+			void										SetIndex(const unsigned short&) noexcept;
 			const std::optional<std::string>& 			GetLanguage() const noexcept;
 			void 										SetLanguage(const std::string&);
 			const std::optional<std::string>& 			GetTitle() const noexcept;
@@ -29,6 +31,7 @@ namespace Alchemist::Media {
 			const std::shared_ptr<Metadata>&			GetMetadata() const noexcept;
 			
 		protected:
+			unsigned short m_index;
 			std::optional<std::string> m_language, m_title;
 			bool m_default, m_forced;
 			std::shared_ptr<Codec> m_codec;

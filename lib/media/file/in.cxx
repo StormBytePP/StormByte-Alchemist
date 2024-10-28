@@ -27,6 +27,7 @@ void InFile::InitStreams() {
 	if (root.size() > 0) {
 		auto stream_json = root["streams"];
 		for (Json::ArrayIndex i = 0; i < stream_json.size(); i++) {
+			m_streams.reserve(stream_json.size());
 			const std::string stream_type = stream_json[i].find("codec_type")->asString();
 			std::shared_ptr<Stream> stream;
 			if (stream_type == "audio")
@@ -49,27 +50,27 @@ void InFile::InitStreams() {
 				if (stream_json[i]["tags"].isMember("title"))
 					stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
 			}
-			m_streams.push_back({stream, i});
+			m_streams.push_back(stream);
 		}
 	}
 }
 
 std::shared_ptr<Stream> InFile::ParseAudioInfo([[maybe_unused]]const Json::Value& json_part) {
-	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>();
+	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
 	}
 	return stream;
 }
 
 std::shared_ptr<Stream> InFile::ParseVideoInfo([[maybe_unused]]const Json::Value& json_part) {
-	std::shared_ptr<Video::Stream> stream = std::make_shared<Video::Stream>();
+	std::shared_ptr<Video::Stream> stream = std::make_shared<Video::Stream>(json_part["index"].asUInt());
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
 	}
 	return stream;
 }
 
 std::shared_ptr<Stream> InFile::ParseSubtitleInfo([[maybe_unused]]const Json::Value& json_part) {
-	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>();
+	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>(json_part["index"].asUInt());
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
 	}
 	return stream;
