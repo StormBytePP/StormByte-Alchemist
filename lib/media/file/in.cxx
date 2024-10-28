@@ -90,15 +90,15 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 		else if (it.key() == "height")
 			height = it->asUInt();
 		else if (it.key() == "color_space")
-			color.SetMatrix(std::move(it->asString()));
+			color.SetMatrix(it->asString());
 		else if (it.key() == "color_transfer")
-			color.SetTransfer(std::move(it->asString()));
+			color.SetTransfer(it->asString());
 		else if (it.key() == "color_transfer")
-			color.SetTransfer(std::move(it->asString()));
+			color.SetTransfer(it->asString());
 		else if (it.key() == "color_primaries")
-			color.SetPrimaries(std::move(it->asString()));
+			color.SetPrimaries(it->asString());
 		else if (it.key() == "pix_fmt")
-			color.SetPixelFormat(std::move(it->asString()));
+			color.SetPixelFormat(it->asString());
 	}
 	stream->SetCodec(codec);
 	metadata.SetResolution({width, height});
