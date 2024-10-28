@@ -15,11 +15,13 @@ namespace Alchemist::Media {
 			Codec& operator=(Codec&&) noexcept				= default;
 			virtual ~Codec() noexcept						= 0;
 
-			const std::string& GetName() const noexcept;
-			const std::string& GetFFmpegName() const noexcept;
-			const std::string& GetDescription() const noexcept;
+			const std::string& 	GetName() const noexcept;
+			const std::string& 	GetFFmpegName() const noexcept;
+			const std::string& 	GetDescription() const noexcept;
+			bool				IsSupported() const noexcept;
 
 		private:
 			std::string m_name, m_ffmpeg_name, m_description;
+			bool m_supported;
 	};
 }
