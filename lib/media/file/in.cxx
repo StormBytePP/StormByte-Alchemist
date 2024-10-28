@@ -39,21 +39,22 @@ void InFile::InitStreams() {
 				stream = ParseVideoInfo(stream_json[i]);
 			else if (stream_type == "subtitle")
 				stream = ParseSubtitleInfo(stream_json[i]);
-
-			// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
-			if (stream_json[i].isMember("disposition")) {
-				if (stream_json[i]["disposition"].isMember("default"))
-					stream->SetDefaultStatus(stream_json[i]["disposition"].find("default")->asBool());
-				if (stream_json[i]["disposition"].isMember("forced"))
-					stream->SetDefaultStatus(stream_json[i]["disposition"].find("forced")->asBool());
+			if (stream) {
+				// Language, title ("tags"), default and forced ("disposition") are general data for all stream types:
+				if (stream_json[i].isMember("disposition")) {
+					if (stream_json[i]["disposition"].isMember("default"))
+						stream->SetDefaultStatus(stream_json[i]["disposition"].find("default")->asBool());
+					if (stream_json[i]["disposition"].isMember("forced"))
+						stream->SetDefaultStatus(stream_json[i]["disposition"].find("forced")->asBool());
+				}
+				if (stream_json[i].isMember("tags")) {
+					if (stream_json[i]["tags"].isMember("language"))
+						stream->SetLanguage(stream_json[i]["tags"].find("language")->asString());
+					if (stream_json[i]["tags"].isMember("title"))
+						stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
+				}
+				m_streams.push_back(stream);
 			}
-			if (stream_json[i].isMember("tags")) {
-				if (stream_json[i]["tags"].isMember("language"))
-					stream->SetLanguage(stream_json[i]["tags"].find("language")->asString());
-				if (stream_json[i]["tags"].isMember("title"))
-					stream->SetTitle(stream_json[i]["tags"].find("title")->asString());
-			}
-			m_streams.push_back(stream);
 		}
 	}
 }
@@ -61,13 +62,10 @@ void InFile::InitStreams() {
 std::shared_ptr<Stream> InFile::ParseAudioInfo(const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
-	std::cout << "Parsing audio info..." << std::endl;
 	unsigned short channels, sample_rate;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-		if (it.key() == "codec_name") {
-			std::cout << "Looking for codec: '" << it->asString() << "'" << std::endl;
+		if (it.key() == "codec_name" && Audio::Codec::All.contains(it->asString()))
 			codec = Audio::Codec::All.at(it->asString());
-		}
 		else if (it.key() == "channels")
 			channels = std::stoul(it->asString()); //JsonCPP bug converting to uint
 		else if (it.key() == "sample_rate")
@@ -83,13 +81,10 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 	std::shared_ptr<Codec> codec;
 	Video::Metadata metadata;
 	Video::Color color;
-	std::cout << "Parsing video info..." << std::endl;
 	unsigned short width, height;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
-		if (it.key() == "codec_name") {
-			std::cout << "Looking for codec: '" << it->asString() << "'" << std::endl;
+		if (it.key() == "codec_name" && Video::Codec::All.contains(it->asString()))
 			codec = Video::Codec::All.at(it->asString());
-		}
 		else if (it.key() == "width")
 			width = it->asUInt();
 		else if (it.key() == "height")
@@ -115,9 +110,8 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 std::shared_ptr<Stream> InFile::ParseSubtitleInfo(const Json::Value& json_part) {
 	std::shared_ptr<Subtitle::Stream> stream = std::make_shared<Subtitle::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
-	std::cout << "Parsing subtitle info..." << std::endl;
 	for (auto it = json_part.begin(); it != json_part.end(); it++)
-		if (it.key() == "codec_name")
+		if (it.key() == "codec_name" && Subtitle::Codec::All.contains(it->asString()))
 			codec = Subtitle::Codec::All.at(it->asString());
 	stream->SetCodec(codec);
 	return stream;
