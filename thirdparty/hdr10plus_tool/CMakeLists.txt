@@ -6,7 +6,7 @@ if (NOT HDR10PLUS_TOOL_EXECUTABLE)
 		BYPRODUCTS "${CMAKE_BINARY_DIR}/thirdparty/hdr10plus_tool"
 	)
 	add_dependencies(Myrddin hdr10plus_tool)
-	install(FILES "${CMAKE_BINARY_DIR}/bin/hdr10plus_tool.exe" DESTINATION "${CMAKE_BUILDINSTALL_PREFIX}/bin/thirdparty" )
+	install(FILES "${CMAKE_BINARY_DIR}/thirdparty/bin/hdr10plus_tool.exe" DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/thirdparty" )
 	if (WIN32)
 		set(HDR10PLUS_TOOL_EXECUTABLE	"thirdparty\\\\hdr10plus_tool.exe")
 	else()
