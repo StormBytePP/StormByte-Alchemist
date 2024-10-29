@@ -15,6 +15,8 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
+      - name: Update repository
+        run: sudo apt update
       - name: Install dependencies
         run: sudo apt install -y rustc libsqlite3-dev ffmpeg libjsoncpp-dev clang
 
