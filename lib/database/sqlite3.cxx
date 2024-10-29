@@ -1,4 +1,4 @@
-#include "../media/file/out.hxx"
+#include "../media/file.hxx"
 #include "../media/audio/stream.hxx"
 #include "../media/video/stream.hxx"
 #include "../media/subtitle/stream.hxx"
@@ -18,7 +18,8 @@ const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = 
 	{ "new_meta_video_color",	"INSERT INTO stream_metadata_video_color(film_id, stream_id, prim, matrix, transfer, pix_fmt) VALUES (?, ?, ?, ?, ?, ?)" },
 	{ "new_meta_video_hdr10",	"INSERT INTO stream_metadata_video_hdr10(film_id, stream_id, red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" },
 	{ "new_meta_subtitle",		"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		},
-	{ "clear_statuses",			"UPDATE films SET process_pid = NULL, failed = FALSE"											}
+	{ "clear_statuses",			"UPDATE films SET active = FALSE, failed = FALSE"											},
+	{ "get_film_data",			"SELECT in_file, in_size, out_file, out_size, encode_time, priority, active, enabled, failed FROM films WHERE film_id = ?" }
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -53,7 +54,7 @@ void SQLite3::ClearStatuses() {
 	commit_transaction();
 }
 
-int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::OutFile& outfile, const unsigned short& prio) {
+int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::File& outfile, const unsigned short& prio) {
 	begin_exclusive_transaction();
 
 	/* Insert Film */

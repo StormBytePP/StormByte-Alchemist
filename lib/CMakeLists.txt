@@ -6,6 +6,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/info.cxx
 
 	# Database
+	${ALCHEMY_DIR}/database/file.cxx
 	${ALCHEMY_DIR}/database/sqlite3.cxx
 
 	# Media handling
@@ -23,8 +24,6 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/audio/stream.cxx
 	${ALCHEMY_DIR}/media/codec.cxx
 	${ALCHEMY_DIR}/media/file.cxx
-	${ALCHEMY_DIR}/media/file/in.cxx
-	${ALCHEMY_DIR}/media/file/out.cxx
 	${ALCHEMY_DIR}/media/metadata.cxx
 	${ALCHEMY_DIR}/media/stream.cxx
 	${ALCHEMY_DIR}/media/subtitle/codec.cxx

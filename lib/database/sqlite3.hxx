@@ -6,7 +6,7 @@
 #include <map>
 #include <sqlite3.h>
 
-namespace Alchemist::Media { class OutFile; }
+namespace Alchemist::Media { class File; }
 
 namespace Alchemist::Database {
 	class DLL_PUBLIC SQLite3 {
@@ -19,7 +19,7 @@ namespace Alchemist::Database {
 			~SQLite3();
 
 			void ClearStatuses();
-			int SaveFilm(const std::filesystem::path&, const Media::OutFile&, const unsigned short&);
+			int SaveFilm(const std::filesystem::path&, const Media::File&, const unsigned short&);
 
 		private:
 			static const std::string DATABASE_CREATE_SQL;

@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include <media/file/in.hxx>
+#include <media/file.hxx>
 
 using namespace Alchemist::Media;
 
 int main() {
-	InFile file("/StormWarehouse/MakeMKV/Final/El Señor de los Anillos - 1 - La Comunidad del Anillo - Extendida.mkv");
-	//InFile file("/tmp/Regreso al Futuro - 1 - m4K HDR+.mkv");
-	//InFile file("/tmp/Tokyo Gore Police (V.O.Sub.Español) 2008 DVDRIP Xvid-Mp3 (Estrenos-Sub.com) by CratosXP.avi");
+	File file("/StormWarehouse/MakeMKV/Final/El Señor de los Anillos - 1 - La Comunidad del Anillo - Extendida.mkv");
+	//File file("/tmp/Regreso al Futuro - 1 - m4K HDR+.mkv");
+	//File file("/tmp/Tokyo Gore Police (V.O.Sub.Español) 2008 DVDRIP Xvid-Mp3 (Estrenos-Sub.com) by CratosXP.avi");
 	std::cout << "File size is " << file.GetSize() << " bytes (" << file.GetSize() / 1073741824.0 << "GB)" << std::endl;
 }
 
