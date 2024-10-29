@@ -1,13 +1,12 @@
 #pragma once
 
-#include "visibility.h"
+#include "stream.hxx"
 
 #include <filesystem>
 #include <utility>
 #include <vector>
 
 namespace Alchemist::Media {
-	class Stream;
 	class DLL_PUBLIC File {
 		public:
 			File(const std::filesystem::path&);

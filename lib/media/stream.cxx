@@ -2,13 +2,13 @@
 
 using namespace Alchemist::Media;
 
-Stream::Stream(const unsigned short& index, const char& type) noexcept:m_index(index), m_type(type) {}
+Stream::Stream(const unsigned short& index, const std::string& type) noexcept:m_index(index), m_type(type) {}
 
 Stream::~Stream() noexcept {}
 
 const unsigned short& Stream::GetIndex() const noexcept { return m_index; }
 
-const char& Stream::GetType() const noexcept { return m_type; }
+const std::string& Stream::GetType() const noexcept { return m_type; }
 
 void Stream::SetIndex(const unsigned short& index) noexcept { m_index = index; }
 
