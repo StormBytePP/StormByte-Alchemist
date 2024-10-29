@@ -8,8 +8,8 @@ on:
 
 env:
   BUILD_TYPE: Release
-  C_COMPILER: gcc
-  CXX_COMPILER: g++
+  C_COMPILER: /usr/bin/gcc
+  CXX_COMPILER: /usr/bin/g++
 
 jobs:
   setup:
