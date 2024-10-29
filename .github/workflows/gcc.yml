@@ -18,7 +18,7 @@ jobs:
       - name: Update system
         run: sudo apt update
       - name: Install dependencies
-        run: sudo apt install -y rust libsqlite3-dev ffmpeg libjsoncpp-dev
+        run: sudo apt install -y rustc libsqlite3-dev ffmpeg libjsoncpp-dev
 
   build:
     runs-on: ubuntu-latest
