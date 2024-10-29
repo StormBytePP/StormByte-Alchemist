@@ -6,6 +6,14 @@
 using namespace Alchemist::Database;
 
 const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = {
+	{ "new_film",				"INSERT INTO films(in_file, in_size, out_file, priority) VALUES (?, ?, ?, ?) RETURNING film_id"	},
+	{ "new_stream",				"INSERT INTO streams(film_id, stream_id, stream_type, title, lang) VALUES (?, ?, ?, ?, ?)"		},
+	{ "new_meta_audio",			"INSERT INTO stream_metadata_audio(film_id, stream_id, codec) VALUES (?, ?, ?)"					},
+	{ "new_meta_video",			"INSERT INTO stream_metadata_video(film_id, stream_id, frames) VALUES (?, ?, ?)"				},
+	{ "new_meta_video_res",		"INSERT INTO stream_metadata_video_resolution(film_id, stream_id, width, height) VALUES (?, ?, ?, ?)" },
+	{ "new_meta_video_color",	"INSERT INTO stream_metadata_video_color(film_id, stream_id, prim, matrix, transfer, pix_fmt) VALUES (?, ?, ?, ?, ?, ?)" },
+	{ "new_meta_video_hdr10",	"INSERT INTO stream_metadata_video_hdr10(film_id, stream_id, red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" },
+	{ "new_meta_subtitle",		"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		}
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {

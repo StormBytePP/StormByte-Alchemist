@@ -77,7 +77,7 @@ CREATE TABLE stream_metadata_video_hdr10 (
 	FOREIGN KEY (stream_id) REFERENCES films(film_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE stream_metadata_subtitle_encoding (
+CREATE TABLE stream_metadata_subtitle (
 	film_id		INTEGER,
 	stream_id	SMALLINT,
 	encoding 	VARCHAR NOT NULL,
