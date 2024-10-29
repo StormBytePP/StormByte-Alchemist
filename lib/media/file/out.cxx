@@ -11,3 +11,7 @@ void OutFile::AddStream(std::shared_ptr<Stream> stream) { m_streams.push_back(st
 const unsigned int& OutFile::GetFilmID() const noexcept { return m_film_id; }
 
 void OutFile::SetFilmID(const unsigned int& film_id) { m_film_id = film_id; }
+
+const unsigned short& OutFile::GetPriority() const noexcept { return m_priority; }
+
+void OutFile::SetPriority(const unsigned short& priority) { m_priority = priority; }

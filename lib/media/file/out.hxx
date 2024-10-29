@@ -14,11 +14,14 @@ namespace Alchemist::Media {
 			OutFile& operator=(OutFile&&)		= default;
 			~OutFile()							= default;
 
-			void 				AddStream(std::shared_ptr<Stream>);
-			const unsigned int& GetFilmID() const noexcept;
-			void				SetFilmID(const unsigned int&);
+			void 					AddStream(std::shared_ptr<Stream>);
+			const unsigned int& 	GetFilmID() const noexcept;
+			void					SetFilmID(const unsigned int&);
+			const unsigned short&	GetPriority() const noexcept;
+			void					SetPriority(const unsigned short&);
 
 		private:
 			unsigned int m_film_id;
+			unsigned short m_priority;
 	};
 }
