@@ -1,8 +1,12 @@
-set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
+add_subdirectory(database)
 
+set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
 set(ALCHEMY_SRCs
 	# Library informations
 	${ALCHEMY_DIR}/info.cxx
+
+	# Database
+	${ALCHEMY_DIR}/database/sqlite3.cxx
 
 	# Media handling
 	${ALCHEMY_DIR}/media/audio/codec.cxx
@@ -55,7 +59,7 @@ target_compile_features(Alchemy PRIVATE cxx_std_20)
 target_link_libraries(Alchemy JsonCpp::JsonCpp SQLite::SQLite3)
 target_include_directories(Alchemy PUBLIC
   $<BUILD_INTERFACE:${ALCHEMY_DIR}>
-  $<INSTALL_INTERFACE:include/StormByte/Alchemist>
+  $<INSTALL_INTERFACE:include/Alchemist>
 )
 
 if (NOT WIN32)
