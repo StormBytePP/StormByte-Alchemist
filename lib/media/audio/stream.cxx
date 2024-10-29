@@ -2,7 +2,7 @@
 
 using namespace Alchemist::Media::Audio;
 
-Stream::Stream(const unsigned short& index) noexcept:Media::Stream(index) {}
+Stream::Stream(const unsigned short& index) noexcept:Media::Stream(index, 'a') {}
 
 void Stream::SetMetadata(const Metadata& meta) { m_metadata = std::make_shared<Metadata>(meta); }
 
