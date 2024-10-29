@@ -1,7 +1,10 @@
 CREATE TABLE films (
 	film_id		INTEGER,
 	in_file		VARCHAR NOT NULL,
+	in_size		INTEGER NOT NULL,
 	out_file	VARCHAR NOT NULL,
+	out_size	INTEGER DEFAULT NULL,
+	encode_time	INTEGER DEFAULT NULL,
 	priority	SMALLINT NOT NULL,
 	in_process	BOOL NOT NULL DEFAULT FALSE,
 	is_enabled	BOOL NOT NULL DEFAULT TRUE,
