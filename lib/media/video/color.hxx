@@ -3,6 +3,7 @@
 #include "visibility.h"
 
 #include <list>
+#include <optional>
 #include <string>
 
 namespace Alchemist::Media::Video {

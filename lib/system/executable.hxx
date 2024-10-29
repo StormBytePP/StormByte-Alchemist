@@ -57,4 +57,5 @@ namespace Alchemist::System {
 			std::vector<std::string> m_arguments;
 			std::unique_ptr<std::thread> m_forwarder;
 	};
+	std::ostream& operator<<(std::ostream&, const Executable&);
 }

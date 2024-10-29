@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace Alchemist::System {
-	class DLL_LOCAL Executable;
+	class Executable;
 	class DLL_PUBLIC Worker {
 		public:
 			Worker(std::unique_ptr<Executable>&&);

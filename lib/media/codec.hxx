@@ -3,6 +3,7 @@
 #include "visibility.h"
 
 #include <list>
+#include <memory>
 #include <string>
 
 namespace Alchemist::Media {
