@@ -372,7 +372,7 @@ std::list<std::shared_ptr<File>> SQLite3::GetAllFilms() {
 	auto stmt = m_prepared["get_all_films"];
 	std::list<std::shared_ptr<File>> films;
 	while (sqlite3_step(stmt) == SQLITE_ROW)
-		films.push_back(GetFilm(sqlite3_column_int64(stmt, 0)));
+		films.push_back(GetFilm(sqlite3_column_int(stmt, 0)));
 	reset_stmt(stmt);
 
 	commit_transaction();
