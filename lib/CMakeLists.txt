@@ -69,7 +69,7 @@ endif()
 include(OptionalFeatures)
 
 include(GetVersionFromGitTag)
-file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/definitions.h CONTENT "#pragma once
+file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/definitions.h CONTENT "#pragma once
 
 #define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
 #define LIBRARY_NAME			\"${PROJECT_NAME}\"

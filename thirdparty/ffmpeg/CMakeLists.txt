@@ -26,5 +26,5 @@ endif()
 mark_as_advanced(FFMPEG_EXECUTABLE)
 mark_as_advanced(FFPROBE_EXECUTABLE)
 
-file(APPEND ${CMAKE_BINARY_DIR}/definitions.h "#define FFMPEG_PATH \"${FFMPEG_EXECUTABLE}\"\n")
-file(APPEND ${CMAKE_BINARY_DIR}/definitions.h "#define FFPROBE_PATH \"${FFPROBE_EXECUTABLE}\"\n")
+file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define FFMPEG_PATH \"${FFMPEG_EXECUTABLE}\"\n")
+file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define FFPROBE_PATH \"${FFPROBE_EXECUTABLE}\"\n")

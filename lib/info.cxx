@@ -1,5 +1,5 @@
 #include "info.hxx"
-#include "definitions.h"
+#include "generated/definitions.h"
 
 #ifdef WINDOWS
 #include <windows.h>
