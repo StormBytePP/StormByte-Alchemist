@@ -47,6 +47,7 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/system/executable/hdr10plus.cxx
 	${ALCHEMY_DIR}/system/executable.cxx
 	${ALCHEMY_DIR}/system/pipe.cxx
+	${ALCHEMY_DIR}/system/worker.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
