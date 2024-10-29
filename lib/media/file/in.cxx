@@ -115,12 +115,11 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 		hdr10info = hdr10info ? hdr10info : std::make_shared<Video::HDR10>(Video::HDR10::DEFAULT);
 
 		/* Finally we search if we have HDR10+ data in */
-		if (HasHDR10Plus()) {
+		if (HasHDR10Plus())
 			hdr10info->SetPlusFile("yes"); /* This is only to indicate we have, it will be replaced by correct file by converter */
-			std::cout << "IT HAS HDR10+!!!" << std::endl;
-		}
-	}
 
+		metadata.SetHDR10(*hdr10info);
+	}
 	metadata.SetColor(std::move(color));
 	stream->SetMetadata(std::move(metadata));
 	return stream;
