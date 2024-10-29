@@ -17,7 +17,8 @@ const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = 
 	{ "new_meta_video_res",		"INSERT INTO stream_metadata_video_resolution(film_id, stream_id, width, height) VALUES (?, ?, ?, ?)" },
 	{ "new_meta_video_color",	"INSERT INTO stream_metadata_video_color(film_id, stream_id, prim, matrix, transfer, pix_fmt) VALUES (?, ?, ?, ?, ?, ?)" },
 	{ "new_meta_video_hdr10",	"INSERT INTO stream_metadata_video_hdr10(film_id, stream_id, red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" },
-	{ "new_meta_subtitle",		"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		}
+	{ "new_meta_subtitle",		"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		},
+	{ "clear_statuses",			"UPDATE films SET process_pid = NULL, failed = FALSE"											}
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -40,6 +41,16 @@ SQLite3::~SQLite3() {
 	}
 	m_prepared.clear();
 	sqlite3_close(m_database);
+}
+
+void SQLite3::ClearStatuses() {
+	begin_exclusive_transaction();
+
+	auto stmt = m_prepared["clear_statuses"];
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+
+	commit_transaction();
 }
 
 int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::OutFile& outfile, const unsigned short& prio) {

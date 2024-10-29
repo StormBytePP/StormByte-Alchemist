@@ -18,6 +18,7 @@ namespace Alchemist::Database {
 			SQLite3& operator=(SQLite3&& db) 		= default;
 			~SQLite3();
 
+			void ClearStatuses();
 			int SaveFilm(const std::filesystem::path&, const Media::OutFile&, const unsigned short&);
 
 		private:
