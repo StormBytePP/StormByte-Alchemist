@@ -19,8 +19,8 @@ namespace Alchemist::Media {
 
 		private:
 			void InitStreams();
-			std::shared_ptr<Stream> 		ParseVideoInfo(const Json::Value&);
 			std::shared_ptr<Stream> 		ParseAudioInfo(const Json::Value&);
+			std::shared_ptr<Stream> 		ParseVideoInfo(const Json::Value&);
 			std::shared_ptr<Stream> 		ParseSubtitleInfo(const Json::Value&);
 			std::shared_ptr<Video::HDR10>	GetHDR10Info();
 			std::vector<std::string>		SplitString(const std::string&) const;
