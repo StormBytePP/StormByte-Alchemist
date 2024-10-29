@@ -20,9 +20,12 @@ namespace Alchemist::Media {
 
 			const std::filesystem::path&				GetFileName() const noexcept;
 			const std::vector<std::shared_ptr<Stream>>&	GetStreams() const noexcept;
+			const unsigned long long&					GetSize() const noexcept;
+			void										ReloadSize();
 
 		protected:
 			std::filesystem::path m_filename;
 			std::vector<std::shared_ptr<Stream>> m_streams;
+			unsigned long long m_size_bytes;
 	};
 }

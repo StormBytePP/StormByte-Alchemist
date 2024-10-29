@@ -19,6 +19,9 @@ InFile::InFile(const std::filesystem::path& filename):File(filename) { InitStrea
 InFile::InFile(std::filesystem::path&& filename):File(std::move(filename)) { InitStreams(); }
 
 void InFile::InitStreams() {
+	if (!std::filesystem::exists(m_filename))
+		return;
+
 	std::unique_ptr<System::FFprobe> probe;
 	std::string buffer;
 	Json::Reader reader;
