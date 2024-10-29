@@ -135,6 +135,10 @@ int Executable::wait() noexcept {
 	waitpid(m_pid, &status, 0);
 	return WEXITSTATUS(status);
 }
+
+pid_t Executable::get_pid() noexcept {
+	return m_pid;
+}
 #else
 DWORD Executable::wait() noexcept {
 	DWORD status;
@@ -148,6 +152,10 @@ DWORD Executable::wait() noexcept {
 	CloseHandle(m_piProcInfo.hProcess);
 	CloseHandle(m_piProcInfo.hThread);
 	return status;
+}
+
+PROCESS_INFORMATION Executable::get_pid() {
+	return m_piProcInfo;
 }
 #endif
 

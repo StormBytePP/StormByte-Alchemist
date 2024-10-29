@@ -24,8 +24,10 @@ namespace Alchemist::System {
 			virtual ~Executable() noexcept;
 			#ifdef LINUX
 			int wait() noexcept;
+			pid_t get_pid() noexcept;
 			#else
 			DWORD wait() noexcept;
+			PROCESS_INFORMATION get_pid();
 			#endif
 
 			Executable& operator>>(Executable&);
