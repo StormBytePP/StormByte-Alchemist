@@ -14,6 +14,6 @@ namespace Alchemist::Media {
 			OutFile& operator=(OutFile&&)		= default;
 			~OutFile()							= default;
 
-			void AddStream(std::shared_ptr<Stream>, const unsigned short&);
+			void AddStream(std::shared_ptr<Stream>);
 	};
 }
