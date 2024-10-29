@@ -8,6 +8,8 @@
 #include "../subtitle/stream.hxx"
 #include "../../system/executable/ffprobe.hxx"
 
+#include <sstream>
+
 using namespace Alchemist::Media;
 
 InFile::InFile(const std::filesystem::path& filename):File(filename) { InitStreams(); }
@@ -15,7 +17,6 @@ InFile::InFile(const std::filesystem::path& filename):File(filename) { InitStrea
 InFile::InFile(std::filesystem::path&& filename):File(std::move(filename)) { InitStreams(); }
 
 void InFile::InitStreams() {
-	/** To be done later **/
 	std::unique_ptr<System::FFprobe> probe;
 	std::string buffer;
 	Json::Reader reader;
@@ -104,11 +105,12 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 	metadata.SetResolution({width, height});
 
 	// Check for HDR10 information only if neccesary
-	if (color.GetPixelFormat() == Video::Color::DEFAULT.GetPixelFormat() &&
-		color.GetMatrix() == Video::Color::DEFAULT.GetMatrix() &&
-		color.GetPrimaries() == Video::Color::DEFAULT.GetPrimaries() &&
-		color.GetTransfer() == Video::Color::DEFAULT.GetTransfer()) {
-			std::cout << "Tengo HDR parece" << std::endl;
+	if (color.IsHDR10()) {
+		std::shared_ptr<Video::HDR10> hdr10info = GetHDR10Info();
+
+		/* Some videos contain the correct HDR10 color modes but lack for metadata *
+		*  so in those cases we put a default metadata on them so they can be displayed as HDR10 */
+		metadata.SetHDR10(hdr10info ? *hdr10info : Video::HDR10::DEFAULT);
 	}
 
 	metadata.SetColor(std::move(color));
@@ -127,6 +129,90 @@ std::shared_ptr<Stream> InFile::ParseSubtitleInfo(const Json::Value& json_part) 
 }
 
 std::shared_ptr<Video::HDR10> InFile::GetHDR10Info() {
+	std::shared_ptr<Video::HDR10> hdr10info;
+	std::unique_ptr<System::FFprobe> probe;
+	std::string buffer;
+	Json::Reader reader;
+    Json::Value root;
 
-	return nullptr;
+	/* Getting FFprobe data in Json*/
+	probe = System::FFprobe::hdr10_info(m_filename);
+	probe->wait();
+	*probe >> buffer;
+
+	/* Parse Json */
+	reader.parse(buffer, root, false);
+	if (root.size() > 0) {
+		auto videoinfo_json = root["frames"][0]["side_data_list"];
+		std::pair<std::optional<unsigned short>, std::optional<unsigned short>> red, green, blue, white;
+		std::pair<std::optional<unsigned short>, std::optional<unsigned int>> luminance;
+		std::pair<std::optional<unsigned short>, std::optional<unsigned short>> light_level;
+
+		for (Json::ArrayIndex i = 0; i < videoinfo_json.size(); i++) {
+			for (auto it = videoinfo_json[i].begin(); it != videoinfo_json[i].end(); it++) {
+				if (videoinfo_json[i].find("side_data_type")) {
+					if (videoinfo_json[i].find("side_data_type")->asString() == "Mastering display metadata") {
+						// Main HDR10 info
+						if (it.key() == "blue_x")
+							blue.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "blue_y")
+							blue.second = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "green_x")
+							green.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "green_y")
+							green.second = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "red_x")
+							red.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "red_y")
+							red.second = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "white_point_x")
+							white.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "white_point_y")
+							white.second = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "min_luminance")
+							luminance.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "max_luminance")
+							luminance.second = std::stoul(SplitString(it->asString())[0]);
+					}
+					else if (videoinfo_json[i].find("side_data_type")->asString() == "Content light level metadata") {
+						// Extra optional light level data
+						if (it.key() == "max_content")
+							light_level.first = std::stoul(SplitString(it->asString())[0]);
+						else if (it.key() == "max_average")
+							light_level.second = std::stoul(SplitString(it->asString())[0]);
+					}
+					// The rest is ignored
+				}
+			}
+
+			// Now check if the gathered data is valid
+			if (red.first && red.second && green.first && green.second && blue.first && blue.second
+				&& white.first && white.second && luminance.first && luminance.second) {
+				Video::HDR10 hdr10_data(
+					{	*red.first, 		*red.second		},
+					{	*green.first, 		*green.second		},
+					{	*blue.first, 		*blue.second		},
+					{	*white.first, 		*white.second		},
+					{	*luminance.first,	*luminance.second	}
+				);
+
+				if (light_level.first && light_level.second)
+					hdr10_data.SetLightLevel({*light_level.first, *light_level.second});
+
+				hdr10info = std::make_shared<Video::HDR10>(std::move(hdr10_data));
+			}
+		}
+	}
+
+	return hdr10info;
+}
+
+std::vector<std::string> InFile::SplitString(const std::string& str) const {
+	std::vector<std::string> strings;
+    std::istringstream f(str);
+    std::string s;    
+    while (std::getline(f, s, '/')) {
+        strings.push_back(s);
+    }
+	return strings;
 }

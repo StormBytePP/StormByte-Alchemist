@@ -16,28 +16,28 @@ namespace Alchemist::Media::Video {
 				const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
-				const std::pair<unsigned short, unsigned int>&,
-				const std::optional<std::string>& hdr10plus = std::make_optional<std::string>());
+				const std::pair<unsigned short, unsigned int>&
+			);
 			HDR10(const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned int>&,
-				const std::pair<unsigned short, unsigned short>&,
-				const std::optional<std::string>& = std::make_optional<std::string>());
+				const std::pair<unsigned short, unsigned short>&
+			);
+			HDR10(std::pair<unsigned short, unsigned short>&&,
+				std::pair<unsigned short, unsigned short>&&,
+				std::pair<unsigned short, unsigned short>&&,
+				std::pair<unsigned short, unsigned short>&&,
+				std::pair<unsigned short, unsigned int>&&
+			);
 			HDR10(std::pair<unsigned short, unsigned short>&&,
 				std::pair<unsigned short, unsigned short>&&,
 				std::pair<unsigned short, unsigned short>&&,
 				std::pair<unsigned short, unsigned short>&&,
 				std::pair<unsigned short, unsigned int>&&,
-				std::optional<std::string>&& hdr10plus = std::make_optional<std::string>());
-			HDR10(std::pair<unsigned short, unsigned short>&&,
-				std::pair<unsigned short, unsigned short>&&,
-				std::pair<unsigned short, unsigned short>&&,
-				std::pair<unsigned short, unsigned short>&&,
-				std::pair<unsigned short, unsigned int>&&,
-				std::pair<unsigned short, unsigned short>&&,
-				std::optional<std::string>&& hdr10plus = std::make_optional<std::string>());
+				std::pair<unsigned short, unsigned short>&&
+			);
 			HDR10(const HDR10&)					= default;
 			HDR10(HDR10&&) noexcept				= default;
 			HDR10& operator=(const HDR10&)		= default;
@@ -50,6 +50,8 @@ namespace Alchemist::Media::Video {
 			const std::pair<unsigned short, unsigned short>& 				GetWhitePoint() const noexcept;
 			const std::pair<unsigned short, unsigned int>& 					GetLuminance() const noexcept;
 			const std::optional<std::pair<unsigned short, unsigned short>>& GetLightLevel() const noexcept;
+			void															SetLightLevel(const std::pair<unsigned short, unsigned short>&);
+			void															SetLightLevel(std::pair<unsigned short, unsigned short>&&) noexcept;
 			const std::optional<std::string>&								GetPlusFile() const noexcept;
 			std::list<std::string>											GetParameters() const;
 

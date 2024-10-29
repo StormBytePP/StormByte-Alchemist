@@ -11,40 +11,35 @@ HDR10::HDR10(const std::pair<unsigned short, unsigned short>& red_point,
 			const std::pair<unsigned short, unsigned short>& green_point,
 			const std::pair<unsigned short, unsigned short>& blue_point,
 			const std::pair<unsigned short, unsigned short>& white_point,
-			const std::pair<unsigned short, unsigned int>& luminance,
-			const std::optional<std::string>& hdr10plus):
+			const std::pair<unsigned short, unsigned int>& luminance):
 m_red(red_point), m_green(green_point), m_blue(blue_point), m_white(white_point),
-m_luminance(luminance), m_hdr10plus(hdr10plus) {}
+m_luminance(luminance) {}
 
 HDR10::HDR10(const std::pair<unsigned short, unsigned short>& red_point,
 			const std::pair<unsigned short, unsigned short>& green_point,
 			const std::pair<unsigned short, unsigned short>& blue_point,
 			const std::pair<unsigned short, unsigned short>& white_point,
 			const std::pair<unsigned short, unsigned int>& luminance,
-			const std::pair<unsigned short, unsigned short>& light_level,
-			const std::optional<std::string>& hdr10plus):
+			const std::pair<unsigned short, unsigned short>& light_level):
 m_red(red_point), m_green(green_point), m_blue(blue_point), m_white(white_point),
-m_luminance(luminance), m_light_level(light_level), m_hdr10plus(hdr10plus) {}
+m_luminance(luminance), m_light_level(light_level) {}
+
+HDR10::HDR10(std::pair<unsigned short, unsigned short>&& red_point,
+			std::pair<unsigned short, unsigned short>&& green_point,
+			std::pair<unsigned short, unsigned short>&& blue_point,
+			std::pair<unsigned short, unsigned short>&& white_point,
+			std::pair<unsigned short, unsigned int>&& luminance):
+m_red(std::move(red_point)), m_green(std::move(green_point)), m_blue(std::move(blue_point)),
+m_white(std::move(white_point)), m_luminance(std::move(luminance)) {}
 
 HDR10::HDR10(std::pair<unsigned short, unsigned short>&& red_point,
 			std::pair<unsigned short, unsigned short>&& green_point,
 			std::pair<unsigned short, unsigned short>&& blue_point,
 			std::pair<unsigned short, unsigned short>&& white_point,
 			std::pair<unsigned short, unsigned int>&& luminance,
-			std::optional<std::string>&& hdr10plus):
+			std::pair<unsigned short, unsigned short>&& light_level):
 m_red(std::move(red_point)), m_green(std::move(green_point)), m_blue(std::move(blue_point)),
-m_white(std::move(white_point)), m_luminance(std::move(luminance)), m_hdr10plus(hdr10plus) {}
-
-HDR10::HDR10(std::pair<unsigned short, unsigned short>&& red_point,
-			std::pair<unsigned short, unsigned short>&& green_point,
-			std::pair<unsigned short, unsigned short>&& blue_point,
-			std::pair<unsigned short, unsigned short>&& white_point,
-			std::pair<unsigned short, unsigned int>&& luminance,
-			std::pair<unsigned short, unsigned short>&& light_level,
-			std::optional<std::string>&& hdr10plus):
-m_red(std::move(red_point)), m_green(std::move(green_point)), m_blue(std::move(blue_point)),
-m_white(std::move(white_point)), m_luminance(std::move(luminance)), m_light_level(std::move(light_level)),
-m_hdr10plus(hdr10plus) {}
+m_white(std::move(white_point)), m_luminance(std::move(luminance)), m_light_level(std::move(light_level)) {}
 
 const std::pair<unsigned short, unsigned short>& HDR10::GetRedPoint() const noexcept { return m_red; }
 
@@ -57,6 +52,10 @@ const std::pair<unsigned short, unsigned short>& HDR10::GetWhitePoint() const no
 const std::pair<unsigned short, unsigned int>& HDR10::GetLuminance() const noexcept { return m_luminance; }
 
 const std::optional<std::pair<unsigned short, unsigned short>>& HDR10::GetLightLevel() const noexcept { return m_light_level; }
+
+void HDR10::SetLightLevel(const std::pair<unsigned short, unsigned short>& light_level) { m_light_level = light_level; }
+
+void HDR10::SetLightLevel(std::pair<unsigned short, unsigned short>&& light_level) noexcept { m_light_level = std::move(light_level); }
 
 const std::optional<std::string>& HDR10::GetPlusFile() const noexcept { return m_hdr10plus; }
 

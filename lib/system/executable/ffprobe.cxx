@@ -36,7 +36,7 @@ std::unique_ptr<FFprobe> FFprobe::hdr10_info(const std::filesystem::path& file) 
 	return std::unique_ptr<FFprobe>(
 		new FFprobe(
 			Alchemist::Info::ffprobe_path(),
-			{ "-v", "quiet", "-print_format", "json", "-show_frames", "-read_intervals", "\"%+#1\"", "-show_entries", "\"frame=side_data_list\"", file.string() }
+			{ "-v", "quiet", "-print_format", "json", "-show_frames", "-select_streams", "v:0", "-read_intervals", "%+#1", "-show_entries", "frame=side_data_list", file.string() }
 		)
 	);
 }
