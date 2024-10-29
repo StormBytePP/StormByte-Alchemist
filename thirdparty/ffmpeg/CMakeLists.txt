@@ -1,20 +1,20 @@
 if(WIN32)
 	include(FetchContent)
 
-	FetchContent_Declare(ffmpeg
+	FetchContent_Declare(FFmpeg
 		URL      https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
 		DOWNLOAD_EXTRACT_TIMESTAMP false
 	)
-	FetchContent_MakeAvailable(ffmpeg)
+	FetchContent_MakeAvailable(FFmpeg)
 
-	if(NOT ffmpeg_POPULATED)
+	if(NOT FFmpeg_POPULATED)
 	# Fetch the content using previously declared details
-	FetchContent_Populate(ffmpeg)
+	FetchContent_Populate(FFmpeg)
 	endif()
 
 	install(FILES
-		"${ffmpeg_SOURCE_DIR}/bin/ffmpeg.exe"
-		"${ffmpeg_SOURCE_DIR}/bin/ffprobe.exe"
+		"${FFmpeg_SOURCE_DIR}/bin/ffmpeg.exe"
+		"${FFmpeg_SOURCE_DIR}/bin/ffprobe.exe"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/thirdparty"
 	)
 	set(FFMPEG_EXECUTABLE	"thirdparty\\\\ffmpeg.exe")
