@@ -1,6 +1,4 @@
-build/
-install/
-extra/
 .vscode/
 .vs/
+build/
 dist/
