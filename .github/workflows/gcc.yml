@@ -15,10 +15,8 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Update system
-        run: sudo apt update
       - name: Install dependencies
-        run: sudo apt install -y rustc libsqlite3-dev ffmpeg libjsoncpp-dev
+        run: sudo apt install -y rustc libsqlite3-dev ffmpeg libjsoncpp-dev gcc g++
 
   build:
     runs-on: ubuntu-latest
@@ -28,7 +26,7 @@ jobs:
     - uses: actions/checkout@v3
   
     - name: Configure CMake All ON
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.C_COMPILER}} -DCMAKE_CXX_COMPILER=${{env.CXX_COMPILER}}-DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=ON -DWITH_SYSTEM_SQLITE=ON
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.C_COMPILER}} -DCMAKE_CXX_COMPILER=${{env.CXX_COMPILER}} -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=ON -DWITH_SYSTEM_SQLITE=ON
 
     - name: Build with gcc
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
