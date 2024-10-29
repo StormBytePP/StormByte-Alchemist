@@ -88,9 +88,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=ON
 
     - name: Build
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: |
-        cmake --build ./build --config Debug
+      run: cmake --build ${{github.workspace}}/build --config Debug
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
