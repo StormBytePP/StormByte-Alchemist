@@ -79,10 +79,10 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 		/* Stream basic */
 		stmt = m_prepared["new_stream"];
 		const unsigned short stream_id = (*it)->GetIndex();
-		const std::string stream_type = (*it)->GetType();
+		const Media::Type stream_type = (*it)->GetType();
 		sqlite3_bind_int	(stmt, 1, film_id);
 		sqlite3_bind_int	(stmt, 2, stream_id);
-		sqlite3_bind_text	(stmt, 3, stream_type.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_int	(stmt, 3, static_cast<unsigned short>(stream_type));
 		if ((*it)->GetTitle())
 			sqlite3_bind_text	(stmt, 4, (*it)->GetTitle().value().c_str(), -1, SQLITE_STATIC);
 		else
@@ -94,89 +94,93 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 		sqlite3_step(stmt);
 		reset_stmt(stmt);
 
-		if (stream_type == "a") {
-			/* Audio Stream Metadata */
-			std::shared_ptr<Media::Audio::Stream> audio_stream = std::dynamic_pointer_cast<Media::Audio::Stream>(*it);
-			std::shared_ptr<Media::Audio::Metadata> audio_metadata = std::dynamic_pointer_cast<Media::Audio::Metadata>(audio_stream->GetMetadata());
-			stmt = m_prepared["new_meta_audio"];
-			sqlite3_bind_int	(stmt, 1, film_id);
-			sqlite3_bind_int	(stmt, 2, stream_id);
-			sqlite3_bind_text	(stmt, 3, audio_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
-			sqlite3_bind_int	(stmt, 4, audio_metadata->GetSampleRate());
-			sqlite3_bind_int	(stmt, 5, audio_metadata->GetChannels());
-			sqlite3_step(stmt);
-			reset_stmt(stmt);
-		}
-		else if (stream_type == "v") {
-			/* Video Stream Metadata */
-			std::shared_ptr<Media::Video::Stream> video_stream = std::dynamic_pointer_cast<Media::Video::Stream>(*it);
-			std::shared_ptr<Media::Video::Metadata> video_metadata = std::dynamic_pointer_cast<Media::Video::Metadata>(video_stream->GetMetadata());
-			if (video_metadata->GetFrames()) {
-				stmt = m_prepared["new_meta_video"];
+		switch(stream_type) {
+			case Media::Type::Audio: {
+				std::shared_ptr<Media::Audio::Stream> audio_stream = std::dynamic_pointer_cast<Media::Audio::Stream>(*it);
+				std::shared_ptr<Media::Audio::Metadata> audio_metadata = std::dynamic_pointer_cast<Media::Audio::Metadata>(audio_stream->GetMetadata());
+				stmt = m_prepared["new_meta_audio"];
 				sqlite3_bind_int	(stmt, 1, film_id);
 				sqlite3_bind_int	(stmt, 2, stream_id);
-				sqlite3_bind_int	(stmt, 3, video_metadata->GetFrames().value());
-				sqlite3_bind_text	(stmt, 4, video_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
+				sqlite3_bind_text	(stmt, 3, audio_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
+				sqlite3_bind_int	(stmt, 4, audio_metadata->GetSampleRate());
+				sqlite3_bind_int	(stmt, 5, audio_metadata->GetChannels());
 				sqlite3_step(stmt);
 				reset_stmt(stmt);
+				break;
 			}
-			if (video_metadata->GetResolution()) {
-				stmt = m_prepared["new_meta_video_res"];
-				sqlite3_bind_int	(stmt, 1, film_id);
-				sqlite3_bind_int	(stmt, 2, stream_id);
-				sqlite3_bind_int	(stmt, 3, video_metadata->GetResolution()->GetWidth());
-				sqlite3_bind_int	(stmt, 4, video_metadata->GetResolution()->GetHeight());
-				sqlite3_step(stmt);
-				reset_stmt(stmt);
-			}
-			if (video_metadata->GetColor()) {
-				stmt = m_prepared["new_meta_video_color"];
-				sqlite3_bind_int	(stmt, 1, film_id);
-				sqlite3_bind_int	(stmt, 2, stream_id);
-				sqlite3_bind_text	(stmt, 3, video_metadata->GetColor()->GetPrimaries()->c_str(), -1, SQLITE_STATIC);
-				sqlite3_bind_text	(stmt, 4, video_metadata->GetColor()->GetMatrix()->c_str(), -1, SQLITE_STATIC);
-				sqlite3_bind_text	(stmt, 5, video_metadata->GetColor()->GetTransfer()->c_str(), -1, SQLITE_STATIC);
-				sqlite3_bind_text	(stmt, 6, video_metadata->GetColor()->GetPixelFormat()->c_str(), -1, SQLITE_STATIC);
-				sqlite3_step(stmt);
-				reset_stmt(stmt);
-			}
-			if (video_metadata->GetHDR10()) {
-				stmt = m_prepared["new_meta_video_hdr10"];
-				sqlite3_bind_int	(stmt, 1, film_id);
-				sqlite3_bind_int	(stmt, 2, stream_id);
-				// red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus
-				sqlite3_bind_int	(stmt, 3, video_metadata->GetHDR10()->GetRedPoint().first);
-				sqlite3_bind_int	(stmt, 4, video_metadata->GetHDR10()->GetRedPoint().second);
-				sqlite3_bind_int	(stmt, 5, video_metadata->GetHDR10()->GetGreenPoint().first);
-				sqlite3_bind_int	(stmt, 6, video_metadata->GetHDR10()->GetGreenPoint().second);
-				sqlite3_bind_int	(stmt, 7, video_metadata->GetHDR10()->GetBluePoint().first);
-				sqlite3_bind_int	(stmt, 8, video_metadata->GetHDR10()->GetBluePoint().second);
-				sqlite3_bind_int	(stmt, 9, video_metadata->GetHDR10()->GetWhitePoint().first);
-				sqlite3_bind_int	(stmt, 10, video_metadata->GetHDR10()->GetWhitePoint().second);
-				sqlite3_bind_int	(stmt, 11, video_metadata->GetHDR10()->GetLuminance().first);
-				sqlite3_bind_int	(stmt, 12, video_metadata->GetHDR10()->GetLuminance().second);
-				if (video_metadata->GetHDR10()->GetLightLevel()) {
-					sqlite3_bind_int	(stmt, 13, video_metadata->GetHDR10()->GetLightLevel()->first);
-					sqlite3_bind_int	(stmt, 14, video_metadata->GetHDR10()->GetLightLevel()->second);
+			case Media::Type::Video: {
+				std::shared_ptr<Media::Video::Stream> video_stream = std::dynamic_pointer_cast<Media::Video::Stream>(*it);
+				std::shared_ptr<Media::Video::Metadata> video_metadata = std::dynamic_pointer_cast<Media::Video::Metadata>(video_stream->GetMetadata());
+				if (video_metadata->GetFrames()) {
+					stmt = m_prepared["new_meta_video"];
+					sqlite3_bind_int	(stmt, 1, film_id);
+					sqlite3_bind_int	(stmt, 2, stream_id);
+					sqlite3_bind_int	(stmt, 3, video_metadata->GetFrames().value());
+					sqlite3_bind_text	(stmt, 4, video_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
+					sqlite3_step(stmt);
+					reset_stmt(stmt);
 				}
-				else {
-					sqlite3_bind_null	(stmt, 13);
-					sqlite3_bind_null	(stmt, 14);
+				if (video_metadata->GetResolution()) {
+					stmt = m_prepared["new_meta_video_res"];
+					sqlite3_bind_int	(stmt, 1, film_id);
+					sqlite3_bind_int	(stmt, 2, stream_id);
+					sqlite3_bind_int	(stmt, 3, video_metadata->GetResolution()->GetWidth());
+					sqlite3_bind_int	(stmt, 4, video_metadata->GetResolution()->GetHeight());
+					sqlite3_step(stmt);
+					reset_stmt(stmt);
 				}
+				if (video_metadata->GetColor()) {
+					stmt = m_prepared["new_meta_video_color"];
+					sqlite3_bind_int	(stmt, 1, film_id);
+					sqlite3_bind_int	(stmt, 2, stream_id);
+					sqlite3_bind_text	(stmt, 3, video_metadata->GetColor()->GetPrimaries()->c_str(), -1, SQLITE_STATIC);
+					sqlite3_bind_text	(stmt, 4, video_metadata->GetColor()->GetMatrix()->c_str(), -1, SQLITE_STATIC);
+					sqlite3_bind_text	(stmt, 5, video_metadata->GetColor()->GetTransfer()->c_str(), -1, SQLITE_STATIC);
+					sqlite3_bind_text	(stmt, 6, video_metadata->GetColor()->GetPixelFormat()->c_str(), -1, SQLITE_STATIC);
+					sqlite3_step(stmt);
+					reset_stmt(stmt);
+				}
+				if (video_metadata->GetHDR10()) {
+					stmt = m_prepared["new_meta_video_hdr10"];
+					sqlite3_bind_int	(stmt, 1, film_id);
+					sqlite3_bind_int	(stmt, 2, stream_id);
+					// red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus
+					sqlite3_bind_int	(stmt, 3, video_metadata->GetHDR10()->GetRedPoint().first);
+					sqlite3_bind_int	(stmt, 4, video_metadata->GetHDR10()->GetRedPoint().second);
+					sqlite3_bind_int	(stmt, 5, video_metadata->GetHDR10()->GetGreenPoint().first);
+					sqlite3_bind_int	(stmt, 6, video_metadata->GetHDR10()->GetGreenPoint().second);
+					sqlite3_bind_int	(stmt, 7, video_metadata->GetHDR10()->GetBluePoint().first);
+					sqlite3_bind_int	(stmt, 8, video_metadata->GetHDR10()->GetBluePoint().second);
+					sqlite3_bind_int	(stmt, 9, video_metadata->GetHDR10()->GetWhitePoint().first);
+					sqlite3_bind_int	(stmt, 10, video_metadata->GetHDR10()->GetWhitePoint().second);
+					sqlite3_bind_int	(stmt, 11, video_metadata->GetHDR10()->GetLuminance().first);
+					sqlite3_bind_int	(stmt, 12, video_metadata->GetHDR10()->GetLuminance().second);
+					if (video_metadata->GetHDR10()->GetLightLevel()) {
+						sqlite3_bind_int	(stmt, 13, video_metadata->GetHDR10()->GetLightLevel()->first);
+						sqlite3_bind_int	(stmt, 14, video_metadata->GetHDR10()->GetLightLevel()->second);
+					}
+					else {
+						sqlite3_bind_null	(stmt, 13);
+						sqlite3_bind_null	(stmt, 14);
+					}
+					sqlite3_step(stmt);
+					reset_stmt(stmt);
+				}
+				break;
+			}
+			case Media::Type::Subtitle: {
+				std::shared_ptr<Media::Subtitle::Stream> subtitle_stream = std::dynamic_pointer_cast<Media::Subtitle::Stream>(*it);
+				std::shared_ptr<Media::Subtitle::Metadata> subtitle_metadata = std::dynamic_pointer_cast<Media::Subtitle::Metadata>(subtitle_stream->GetMetadata());
+				stmt = m_prepared["new_meta_subtitle"];
+				sqlite3_bind_int	(stmt, 1, film_id);
+				sqlite3_bind_int	(stmt, 2, stream_id);
+				sqlite3_bind_text	(stmt, 3, subtitle_metadata->GetString().c_str(), -1, SQLITE_STATIC);
 				sqlite3_step(stmt);
 				reset_stmt(stmt);
+				break;
 			}
-		}
-		else if (stream_type == "s") {
-			/* Subtitle stream */
-			std::shared_ptr<Media::Subtitle::Stream> subtitle_stream = std::dynamic_pointer_cast<Media::Subtitle::Stream>(*it);
-			std::shared_ptr<Media::Subtitle::Metadata> subtitle_metadata = std::dynamic_pointer_cast<Media::Subtitle::Metadata>(subtitle_stream->GetMetadata());
-			stmt = m_prepared["new_meta_subtitle"];
-			sqlite3_bind_int	(stmt, 1, film_id);
-			sqlite3_bind_int	(stmt, 2, stream_id);
-			sqlite3_bind_text	(stmt, 3, subtitle_metadata->GetString().c_str(), -1, SQLITE_STATIC);
-			sqlite3_step(stmt);
-			reset_stmt(stmt);
+			default:
+				break;
 		}
 	}
 

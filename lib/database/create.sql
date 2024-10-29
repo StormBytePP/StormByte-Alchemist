@@ -15,7 +15,7 @@ CREATE TABLE films (
 CREATE TABLE streams (
 	film_id		INTEGER,
 	stream_id	SMALLINT,
-	stream_type	CHAR NOT NULL,
+	stream_type	SMALLINT NOT NULL,
 	title		VARCHAR NOT NULL,
 	lang		CHAR(3) NOT NULL,
 	PRIMARY KEY (film_id, stream_id),

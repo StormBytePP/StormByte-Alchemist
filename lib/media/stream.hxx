@@ -2,6 +2,7 @@
 
 #include "codec.hxx"
 #include "metadata.hxx"
+#include "type.hxx"
 
 #include <optional>
 #include <string>
@@ -9,7 +10,7 @@
 namespace Alchemist::Media {
 	class DLL_PUBLIC Stream {
 		public:
-			Stream(const unsigned short&, const std::string&) noexcept;
+			Stream(const unsigned short&, const Type&) noexcept;
 			Stream(const Stream&)					= default;
 			Stream(Stream&&) noexcept				= default;
 			Stream& operator=(const Stream&)		= default;
@@ -18,7 +19,7 @@ namespace Alchemist::Media {
 
 			const unsigned short&						GetIndex() const noexcept;
 			void										SetIndex(const unsigned short&) noexcept;
-			const std::string&							GetType() const noexcept;
+			const Type&									GetType() const noexcept;
 			const std::optional<std::string>& 			GetLanguage() const noexcept;
 			void 										SetLanguage(const std::string&);
 			const std::optional<std::string>& 			GetTitle() const noexcept;
@@ -37,6 +38,6 @@ namespace Alchemist::Media {
 			bool m_default, m_forced;
 			std::shared_ptr<Codec> m_codec;
 			std::shared_ptr<Metadata> m_metadata;
-			std::string m_type;
+			Type m_type;
 	};
 }
