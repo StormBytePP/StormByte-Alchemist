@@ -1,7 +1,7 @@
 if (WITH_SYSTEM_JSONCPP)
 	find_package (JsonCpp REQUIRED)
 else()
-	set(JsonCpp_VERSION 1.9.5)
+	set(JsonCpp_VERSION 1.9.6)
 	set(JsonCpp_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${JsonCpp_VERSION})
 
 	add_library(JsonCpp STATIC ${JsonCpp_DIR}/jsoncpp.cpp)
