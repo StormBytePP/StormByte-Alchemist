@@ -27,7 +27,12 @@ const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = 
 	{ "get_film_meta_video_res",	"SELECT width, height FROM stream_metadata_video_resolution WHERE film_id = ? AND stream_id = ?"},
 	{ "get_film_meta_video_color",	"SELECT prim, matrix, transfer, pix_fmt FROM stream_metadata_video_color WHERE film_id = ? AND stream_id = ?"	},
 	{ "get_film_meta_video_hdr10",	"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus FROM stream_metadata_video_hdr10 WHERE film_id = ? AND stream_id = ?" },
-	{ "get_film_meta_subtitle",		"SELECT encoding FROM stream_metadata_video_subtitle WHERE film_id = ? AND stream_id = ?" }
+	{ "get_film_meta_subtitle",		"SELECT encoding FROM stream_metadata_video_subtitle WHERE film_id = ? AND stream_id = ?" },
+	{ "get_film_id_for_encode",		"SELECT film_id FROM films WHERE enabled = TRUE AND active = FALSE AND out_size IS NULL ORDER BY priority ASC LIMIT 1" },
+	{ "mark_film_as_active",		"UPDATE films SET active = TRUE WHERE film_id = ?" },
+	{ "mark_film_as_failed",		"UPDATE films SET active = FALSE, failed = TRUE WHERE film_id = ?" },
+	{ "complete_film",				"UPDATE films SET active = FALSE, failed = FALSE, out_size = ?, encode_time = ? WHERE film_id = ?" },
+	{ "get_all_films",				"SELECT film_id FROM films ORDER BY film_id DESC" }
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -313,6 +318,65 @@ std::shared_ptr<File> SQLite3::GetFilm(const unsigned int& film_id) {
 		reset_stmt(stmt);
 	}
 	return film;
+}
+
+std::shared_ptr<File> SQLite3::GetFilm() {
+	begin_exclusive_transaction();
+
+	auto stmt = m_prepared["get_film_id_for_encode"];
+	std::shared_ptr<File> film;
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		int film_id = sqlite3_column_int(stmt, 0);
+		film = GetFilm(film_id);
+		reset_stmt(stmt);
+
+		stmt = m_prepared["mark_film_as_active"];
+		sqlite3_bind_int(stmt, 1, film_id);
+		sqlite3_step(stmt);
+		reset_stmt(stmt);
+	}
+	else
+		reset_stmt(stmt);
+
+	commit_transaction();
+	return film;
+}
+
+void SQLite3::SetAsFailed(const File& film) {
+	begin_exclusive_transaction();
+
+	auto stmt = m_prepared["mark_film_as_failed"];
+	sqlite3_bind_int(stmt, 1, film.GetFilmID());
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+
+	commit_transaction();
+}
+
+void SQLite3::SetAsCompleted(const File& film) {
+	begin_exclusive_transaction();
+
+	auto stmt = m_prepared["complete_film"];
+	sqlite3_bind_int64(stmt, 1, *film.GetOutSize());
+	sqlite3_bind_int(stmt, 2, *film.GetEncodeTime());
+	sqlite3_bind_int(stmt, 3, film.GetFilmID());
+	sqlite3_step(stmt);
+	reset_stmt(stmt);
+
+	commit_transaction();
+}
+
+std::list<std::shared_ptr<File>> SQLite3::GetAllFilms() {
+	begin_exclusive_transaction();
+
+	auto stmt = m_prepared["get_all_films"];
+	std::list<std::shared_ptr<File>> films;
+	while (sqlite3_step(stmt) == SQLITE_ROW)
+		films.push_back(GetFilm(sqlite3_column_int64(stmt, 0)));
+	reset_stmt(stmt);
+
+	commit_transaction();
+	return films;
 }
 
 bool SQLite3::check_database() {

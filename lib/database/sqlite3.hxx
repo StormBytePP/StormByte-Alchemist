@@ -18,9 +18,13 @@ namespace Alchemist::Database {
 			SQLite3& operator=(SQLite3&& db) 		= default;
 			~SQLite3();
 
-			void ClearStatuses();
-			int SaveFilm(const std::filesystem::path&, const Media::File&, const unsigned short&);
-			std::shared_ptr<File> GetFilm(const unsigned int&);
+			void 								ClearStatuses();
+			int 								SaveFilm(const std::filesystem::path&, const Media::File&, const unsigned short&);
+			std::shared_ptr<File> 				GetFilm(const unsigned int&);
+			std::shared_ptr<File> 				GetFilm();
+			void								SetAsFailed(const File&);
+			void								SetAsCompleted(const File&);
+			std::list<std::shared_ptr<File>>	GetAllFilms();
 
 		private:
 			static const std::string DATABASE_CREATE_SQL;
