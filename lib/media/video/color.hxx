@@ -9,7 +9,7 @@
 namespace Alchemist::Media::Video {
 	class DLL_PUBLIC Color {
 		public:
-			static DLL_PUBLIC const Color DEFAULT;
+			static const Color DEFAULT;
 
 			Color()								= default;
 			Color(const std::string&, const std::string&, const std::string&, const std::string&);

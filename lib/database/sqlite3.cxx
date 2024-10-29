@@ -31,7 +31,7 @@ const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = 
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {
-	int rc = sqlite3_open(dbfile.c_str(), &m_database);
+	int rc = sqlite3_open(dbfile.string().c_str(), &m_database); // Windows needs this string intermediate conversion
 
 	if (rc != SQLITE_OK) {
 		const std::string message = "Cannot open database " + dbfile.string() + ": " + std::string(sqlite3_errmsg(m_database));
@@ -67,9 +67,9 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 
 	/* Insert Film */
 	auto stmt = m_prepared["new_film"];
-	sqlite3_bind_text	(stmt, 1, source_file.c_str(), -1, SQLITE_STATIC);
+	sqlite3_bind_text	(stmt, 1, source_file.string().c_str(), -1, SQLITE_STATIC); // Windows needs this string intermediate conversion
 	sqlite3_bind_int64	(stmt, 2, outfile.GetSize());
-	sqlite3_bind_text	(stmt, 3, outfile.GetFileName().c_str(), -1, SQLITE_STATIC);
+	sqlite3_bind_text	(stmt, 3, outfile.GetFileName().string().c_str(), -1, SQLITE_STATIC);
 	sqlite3_bind_int	(stmt, 4, prio);
 	sqlite3_step(stmt);
 	unsigned short film_id = sqlite3_column_int(stmt, 0);
@@ -371,7 +371,7 @@ void SQLite3::rollback_transaction() {
 void SQLite3::prepare_sentences() {
 	for (auto it = DATABASE_PREPARED_SENTENCES.begin(); it != DATABASE_PREPARED_SENTENCES.end(); it++) {
 		m_prepared[it->first] = nullptr;
-		sqlite3_prepare_v2( m_database, it->second.c_str(), it->second.length(), &m_prepared[it->first], nullptr);
+		sqlite3_prepare_v2( m_database, it->second.c_str(), static_cast<int>(it->second.length()), &m_prepared[it->first], nullptr);
 		if (!m_prepared[it->first])
 			throw std::runtime_error("Prepared sentence " + (it->first) + " can not be loaded!");
 	}

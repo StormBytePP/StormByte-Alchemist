@@ -10,7 +10,7 @@
 namespace Alchemist::Media::Video {
 	class DLL_PUBLIC HDR10 {
 		public:
-			static DLL_PUBLIC const HDR10 DEFAULT;
+			static const HDR10 DEFAULT;
 
 			HDR10(const std::pair<unsigned short, unsigned short>&,
 				const std::pair<unsigned short, unsigned short>&,
