@@ -26,6 +26,8 @@ CREATE TABLE stream_metadata_audio (
 	film_id		INTEGER,
 	stream_id	SMALLINT,
 	codec		VARCHAR NOT NULL,
+	sample_rate INTEGER NOT NULL,
+	channels	SMALLINT NOT NULL,
 	PRIMARY KEY (film_id, stream_id),
 	FOREIGN KEY (stream_id) REFERENCES films(film_id) ON UPDATE CASCADE ON DELETE CASCADE
 )

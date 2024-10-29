@@ -1,3 +1,4 @@
+#include "file.hxx"
 #include "../media/file.hxx"
 #include "../media/audio/stream.hxx"
 #include "../media/video/stream.hxx"
@@ -10,16 +11,23 @@
 using namespace Alchemist::Database;
 
 const std::map<std::string, std::string> SQLite3::DATABASE_PREPARED_SENTENCES = {
-	{ "new_film",				"INSERT INTO films(in_file, in_size, out_file, priority) VALUES (?, ?, ?, ?) RETURNING film_id"	},
-	{ "new_stream",				"INSERT INTO streams(film_id, stream_id, stream_type, title, lang) VALUES (?, ?, ?, ?, ?)"		},
-	{ "new_meta_audio",			"INSERT INTO stream_metadata_audio(film_id, stream_id, codec) VALUES (?, ?, ?)"					},
-	{ "new_meta_video",			"INSERT INTO stream_metadata_video(film_id, stream_id, frames) VALUES (?, ?, ?)"				},
-	{ "new_meta_video_res",		"INSERT INTO stream_metadata_video_resolution(film_id, stream_id, width, height) VALUES (?, ?, ?, ?)" },
-	{ "new_meta_video_color",	"INSERT INTO stream_metadata_video_color(film_id, stream_id, prim, matrix, transfer, pix_fmt) VALUES (?, ?, ?, ?, ?, ?)" },
-	{ "new_meta_video_hdr10",	"INSERT INTO stream_metadata_video_hdr10(film_id, stream_id, red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" },
-	{ "new_meta_subtitle",		"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		},
-	{ "clear_statuses",			"UPDATE films SET active = FALSE, failed = FALSE"											},
-	{ "get_film_data",			"SELECT in_file, in_size, out_file, out_size, encode_time, priority, active, enabled, failed FROM films WHERE film_id = ?" }
+	{ "new_film",					"INSERT INTO films(in_file, in_size, out_file, priority) VALUES (?, ?, ?, ?) RETURNING film_id"	},
+	{ "new_stream",					"INSERT INTO streams(film_id, stream_id, stream_type, title, lang) VALUES (?, ?, ?, ?, ?)"		},
+	{ "new_meta_audio",				"INSERT INTO stream_metadata_audio(film_id, stream_id, codec, sample_rate, channels) VALUES (?, ?, ?, ?, ?)"					},
+	{ "new_meta_video",				"INSERT INTO stream_metadata_video(film_id, stream_id, frames, codec) VALUES (?, ?, ?, ?)"		},
+	{ "new_meta_video_res",			"INSERT INTO stream_metadata_video_resolution(film_id, stream_id, width, height) VALUES (?, ?, ?, ?)" },
+	{ "new_meta_video_color",		"INSERT INTO stream_metadata_video_color(film_id, stream_id, prim, matrix, transfer, pix_fmt) VALUES (?, ?, ?, ?, ?, ?)" },
+	{ "new_meta_video_hdr10",		"INSERT INTO stream_metadata_video_hdr10(film_id, stream_id, red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" },
+	{ "new_meta_subtitle",			"INSERT INTO stream_metadata_video_subtitle(film_id, stream_id, encoding) VALUES (?, ?, ?)"		},
+	{ "clear_statuses",				"UPDATE films SET active = FALSE, failed = FALSE"											},
+	{ "get_film_data",				"SELECT in_file, in_size, out_file, out_size, encode_time, priority, active, enabled, failed FROM films WHERE film_id = ?" },
+	{ "get_film_streams",			"SELECT stream_id, stream_type, title, lang FROM streams WHERE film_id = ?"						},
+	{ "get_film_meta_audio",		"SELECT codec, sample_rate, channels FROM stream_metadata_audio WHERE film_id = ? AND stream_id = ?"					},
+	{ "get_film_meta_video",		"SELECT frames, codec FROM stream_metadata_video WHERE film_id = ? AND stream_id = ?"					},
+	{ "get_film_meta_video_res",	"SELECT width, height FROM stream_metadata_video_resolution WHERE film_id = ? AND stream_id = ?"},
+	{ "get_film_meta_video_color",	"SELECT prim, matrix, transfer, pix_fmt FROM stream_metadata_video_color WHERE film_id = ? AND stream_id = ?"	},
+	{ "get_film_meta_video_hdr10",	"SELECT red_x, red_y, green_x, green_y, blue_x, blue_y, white_x, white_y, lum_min, lum_max, light_max, light_avg, has_plus FROM stream_metadata_video_hdr10 WHERE film_id = ? AND stream_id = ?" },
+	{ "get_film_meta_subtitle",		"SELECT encoding FROM stream_metadata_video_subtitle WHERE film_id = ? AND stream_id = ?" }
 };
 
 SQLite3::SQLite3(const std::filesystem::path& dbfile) {
@@ -89,10 +97,13 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 		if (stream_type == "a") {
 			/* Audio Stream Metadata */
 			std::shared_ptr<Media::Audio::Stream> audio_stream = std::dynamic_pointer_cast<Media::Audio::Stream>(*it);
+			std::shared_ptr<Media::Audio::Metadata> audio_metadata = std::dynamic_pointer_cast<Media::Audio::Metadata>(audio_stream->GetMetadata());
 			stmt = m_prepared["new_meta_audio"];
 			sqlite3_bind_int	(stmt, 1, film_id);
 			sqlite3_bind_int	(stmt, 2, stream_id);
 			sqlite3_bind_text	(stmt, 3, audio_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
+			sqlite3_bind_int	(stmt, 4, audio_metadata->GetSampleRate());
+			sqlite3_bind_int	(stmt, 5, audio_metadata->GetChannels());
 			sqlite3_step(stmt);
 			reset_stmt(stmt);
 		}
@@ -105,6 +116,7 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 				sqlite3_bind_int	(stmt, 1, film_id);
 				sqlite3_bind_int	(stmt, 2, stream_id);
 				sqlite3_bind_int	(stmt, 3, video_metadata->GetFrames().value());
+				sqlite3_bind_text	(stmt, 4, video_stream->GetCodec()->GetEncoderName().c_str(), -1, SQLITE_STATIC);
 				sqlite3_step(stmt);
 				reset_stmt(stmt);
 			}
@@ -170,6 +182,133 @@ int SQLite3::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 
 	commit_transaction();
 	return film_id;
+}
+
+std::shared_ptr<File> SQLite3::GetFilm(const unsigned int& film_id) {
+	std::shared_ptr<File> film;
+	auto stmt = m_prepared["get_film_data"];
+	sqlite3_bind_int(stmt, 1, film_id);
+	if (sqlite3_step(stmt) == SQLITE_ROW) {
+		film = std::make_shared<File>();
+		film->SetInFile(std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0))));
+		film->SetInSize(sqlite3_column_int(stmt, 1));
+		film->SetOutFile(std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2))));
+		if (sqlite3_column_type(stmt, 3) != SQLITE_NULL)
+			film->SetOutSize(sqlite3_column_int(stmt, 3));
+		if (sqlite3_column_type(stmt, 4) != SQLITE_NULL)
+			film->SetEncodeTime(sqlite3_column_int(stmt, 4));
+		film->SetPriority(sqlite3_column_int(stmt, 5));
+		film->SetActiveStatus(static_cast<bool>(sqlite3_column_int(stmt, 6)));
+		film->SetEnabledStatus(static_cast<bool>(sqlite3_column_int(stmt, 7)));
+		film->SetFailedStatus(static_cast<bool>(sqlite3_column_int(stmt, 8)));
+		reset_stmt(stmt);
+
+		/* Streams */
+		stmt = m_prepared["get_film_streams"];
+		sqlite3_bind_int(stmt, 1, film_id);
+		while (sqlite3_step(stmt) != SQLITE_DONE) {
+			const unsigned short stream_index = sqlite3_column_int(stmt, 0);
+			const std::string stream_type = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+			const std::string stream_title = (sqlite3_column_type(stmt, 2) != SQLITE_NULL) ? reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)) : "";
+			const std::string stream_language = (sqlite3_column_type(stmt, 3) != SQLITE_NULL) ? reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)) : "";
+			
+			if (stream_type == "a") {
+				std::shared_ptr<Media::Audio::Stream> stream = std::make_shared<Media::Audio::Stream>(stream_index);
+				auto stmt_audio = m_prepared["get_film_meta_audio"];
+				sqlite3_bind_int(stmt_audio, 1, film_id);
+				sqlite3_bind_int(stmt_audio, 2, stream_index);
+				if (sqlite3_step(stmt_audio) == SQLITE_ROW) {
+					const std::string codec = reinterpret_cast<const char*>(sqlite3_column_text(stmt_audio, 0));
+					stream->SetCodec(Media::Audio::Codec::All.at(codec));
+					stream->SetMetadata(
+						{
+							static_cast<unsigned short>(sqlite3_column_int(stmt_audio, 1)),
+							static_cast<unsigned short>(sqlite3_column_int(stmt_audio, 2))
+						}
+					);
+					reset_stmt(stmt_audio);
+					film->AddStream(stream);
+				}
+			}
+			else if (stream_type == "v") {
+				std::shared_ptr<Media::Video::Stream> stream = std::make_shared<Media::Video::Stream>(stream_index);
+				Media::Video::Metadata metadata;
+				auto stmt_video = m_prepared["get_film_meta_video"];
+				sqlite3_bind_int(stmt_video, 1, film_id);
+				sqlite3_bind_int(stmt_video, 2, stream_index);
+				if (sqlite3_step(stmt_video) == SQLITE_ROW) {
+					metadata.SetFrames(sqlite3_column_int(stmt_video, 0));
+					stream->SetCodec(Media::Video::Codec::All.at(reinterpret_cast<const char*>(sqlite3_column_text(stmt_video, 1))));
+				}
+				reset_stmt(stmt_video);
+				stmt_video = m_prepared["get_film_meta_video_res"];
+				sqlite3_bind_int(stmt_video, 1, film_id);
+				sqlite3_bind_int(stmt_video, 2, stream_index);
+				if (sqlite3_step(stmt_video) == SQLITE_ROW) {
+					metadata.SetResolution(
+						{
+							static_cast<unsigned short>(sqlite3_column_int(stmt_video, 0)),
+							static_cast<unsigned short>(sqlite3_column_int(stmt_video, 1))
+						}
+					);
+				}
+				reset_stmt(stmt_video);
+				stmt_video = m_prepared["get_film_meta_video_color"];
+				sqlite3_bind_int(stmt_video, 1, film_id);
+				sqlite3_bind_int(stmt_video, 2, stream_index);
+				if (sqlite3_step(stmt_video) == SQLITE_ROW) {
+					metadata.SetColor(
+						{
+							reinterpret_cast<const char*>(sqlite3_column_text(stmt_video, 0)),
+							reinterpret_cast<const char*>(sqlite3_column_text(stmt_video, 1)),
+							reinterpret_cast<const char*>(sqlite3_column_text(stmt_video, 2)),
+							reinterpret_cast<const char*>(sqlite3_column_text(stmt_video, 3)),
+						}
+					);
+				}
+				reset_stmt(stmt_video);
+				stmt_video = m_prepared["get_film_meta_video_hdr10"];
+				sqlite3_bind_int(stmt_video, 1, film_id);
+				sqlite3_bind_int(stmt_video, 2, stream_index);
+				if (sqlite3_step(stmt_video) == SQLITE_ROW) {
+					Media::Video::HDR10 hdr10(
+						{
+							{ static_cast<unsigned short>(sqlite3_column_int(stmt_video, 0)), static_cast<unsigned short>(sqlite3_column_int(stmt_video, 1)) },
+							{ static_cast<unsigned short>(sqlite3_column_int(stmt_video, 2)), static_cast<unsigned short>(sqlite3_column_int(stmt_video, 3)) },
+							{ static_cast<unsigned short>(sqlite3_column_int(stmt_video, 4)), static_cast<unsigned short>(sqlite3_column_int(stmt_video, 5)) },
+							{ static_cast<unsigned short>(sqlite3_column_int(stmt_video, 6)), static_cast<unsigned short>(sqlite3_column_int(stmt_video, 7)) },
+							{ static_cast<unsigned short>(sqlite3_column_int(stmt_video, 8)), sqlite3_column_int(stmt_video, 9) }
+						}
+					);
+					if (sqlite3_column_type(stmt_video, 10) != SQLITE_NULL && sqlite3_column_type(stmt_video, 11) != SQLITE_NULL)
+						hdr10.SetLightLevel(
+							{
+								static_cast<unsigned short>(sqlite3_column_int(stmt_video, 10)), static_cast<unsigned short>(sqlite3_column_int(stmt_video, 11))
+							}
+						);
+					if (static_cast<bool>(sqlite3_column_int(stmt_video, 12)))
+						hdr10.SetPlusFile("yes"); // File will be corrected by converter
+					metadata.SetHDR10(std::move(hdr10));
+				}
+				reset_stmt(stmt_video);
+				stream->SetMetadata(std::move(metadata));
+				film->AddStream(stream);
+			}
+			else if (stream_type == "s") {
+				std::shared_ptr<Media::Subtitle::Stream> stream = std::make_shared<Media::Subtitle::Stream>(stream_index);
+				auto stmt_subtitle = m_prepared["get_film_meta_subtitle"];
+				sqlite3_bind_int(stmt_subtitle, 1, film_id);
+				sqlite3_bind_int(stmt_subtitle, 2, stream_index);
+				if (sqlite3_step(stmt_subtitle) == SQLITE_ROW) {
+					stream->SetMetadata({ reinterpret_cast<const char*>(sqlite3_column_text(stmt_subtitle, 0)) });
+				}
+				reset_stmt(stmt_subtitle);
+				film->AddStream(stream);
+			}
+		}
+		reset_stmt(stmt);
+	}
+	return film;
 }
 
 bool SQLite3::check_database() {

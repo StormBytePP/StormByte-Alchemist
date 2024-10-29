@@ -20,6 +20,7 @@ namespace Alchemist::Database {
 
 			void ClearStatuses();
 			int SaveFilm(const std::filesystem::path&, const Media::File&, const unsigned short&);
+			std::shared_ptr<File> GetFilm(const unsigned int&);
 
 		private:
 			static const std::string DATABASE_CREATE_SQL;
