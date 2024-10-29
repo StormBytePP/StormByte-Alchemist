@@ -1,11 +1,13 @@
 #pragma once
 
+#include "visibility.h"
+
 #include <filesystem>
 #include <map>
 #include <sqlite3.h>
 
 namespace Alchemist::Database {
-	class SQLite3 {
+	class DLL_PUBLIC SQLite3 {
 		public:
 			SQLite3(const std::filesystem::path& dbfile);
 			SQLite3(const SQLite3& db) 				= delete;
