@@ -4,8 +4,8 @@ else()
 	include(FetchContent)
 
 	FetchContent_Declare(sqlite3
-		URL      https://sqlite.org/2024/sqlite-amalgamation-3450200.zip
-		URL_HASH SHA3_256=8d9c553b52c7b1656a97fec7907cb00fd1419ac45104e45c76b7c2b81ffe0a9d
+		URL      https://sqlite.org/2024/sqlite-amalgamation-3470000.zip
+		URL_HASH SHA3_256=e35ee48efc24fe58d0e9102034ac0a41e3904641a745e94ab11a841fe9d7355e
 		DOWNLOAD_EXTRACT_TIMESTAMP false
 	)
 	FetchContent_MakeAvailable(sqlite3)
