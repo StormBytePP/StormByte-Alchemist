@@ -17,6 +17,7 @@ namespace Alchemist::System {
 			static std::unique_ptr<FFprobe> format_info(const std::filesystem::path&);
 			static std::unique_ptr<FFprobe> video_info(const std::filesystem::path&);
 			static std::unique_ptr<FFprobe> hdr10_info(const std::filesystem::path&);
+			static std::unique_ptr<FFprobe> count_video_frames(const std::filesystem::path&);
 
 		private:
 			FFprobe(const std::filesystem::path&, std::vector<std::string>&&);

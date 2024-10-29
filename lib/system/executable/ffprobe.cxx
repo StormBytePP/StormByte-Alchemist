@@ -40,3 +40,12 @@ std::unique_ptr<FFprobe> FFprobe::hdr10_info(const std::filesystem::path& file) 
 		)
 	);
 }
+
+std::unique_ptr<FFprobe> FFprobe::count_video_frames(const std::filesystem::path& file) {
+	return std::unique_ptr<FFprobe>(
+		new FFprobe(
+			Alchemist::Info::ffprobe_path(),
+			{ "-v", "quiet", "-print_format", "json", "-count_packets", "-select_streams", "v:0", "-show_entries", "stream=nb_read_packets", file.string() }
+		)
+	);
+}

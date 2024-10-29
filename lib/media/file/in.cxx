@@ -102,11 +102,23 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 			color.SetPrimaries(it->asString());
 		else if (it.key() == "pix_fmt")
 			color.SetPixelFormat(it->asString());
+		else if (it.key() == "tags") {
+			if (it->find("NUMBER_OF_FRAMES")) {
+				metadata.SetFrames(std::stoul(it->find("NUMBER_OF_FRAMES")->asString()));
+			}
+		}
+		else if (it.key() == "nb_frames")
+			metadata.SetFrames(std::stoul(it->asString()));
 	}
 	stream->SetCodec(codec);
 	metadata.SetResolution({width, height});
 
-	// Check for HDR10 information only if neccesary
+	/* If we could not obtain frame number we will need to look for it (long operation!) */
+	/* We will only do this if the codec is valid */
+	if (stream->GetCodec() && !metadata.GetFrames())
+		metadata.SetFrames(CountVideoFrames());
+
+	/* Check for HDR10 information only if neccesary */
 	if (color.IsHDR10()) {
 		std::shared_ptr<Video::HDR10> hdr10info = GetHDR10Info();
 
@@ -225,6 +237,19 @@ bool InFile::HasHDR10Plus() {
 	ffmpeg->wait();
 
 	return status == 0;
+}
+
+unsigned int InFile::CountVideoFrames() {
+	auto ffprobe = System::FFprobe::count_video_frames(m_filename);
+	std::string buffer;
+	Json::Reader reader;
+    Json::Value root;
+
+	*ffprobe >> buffer;
+	ffprobe->wait();
+
+	reader.parse(buffer, root, false);
+	return std::stoul(root["streams"][0]["nb_read_packets"].asString());
 }
 
 std::vector<std::string> InFile::SplitString(const std::string& str) const {
