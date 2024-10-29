@@ -26,6 +26,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Update repository
+      run: sudo apt update
+
+    - name: Install dependencies
+      run: sudo apt install -y rustc libsqlite3-dev ffmpeg libjsoncpp-dev clang
   
     - name: Configure CMake All ON
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=${{env.C_COMPILER}} -DCMAKE_CXX_COMPILER=${{env.CXX_COMPILER}} -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=ON -DWITH_SYSTEM_SQLITE=ON
