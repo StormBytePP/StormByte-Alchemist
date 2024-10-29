@@ -23,6 +23,7 @@ namespace Alchemist::Media {
 			std::shared_ptr<Stream> 		ParseVideoInfo(const Json::Value&);
 			std::shared_ptr<Stream> 		ParseSubtitleInfo(const Json::Value&);
 			std::shared_ptr<Video::HDR10>	GetHDR10Info();
+			bool							HasHDR10Plus();
 			std::vector<std::string>		SplitString(const std::string&) const;
 	};
 }

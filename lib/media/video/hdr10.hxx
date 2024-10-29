@@ -53,6 +53,8 @@ namespace Alchemist::Media::Video {
 			void															SetLightLevel(const std::pair<unsigned short, unsigned short>&);
 			void															SetLightLevel(std::pair<unsigned short, unsigned short>&&) noexcept;
 			const std::optional<std::string>&								GetPlusFile() const noexcept;
+			void															SetPlusFile(const std::string&);
+			void															SetPlusFile(std::string&&) noexcept;
 			std::list<std::string>											GetParameters() const;
 
 		private:

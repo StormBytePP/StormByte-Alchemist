@@ -6,7 +6,9 @@
 #include "../video/stream.hxx"
 #include "../subtitle/codec.hxx"
 #include "../subtitle/stream.hxx"
+#include "../../system/executable/ffmpeg.hxx"
 #include "../../system/executable/ffprobe.hxx"
+#include "../../system/executable/hdr10plus.hxx"
 
 #include <sstream>
 
@@ -110,7 +112,13 @@ std::shared_ptr<Stream> InFile::ParseVideoInfo(const Json::Value& json_part) {
 
 		/* Some videos contain the correct HDR10 color modes but lack for metadata *
 		*  so in those cases we put a default metadata on them so they can be displayed as HDR10 */
-		metadata.SetHDR10(hdr10info ? *hdr10info : Video::HDR10::DEFAULT);
+		hdr10info = hdr10info ? hdr10info : std::make_shared<Video::HDR10>(Video::HDR10::DEFAULT);
+
+		/* Finally we search if we have HDR10+ data in */
+		if (HasHDR10Plus()) {
+			hdr10info->SetPlusFile("yes"); /* This is only to indicate we have, it will be replaced by correct file by converter */
+			std::cout << "IT HAS HDR10+!!!" << std::endl;
+		}
 	}
 
 	metadata.SetColor(std::move(color));
@@ -205,6 +213,19 @@ std::shared_ptr<Video::HDR10> InFile::GetHDR10Info() {
 	}
 
 	return hdr10info;
+}
+
+bool InFile::HasHDR10Plus() {
+	auto ffmpeg = System::FFmpeg::hdr_stream(m_filename);
+	auto hdr10plus = System::HDR10Plus::hdr_plus_detect();
+	std::string buffer;
+
+	*ffmpeg >> *hdr10plus;
+	*hdr10plus >> buffer;
+	int status = hdr10plus->wait();
+	ffmpeg->wait();
+
+	return status == 0;
 }
 
 std::vector<std::string> InFile::SplitString(const std::string& str) const {

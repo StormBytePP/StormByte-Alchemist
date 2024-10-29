@@ -59,6 +59,10 @@ void HDR10::SetLightLevel(std::pair<unsigned short, unsigned short>&& light_leve
 
 const std::optional<std::string>& HDR10::GetPlusFile() const noexcept { return m_hdr10plus; }
 
+void HDR10::SetPlusFile(const std::string& plusfile) { m_hdr10plus = plusfile; }
+
+void HDR10::SetPlusFile(std::string&& plusfile) noexcept { m_hdr10plus = std::move(plusfile); }
+
 std::list<std::string> HDR10::GetParameters() const {
 	std::list<std::string> parameters;
 	
