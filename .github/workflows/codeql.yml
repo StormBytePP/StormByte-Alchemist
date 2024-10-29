@@ -64,9 +64,6 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt install -y rustc cargo libsqlite3-dev ffmpeg libjsoncpp-dev clang cmake
-  
-    - name: Configure CMake All ON
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=ON
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -87,14 +84,13 @@ jobs:
     # to build your code.
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-    - name: Configure CMake
-      run: |
-        cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}}
+    - name: Configure CMake All ON
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=ON
 
     - name: Build
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: |
-        cmake --build ./build --config ${{matrix.build_type}}
+        cmake --build ./build --config Debug
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
