@@ -7,8 +7,8 @@ if(WIN32)
 	)
 
 	if(NOT ffmpeg_POPULATED)
-		FetchContent_MakeAvailable(ffmpeg)
 		message(STATUS "Downloading FFmpeg")
+		FetchContent_MakeAvailable(ffmpeg)
 	endif()
 
 	install(FILES

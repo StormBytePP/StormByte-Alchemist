@@ -72,6 +72,8 @@ if (NOT WIN32)
 	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
 	find_package (Config++ REQUIRED)
 	target_link_libraries(Alchemy PUBLIC config++)
+else()
+	add_dependencies(Alchemy hdr10plus_tool)
 endif()
 
 include(OptionalFeatures)
