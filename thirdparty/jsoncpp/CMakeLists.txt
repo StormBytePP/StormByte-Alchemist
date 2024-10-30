@@ -6,6 +6,8 @@ else()
 
 	add_library(JsonCpp SHARED ${JsonCpp_DIR}/jsoncpp/jsoncpp.cpp)
 	target_include_directories(JsonCpp PUBLIC ${JsonCpp_DIR})
+	message(STATUS "JsonCPP include: ${JsonCpp_DIR}")
+
 	if (NOT WIN32)
 		target_compile_options(JsonCpp PRIVATE -DPIC -fPIC)
 	endif()

@@ -16,6 +16,7 @@ else()
 	
 	add_library(SQLite3 SHARED "${sqlite3_SOURCE_DIR}/sqlite3.c")
 	target_include_directories(SQLite3 PUBLIC "${sqlite3_SOURCE_DIR}")
+	message(STATUS "Folder: ${sqlite3_SOURCE_DIR}")
 
 	if (NOT WIN32)
 		target_compile_options(SQLite3 PRIVATE -DPIC -fPIC)
