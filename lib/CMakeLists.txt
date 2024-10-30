@@ -56,7 +56,10 @@ set(ALCHEMY_SRCs
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PRIVATE cxx_std_20)
-target_link_libraries(Alchemy PUBLIC jsoncpp sqlite3 config++)
+target_link_libraries(Alchemy
+	PUBLIC jsoncpp
+	PUBLIC sqlite3
+)
 target_include_directories(Alchemy PUBLIC
   $<BUILD_INTERFACE:${ALCHEMY_DIR}>
   $<INSTALL_INTERFACE:include/Alchemy>
@@ -64,6 +67,8 @@ target_include_directories(Alchemy PUBLIC
 
 if (NOT WIN32)
 	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
+	find_package (Config++ REQUIRED)
+	target_link_libraries(Alchemy PUBLIC config++)
 endif()
 
 include(OptionalFeatures)
