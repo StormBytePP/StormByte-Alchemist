@@ -15,7 +15,7 @@ if(Config++_LIBRARY AND Config++_INCLUDE_DIR)
             INTERFACE_INCLUDE_DIRECTORIES "${Config++_INCLUDE_DIR}"
 		)
     endif()
-	message(STATUS "Found Config++")
+	message(STATUS "Found Config++: ${Config++_LIBRARY}")
 else()
 	message(FATAL_ERROR "Could NOT find Config++ library")
 endif()
