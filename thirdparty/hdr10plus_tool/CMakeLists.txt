@@ -1,8 +1,7 @@
 find_program(HDR10PLUS_TOOL_EXECUTABLE hdr10plus_tool)
 if (NOT HDR10PLUS_TOOL_EXECUTABLE)
 	add_custom_target(hdr10plus_tool ALL
-		cargo update -q --manifest-path "${CMAKE_CURRENT_LIST_DIR}/src/Cargo.toml"
-		COMMAND cargo install -q --root "${CMAKE_BINARY_DIR}" --path "${CMAKE_CURRENT_LIST_DIR}/src"
+		cargo install -q --root "${CMAKE_BINARY_DIR}" --path "${CMAKE_CURRENT_LIST_DIR}/src"
 		BYPRODUCTS "${CMAKE_BINARY_DIR}/bin/thirdparty/hdr10plus_tool"
 	)
 	add_dependencies(Myrddin hdr10plus_tool)
