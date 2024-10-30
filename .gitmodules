@@ -1,3 +1,6 @@
 [submodule "thirdparty/hdr10plus_tool/src"]
 	path = thirdparty/hdr10plus_tool/src
 	url = https://github.com/quietvoid/hdr10plus_tool.git
+[submodule "thirdparty/libconfig"]
+	path = thirdparty/libconfig
+	url = https://github.com/hyperrealm/libconfig.git
