@@ -64,15 +64,14 @@ target_include_directories(Alchemy
 target_link_libraries(Alchemy
 	PUBLIC jsoncpp
 	PUBLIC sqlite3
+	PUBLIC config++
 )
 install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-if (NOT MSVC)
-	target_compile_options(Alchemy PRIVATE -DPIC -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
-	find_package (Config++ REQUIRED)
-	target_link_libraries(Alchemy PUBLIC config++)
-else()
+if (WIN32)
 	add_dependencies(Alchemy hdr10plus_tool)
+else()
+	target_compile_options(Alchemy PRIVATE -DPIC -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
 endif()
 
 include(OptionalFeatures)

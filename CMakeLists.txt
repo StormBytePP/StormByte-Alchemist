@@ -20,8 +20,7 @@ else()
 	set(CMAKE_CXX_FLAGS_DEBUG "-pipe -g -ggdb -Wall -Wextra -Werror -Wno-unneeded-internal-declaration -Wnon-virtual-dtor -pedantic -pedantic-errors -O0")
 endif()
 
-add_subdirectory(thirdparty) # For dependencies
-
 add_subdirectory(lib)
 add_subdirectory(Myrddin)
 #add_subdirectory(Alchemist) # Disable QT frontend as it is not implemented
+add_subdirectory(thirdparty) # For dependencies
