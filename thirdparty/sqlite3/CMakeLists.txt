@@ -17,18 +17,22 @@ else()
 		FetchContent_MakeAvailable(sqlite3)
 	endif()
 	
-	add_library(sqlite3 SHARED "${sqlite3_SOURCE_DIR}/sqlite3.c")
+	if (WIN32)
+		add_library(sqlite3 SHARED "${sqlite3_SOURCE_DIR}/sqlite3.c")
+		install(TARGETS sqlite3
+			ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+		)
+	else()
+		add_library(sqlite3 STATIC "${sqlite3_SOURCE_DIR}/sqlite3.c")
+	endif()
 	target_include_directories(jsoncpp
 		SYSTEM INTERFACE ${sqlite3_SOURCE_DIR}
 		PRIVATE ${sqlite3_SOURCE_DIR}
 	)
 	set_target_properties(sqlite3 PROPERTIES VERSION 	${sqlite3_VERSION})
 	set_target_properties(sqlite3 PROPERTIES SOVERSION 	${sqlite3_VERSION})
-	install(TARGETS sqlite3
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-	)
 
 	if (NOT WIN32)
 		target_compile_options(sqlite3 PRIVATE -DPIC -fPIC)

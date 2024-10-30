@@ -3,18 +3,22 @@ if (WITH_SYSTEM_CONFIG++)
 else()
     FILE(GLOB_RECURSE libsrc_cpp "src/lib/*.c" "src/lib/*.cc")
 
-    add_library(config++ SHARED ${libsrc_cpp})
+	if (WIN32)
+    	add_library(config++ SHARED ${libsrc_cpp})
+		install(TARGETS config++
+			ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+		)
+	else()
+		add_library(config++ STATIC ${libsrc_cpp})
+	endif()
 
     target_include_directories(config++
 		SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/lib
 	)
     target_compile_definitions(config++ PRIVATE LIBCONFIGXX_EXPORTS)
-
-    install(TARGETS config++
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+	target_compile_options(config++ PRIVATE -fPIC)
     
     include(CheckSymbolExists)
     check_symbol_exists(uselocale "locale.h" HAVE_USELOCALE)
