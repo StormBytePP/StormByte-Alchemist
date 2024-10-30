@@ -57,31 +57,21 @@ set(ALCHEMY_SRCs
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PRIVATE cxx_std_20)
-target_link_libraries(Alchemy
-	PUBLIC jsoncpp
-	PUBLIC sqlite3
-)
+target_link_libraries(Alchemy PRIVATE jsoncpp sqlite3)
 target_include_directories(Alchemy PUBLIC
   $<BUILD_INTERFACE:${ALCHEMY_DIR}>
   $<INSTALL_INTERFACE:include/Alchemy>
+  PRIVATE ${CMAKE_BINARY_DIR}
 )
+install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 if (NOT WIN32)
 	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
 	find_package (Config++ REQUIRED)
-	target_link_libraries(Alchemy PUBLIC config++)
+	target_link_libraries(Alchemy PRIVATE config++)
 endif()
 
 include(OptionalFeatures)
-
 include(GetVersionFromGitTag)
-file(CONFIGURE OUTPUT ${CMAKE_BINARY_DIR}/generated/definitions.h CONTENT "#pragma once
+include(Definitions)
 
-#define PROJECT_URI				\"${PROJECT_HOMEPAGE_URL}\"
-#define LIBRARY_NAME			\"${PROJECT_NAME}\"
-#define LIBRARY_AUTHOR			\"David C. Manuelda a.k.a StormByte <stormbyte@gmail.com>\"
-#define LIBRARY_VERSION			\"${${PROJECT_NAME}_VERSION_STRING}\"
-
-
-")
-target_include_directories(Alchemy PRIVATE ${CMAKE_BINARY_DIR})

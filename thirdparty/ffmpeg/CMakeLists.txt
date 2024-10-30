@@ -5,11 +5,10 @@ if(WIN32)
 		URL      https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
 		DOWNLOAD_EXTRACT_TIMESTAMP false
 	)
-	FetchContent_MakeAvailable(ffmpeg)
 
 	if(NOT ffmpeg_POPULATED)
-	# Fetch the content using previously declared details
-	FetchContent_Populate(ffmpeg)
+		FetchContent_MakeAvailable(ffmpeg)
+		message(STATUS "Downloading FFmpeg")
 	endif()
 
 	install(FILES
@@ -22,9 +21,7 @@ if(WIN32)
 else()
 	find_program(FFMPEG_EXECUTABLE ffmpeg REQUIRED)
 	find_program(FFPROBE_EXECUTABLE ffprobe REQUIRED)
+	message(STATUS "Found FFmpeg: ${FFMPEG_EXECUTABLE}")
 endif()
 mark_as_advanced(FFMPEG_EXECUTABLE)
 mark_as_advanced(FFPROBE_EXECUTABLE)
-
-file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define FFMPEG_PATH \"${FFMPEG_EXECUTABLE}\"\n")
-file(APPEND ${CMAKE_BINARY_DIR}/generated/definitions.h "#define FFPROBE_PATH \"${FFPROBE_EXECUTABLE}\"\n")

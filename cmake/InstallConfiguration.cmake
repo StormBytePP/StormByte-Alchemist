@@ -1,3 +1,0 @@
-# Setting install targets
-install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS Myrddin DESTINATION ${CMAKE_INSTALL_BINDIR})
