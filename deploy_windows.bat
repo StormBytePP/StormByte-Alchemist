@@ -7,19 +7,17 @@ mkdir build
 mkdir dist
 mkdir deps
 
-cd deps
-mkdir src
-cd src
-git clone https://github.com/hyperrealm/libconfig.git
-cd ..
-mkdir build
-mkdir bin
-cd build
+git submodule update --init --recursive
+git submodule update --recursive --remote
 
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR=Ninja -DCMAKE_INSTALL_PREFIX=..\bin -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF ..\src\libconfig
+cd build
+mkdir libconfig
+cd libconfig
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR=Ninja -DCMAKE_INSTALL_PREFIX=..\..\deps -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF ..\..\thirdparty\libconfig
 ninja install
 
-cd ..\..\build
+cd ..
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR=Ninja -DCMAKE_INSTALL_PREFIX=../dist -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=OFF ..
 ninja install
 cd ..
