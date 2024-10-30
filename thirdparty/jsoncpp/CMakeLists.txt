@@ -5,9 +5,7 @@ else()
 	set(jsoncpp_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${jsoncpp_VERSION})
 
 	add_library(jsoncpp SHARED ${jsoncpp_DIR}/jsoncpp/jsoncpp.cpp)
-	target_include_directories(jsoncpp PUBLIC
-		$<BUILD_INTERFACE:${jsoncpp_DIR}>
-	)
+	target_include_directories(jsoncpp PUBLIC ${jsoncpp_DIR})
 
 	if (NOT WIN32)
 		target_compile_options(jsoncpp PRIVATE -DPIC -fPIC)
