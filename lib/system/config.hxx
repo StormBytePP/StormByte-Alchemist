@@ -3,6 +3,7 @@
 #include "visibility.h"
 
 #include <filesystem>
+#include <libconfig.h++>
 
 namespace Alchemist::System {
 	class DLL_PUBLIC Config {
@@ -15,9 +16,12 @@ namespace Alchemist::System {
 			~Config()							= default;
 
 		private:
+			static const std::filesystem::path 	GetPath();
+			static const std::filesystem::path 	GetFileName();
+			#ifdef WINDOWS
+			static const std::wstring			EnvironmentVariable(const std::wstring&);
+			#endif
 			void Initialize();
-		public:
-			static const std::filesystem::path GetDefaultPath();
-			static const std::filesystem::path GetFileName();
+			static const libconfig::Config		Default();
 	};
 }
