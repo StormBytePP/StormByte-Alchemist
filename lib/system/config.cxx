@@ -23,7 +23,7 @@ const std::filesystem::path Config::GetPath() {
 	const struct passwd *pw = getpwuid(getuid());
 	return std::filesystem::path(pw->pw_dir) / ".alchemist";
 	#else
-	return std::filesystem::path(EnvironmentVariable("%PROGRAMDATA%") / "Alchemist";
+	return std::filesystem::path(EnvironmentVariable(TEXT("%PROGRAMDATA%"))) / "Alchemist";
 	#endif
 }
 
@@ -34,7 +34,8 @@ const std::filesystem::path Config::GetFileName() {
 #ifdef WINDOWS
 const std::wstring Config::EnvironmentVariable(const std::wstring& var) {
 	TCHAR  infoBuf[INFO_BUFFER_SIZE] = { '\0' };
-	return ::ExpandEnvironmentStrings(var.c_str(), infoBuf, INFO_BUFFER_SIZE);
+	::ExpandEnvironmentStrings(var.c_str(), infoBuf, INFO_BUFFER_SIZE);
+	return infoBuf;
 }
 #endif
 
