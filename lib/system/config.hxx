@@ -16,10 +16,8 @@ namespace Alchemist::System {
 
 		private:
 			void Initialize();
-
-			#ifdef LINUX
-			const std::filesystem::path GetDefaultPath() const;
-			const std::filesystem::path GetFileName() const;
-			#endif
+		public:
+			static const std::filesystem::path GetDefaultPath();
+			static const std::filesystem::path GetFileName();
 	};
 }
