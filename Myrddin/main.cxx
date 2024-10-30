@@ -5,7 +5,10 @@
 using namespace Alchemist::System;
 
 int main() {
-	Config config;
+	std::cout << "Before: " << Config::Instance.GetDatabaseFile() << std::endl;
+	Config::Instance.SetDatabaseFile("/tmp/my_database.sqlite3");
+	std::cout << "After: " << Config::Instance.GetDatabaseFile() << std::endl;
+	Config::Instance.Save();
 	return 0;
 }
 
