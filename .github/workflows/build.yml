@@ -47,7 +47,7 @@ jobs:
       run: sudo apt update
   
     - name: Install dependencies
-      run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
+      run: sudo apt install -y ffmpeg clang cmake libconfig++-dev
 
     - name: Pretending hdr10plus_tool is installed
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
@@ -95,7 +95,7 @@ jobs:
       run: sudo apt update
 
     - name: Install dependencies
-      run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
+      run: sudo apt install -y ffmpeg clang cmake libconfig++-dev
 
     - name: Pretending hdr10plus_tool is installed
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
