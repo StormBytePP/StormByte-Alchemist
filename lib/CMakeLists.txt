@@ -57,7 +57,6 @@ set(ALCHEMY_SRCs
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PUBLIC cxx_std_20)
-target_compile_options(Alchemy PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
 target_include_directories(Alchemy
 	SYSTEM INTERFACE ${ALCHEMY_DIR}
 	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
@@ -68,8 +67,8 @@ target_link_libraries(Alchemy
 )
 install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-if (NOT WIN32)
-	target_compile_options(Alchemy PRIVATE -DPIC -fPIC)
+if (NOT MSVC)
+	target_compile_options(Alchemy PRIVATE -DPIC -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
 	find_package (Config++ REQUIRED)
 	target_link_libraries(Alchemy PUBLIC config++)
 else()
