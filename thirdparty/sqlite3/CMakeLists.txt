@@ -24,7 +24,11 @@ else()
 	)
 	set_target_properties(sqlite3 PROPERTIES VERSION 	${sqlite3_VERSION})
 	set_target_properties(sqlite3 PROPERTIES SOVERSION 	${sqlite3_VERSION})
-	install(TARGETS sqlite3 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+	install(TARGETS sqlite3
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 
 	if (NOT WIN32)
 		target_compile_options(sqlite3 PRIVATE -DPIC -fPIC)

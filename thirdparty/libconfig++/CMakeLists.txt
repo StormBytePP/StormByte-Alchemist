@@ -10,8 +10,12 @@ else()
 	)
     target_compile_definitions(config++ PRIVATE LIBCONFIGXX_EXPORTS)
 
-    install(TARGETS config++ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
+    install(TARGETS config++
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+    
     include(CheckSymbolExists)
     check_symbol_exists(uselocale "locale.h" HAVE_USELOCALE)
     check_symbol_exists(newlocale "locale.h" HAVE_NEWLOCALE)

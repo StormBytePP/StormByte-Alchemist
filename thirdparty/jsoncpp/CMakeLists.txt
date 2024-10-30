@@ -12,7 +12,11 @@ else()
 	)
 	set_target_properties(jsoncpp PROPERTIES VERSION 	${jsoncpp_VERSION})
 	set_target_properties(jsoncpp PROPERTIES SOVERSION 	${jsoncpp_VERSION})
-	install(TARGETS jsoncpp DESTINATION ${CMAKE_INSTALL_LIBDIR})
+	install(TARGETS jsoncpp
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 
 	if (NOT WIN32)
 		target_compile_options(jsoncpp PRIVATE -DPIC -fPIC)

@@ -66,7 +66,11 @@ target_link_libraries(Alchemy
 	PUBLIC sqlite3
 	PUBLIC config++
 )
-install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS Alchemy
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 if (WIN32)
 	add_dependencies(Alchemy hdr10plus_tool)
