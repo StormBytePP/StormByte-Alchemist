@@ -14,7 +14,7 @@ else()
 		FetchContent_Populate(sqlite3)
 	endif()
 	
-	add_library(sqlite3 SHARED "${sqlite3_SOURCE_DIR}/sqlite3.c")
+	add_library(sqlite3 STATIC "${sqlite3_SOURCE_DIR}/sqlite3.c")
 	target_include_directories(sqlite3 PUBLIC
 		$<BUILD_INTERFACE:${sqlite3_SOURCE_DIR}>
 	)
