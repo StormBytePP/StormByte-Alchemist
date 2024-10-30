@@ -101,7 +101,7 @@ jobs:
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
       
     - name: Configure CMake All OFF
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=OFF -DWITH_SYSTEM_CONFIG++=ON
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_SQLITE=OFF -DWITH_SYSTEM_CONFIG++=OFF
 
     - name: Build with Clang
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} 
