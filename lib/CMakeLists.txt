@@ -56,12 +56,14 @@ set(ALCHEMY_SRCs
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
-target_compile_features(Alchemy PRIVATE cxx_std_20)
-target_link_libraries(Alchemy PRIVATE jsoncpp sqlite3)
-target_include_directories(Alchemy PUBLIC
-  $<BUILD_INTERFACE:${ALCHEMY_DIR}>
-  $<INSTALL_INTERFACE:include/Alchemy>
-  PRIVATE ${CMAKE_BINARY_DIR}
+target_compile_features(Alchemy PUBLIC cxx_std_20)
+target_link_libraries(Alchemy
+	PUBLIC jsoncpp
+	PUBLIC sqlite3
+)
+target_include_directories(Alchemy
+	SYSTEM INTERFACE ${ALCHEMY_DIR}
+	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
 )
 install(TARGETS Alchemy LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 

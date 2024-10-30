@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <media/file.hxx>
+#include <sqlite3.h>
 
 using namespace Alchemist::Media;
 

@@ -6,7 +6,10 @@ else()
 	set(jsoncpp_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${jsoncpp_VERSION})
 
 	add_library(jsoncpp SHARED ${jsoncpp_DIR}/jsoncpp/jsoncpp.cpp)
-	target_include_directories(jsoncpp PUBLIC ${jsoncpp_DIR})
+	target_include_directories(jsoncpp
+		SYSTEM INTERFACE ${jsoncpp_DIR}
+		PRIVATE ${jsoncpp_DIR}/jsoncpp
+	)
 	set_target_properties(jsoncpp PROPERTIES VERSION 	${jsoncpp_VERSION})
 	set_target_properties(jsoncpp PROPERTIES SOVERSION 	${jsoncpp_VERSION})
 	install(TARGETS jsoncpp DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -18,11 +18,12 @@ else()
 	endif()
 	
 	add_library(sqlite3 SHARED "${sqlite3_SOURCE_DIR}/sqlite3.c")
+	target_include_directories(jsoncpp
+		SYSTEM INTERFACE ${sqlite3_SOURCE_DIR}
+		PRIVATE ${sqlite3_SOURCE_DIR}
+	)
 	set_target_properties(sqlite3 PROPERTIES VERSION 	${sqlite3_VERSION})
 	set_target_properties(sqlite3 PROPERTIES SOVERSION 	${sqlite3_VERSION})
-	target_include_directories(sqlite3 PUBLIC
-		$<BUILD_INTERFACE:${sqlite3_SOURCE_DIR}>
-	)
 	install(TARGETS sqlite3 DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 	if (NOT WIN32)
