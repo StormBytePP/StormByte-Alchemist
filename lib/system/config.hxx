@@ -9,13 +9,8 @@
 namespace Alchemist::System {
 	class DLL_PUBLIC Config {
 		public:
-			
-			Config(const Config&)				= delete;
-			Config(Config&&)					= delete;
-			Config& operator=(const Config&)	= delete;
-			Config& operator=(Config&&)			= delete;
 			~Config()							= default;
-
+			
 			static Config						Instance;
 			const std::filesystem::path			GetDatabaseFile() const;
 			void								SetDatabaseFile(const std::filesystem::path&);
@@ -27,9 +22,14 @@ namespace Alchemist::System {
 			void 								Save();
 
 		private:
+			Config();
+			Config(const Config&)				= delete;
+			Config(Config&&)					= delete;
+			Config& operator=(const Config&)	= delete;
+			Config& operator=(Config&&)			= delete;
+
 			libconfig::Config m_config;
 
-			Config();
 			static const std::filesystem::path 	GetPath();
 			static const std::filesystem::path 	GetFileName();
 			#ifdef WINDOWS
