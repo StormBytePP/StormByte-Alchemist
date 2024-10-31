@@ -3,4 +3,4 @@
 	url = https://github.com/quietvoid/hdr10plus_tool.git
 [submodule "thirdparty/libconfig++/src"]
 	path = thirdparty/libconfig++/src
-	url = https://github.com/StormBytePP/libconfig.git
+	url = https://github.com/hyperrealm/libconfig.git
