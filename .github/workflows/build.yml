@@ -20,7 +20,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update && sudo apt upgrade
+      run: sudo apt update
 
     - name: Install dependencies
       run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
@@ -44,7 +44,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update && sudo apt upgrade
+      run: sudo apt update
   
     - name: Install dependencies
       run: sudo apt install -y ffmpeg clang cmake
@@ -68,7 +68,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update && sudo apt upgrade
+      run: sudo apt update
 
     - name: Install dependencies
       run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
@@ -92,7 +92,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update && sudo apt upgrade
+      run: sudo apt update
 
     - name: Install dependencies
       run: sudo apt install -y ffmpeg clang cmake

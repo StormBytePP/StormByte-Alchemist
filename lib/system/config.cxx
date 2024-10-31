@@ -33,7 +33,7 @@ void Config::SetTmpFolder(const std::filesystem::path& tmpdir) {
 }
 
 void Config::Save() {
-	m_config.writeFile(GetFileName());
+	m_config.writeFile(GetFileName().string().c_str());
 }
 
 const std::filesystem::path Config::GetPath() {
