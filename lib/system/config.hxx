@@ -10,10 +10,10 @@ namespace Alchemist::System {
 	class DLL_PUBLIC Config {
 		public:
 			
-			Config(const Config&)				= default;
-			Config(Config&&)					= default;
-			Config& operator=(const Config&)	= default;
-			Config& operator=(Config&&)			= default;
+			Config(const Config&)				= delete;
+			Config(Config&&)					= delete;
+			Config& operator=(const Config&)	= delete;
+			Config& operator=(Config&&)			= delete;
 			~Config()							= default;
 
 			static Config						Instance;
