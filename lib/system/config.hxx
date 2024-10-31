@@ -9,6 +9,11 @@
 namespace Alchemist::System {
 	class DLL_PUBLIC Config {
 		public:
+			struct Codec {
+				std::string 					name;
+				std::optional<unsigned short>	bitrate;
+				std::optional<std::string>		options;
+			};
 			~Config()							= default;
 			
 			static Config						Instance;
@@ -18,8 +23,11 @@ namespace Alchemist::System {
 			void								SetTmpFolder(const std::filesystem::path&);
 			const unsigned short				GetSleepTime() const;
 			void								SetSleepTime(const unsigned short&);
+			Codec								GetCodec() const;
+			void								SetCodec(const Codec&);
 			
 			void 								Save();
+			void								Read();
 
 		private:
 			Config();
@@ -33,13 +41,8 @@ namespace Alchemist::System {
 			static const std::filesystem::path 	GetPath();
 			static const std::filesystem::path 	GetFileName();
 			#ifdef WINDOWS
-			static const std::wstring			EnvironmentVariable(const std::wstring&);
+			static const std::string			ExpandEnvironmentVariable(const std::string&);
 			#endif
-			void Initialize();
-			void PopulateDefaultValuesIfNeeded(bool);
-			static const std::filesystem::path	DefaultDatabaseFile();
-			static const std::filesystem::path	DefaultTmpDirectory();
-			static const unsigned short			DefaultSleepTime();
 			const std::string					GetValueString(const std::string&) const;
 	};
 }
