@@ -63,7 +63,8 @@ void Config::Read() {
 
 	int value_int;
 	std::string value_string;
-	libconfig::Setting& target_root = target_cfg.getRoot();
+	m_config.clear();
+	libconfig::Setting& target_root = m_config.getRoot();
 
 	if (source_cfg.exists("database") && source_cfg.lookup("database").getType() == libconfig::Setting::TypeString)
 		value_string = source_cfg.lookup("database").c_str();
@@ -106,8 +107,8 @@ void Config::Read() {
 		codec_root.add("fdk_aac", libconfig::Setting::TypeGroup).add("bitrate", libconfig::Setting::TypeInt) = 128;
 		codec_root.add("libx265", libconfig::Setting::TypeGroup).add("options", libconfig::Setting::TypeInt) = "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
 	}
-	target_cfg.writeFile(GetFileName());
-	m_config = std::move(target_cfg);
+
+	m_config.writeFile(GetFileName());
 }
 
 const std::filesystem::path Config::GetPath() {
