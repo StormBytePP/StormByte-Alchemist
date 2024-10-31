@@ -7,8 +7,6 @@
 #else
 #include <windows.h>
 #include <tchar.h>
-#include <locale>
-#include <codecvt>
 #define INFO_BUFFER_SIZE 32767
 #endif
 
@@ -26,11 +24,11 @@ void Config::SetDatabaseFile(const std::filesystem::path& dbfile) {
 	m_config.getRoot()["database"] = dbfile.string();
 }
 
-const std::filesystem::path Config::GetTmpFolder() const {
+const std::filesystem::path Config::GetTmpDirectory() const {
 	return GetValueString("tmpdir");
 }
 
-void Config::SetTmpFolder(const std::filesystem::path& tmpdir) {
+void Config::SetTmpDirectory(const std::filesystem::path& tmpdir) {
 	m_config.getRoot()["tmpdir"] = tmpdir.string();
 }
 
@@ -69,7 +67,7 @@ void Config::Read() {
 	if (cfg.exists("database") && cfg.lookup("database").getType() == libconfig::Setting::TypeString)
 		value_string = cfg.lookup("database").c_str();
 	else
-		value_string = GetPath() / "database.sqlite";
+		value_string = (GetPath() / "database.sqlite").string();
 	target_root.add("database", libconfig::Setting::TypeString) = value_string;
 
 	if (cfg.exists("tmpdir") && cfg.lookup("tmpdir").getType() == libconfig::Setting::TypeString)
@@ -98,7 +96,7 @@ void Config::Read() {
 				if (it->exists("bitrate") && it->lookup("bitrate").getType() == libconfig::Setting::TypeInt)
 					target_codec.add("bitrate", libconfig::Setting::TypeInt) = (int)it->lookup("bitrate");
 				if (it->exists("options") && it->lookup("options").getType() == libconfig::Setting::TypeString)
-					target_codec.add("options", libconfig::Setting::TypeString) = (std::string)it->lookup("options");
+					target_codec.add("options", libconfig::Setting::TypeString) = (std::string)it->lookup("options").c_str();
 			}
 		} 
 	}
@@ -126,9 +124,30 @@ const std::filesystem::path Config::GetFileName() {
 
 #ifdef WINDOWS
 const std::string Config::ExpandEnvironmentVariable(const std::string& var) {
+	return ExpandEnvironmentVariable(UTF8Decode(var));
+}
+
+const std::string Config::ExpandEnvironmentVariable(const std::wstring& var) {
 	TCHAR  infoBuf[INFO_BUFFER_SIZE] = { '\0' };
 	::ExpandEnvironmentStrings(var.c_str(), infoBuf, INFO_BUFFER_SIZE);
-	return infoBuf;
+
+	return UTF8Encode(infoBuf);
+}
+
+std::string Config::UTF8Encode(const std::wstring& wstr) {
+	if (wstr.empty()) return std::string();
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+	return strTo;
+}
+
+std::wstring Config::UTF8Decode(const std::string& str) {
+	if (str.empty()) return std::wstring();
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+	std::wstring wstrTo(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+	return wstrTo;
 }
 #endif
 
