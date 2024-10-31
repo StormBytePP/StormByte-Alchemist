@@ -36,7 +36,7 @@ namespace Alchemist::System {
 			static const std::wstring			EnvironmentVariable(const std::wstring&);
 			#endif
 			void Initialize();
-			void PopulateDefaultValues();
+			void PopulateDefaultValuesIfNeeded(bool);
 			static const std::filesystem::path	DefaultDatabaseFile();
 			static const std::filesystem::path	DefaultTmpDirectory();
 			static const unsigned short			DefaultSleepTime();

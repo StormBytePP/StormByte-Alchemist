@@ -71,25 +71,31 @@ void Config::Initialize() {
 
 	try {
     	m_config.readFile(GetFileName().string().c_str());
+		PopulateDefaultValuesIfNeeded(false);
 	}
 	catch(const libconfig::FileIOException&) {
-		PopulateDefaultValues();
+		PopulateDefaultValuesIfNeeded(true);
 	}
 	catch(const libconfig::ParseException&) {
-		PopulateDefaultValues();
+		PopulateDefaultValuesIfNeeded(true);
 	}
 }
 
-void Config::PopulateDefaultValues() {
-	#if (LIBCONFIGXX_VER_MAJOR > 1 || (LIBCONFIGXX_VER_MAJOR == 1 && LIBCONFIGXX_VER_MINOR >= 7))
-	m_config.clear();
-	#else
-	m_config.getRoot().remove("database");
-	m_config.getRoot().remove("tmpdir");
-	#endif
-	m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile().string();
-	m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory().string();
-	m_config.getRoot().add("sleep", libconfig::Setting::TypeInt) = DefaultSleepTime();
+void Config::PopulateDefaultValuesIfNeeded(bool clear) {
+	if (clear) {
+		#if (LIBCONFIGXX_VER_MAJOR > 1 || (LIBCONFIGXX_VER_MAJOR == 1 && LIBCONFIGXX_VER_MINOR >= 7))
+		m_config.clear();
+		#else
+		m_config.getRoot().remove("database");
+		m_config.getRoot().remove("tmpdir");
+		#endif
+	}
+	if (!m_config.exists("database"))
+		m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile().string();
+	if (!m_config.exists("tmpdir"))
+		m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory().string();
+	if (!m_config.exists("sleep"))
+		m_config.getRoot().add("sleep", libconfig::Setting::TypeInt) = DefaultSleepTime();
 }
 
 const std::filesystem::path Config::DefaultDatabaseFile() {
