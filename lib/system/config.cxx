@@ -17,19 +17,19 @@ Config Config::Instance = {};
 Config::Config() { Initialize(); }
 
 const std::filesystem::path Config::GetDatabaseFile() const noexcept {
-	return std::string(m_config.lookup("database"));
+	return GetValue("database");
 }
 
 void Config::SetDatabaseFile(const std::filesystem::path& dbfile) {
-	m_config.getRoot()["database"] = dbfile;
+	m_config.getRoot()["database"] = dbfile.string();
 }
 
 const std::filesystem::path Config::GetTmpFolder() const noexcept {
-	return std::string(m_config.lookup("tmpdir"));
+	return GetValue("tmpdir");
 }
 
 void Config::SetTmpFolder(const std::filesystem::path& tmpdir) {
-	m_config.getRoot()["tmpdir"] = tmpdir;
+	m_config.getRoot()["tmpdir"] = tmpdir.string();
 }
 
 void Config::Save() {
@@ -64,23 +64,23 @@ void Config::Initialize() {
 	try {
     	m_config.readFile(GetFileName().string().c_str());
 	}
-	catch(const libconfig::FileIOException &fioex) {
+	catch(const libconfig::FileIOException&) {
 		PopulateDefaultValues();
 	}
-	catch(const libconfig::ParseException &pex) {
+	catch(const libconfig::ParseException&) {
 		PopulateDefaultValues();
 	}
 }
 
 void Config::PopulateDefaultValues() {
 	#if (LIBCONFIGXX_VER_MAJOR > 1 || (LIBCONFIGXX_VER_MAJOR == 1 && LIBCONFIGXX_VER_MINOR >= 7))
-		m_config.clear();
+	m_config.clear();
 	#else
-		m_config.getRoot().remove("database");
-		m_config.getRoot().remove("tmpdir");
+	m_config.getRoot().remove("database");
+	m_config.getRoot().remove("tmpdir");
 	#endif
-	m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile();
-	m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory();
+	m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile().string();
+	m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory().string();
 }
 
 const std::filesystem::path Config::DefaultDatabaseFile() {
@@ -91,6 +91,11 @@ const std::filesystem::path Config::DefaultTmpDirectory() {
 	#ifdef LINUX
 	return "/tmp";
 	#else
-	return EnvironmentVariable(TEXT("%TEMP"));
+	return EnvironmentVariable(TEXT("%TEMP%"));
 	#endif
+}
+
+const std::string Config::GetValue(const std::string& key) const {
+	/* This function is just an intermediary string copy to make Windows happy */
+	return m_config.lookup(key);
 }

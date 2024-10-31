@@ -37,5 +37,6 @@ namespace Alchemist::System {
 			void PopulateDefaultValues();
 			static const std::filesystem::path	DefaultDatabaseFile();
 			static const std::filesystem::path	DefaultTmpDirectory();
+			const std::string					GetValue(const std::string&) const;
 	};
 }

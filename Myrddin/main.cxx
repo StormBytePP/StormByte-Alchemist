@@ -5,9 +5,13 @@
 using namespace Alchemist::System;
 
 int main() {
-	std::cout << "Before: " << Config::Instance.GetDatabaseFile() << std::endl;
+	std::cout << "Database before: " << Config::Instance.GetDatabaseFile() << std::endl;
 	Config::Instance.SetDatabaseFile("/tmp/my_database.sqlite3");
-	std::cout << "After: " << Config::Instance.GetDatabaseFile() << std::endl;
+	std::cout << "Database after: " << Config::Instance.GetDatabaseFile() << std::endl;
+
+	std::cout << "TMP before: " << Config::Instance.GetTmpFolder() << std::endl;
+	Config::Instance.SetTmpFolder("TEMPORARY");
+	std::cout << "TMP after: " << Config::Instance.GetTmpFolder() << std::endl;
 	Config::Instance.Save();
 	return 0;
 }
