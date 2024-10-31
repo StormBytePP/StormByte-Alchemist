@@ -42,7 +42,7 @@ void Config::SetSleepTime(const unsigned short& sleep) {
 	m_config.getRoot()["sleep"] = sleep;
 }
 
-void Config::Save() {
+void Config::Write() {
 	m_config.writeFile(GetFileName().string().c_str());
 }
 
@@ -50,9 +50,9 @@ void Config::Read() {
 	if (!std::filesystem::exists(GetPath()))
 		std::filesystem::create_directory(GetPath());
 	
-	libconfig::Config source_cfg, target_cfg;
+	libconfig::Config cfg;
 	try {
-		source_cfg.readFile(GetFileName().string());
+		cfg.readFile(GetFileName().string());
 	}
 	catch(const libconfig::FileIOException&) {
 		/* Ignored */
@@ -66,14 +66,14 @@ void Config::Read() {
 	m_config.clear();
 	libconfig::Setting& target_root = m_config.getRoot();
 
-	if (source_cfg.exists("database") && source_cfg.lookup("database").getType() == libconfig::Setting::TypeString)
-		value_string = source_cfg.lookup("database").c_str();
+	if (cfg.exists("database") && cfg.lookup("database").getType() == libconfig::Setting::TypeString)
+		value_string = cfg.lookup("database").c_str();
 	else
-		value_string = GetTmpFolder() / "database.sqlite";
+		value_string = GetPath() / "database.sqlite";
 	target_root.add("database", libconfig::Setting::TypeString) = value_string;
 
-	if (source_cfg.exists("tmpdir") && source_cfg.lookup("tmpdir").getType() == libconfig::Setting::TypeString)
-		value_string = source_cfg.lookup("tmpdir").c_str();
+	if (cfg.exists("tmpdir") && cfg.lookup("tmpdir").getType() == libconfig::Setting::TypeString)
+		value_string = cfg.lookup("tmpdir").c_str();
 	else {
 		#ifdef LINUX
 		value_string = "/tmp";
@@ -81,17 +81,17 @@ void Config::Read() {
 		value_string = "%TEMP%";
 		#endif
 	}
-	target_root.add("tmpfolder", libconfig::Setting::TypeString) = value_string;
+	target_root.add("tmpdir", libconfig::Setting::TypeString) = value_string;
 
-	if (source_cfg.exists("sleep") && source_cfg.lookup("sleep").getType() == libconfig::Setting::TypeInt)
-		value_int = source_cfg.lookup("sleep");
+	if (cfg.exists("sleep") && cfg.lookup("sleep").getType() == libconfig::Setting::TypeInt)
+		value_int = cfg.lookup("sleep");
 	else
 		value_int = 60 * 60; // 60 minutes
-	target_root.add("sleep", libconfig::Setting::TypeString) = value_int;
+	target_root.add("sleep", libconfig::Setting::TypeInt) = value_int;
 
-	if (source_cfg.exists("codec") && source_cfg.lookup("codec").getType() == libconfig::Setting::TypeGroup) {
+	if (cfg.exists("codec") && cfg.lookup("codec").getType() == libconfig::Setting::TypeGroup) {
 		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeGroup);
-		for (libconfig::Setting::iterator it = source_cfg.lookup("codec").begin(); it != source_cfg.lookup("codec").end(); it++) {
+		for (libconfig::Setting::iterator it = cfg.lookup("codec").begin(); it != cfg.lookup("codec").end(); it++) {
 			// We don't check if codec exists as it will just be ignored
 			if (it->getType() == libconfig::Setting::TypeGroup) {
 				libconfig::Setting& target_codec = target_codec_root.add(it->getName(), libconfig::Setting::TypeGroup);
@@ -103,12 +103,12 @@ void Config::Read() {
 		} 
 	}
 	else {
-		libconfig::Setting& codec_root = target_root.add("codec", libconfig::Setting::TypeGroup);
-		codec_root.add("fdk_aac", libconfig::Setting::TypeGroup).add("bitrate", libconfig::Setting::TypeInt) = 128;
-		codec_root.add("libx265", libconfig::Setting::TypeGroup).add("options", libconfig::Setting::TypeInt) = "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
+		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeGroup);
+		target_codec_root.add("fdk_aac", libconfig::Setting::TypeGroup).add("bitrate", libconfig::Setting::TypeInt) = 128;
+		target_codec_root.add("libx265", libconfig::Setting::TypeGroup).add("options", libconfig::Setting::TypeString) = "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
 	}
 
-	m_config.writeFile(GetFileName());
+	Write();
 }
 
 const std::filesystem::path Config::GetPath() {
@@ -131,39 +131,6 @@ const std::string Config::ExpandEnvironmentVariable(const std::string& var) {
 	return infoBuf;
 }
 #endif
-
-// void Config::PopulateDefaultValuesIfNeeded(bool clear) {
-// 	if (clear) {
-// 		#if (LIBCONFIGXX_VER_MAJOR > 1 || (LIBCONFIGXX_VER_MAJOR == 1 && LIBCONFIGXX_VER_MINOR >= 7))
-// 		m_config.clear();
-// 		#else
-// 		m_config.getRoot().remove("database");
-// 		m_config.getRoot().remove("tmpdir");
-// 		#endif
-// 	}
-// 	if (!m_config.exists("database"))
-// 		m_config.getRoot().add("database", libconfig::Setting::TypeString) = (GetPath() / "database.sqlite3").string();
-// 	if (!m_config.exists("tmpdir"))
-// 		m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory().string();
-// 	if (!m_config.exists("sleep"))
-// 		m_config.getRoot().add("sleep", libconfig::Setting::TypeInt) = DefaultSleepTime();
-// }
-
-// const std::filesystem::path Config::DefaultDatabaseFile() {
-// 	return GetPath() / "database.sqlite";
-// }
-
-// const std::filesystem::path Config::DefaultTmpDirectory() {
-// 	#ifdef LINUX
-// 	return "/tmp";
-// 	#else
-// 	return ExpandEnvironmentVariable(TEXT("%TEMP%"));
-// 	#endif
-// }
-
-// const unsigned short Config::DefaultSleepTime() {
-// 	return 600; // 10 minutes
-// }
 
 const std::string Config::GetValueString(const std::string& key) const {
 	/* This function will return string value from key */

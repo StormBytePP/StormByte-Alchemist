@@ -27,8 +27,8 @@ namespace Alchemist::System {
 			Codec								GetCodec() const;
 			void								SetCodec(const Codec&);
 			
-			void 								Save();
 			void								Read();
+			void 								Write();
 
 		private:
 			Config();
