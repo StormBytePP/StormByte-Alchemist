@@ -20,10 +20,10 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update
+      run: sudo apt update && sudo apt upgrade
 
     - name: Install dependencies
-      run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev cpp-14 g++-14
+      run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
 
     - name: Pretending hdr10plus_tool is installed
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
@@ -44,10 +44,10 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update
+      run: sudo apt update && sudo apt upgrade
   
     - name: Install dependencies
-      run: sudo apt install -y ffmpeg clang cmake cpp-14 g++-14
+      run: sudo apt install -y ffmpeg clang cmake
 
     - name: Pretending hdr10plus_tool is installed
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
@@ -68,7 +68,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update
+      run: sudo apt update && sudo apt upgrade
 
     - name: Install dependencies
       run: sudo apt install -y libsqlite3-dev ffmpeg clang cmake libconfig++-dev
@@ -92,7 +92,7 @@ jobs:
         submodules: 'true'
 
     - name: Update repository
-      run: sudo apt update
+      run: sudo apt update && sudo apt upgrade
 
     - name: Install dependencies
       run: sudo apt install -y ffmpeg clang cmake
