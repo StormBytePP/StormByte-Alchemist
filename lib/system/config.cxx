@@ -73,7 +73,12 @@ void Config::Initialize() {
 }
 
 void Config::PopulateDefaultValues() {
-	m_config.clear();
+	#if (LIBCONFIGXX_VER_MAJOR > 1 || (LIBCONFIGXX_VER_MAJOR == 1 && LIBCONFIGXX_VER_MINOR >= 7))
+		m_config.clear();
+	#else
+		m_config.getRoot().remove("database");
+		m_config.getRoot().remove("tmpdir");
+	#endif
 	m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile();
 	m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory();
 }
