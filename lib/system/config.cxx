@@ -16,7 +16,7 @@ Config Config::Instance = {};
 
 Config::Config() { Initialize(); }
 
-const std::filesystem::path Config::GetDatabaseFile() const noexcept {
+const std::filesystem::path Config::GetDatabaseFile() const {
 	return GetValueString("database");
 }
 
@@ -24,12 +24,20 @@ void Config::SetDatabaseFile(const std::filesystem::path& dbfile) {
 	m_config.getRoot()["database"] = dbfile.string();
 }
 
-const std::filesystem::path Config::GetTmpFolder() const noexcept {
+const std::filesystem::path Config::GetTmpFolder() const {
 	return GetValueString("tmpdir");
 }
 
 void Config::SetTmpFolder(const std::filesystem::path& tmpdir) {
 	m_config.getRoot()["tmpdir"] = tmpdir.string();
+}
+
+const unsigned short Config::GetSleepTime() const {
+	return static_cast<unsigned int>(m_config.lookup("sleep"));
+}
+
+void Config::SetSleepTime(const unsigned short& sleep) {
+	m_config.getRoot()["sleep"] = sleep;
 }
 
 void Config::Save() {
@@ -81,6 +89,7 @@ void Config::PopulateDefaultValues() {
 	#endif
 	m_config.getRoot().add("database", libconfig::Setting::TypeString) = DefaultDatabaseFile().string();
 	m_config.getRoot().add("tmpdir", libconfig::Setting::TypeString) = DefaultTmpDirectory().string();
+	m_config.getRoot().add("sleep", libconfig::Setting::TypeInt) = DefaultSleepTime();
 }
 
 const std::filesystem::path Config::DefaultDatabaseFile() {
@@ -93,6 +102,10 @@ const std::filesystem::path Config::DefaultTmpDirectory() {
 	#else
 	return EnvironmentVariable(TEXT("%TEMP%"));
 	#endif
+}
+
+const unsigned short Config::DefaultSleepTime() {
+	return 600; // 10 minutes
 }
 
 const std::string Config::GetValueString(const std::string& key) const {

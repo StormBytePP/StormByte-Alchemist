@@ -17,10 +17,12 @@ namespace Alchemist::System {
 			~Config()							= default;
 
 			static Config						Instance;
-			const std::filesystem::path			GetDatabaseFile() const noexcept;
+			const std::filesystem::path			GetDatabaseFile() const;
 			void								SetDatabaseFile(const std::filesystem::path&);
-			const std::filesystem::path			GetTmpFolder() const noexcept;
+			const std::filesystem::path			GetTmpFolder() const;
 			void								SetTmpFolder(const std::filesystem::path&);
+			const unsigned short				GetSleepTime() const;
+			void								SetSleepTime(const unsigned short&);
 			
 			void 								Save();
 
@@ -37,6 +39,7 @@ namespace Alchemist::System {
 			void PopulateDefaultValues();
 			static const std::filesystem::path	DefaultDatabaseFile();
 			static const std::filesystem::path	DefaultTmpDirectory();
+			static const unsigned short			DefaultSleepTime();
 			const std::string					GetValueString(const std::string&) const;
 	};
 }
