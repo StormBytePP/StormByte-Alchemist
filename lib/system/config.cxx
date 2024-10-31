@@ -17,7 +17,7 @@ Config Config::Instance = {};
 Config::Config() { Initialize(); }
 
 const std::filesystem::path Config::GetDatabaseFile() const noexcept {
-	return GetValue("database");
+	return GetValueString("database");
 }
 
 void Config::SetDatabaseFile(const std::filesystem::path& dbfile) {
@@ -25,7 +25,7 @@ void Config::SetDatabaseFile(const std::filesystem::path& dbfile) {
 }
 
 const std::filesystem::path Config::GetTmpFolder() const noexcept {
-	return GetValue("tmpdir");
+	return GetValueString("tmpdir");
 }
 
 void Config::SetTmpFolder(const std::filesystem::path& tmpdir) {
@@ -95,7 +95,7 @@ const std::filesystem::path Config::DefaultTmpDirectory() {
 	#endif
 }
 
-const std::string Config::GetValue(const std::string& key) const {
+const std::string Config::GetValueString(const std::string& key) const {
 	/* This function is just an intermediary string copy to make Windows happy */
 	return m_config.lookup(key);
 }
