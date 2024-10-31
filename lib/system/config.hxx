@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <libconfig.h++>
 #include <memory>
+#include <optional>
 
 namespace Alchemist::System {
 	class DLL_PUBLIC Config {
