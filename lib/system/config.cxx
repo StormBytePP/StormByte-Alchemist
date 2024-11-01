@@ -12,6 +12,10 @@
 
 using namespace Alchemist::System;
 
+bool Config::Codec::Empty() const {
+	return !bitrate && !options;
+}
+
 Config Config::Instance = {};
 
 Config::Config() { Read(); }
@@ -40,6 +44,43 @@ void Config::SetSleepTime(const unsigned short& sleep) {
 	m_config.getRoot()["sleep"] = sleep;
 }
 
+Config::Codec Config::GetCodec(const std::string& codec) const {
+	Codec codec_cfg;
+	codec_cfg.name = codec;
+	bool found = false;
+	const libconfig::Setting& codec_list = m_config.getRoot().lookup("codec");
+	for (auto i = 0; i < codec_list.getLength() && !found; i++) {
+		if (static_cast<std::string>(codec_list[i]["name"]) == codec) {
+			found = true;
+			if (codec_list[i].exists("bitrate")) codec_cfg.bitrate = static_cast<int>(codec_list[i]["bitrate"]);
+			if (codec_list[i].exists("options")) codec_cfg.options = static_cast<std::string>(codec_list[i]["options"]);
+		}
+	//for (libconfig::Setting::const_iterator it = codec_list.begin(); it != codec_list.end() && !found; it++) {
+		//std::cout << static_cast<std::string>(codec_list[i]["name"]) << std::endl;//it->getPath() << std::endl;
+	// 	// if (static_cast<std::string>((*it)["name"]) == codec) {
+	// 	// 	found = true;
+	// 	// 	if (it->exists("bitrate")) codec_cfg.bitrate = static_cast<int>((*it)["bitrate"]);
+	// 	// 	if (it->exists("options")) codec_cfg.options = static_cast<std::string>((*it)["options"]);
+	// 	// }
+	}
+	return codec_cfg;
+}
+
+void Config::SetCodec(const Codec& codec_cfg) {
+	libconfig::Setting& codec_root = m_config.getRoot().lookup("codec");
+	if (codec_root.exists(codec_cfg.name))
+		codec_root.remove(codec_cfg.name);
+	
+	/* We only add the item if there is at least one valid */
+	if (codec_cfg.bitrate || codec_cfg.options) {
+		libconfig::Setting& codec_item = codec_root.add(codec_cfg.name, libconfig::Setting::TypeGroup);
+		if (codec_cfg.bitrate)
+			codec_item.add("bitrate", libconfig::Setting::TypeInt) = *codec_cfg.bitrate;
+		if (codec_cfg.options)
+			codec_item.add("options", libconfig::Setting::TypeString) = *codec_cfg.options;
+	}
+}
+
 void Config::Write() {
 	m_config.writeFile(GetFileName().string().c_str());
 }
@@ -48,9 +89,14 @@ void Config::Read() {
 	if (!std::filesystem::exists(GetPath()))
 		std::filesystem::create_directory(GetPath());
 	
-	libconfig::Config cfg;
+	std::unique_ptr<libconfig::Config> cfg = std::make_unique<libconfig::Config>();
+	cfg->setOptions(libconfig::Config::OptionFsync);
+	m_config.setOptions(libconfig::Config::OptionFsync
+                		| libconfig::Config::OptionSemicolonSeparators
+                		| libconfig::Config::OptionColonAssignmentForGroups
+            			| libconfig::Config::OptionOpenBraceOnSeparateLine);
 	try {
-		cfg.readFile(GetFileName().string());
+		cfg->readFile(GetFileName().string());
 	}
 	catch(const libconfig::FileIOException&) {
 		/* Ignored */
@@ -63,15 +109,16 @@ void Config::Read() {
 	std::string value_string;
 	m_config.clear();
 	libconfig::Setting& target_root = m_config.getRoot();
+	libconfig::Setting& cfg_root = cfg->getRoot();
 
-	if (cfg.exists("database") && cfg.lookup("database").getType() == libconfig::Setting::TypeString)
-		value_string = cfg.lookup("database").c_str();
+	if (cfg_root.exists("database") && cfg_root["database"].getType() == libconfig::Setting::TypeString)
+		value_string = static_cast<std::string>(cfg_root["database"]);
 	else
 		value_string = (GetPath() / "database.sqlite").string();
 	target_root.add("database", libconfig::Setting::TypeString) = value_string;
 
-	if (cfg.exists("tmpdir") && cfg.lookup("tmpdir").getType() == libconfig::Setting::TypeString)
-		value_string = cfg.lookup("tmpdir").c_str();
+	if (cfg_root.exists("tmpdir") && cfg_root["tmpdir"].getType() == libconfig::Setting::TypeString)
+		value_string = static_cast<std::string>(cfg_root["tmpdir"]);
 	else {
 		#ifdef LINUX
 		value_string = "/tmp";
@@ -81,30 +128,40 @@ void Config::Read() {
 	}
 	target_root.add("tmpdir", libconfig::Setting::TypeString) = value_string;
 
-	if (cfg.exists("sleep") && cfg.lookup("sleep").getType() == libconfig::Setting::TypeInt)
-		value_int = cfg.lookup("sleep");
+	if (cfg_root.exists("sleep") && cfg_root["sleep"].getType() == libconfig::Setting::TypeInt)
+		value_int = static_cast<int>(cfg_root["sleep"]);
 	else
 		value_int = 60 * 60; // 60 minutes
 	target_root.add("sleep", libconfig::Setting::TypeInt) = value_int;
 
-	if (cfg.exists("codec") && cfg.lookup("codec").getType() == libconfig::Setting::TypeGroup) {
-		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeGroup);
-		for (libconfig::Setting::iterator it = cfg.lookup("codec").begin(); it != cfg.lookup("codec").end(); it++) {
+	if (cfg_root.exists("codec") && cfg_root["codec"].getType() == libconfig::Setting::TypeList) {
+		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeList);
+		for (auto i = 0; i < cfg_root["codec"].getLength(); i++) {
 			// We don't check if codec exists as it will just be ignored
-			if (it->getType() == libconfig::Setting::TypeGroup) {
-				libconfig::Setting& target_codec = target_codec_root.add(it->getName(), libconfig::Setting::TypeGroup);
-				if (it->exists("bitrate") && it->lookup("bitrate").getType() == libconfig::Setting::TypeInt)
-					target_codec.add("bitrate", libconfig::Setting::TypeInt) = (int)it->lookup("bitrate");
-				if (it->exists("options") && it->lookup("options").getType() == libconfig::Setting::TypeString)
-					target_codec.add("options", libconfig::Setting::TypeString) = (std::string)it->lookup("options").c_str();
+			if (cfg_root["codec"][i].getType() == libconfig::Setting::TypeGroup) {
+				libconfig::Setting& target_codec = target_codec_root.add(libconfig::Setting::TypeGroup);
+				if (cfg_root["codec"][i].exists("name")) {
+					target_codec.add("name", libconfig::Setting::TypeString) = static_cast<std::string>(cfg_root["codec"][i]["name"]);
+					if (cfg_root["codec"][i].exists("bitrate") && cfg_root["codec"][i]["bitrate"].getType() == libconfig::Setting::TypeInt)
+						target_codec.add("bitrate", libconfig::Setting::TypeInt) = static_cast<int>(cfg_root["codec"][i]["bitrate"]);
+					if (cfg_root["codec"][i].exists("options") && cfg_root["codec"][i]["options"].getType() == libconfig::Setting::TypeString)
+						target_codec.add("options", libconfig::Setting::TypeString) = static_cast<std::string>(cfg_root["codec"][i]["options"]);
+				}
 			}
-		} 
+		}
 	}
 	else {
-		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeGroup);
-		target_codec_root.add("fdk_aac", libconfig::Setting::TypeGroup).add("bitrate", libconfig::Setting::TypeInt) = 128;
-		target_codec_root.add("libx265", libconfig::Setting::TypeGroup).add("options", libconfig::Setting::TypeString) = "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
+		libconfig::Setting& target_codec_root = target_root.add("codec", libconfig::Setting::TypeList);
+		libconfig::Setting& fdk_aac = target_codec_root.add(libconfig::Setting::TypeGroup);
+		fdk_aac.add("name", libconfig::Setting::TypeString) = "fdk_aac";
+		fdk_aac.add("bitrate", libconfig::Setting::TypeInt) = 128;
+		libconfig::Setting& libx265 = target_codec_root.add(libconfig::Setting::TypeGroup);
+		libx265.add("name", libconfig::Setting::TypeString) = "libx265";
+		libx265.add("options", libconfig::Setting::TypeString) = "level=5.1:crf=24:ref=4:hme=1:hme-search=umh,umh,star:subme=4:bframes=8:rd=4:rd-refine=0:qcomp=0.65:fades=1:strong-intra-smoothing=1:ctu=32:qg-size=32:aq-mode=4:sao=1:selective-sao=2:rdoq-level=1:psy-rd=4.0:psy-rdoq=15.0:limit-modes=0:limit-refs=0:limit-tu=0:weightb=1:weightp=1:rect=1:amp=1:wpp=1:pmode=0:pme=0:b-intra=1:b-adapt=2:b-pyramid=1:vbv-bufsize=160000:vbv-maxrate=160000:log-level=error";
 	}
+
+	// Before save we destroy original config object
+	cfg.reset();
 
 	Write();
 }

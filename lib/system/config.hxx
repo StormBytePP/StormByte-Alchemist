@@ -11,7 +11,8 @@ namespace Alchemist::System {
 	class DLL_PUBLIC Config {
 		public:
 			struct Codec {
-				std::string 					name;
+				bool Empty() const;
+				std::string						name;
 				std::optional<unsigned short>	bitrate;
 				std::optional<std::string>		options;
 			};
@@ -24,7 +25,7 @@ namespace Alchemist::System {
 			void								SetTmpDirectory(const std::filesystem::path&);
 			const unsigned short				GetSleepTime() const;
 			void								SetSleepTime(const unsigned short&);
-			Codec								GetCodec() const;
+			Codec								GetCodec(const std::string&) const;
 			void								SetCodec(const Codec&);
 			
 			void								Read();
