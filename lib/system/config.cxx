@@ -5,25 +5,22 @@
 #include <sys/types.h>
 #include <unistd.h>
 #else
-#include <windows.h>
-#include <tchar.h>
-#define INFO_BUFFER_SIZE 32767
+#include <StormByte/windows.hxx>
 #endif
-
-/* NOTES:
- * Windows does not transform automatically libconfig::Setting to std::string so
- * std::string(setting.c_str()) manual conversion is needed everywhere
- */
 
 using namespace Alchemist::System;
 
 bool Config::Codec::Empty() const {
 	return !bitrate && !options;
 }
+#include <iostream>
+Config& Config::Instance() {
+	static Config instance { GetFileName() };
 
-Config Config::Instance = {};
+	return instance;
+}
 
-Config::Config() { Read(); }
+Config::Config(const std::filesystem::path& path):StormByte::Config(std::move(path)) { Reload(); }
 
 const std::filesystem::path Config::GetDatabaseFile() const {
 	return GetValueString("database");
@@ -79,29 +76,14 @@ void Config::SetCodec(const Codec& codec_cfg) {
 	}
 }
 
-void Config::Write() {
-	m_config.writeFile(GetFileName().string().c_str());
-}
+void Config::Initialize() {
+	StormByte::Config::Initialize();
 
-void Config::Read() {
 	if (!std::filesystem::exists(GetPath()))
 		std::filesystem::create_directory(GetPath());
-	
+
 	std::unique_ptr<libconfig::Config> cfg = std::make_unique<libconfig::Config>();
 	cfg->setOptions(libconfig::Config::OptionFsync);
-	m_config.setOptions(libconfig::Config::OptionFsync
-                		| libconfig::Config::OptionSemicolonSeparators
-                		| libconfig::Config::OptionColonAssignmentForGroups
-            			| libconfig::Config::OptionOpenBraceOnSeparateLine);
-	try {
-		cfg->readFile(GetFileName().string());
-	}
-	catch(const libconfig::FileIOException&) {
-		/* Ignored */
-	}
-	catch(const libconfig::ParseException&) {
-		/* Ignored */
-	}
 
 	int value_int;
 	std::string value_string;
@@ -169,42 +151,13 @@ const std::filesystem::path Config::GetPath() {
 	const struct passwd *pw = getpwuid(getuid());
 	return std::filesystem::path(pw->pw_dir) / ".alchemist";
 	#else
-	return std::filesystem::path(ExpandEnvironmentVariable(TEXT("%PROGRAMDATA%"))) / "Alchemist";
+	return std::filesystem::path(StormByte::Windows::ExpandEnvironmentVariable(TEXT("%PROGRAMDATA%"))) / "Alchemist";
 	#endif
 }
 
 const std::filesystem::path Config::GetFileName() {
 	return GetPath() / "config";
 }
-
-#ifdef WINDOWS
-const std::string Config::ExpandEnvironmentVariable(const std::string& var) {
-	return ExpandEnvironmentVariable(UTF8Decode(var));
-}
-
-const std::string Config::ExpandEnvironmentVariable(const std::wstring& var) {
-	TCHAR  infoBuf[INFO_BUFFER_SIZE] = { '\0' };
-	::ExpandEnvironmentStrings(var.c_str(), infoBuf, INFO_BUFFER_SIZE);
-
-	return UTF8Encode(infoBuf);
-}
-
-std::string Config::UTF8Encode(const std::wstring& wstr) {
-	if (wstr.empty()) return std::string();
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-	std::string strTo(size_needed, 0);
-	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
-	return strTo;
-}
-
-std::wstring Config::UTF8Decode(const std::string& str) {
-	if (str.empty()) return std::wstring();
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-	std::wstring wstrTo(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-	return wstrTo;
-}
-#endif
 
 const std::string Config::GetValueString(const std::string& key) const {
 	/* This function will return string value from key */
@@ -214,7 +167,7 @@ const std::string Config::GetValueString(const std::string& key) const {
 		#ifdef WINDOWS
 		/* In Windows we allow for environment variables so we expand them if found */
 		if (result[0] == '%' && result[result.length() - 1] == '%') {
-			std::string expanded = ExpandEnvironmentVariable(result);
+			std::string expanded = StormByte::Windows::ExpandEnvironmentVariable(result);
 			result = (expanded.length() > 0) ? expanded : result;
 		}
 		#endif

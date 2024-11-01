@@ -7,7 +7,7 @@ using namespace Alchemist::System;
 #include <iostream>
 
 int main() {
-	Config& cfg = Config::Instance;
+	Config& cfg = Config::Instance();
 
 	std::cout << "libx265 options: ";
 	Config::Codec codec = cfg.GetCodec("libx265");
