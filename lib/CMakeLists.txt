@@ -1,6 +1,6 @@
-add_subdirectory(database)
+add_subdirectory(Alchemy/database)
 
-set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib)
+set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib/Alchemy)
 set(ALCHEMY_SRCs
 	# Library informations
 	${ALCHEMY_DIR}/info.cxx
@@ -59,7 +59,7 @@ add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PUBLIC cxx_std_20)
 target_compile_definitions(Alchemy PRIVATE Alchemy_EXPORTS)
 target_include_directories(Alchemy
-	SYSTEM INTERFACE ${ALCHEMY_DIR}
+	SYSTEM PUBLIC ${ALCHEMIST_MAIN_DIR}/lib
 	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
 )
 target_link_libraries(Alchemy

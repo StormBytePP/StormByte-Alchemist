@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <system/config.hxx>
+#include <Alchemy/system/config.hxx>
 
 using namespace Alchemist::System;
 
