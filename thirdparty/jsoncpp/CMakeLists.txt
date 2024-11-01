@@ -21,6 +21,7 @@ else()
 	)
 	set_target_properties(jsoncpp PROPERTIES VERSION 	${jsoncpp_VERSION})
 	set_target_properties(jsoncpp PROPERTIES SOVERSION 	${jsoncpp_VERSION})
+	target_compile_definitions(jsoncpp PRIVATE JSON_DLL_BUILD)
 
 	if (NOT WIN32)
 		target_compile_options(jsoncpp PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
