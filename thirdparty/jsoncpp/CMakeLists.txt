@@ -23,7 +23,7 @@ else()
 	set_target_properties(jsoncpp PROPERTIES SOVERSION 	${jsoncpp_VERSION})
 
 	if (NOT WIN32)
-		target_compile_options(jsoncpp PRIVATE -DPIC -fPIC)
+		target_compile_options(jsoncpp PRIVATE -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
 	endif()
 
 	message(STATUS "Found JsonCpp: bundled ${jsoncpp_VERSION}")
