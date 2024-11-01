@@ -76,7 +76,7 @@ install(TARGETS Alchemy
 if (WIN32)
 	add_dependencies(Alchemy hdr10plus_tool)
 else()
-	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
+	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
 endif()
 
 include(OptionalFeatures)

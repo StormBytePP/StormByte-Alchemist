@@ -35,7 +35,7 @@ else()
 	set_target_properties(sqlite3 PROPERTIES SOVERSION 	${sqlite3_VERSION})
 
 	if (NOT WIN32)
-		target_compile_options(sqlite3 PRIVATE -fPIC)
+		target_compile_options(sqlite3 PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
 	endif()
   
 	message(STATUS "Found SQLite3: bundled ${sqlite3_VERSION}")
