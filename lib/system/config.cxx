@@ -10,6 +10,11 @@
 #define INFO_BUFFER_SIZE 32767
 #endif
 
+/* NOTES:
+ * Windows does not transform automatically libconfig::Setting to std::string so
+ * std::string(setting.c_str()) manual conversion is needed everywhere
+ */
+
 using namespace Alchemist::System;
 
 bool Config::Codec::Empty() const {
@@ -37,7 +42,7 @@ void Config::SetTmpDirectory(const std::filesystem::path& tmpdir) {
 }
 
 const unsigned short Config::GetSleepTime() const {
-	return static_cast<unsigned int>(m_config.lookup("sleep"));
+	return (int)m_config.lookup("sleep");
 }
 
 void Config::SetSleepTime(const unsigned short& sleep) {
@@ -50,18 +55,11 @@ Config::Codec Config::GetCodec(const std::string& codec) const {
 	bool found = false;
 	const libconfig::Setting& codec_list = m_config.getRoot().lookup("codec");
 	for (auto i = 0; i < codec_list.getLength() && !found; i++) {
-		if (static_cast<std::string>(codec_list[i]["name"]) == codec) {
+		if (std::string(codec_list[i]["name"].c_str()) == codec) {
 			found = true;
-			if (codec_list[i].exists("bitrate")) codec_cfg.bitrate = static_cast<int>(codec_list[i]["bitrate"]);
-			if (codec_list[i].exists("options")) codec_cfg.options = static_cast<std::string>(codec_list[i]["options"]);
+			if (codec_list[i].exists("bitrate")) codec_cfg.bitrate = (int)codec_list[i]["bitrate"];
+			if (codec_list[i].exists("options")) codec_cfg.options = std::move(std::string(codec_list[i]["options"].c_str()));
 		}
-	//for (libconfig::Setting::const_iterator it = codec_list.begin(); it != codec_list.end() && !found; it++) {
-		//std::cout << static_cast<std::string>(codec_list[i]["name"]) << std::endl;//it->getPath() << std::endl;
-	// 	// if (static_cast<std::string>((*it)["name"]) == codec) {
-	// 	// 	found = true;
-	// 	// 	if (it->exists("bitrate")) codec_cfg.bitrate = static_cast<int>((*it)["bitrate"]);
-	// 	// 	if (it->exists("options")) codec_cfg.options = static_cast<std::string>((*it)["options"]);
-	// 	// }
 	}
 	return codec_cfg;
 }
@@ -112,13 +110,13 @@ void Config::Read() {
 	libconfig::Setting& cfg_root = cfg->getRoot();
 
 	if (cfg_root.exists("database") && cfg_root["database"].getType() == libconfig::Setting::TypeString)
-		value_string = static_cast<std::string>(cfg_root["database"]);
+		value_string = std::move(std::string(cfg_root["database"].c_str()));
 	else
 		value_string = (GetPath() / "database.sqlite").string();
 	target_root.add("database", libconfig::Setting::TypeString) = value_string;
 
 	if (cfg_root.exists("tmpdir") && cfg_root["tmpdir"].getType() == libconfig::Setting::TypeString)
-		value_string = static_cast<std::string>(cfg_root["tmpdir"]);
+		value_string = std::move(std::string(cfg_root["tmpdir"].c_str()));
 	else {
 		#ifdef LINUX
 		value_string = "/tmp";
@@ -129,7 +127,7 @@ void Config::Read() {
 	target_root.add("tmpdir", libconfig::Setting::TypeString) = value_string;
 
 	if (cfg_root.exists("sleep") && cfg_root["sleep"].getType() == libconfig::Setting::TypeInt)
-		value_int = static_cast<int>(cfg_root["sleep"]);
+		value_int = cfg_root["sleep"];
 	else
 		value_int = 60 * 60; // 60 minutes
 	target_root.add("sleep", libconfig::Setting::TypeInt) = value_int;
@@ -141,11 +139,11 @@ void Config::Read() {
 			if (cfg_root["codec"][i].getType() == libconfig::Setting::TypeGroup) {
 				libconfig::Setting& target_codec = target_codec_root.add(libconfig::Setting::TypeGroup);
 				if (cfg_root["codec"][i].exists("name")) {
-					target_codec.add("name", libconfig::Setting::TypeString) = static_cast<std::string>(cfg_root["codec"][i]["name"]);
+					target_codec.add("name", libconfig::Setting::TypeString) = std::move(std::string(cfg_root["codec"][i]["name"].c_str()));
 					if (cfg_root["codec"][i].exists("bitrate") && cfg_root["codec"][i]["bitrate"].getType() == libconfig::Setting::TypeInt)
-						target_codec.add("bitrate", libconfig::Setting::TypeInt) = static_cast<int>(cfg_root["codec"][i]["bitrate"]);
+						target_codec.add("bitrate", libconfig::Setting::TypeInt) = (int)cfg_root["codec"][i]["bitrate"];
 					if (cfg_root["codec"][i].exists("options") && cfg_root["codec"][i]["options"].getType() == libconfig::Setting::TypeString)
-						target_codec.add("options", libconfig::Setting::TypeString) = static_cast<std::string>(cfg_root["codec"][i]["options"]);
+						target_codec.add("options", libconfig::Setting::TypeString) = std::move(std::string(cfg_root["codec"][i]["options"].c_str()));
 				}
 			}
 		}
