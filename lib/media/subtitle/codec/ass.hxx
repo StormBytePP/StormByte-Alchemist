@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC ASS: public Codec {
+	class ALCHEMY_PUBLIC ASS: public Codec {
 		public:
 			ASS() noexcept;
 			ASS(const ASS&)				= default;

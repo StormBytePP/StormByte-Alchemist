@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC H264: public Codec {
+	class ALCHEMY_PUBLIC H264: public Codec {
 		public:
 			H264() noexcept;
 			H264(const H264&)				= default;

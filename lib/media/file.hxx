@@ -10,7 +10,7 @@ namespace Alchemist::Media {
 	class Stream;
 	namespace Video { class HDR10; }
 
-	class DLL_PUBLIC File {
+	class ALCHEMY_PUBLIC File {
 		public:
 			File(const std::filesystem::path&);
 			File(std::filesystem::path&&);

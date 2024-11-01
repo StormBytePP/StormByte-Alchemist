@@ -9,7 +9,7 @@
 namespace Alchemist::Media { class File; }
 
 namespace Alchemist::Database {
-	class DLL_PUBLIC SQLite3 {
+	class ALCHEMY_PUBLIC SQLite3 {
 		public:
 			SQLite3(const std::filesystem::path& dbfile);
 			SQLite3(const SQLite3& db) 				= delete;

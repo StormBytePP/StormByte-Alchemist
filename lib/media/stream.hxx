@@ -8,7 +8,7 @@
 #include <string>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Stream {
+	class ALCHEMY_PUBLIC Stream {
 		public:
 			Stream(const unsigned short&, const Type&) noexcept;
 			Stream(const Stream&)					= default;

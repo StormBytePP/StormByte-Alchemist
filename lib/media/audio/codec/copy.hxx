@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC Copy: public Codec {
+	class ALCHEMY_PUBLIC Copy: public Codec {
 		public:
 			Copy() noexcept;
 			Copy(const Copy&)				= default;

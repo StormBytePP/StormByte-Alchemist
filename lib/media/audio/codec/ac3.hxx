@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC AC3: public Codec {
+	class ALCHEMY_PUBLIC AC3: public Codec {
 		public:
 			AC3() noexcept;
 			AC3(const AC3&)				= default;

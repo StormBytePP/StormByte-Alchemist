@@ -5,7 +5,7 @@
 #include <string>
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC Metadata: public Media::Metadata {
+	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const unsigned short&, const unsigned short&);
 			Metadata(unsigned short&&, unsigned short&&) noexcept;

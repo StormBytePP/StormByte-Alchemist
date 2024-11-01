@@ -6,7 +6,7 @@
 
 namespace Alchemist::System {
 	class Executable;
-	class DLL_PUBLIC Worker {
+	class ALCHEMY_PUBLIC Worker {
 		public:
 			Worker(std::unique_ptr<Executable>&&);
 			Worker(const Worker&)				= delete;

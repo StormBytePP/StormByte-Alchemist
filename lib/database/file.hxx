@@ -9,7 +9,7 @@
 namespace Alchemist::Media { class Stream; }
 
 namespace Alchemist::Database {
-	class DLL_PUBLIC File {
+	class ALCHEMY_PUBLIC File {
 		public:
 			File()							= default;
 			File(const File&)				= default;

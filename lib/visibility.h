@@ -9,12 +9,12 @@
 
 #ifdef WINDOWS
 	#ifdef Alchemy_EXPORTS
-		#define DLL_PUBLIC	__declspec(dllexport)
+		#define ALCHEMY_PUBLIC	__declspec(dllexport)
   	#else
-      	#define DLL_PUBLIC	__declspec(dllimport)
+      	#define ALCHEMY_PUBLIC	__declspec(dllimport)
   	#endif
-  	#define DLL_LOCAL
+  	#define ALCHEMY_PRIVATE
 #else
-    #define DLL_PUBLIC		__attribute__ ((visibility ("default")))
-    #define DLL_LOCAL		__attribute__ ((visibility ("hidden")))
+    #define ALCHEMY_PUBLIC		__attribute__ ((visibility ("default")))
+    #define ALCHEMY_PRIVATE		__attribute__ ((visibility ("hidden")))
 #endif

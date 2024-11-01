@@ -7,7 +7,7 @@
 #include <optional>
 
 namespace Alchemist::System {
-	class DLL_PUBLIC Config: public StormByte::Config {
+	class ALCHEMY_PUBLIC Config: public StormByte::Config {
 		public:
 			struct Codec {
 				bool Empty() const;

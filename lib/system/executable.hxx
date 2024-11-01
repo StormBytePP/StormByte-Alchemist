@@ -13,7 +13,7 @@
 namespace Alchemist::System {
 	struct {} typedef _EoF;
 	static constexpr _EoF EoF = {};
-	class DLL_LOCAL Executable {
+	class ALCHEMY_PRIVATE Executable {
 		public:
 			Executable(const std::filesystem::path& prog, const std::vector<std::string>& args = std::vector<std::string>());
 			Executable(std::filesystem::path&&, std::vector<std::string>&&);

@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC PGS: public Codec {
+	class ALCHEMY_PUBLIC PGS: public Codec {
 		public:
 			PGS() noexcept;
 			PGS(const PGS&)				= default;

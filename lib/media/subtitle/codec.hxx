@@ -5,7 +5,7 @@
 #include <map>
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC Codec: public Media::Codec {
+	class ALCHEMY_PUBLIC Codec: public Media::Codec {
 		public:
 			Codec(std::string&&, std::string&&, std::string&&) noexcept;
 			Codec(const Codec&)				= default;

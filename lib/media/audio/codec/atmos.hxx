@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC Atmos: public Codec {
+	class ALCHEMY_PUBLIC Atmos: public Codec {
 		public:
 			Atmos() noexcept;
 			Atmos(const Atmos&)				= default;

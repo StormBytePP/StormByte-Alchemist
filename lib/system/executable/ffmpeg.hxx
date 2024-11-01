@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace Alchemist::System {
-	class DLL_LOCAL FFmpeg final: public Executable {
+	class ALCHEMY_PRIVATE FFmpeg final: public Executable {
 		public:
 			FFmpeg(const FFmpeg&)				= delete;
 			FFmpeg(FFmpeg&&)					= delete;

@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC OPUS: public Codec {
+	class ALCHEMY_PUBLIC OPUS: public Codec {
 		public:
 			OPUS() noexcept;
 			OPUS(const OPUS&)				= default;

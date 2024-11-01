@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace Alchemist::System {
-	class DLL_LOCAL FFprobe final: public Executable {
+	class ALCHEMY_PRIVATE FFprobe final: public Executable {
 		public:
 			FFprobe(const FFprobe&)				= delete;
 			FFprobe(FFprobe&&)					= delete;

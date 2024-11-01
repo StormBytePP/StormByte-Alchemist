@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC FDK_AAC: public Codec {
+	class ALCHEMY_PUBLIC FDK_AAC: public Codec {
 		public:
 			FDK_AAC() noexcept;
 			FDK_AAC(const FDK_AAC&)				= default;

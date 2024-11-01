@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace Alchemist::System {
-	class DLL_LOCAL HDR10Plus final: public Executable {
+	class ALCHEMY_PRIVATE HDR10Plus final: public Executable {
 		public:
 			HDR10Plus(const HDR10Plus&)				= delete;
 			HDR10Plus(HDR10Plus&&)					= delete;

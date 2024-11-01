@@ -5,7 +5,7 @@
 #include "../stream.hxx"
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC Stream: public Media::Stream {
+	class ALCHEMY_PUBLIC Stream: public Media::Stream {
 		public:
 			Stream(const unsigned short&) noexcept;
 			Stream(const Stream&)					= default;

@@ -5,7 +5,7 @@
 #include <string>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Metadata {
+	class ALCHEMY_PUBLIC Metadata {
 		public:
 			Metadata() noexcept							= default;
 			Metadata(const Metadata&)					= default;

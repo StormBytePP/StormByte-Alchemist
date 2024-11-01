@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Audio {
-	class DLL_PUBLIC WAV: public Codec {
+	class ALCHEMY_PUBLIC WAV: public Codec {
 		public:
 			WAV() noexcept;
 			WAV(const WAV&)				= default;

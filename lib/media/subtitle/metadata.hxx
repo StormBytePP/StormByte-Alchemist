@@ -5,7 +5,7 @@
 #include <string>
 
 namespace Alchemist::Media::Subtitle {
-	class DLL_PUBLIC Metadata: public Media::Metadata {
+	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const std::string&);
 			Metadata(std::string&&) noexcept;

@@ -5,7 +5,7 @@
 #include <string>
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC Resolution {
+	class ALCHEMY_PUBLIC Resolution {
 		public:
 			Resolution(const unsigned short&, const unsigned short&);
 			Resolution(unsigned short&&, unsigned short&&) noexcept;

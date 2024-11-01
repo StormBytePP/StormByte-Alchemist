@@ -7,7 +7,7 @@
 #include <string>
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC Color {
+	class ALCHEMY_PUBLIC Color {
 		public:
 			static const Color DEFAULT;
 

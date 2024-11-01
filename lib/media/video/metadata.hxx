@@ -6,7 +6,7 @@
 #include "../metadata.hxx"
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC Metadata: public Media::Metadata {
+	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata() noexcept							= default;
 			Metadata(const Metadata&)					= default;

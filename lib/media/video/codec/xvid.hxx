@@ -3,7 +3,7 @@
 #include "../codec.hxx"
 
 namespace Alchemist::Media::Video {
-	class DLL_PUBLIC XVID: public Codec {
+	class ALCHEMY_PUBLIC XVID: public Codec {
 		public:
 			XVID() noexcept;
 			XVID(const XVID&)				= default;

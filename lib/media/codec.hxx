@@ -7,7 +7,7 @@
 #include <string>
 
 namespace Alchemist::Media {
-	class DLL_PUBLIC Codec {
+	class ALCHEMY_PUBLIC Codec {
 		public:
 			Codec(std::string&&, std::string&&, std::string&&) noexcept;
 			Codec(const Codec&)								= default;

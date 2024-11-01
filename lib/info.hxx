@@ -6,7 +6,7 @@
 #include <string>
 
 namespace Alchemist {
-	class DLL_PUBLIC Info {
+	class ALCHEMY_PUBLIC Info {
 		public:
 			static const std::string 			Name;
 			static const std::string 			Author;
@@ -18,6 +18,6 @@ namespace Alchemist {
 			static const std::filesystem::path  hdr10plus_tool_path();
 
 		private:
-			static const std::filesystem::path DLL_LOCAL prefix();
+			static const std::filesystem::path ALCHEMY_PRIVATE prefix();
 	};
 }
