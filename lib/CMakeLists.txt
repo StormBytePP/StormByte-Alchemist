@@ -57,6 +57,7 @@ set(ALCHEMY_SRCs
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PUBLIC cxx_std_20)
+target_compile_definitions(Alchemy PRIVATE Alchemy_EXPORTS)
 target_include_directories(Alchemy
 	SYSTEM INTERFACE ${ALCHEMY_DIR}
 	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
@@ -75,7 +76,7 @@ install(TARGETS Alchemy
 if (WIN32)
 	add_dependencies(Alchemy hdr10plus_tool)
 else()
-	target_compile_options(Alchemy PRIVATE -DPIC -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
+	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden -fvisibility-inlines-hidden)
 endif()
 
 include(OptionalFeatures)
