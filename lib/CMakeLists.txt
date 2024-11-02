@@ -64,8 +64,10 @@ target_include_directories(Alchemy
 )
 target_link_libraries(Alchemy
 	PUBLIC jsoncpp
-	PUBLIC sqlite3
 	PUBLIC StormByte++
+	# Fix this!
+	PUBLIC sqlite3
+	PUBLIC config++
 )
 install(TARGETS Alchemy
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
