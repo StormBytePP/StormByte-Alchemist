@@ -5,8 +5,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #else
-#include <tchar.h>
 #include <windows.h>
+#include <tchar.h>
 #define INFO_BUFFER_SIZE 32767
 #endif
 
