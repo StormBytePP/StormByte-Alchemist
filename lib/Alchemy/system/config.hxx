@@ -39,5 +39,11 @@ namespace Alchemist::System {
 			static const std::filesystem::path 	GetFileName();
 			const std::string					GetValueString(const std::string&) const;
 			void								Initialize() override;
+			#ifdef WINDOWS
+			static const std::string			ExpandEnvironmentVariable(const std::string&);
+			static const std::string			ExpandEnvironmentVariable(const std::wstring&);
+			static std::string					UTF8Encode(const std::wstring&);
+			static std::wstring					UTF8Decode(const std::string&);
+			#endif
 	};
 }

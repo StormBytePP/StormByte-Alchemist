@@ -5,7 +5,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #else
-#include <StormByte++/windows.hxx>
+#include <tchar.h>
+#include <windows.h>
 #endif
 
 using namespace Alchemist::System;
@@ -151,7 +152,7 @@ const std::filesystem::path Config::GetPath() {
 	const struct passwd *pw = getpwuid(getuid());
 	return std::filesystem::path(pw->pw_dir) / ".alchemist";
 	#else
-	return std::filesystem::path(StormBytePP::Windows::ExpandEnvironmentVariable(TEXT("%PROGRAMDATA%"))) / "Alchemist";
+	return std::filesystem::path(ExpandEnvironmentVariable(TEXT("%PROGRAMDATA%"))) / "Alchemist";
 	#endif
 }
 
@@ -167,7 +168,7 @@ const std::string Config::GetValueString(const std::string& key) const {
 		#ifdef WINDOWS
 		/* In Windows we allow for environment variables so we expand them if found */
 		if (result[0] == '%' && result[result.length() - 1] == '%') {
-			std::string expanded = StormBytePP::Windows::ExpandEnvironmentVariable(result);
+			std::string expanded = ExpandEnvironmentVariable(result);
 			result = (expanded.length() > 0) ? expanded : result;
 		}
 		#endif
