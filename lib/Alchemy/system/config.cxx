@@ -22,7 +22,7 @@ Config& Config::Instance() {
 	return instance;
 }
 
-Config::Config(const std::filesystem::path& path):StormBytePP::Config(std::move(path)) { Reload(); }
+Config::Config(const std::filesystem::path& path):StormByte::Config(std::move(path)) { Reload(); }
 
 const std::filesystem::path Config::GetDatabaseFile() const {
 	return GetValueString("database");
@@ -79,7 +79,7 @@ void Config::SetCodec(const Codec& codec_cfg) {
 }
 
 void Config::Initialize() {
-	StormBytePP::Config::Initialize();
+	StormByte::Config::Initialize();
 
 	if (!std::filesystem::exists(GetPath()))
 		std::filesystem::create_directory(GetPath());
