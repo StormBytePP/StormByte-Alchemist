@@ -1,6 +1,6 @@
 [submodule "thirdparty/hdr10plus_tool/src"]
 	path = thirdparty/hdr10plus_tool/src
 	url = https://github.com/quietvoid/hdr10plus_tool.git
-[submodule "thirdparty/StormByte++/src"]
-	path = thirdparty/StormByte++/src
-	url = https://github.com/StormBytePP/StormBytePP.git
+[submodule "thirdparty/StormByte/src"]
+	path = thirdparty/StormByte/src
+	url = https://github.com/StormBytePP/StormByte.git
