@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Alchemy/visibility.h>
-#include <StormByte++/config.hxx>
+#include <StormByte/config.hxx>
 #include <memory>
 #include <optional>
 

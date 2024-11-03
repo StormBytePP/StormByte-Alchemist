@@ -1,5 +1,5 @@
-if (WITH_SYSTEM_STORMBYTE++)
-	find_package(StormByte++ REQUIRED)
+if (WITH_SYSTEM_STORMBYTE)
+	find_package(StormByte REQUIRED)
 else()
 	set(STORMBYTE_AS_SUBPROJECT TRUE)
 	add_subdirectory(src)

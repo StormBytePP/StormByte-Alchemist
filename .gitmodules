@@ -3,4 +3,4 @@
 	url = https://github.com/quietvoid/hdr10plus_tool.git
 [submodule "thirdparty/StormByte/src"]
 	path = thirdparty/StormByte/src
-	url = https://github.com/StormBytePP/StormByte.git
+	url = https://github.com/StormBytePP/StormByte
