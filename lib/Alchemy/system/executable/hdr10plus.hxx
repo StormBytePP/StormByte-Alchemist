@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Alchemy/system/executable.hxx>
+#include <StormByte/system/executable.hxx>
 
 #include <memory>
 
 namespace Alchemist::System {
-	class ALCHEMY_PRIVATE HDR10Plus final: public Executable {
+	class ALCHEMY_PRIVATE HDR10Plus final: public StormByte::System::Executable {
 		public:
 			HDR10Plus(const HDR10Plus&)				= delete;
 			HDR10Plus(HDR10Plus&&)					= delete;

@@ -4,7 +4,7 @@
 using namespace Alchemist::System;
 
 FFmpeg::FFmpeg(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) {
-	Executable::operator<<(System::EoF);
+	Executable::operator<<(StormByte::System::EoF);
 }
 
 std::unique_ptr<FFmpeg> FFmpeg::hdr_stream(const std::filesystem::path& file) {

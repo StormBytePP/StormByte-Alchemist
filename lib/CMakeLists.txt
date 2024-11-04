@@ -47,12 +47,9 @@ set(ALCHEMY_SRCs
 
 	# System internals
 	${ALCHEMY_DIR}/system/config.cxx
-	${ALCHEMY_DIR}/system/executable.cxx
 	${ALCHEMY_DIR}/system/executable/ffmpeg.cxx
 	${ALCHEMY_DIR}/system/executable/ffprobe.cxx
 	${ALCHEMY_DIR}/system/executable/hdr10plus.cxx
-	${ALCHEMY_DIR}/system/pipe.cxx
-	${ALCHEMY_DIR}/system/worker.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
