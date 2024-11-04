@@ -1,5 +1,8 @@
 if (WITH_SYSTEM_STORMBYTE)
 	find_package(StormByte REQUIRED)
+	if (NOT StormByte_SQLITE3_FEATURE)
+		message(FATAL_ERROR "StormByte have been built without SQLite3 support but it is needed by this project")
+	endif()
 else()
 	set(STORMBYTE_AS_SUBPROJECT TRUE)
 	add_subdirectory(src)

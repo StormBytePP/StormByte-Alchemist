@@ -1,12 +1,14 @@
 #pragma once
 
 #include <Alchemy/visibility.h>
-#include <StormByte/config.hxx>
+#include <StormByte/config/file.hxx>
 #include <memory>
 #include <optional>
 
+
 namespace Alchemist::System {
-	class ALCHEMY_PUBLIC Config: public StormByte::Config {
+	/*
+	class ALCHEMY_PUBLIC Config: public StormByte::Config::File {
 		public:
 			struct Codec {
 				bool Empty() const;
@@ -46,4 +48,5 @@ namespace Alchemist::System {
 			static std::wstring					UTF8Decode(const std::string&);
 			#endif
 	};
+	*/
 }
