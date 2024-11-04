@@ -32,7 +32,7 @@ jobs:
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
   
     - name: Configure CMake All ON
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF -DWITH_SYSTEM_SQLITE=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -56,7 +56,7 @@ jobs:
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
 
     - name: Configure CMake All OFF
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF -DWITH_SYSTEM_SQLITE=OFF
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} 
@@ -80,7 +80,7 @@ jobs:
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
   
     - name: Configure CMake All ON
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=ON -DENABLE_H264=ON -DENABLE_H265=ON -DENABLE_LAME=ON -DENABLE_LIBOPUS=ON -DENABLE_LIBVORBIS=ON -DENABLE_LIBVPX=ON -DENABLE_XVID=ON -DWITH_SYSTEM_JSONCPP=ON -DWITH_SYSTEM_STORMBYTE=OFF -DWITH_SYSTEM_SQLITE=ON
 
     - name: Build with Clang
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -104,7 +104,7 @@ jobs:
       run: sudo touch /usr/bin/hdr10plus_tool && sudo chmod +x /usr/bin/hdr10plus_tool
       
     - name: Configure CMake All OFF
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DENABLE_FDK_AAC=OFF -DENABLE_H264=OFF -DENABLE_H265=OFF -DENABLE_LAME=OFF -DENABLE_LIBOPUS=OFF -DENABLE_LIBVORBIS=OFF -DENABLE_LIBVPX=OFF -DENABLE_XVID=OFF -DWITH_SYSTEM_JSONCPP=OFF -DWITH_SYSTEM_STORMBYTE=OFF -DWITH_SYSTEM_SQLITE=OFF
 
     - name: Build with Clang
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} 
