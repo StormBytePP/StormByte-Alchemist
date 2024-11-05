@@ -81,7 +81,7 @@ else()
 		PATTERN "*.h"
 		PATTERN "*.hxx"
 	)
-	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
+	target_compile_options(Alchemy PRIVATE -fPIC)
 endif()
 
 add_subdirectory(database)
