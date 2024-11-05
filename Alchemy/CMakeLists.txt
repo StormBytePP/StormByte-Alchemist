@@ -1,6 +1,4 @@
-add_subdirectory(Alchemy/database)
-
-set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/lib/Alchemy)
+set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/Alchemy)
 set(ALCHEMY_SRCs
 	# Library informations
 	${ALCHEMY_DIR}/info.cxx
@@ -56,12 +54,17 @@ add_library(Alchemy SHARED ${ALCHEMY_SRCs})
 target_compile_features(Alchemy PUBLIC cxx_std_20)
 target_compile_definitions(Alchemy PRIVATE Alchemy_EXPORTS)
 target_include_directories(Alchemy
-	SYSTEM PUBLIC ${ALCHEMIST_MAIN_DIR}/lib
+	SYSTEM PUBLIC ${ALCHEMIST_MAIN_DIR}
 	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
 )
 target_link_libraries(Alchemy
 	PUBLIC jsoncpp
 	PUBLIC StormByte
+)
+set_target_properties(Alchemy PROPERTIES
+	LINKER_LANGUAGE CXX
+	SOVERSION		${CMAKE_PROJECT_VERSION}
+	VERSION 		${CMAKE_PROJECT_VERSION}
 )
 install(TARGETS Alchemy
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -72,9 +75,16 @@ install(TARGETS Alchemy
 if (WIN32)
 	add_dependencies(Alchemy hdr10plus_tool)
 else()
+	install(DIRECTORY ${ALCHEMY_DIR}
+		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+		FILES_MATCHING
+		PATTERN "*.h"
+		PATTERN "*.hxx"
+	)
 	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
 endif()
 
+add_subdirectory(database)
 include(OptionalFeatures)
 include(GetVersionFromGitTag)
 include(Definitions)

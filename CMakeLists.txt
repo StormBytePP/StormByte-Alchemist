@@ -21,7 +21,7 @@ else()
 endif()
 
 include(GNUInstallDirs)
-add_subdirectory(lib)
+add_subdirectory(thirdparty) # For dependencies
+add_subdirectory(Alchemy)
 add_subdirectory(Myrddin)
 #add_subdirectory(Alchemist) # Disable QT frontend as it is not implemented
-add_subdirectory(thirdparty) # For dependencies
