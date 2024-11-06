@@ -6,7 +6,7 @@
 #include <optional>
 
 
-namespace Alchemist::System {
+namespace Alchemist {
 	/*
 	class ALCHEMY_PUBLIC Config: public StormByte::Config::File {
 		public:

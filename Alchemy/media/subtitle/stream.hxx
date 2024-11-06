@@ -7,7 +7,7 @@
 namespace Alchemist::Media::Subtitle {
 	class ALCHEMY_PUBLIC Stream: public Media::Stream {
 		public:
-			Stream(const unsigned short&) noexcept;
+			Stream(const int&) noexcept;
 			Stream(const Stream&)					= default;
 			Stream(Stream&&) noexcept				= default;
 			Stream& operator=(const Stream&)		= default;

@@ -32,8 +32,8 @@ namespace Alchemist::Database {
 			void												SetOutSize(const unsigned long long&);
 			const std::optional<unsigned int>&					GetEncodeTime() const noexcept;
 			void												SetEncodeTime(const int&);
-			const unsigned short&								GetPriority() const noexcept;
-			void												SetPriority(const unsigned short&);
+			const int&								GetPriority() const noexcept;
+			void												SetPriority(const int&);
 			bool												GetActiveStatus() const noexcept;
 			void												SetActiveStatus(bool);
 			bool												GetEnabledStatus() const noexcept;
@@ -49,7 +49,7 @@ namespace Alchemist::Database {
 			unsigned long long m_in_size;
 			std::optional<unsigned long long> m_out_size;
 			std::optional<unsigned int> m_encode_time;
-			unsigned short m_priority;
+			int m_priority;
 			bool m_active, m_enabled, m_failed;
 			std::vector<std::shared_ptr<Media::Stream>> m_streams;
 	};

@@ -4,8 +4,8 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/info.cxx
 
 	# Database
+	${ALCHEMY_DIR}/database/alchemy.cxx
 	${ALCHEMY_DIR}/database/file.cxx
-	${ALCHEMY_DIR}/database/sqlite3.cxx
 
 	# Media handling
 	${ALCHEMY_DIR}/media/audio/codec.cxx
@@ -81,7 +81,7 @@ else()
 		PATTERN "*.h"
 		PATTERN "*.hxx"
 	)
-	target_compile_options(Alchemy PRIVATE -fPIC)
+	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
 endif()
 
 add_subdirectory(database)

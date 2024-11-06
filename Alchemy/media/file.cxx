@@ -22,7 +22,7 @@ const std::filesystem::path& File::GetFileName() const noexcept { return m_filen
 
 const std::vector<std::shared_ptr<Stream>>& File::GetStreams() const noexcept { return m_streams; }
 
-const unsigned long long& File::GetSize() const noexcept { return m_size_bytes; }
+const uint64_t& File::GetSize() const noexcept { return m_size_bytes; }
 
 void File::InitStreams() {
 	if (!std::filesystem::exists(m_filename))
@@ -74,14 +74,14 @@ void File::InitStreams() {
 std::shared_ptr<Stream> File::ParseAudioInfo(const Json::Value& json_part) {
 	std::shared_ptr<Audio::Stream> stream = std::make_shared<Audio::Stream>(json_part["index"].asUInt());
 	std::shared_ptr<Codec> codec;
-	unsigned short channels, sample_rate;
+	int channels, sample_rate;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
 		if (it.key() == "codec_name" && Audio::Codec::All.contains(it->asString()))
 			codec = Audio::Codec::All.at(it->asString());
 		else if (it.key() == "channels")
-			channels = static_cast<unsigned short>(std::stoul(it->asString())); //JsonCPP bug converting to uint and Windows needs the cast
+			channels = static_cast<int>(std::stoul(it->asString())); //JsonCPP bug converting to uint and Windows needs the cast
 		else if (it.key() == "sample_rate")
-			sample_rate = static_cast<unsigned short>(std::stoul(it->asString())); //JsonCPP bug converting to uint and Windows needs the cast
+			sample_rate = static_cast<int>(std::stoul(it->asString())); //JsonCPP bug converting to uint and Windows needs the cast
 	}
 	stream->SetCodec(codec);
 	stream->SetMetadata({sample_rate, channels});
@@ -93,7 +93,7 @@ std::shared_ptr<Stream> File::ParseVideoInfo(const Json::Value& json_part) {
 	std::shared_ptr<Codec> codec;
 	Video::Metadata metadata;
 	Video::Color color;
-	unsigned short width, height;
+	int width, height;
 	for (auto it = json_part.begin(); it != json_part.end(); it++) {
 		if (it.key() == "codec_name" && Video::Codec::All.contains(it->asString()))
 			codec = Video::Codec::All.at(it->asString());
@@ -172,9 +172,9 @@ std::shared_ptr<Video::HDR10> File::GetHDR10Info() {
 	reader.parse(buffer, root, false);
 	if (root.size() > 0) {
 		auto videoinfo_json = root["frames"][0]["side_data_list"];
-		std::pair<std::optional<unsigned short>, std::optional<unsigned short>> red, green, blue, white;
-		std::pair<std::optional<unsigned short>, std::optional<unsigned int>> luminance;
-		std::pair<std::optional<unsigned short>, std::optional<unsigned short>> light_level;
+		std::pair<std::optional<int>, std::optional<int>> red, green, blue, white;
+		std::pair<std::optional<int>, std::optional<unsigned int>> luminance;
+		std::pair<std::optional<int>, std::optional<int>> light_level;
 
 		for (Json::ArrayIndex i = 0; i < videoinfo_json.size(); i++) {
 			for (auto it = videoinfo_json[i].begin(); it != videoinfo_json[i].end(); it++) {
@@ -183,32 +183,32 @@ std::shared_ptr<Video::HDR10> File::GetHDR10Info() {
 						// Main HDR10 info
 						// The static casts are to silence Windows warnings
 						if (it.key() == "blue_x")
-							blue.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							blue.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "blue_y")
-							blue.second = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							blue.second = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "green_x")
-							green.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							green.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "green_y")
-							green.second = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							green.second = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "red_x")
-							red.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							red.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "red_y")
-							red.second = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							red.second = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "white_point_x")
-							white.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							white.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "white_point_y")
-							white.second = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							white.second = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "min_luminance")
-							luminance.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							luminance.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "max_luminance")
 							luminance.second = std::stoul(SplitString(it->asString())[0]);
 					}
 					else if (videoinfo_json[i].find("side_data_type")->asString() == "Content light level metadata") {
 						// Extra optional light level data
 						if (it.key() == "max_content")
-							light_level.first = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							light_level.first = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 						else if (it.key() == "max_average")
-							light_level.second = static_cast<unsigned short>(std::stoul(SplitString(it->asString())[0]));
+							light_level.second = static_cast<int>(std::stoul(SplitString(it->asString())[0]));
 					}
 					// The rest is ignored
 				}

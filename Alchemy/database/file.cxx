@@ -30,9 +30,9 @@ const std::optional<unsigned int>& File::GetEncodeTime() const noexcept { return
 
 void File::SetEncodeTime(const int& encode_time) { m_encode_time = encode_time; }
 
-const unsigned short& File::GetPriority() const noexcept { return m_priority; }
+const int& File::GetPriority() const noexcept { return m_priority; }
 
-void File::SetPriority(const unsigned short& priority) { m_priority = priority; }
+void File::SetPriority(const int& priority) { m_priority = priority; }
 
 bool File::GetActiveStatus() const noexcept { return m_active; }
 

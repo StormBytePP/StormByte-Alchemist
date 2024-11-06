@@ -2,15 +2,15 @@
 
 using namespace Alchemist::Media;
 
-Stream::Stream(const unsigned short& index, const Type& type) noexcept:m_index(index), m_type(type) {}
+Stream::Stream(const int& index, const Type& type) noexcept:m_index(index), m_type(type) {}
 
 Stream::~Stream() noexcept {}
 
-const unsigned short& Stream::GetIndex() const noexcept { return m_index; }
+const int& Stream::GetIndex() const noexcept { return m_index; }
 
 const Type& Stream::GetType() const noexcept { return m_type; }
 
-void Stream::SetIndex(const unsigned short& index) noexcept { m_index = index; }
+void Stream::SetIndex(const int& index) noexcept { m_index = index; }
 
 const std::optional<std::string>& Stream::GetLanguage() const noexcept { return m_language; }
 

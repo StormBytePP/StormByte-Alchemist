@@ -2,15 +2,15 @@
 
 using namespace Alchemist::Media::Video;
 
-Resolution::Resolution(const unsigned short& width, const unsigned short& height):
+Resolution::Resolution(const int& width, const int& height):
 m_width(width), m_height(height) {}
 
-Resolution::Resolution(unsigned short&& width, unsigned short&& height) noexcept:
+Resolution::Resolution(int&& width, int&& height) noexcept:
 m_width(std::move(width)), m_height(std::move(height)) {}
 
-const unsigned short& Resolution::GetWidth() const noexcept { return m_width; }
+const int& Resolution::GetWidth() const noexcept { return m_width; }
 
-const unsigned short& Resolution::GetHeight() const noexcept { return m_height; }
+const int& Resolution::GetHeight() const noexcept { return m_height; }
 
 std::string Resolution::GetName() const {
 	return std::to_string(m_width) + "x" + std::to_string(m_height);

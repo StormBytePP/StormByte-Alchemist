@@ -7,55 +7,55 @@ using namespace Alchemist::Media::Video;
 /** Default values for HDR and color to check and use when metadata is missing in source video **/
 const HDR10 HDR10::DEFAULT = { {34000, 16000}, {13250, 34500}, {7500, 3000}, {15635, 16450}, {1, 10000000} };
 
-HDR10::HDR10(const std::pair<unsigned short, unsigned short>& red_point,
-			const std::pair<unsigned short, unsigned short>& green_point,
-			const std::pair<unsigned short, unsigned short>& blue_point,
-			const std::pair<unsigned short, unsigned short>& white_point,
-			const std::pair<unsigned short, unsigned int>& luminance):
+HDR10::HDR10(const std::pair<int, int>& red_point,
+			const std::pair<int, int>& green_point,
+			const std::pair<int, int>& blue_point,
+			const std::pair<int, int>& white_point,
+			const std::pair<int, unsigned int>& luminance):
 m_red(red_point), m_green(green_point), m_blue(blue_point), m_white(white_point),
 m_luminance(luminance) {}
 
-HDR10::HDR10(const std::pair<unsigned short, unsigned short>& red_point,
-			const std::pair<unsigned short, unsigned short>& green_point,
-			const std::pair<unsigned short, unsigned short>& blue_point,
-			const std::pair<unsigned short, unsigned short>& white_point,
-			const std::pair<unsigned short, unsigned int>& luminance,
-			const std::pair<unsigned short, unsigned short>& light_level):
+HDR10::HDR10(const std::pair<int, int>& red_point,
+			const std::pair<int, int>& green_point,
+			const std::pair<int, int>& blue_point,
+			const std::pair<int, int>& white_point,
+			const std::pair<int, unsigned int>& luminance,
+			const std::pair<int, int>& light_level):
 m_red(red_point), m_green(green_point), m_blue(blue_point), m_white(white_point),
 m_luminance(luminance), m_light_level(light_level) {}
 
-HDR10::HDR10(std::pair<unsigned short, unsigned short>&& red_point,
-			std::pair<unsigned short, unsigned short>&& green_point,
-			std::pair<unsigned short, unsigned short>&& blue_point,
-			std::pair<unsigned short, unsigned short>&& white_point,
-			std::pair<unsigned short, unsigned int>&& luminance):
+HDR10::HDR10(std::pair<int, int>&& red_point,
+			std::pair<int, int>&& green_point,
+			std::pair<int, int>&& blue_point,
+			std::pair<int, int>&& white_point,
+			std::pair<int, unsigned int>&& luminance):
 m_red(std::move(red_point)), m_green(std::move(green_point)), m_blue(std::move(blue_point)),
 m_white(std::move(white_point)), m_luminance(std::move(luminance)) {}
 
-HDR10::HDR10(std::pair<unsigned short, unsigned short>&& red_point,
-			std::pair<unsigned short, unsigned short>&& green_point,
-			std::pair<unsigned short, unsigned short>&& blue_point,
-			std::pair<unsigned short, unsigned short>&& white_point,
-			std::pair<unsigned short, unsigned int>&& luminance,
-			std::pair<unsigned short, unsigned short>&& light_level):
+HDR10::HDR10(std::pair<int, int>&& red_point,
+			std::pair<int, int>&& green_point,
+			std::pair<int, int>&& blue_point,
+			std::pair<int, int>&& white_point,
+			std::pair<int, unsigned int>&& luminance,
+			std::pair<int, int>&& light_level):
 m_red(std::move(red_point)), m_green(std::move(green_point)), m_blue(std::move(blue_point)),
 m_white(std::move(white_point)), m_luminance(std::move(luminance)), m_light_level(std::move(light_level)) {}
 
-const std::pair<unsigned short, unsigned short>& HDR10::GetRedPoint() const noexcept { return m_red; }
+const std::pair<int, int>& HDR10::GetRedPoint() const noexcept { return m_red; }
 
-const std::pair<unsigned short, unsigned short>& HDR10::GetGreenPoint() const noexcept { return m_green; }
+const std::pair<int, int>& HDR10::GetGreenPoint() const noexcept { return m_green; }
 
-const std::pair<unsigned short, unsigned short>& HDR10::GetBluePoint() const noexcept { return m_blue; }
+const std::pair<int, int>& HDR10::GetBluePoint() const noexcept { return m_blue; }
 
-const std::pair<unsigned short, unsigned short>& HDR10::GetWhitePoint() const noexcept { return m_white; }
+const std::pair<int, int>& HDR10::GetWhitePoint() const noexcept { return m_white; }
 
-const std::pair<unsigned short, unsigned int>& HDR10::GetLuminance() const noexcept { return m_luminance; }
+const std::pair<int, unsigned int>& HDR10::GetLuminance() const noexcept { return m_luminance; }
 
-const std::optional<std::pair<unsigned short, unsigned short>>& HDR10::GetLightLevel() const noexcept { return m_light_level; }
+const std::optional<std::pair<int, int>>& HDR10::GetLightLevel() const noexcept { return m_light_level; }
 
-void HDR10::SetLightLevel(const std::pair<unsigned short, unsigned short>& light_level) { m_light_level = light_level; }
+void HDR10::SetLightLevel(const std::pair<int, int>& light_level) { m_light_level = light_level; }
 
-void HDR10::SetLightLevel(std::pair<unsigned short, unsigned short>&& light_level) noexcept { m_light_level = std::move(light_level); }
+void HDR10::SetLightLevel(std::pair<int, int>&& light_level) noexcept { m_light_level = std::move(light_level); }
 
 const std::optional<std::string>& HDR10::GetPlusFile() const noexcept { return m_hdr10plus; }
 

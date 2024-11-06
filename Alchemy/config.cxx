@@ -1,4 +1,4 @@
-#include <Alchemy/system/config.hxx>
+#include <Alchemy/config.hxx>
 
 #ifdef LINUX
 #include <pwd.h>

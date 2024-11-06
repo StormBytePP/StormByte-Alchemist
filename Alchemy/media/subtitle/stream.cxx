@@ -2,7 +2,7 @@
 
 using namespace Alchemist::Media::Subtitle;
 
-Stream::Stream(const unsigned short& index) noexcept:Media::Stream(index, Type::Subtitle) {}
+Stream::Stream(const int& index) noexcept:Media::Stream(index, Type::Subtitle) {}
 
 void Stream::SetMetadata(const Metadata& meta) { m_metadata = std::make_shared<Metadata>(meta); }
 
