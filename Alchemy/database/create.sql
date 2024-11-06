@@ -30,12 +30,13 @@ CREATE TABLE stream_metadata_audio (
 	channels	SMALLINT NOT NULL,
 	PRIMARY KEY (film_id, stream_id),
 	FOREIGN KEY (stream_id) REFERENCES films(film_id) ON UPDATE CASCADE ON DELETE CASCADE
-)
+);
 
 CREATE TABLE stream_metadata_video (
 	film_id		INTEGER,
 	stream_id	SMALLINT,
 	frames		INTEGER NOT NULL,
+	codec		VARCHAR NOT NULL,
 	PRIMARY KEY (film_id, stream_id),
 	FOREIGN KEY (stream_id) REFERENCES films(film_id) ON UPDATE CASCADE ON DELETE CASCADE
 );

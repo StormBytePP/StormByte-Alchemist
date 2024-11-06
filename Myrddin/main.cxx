@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include <Alchemy/system/config.hxx>
+#include <Alchemy/database/alchemy.hxx>
 
-using namespace Alchemist::System;
+using namespace Alchemist::Database;
 
 #include <iostream>
 
@@ -15,6 +15,8 @@ int main() {
 	// 	std::cout << "\"" << *codec.options << "\"" <<  std::endl;
 	// else
 	// 	std::cout << "(not available)" << std::endl;
+
+	Alchemy al("/tmp/db.sqlite");
 
 	return 0;
 }
