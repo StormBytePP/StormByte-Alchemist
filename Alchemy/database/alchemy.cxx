@@ -62,7 +62,7 @@ int Alchemy::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("new_film");
 	stmt->Bind(0, source_file.string());
 	stmt->Bind(1, outfile.GetSize());
-	stmt->Bind(2, outfile.GetFileName());
+	stmt->Bind(2, outfile.GetFileName().string());
 	stmt->Bind(3, prio);
 
 	int film_id = stmt->Step()->At(0)->Value<int>();
