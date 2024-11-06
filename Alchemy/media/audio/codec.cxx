@@ -20,7 +20,7 @@ const std::map<std::string, std::shared_ptr<Codec>> Codec::All = {
 	{ "ac3",		std::make_shared<AC3>()			},
 	{ "copy",		std::make_shared<Copy>()		},
 	{ "dts",		std::make_shared<DTS>()			},
-	{ "eac3",		std::make_shared<EAC3>()			},
+	{ "eac3",		std::make_shared<EAC3>()		},
 	{ "fdk_aac",	std::make_shared<FDK_AAC>()		},
 	{ "mp3",		std::make_shared<MP3>()			},
 	{ "truehd",		std::make_shared<Atmos>()		},
