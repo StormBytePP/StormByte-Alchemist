@@ -207,105 +207,112 @@ std::shared_ptr<File> Alchemy::GetFilm(const unsigned int& film_id) {
 		stmt->Bind(0, film_id);
 		while (std::shared_ptr<SQLite::Row> stream_row = stmt->Step()) {
 			const int stream_index = stream_row->At("stream_id")->Value<int>();
-			const std::string stream_type = stream_row->At("stream_type")->Value<std::string>();
+			const Media::Type stream_type = static_cast<Media::Type>(stream_row->At("stream_type")->Value<int>());
 			const std::string stream_title = stream_row->At("title")->IsNull() ? "" : row->At("title")->Value<std::string>();
 			const std::string stream_language = stream_row->At("language")->IsNull() ? "" : row->At("language")->Value<std::string>();
 			
-			if (stream_type == "a") {
-				std::shared_ptr<Media::Audio::Stream> stream = std::make_shared<Media::Audio::Stream>(stream_index);
-				std::shared_ptr<SQLite::PreparedSTMT> stmt_audio = get_prepared("get_film_meta_audio");
-				stmt_audio->Bind(0, film_id);
-				stmt_audio->Bind(1, stream_index);
-				std::shared_ptr<SQLite::Row> audio_row;
-				if ((audio_row = stmt_audio->Step())) {
-					const std::string codec = audio_row->At("codec")->Value<std::string>();
-					stream->SetCodec(Media::Audio::Codec::All.at(codec));
-					stream->SetMetadata(
-						{
-							audio_row->At("sample_rate")->Value<int>(),
-							audio_row->At("channels")->Value<int>()
-						}
-					);
-					stmt_audio->Reset();
-					film->AddStream(stream);
-				}
-			}
-			else if (stream_type == "v") {
-				std::shared_ptr<Media::Video::Stream> stream = std::make_shared<Media::Video::Stream>(stream_index);
-				Media::Video::Metadata metadata;
-				std::shared_ptr<SQLite::PreparedSTMT> stmt_video = get_prepared("get_film_meta_video");
-				stmt_video->Bind(0, film_id);
-				stmt_video->Bind(1, stream_index);
-				std::shared_ptr<SQLite::Row> video_row;
-				if ((video_row = stmt_video->Step())) {
-					metadata.SetFrames(video_row->At("frames")->Value<int>());
-					stream->SetCodec(Media::Video::Codec::All.at(video_row->At("codec")->Value<std::string>()));
-				}
-				stmt_video->Reset();
-				stmt_video = get_prepared("get_film_meta_video_res");
-				stmt_video->Bind(0, film_id);
-				stmt_video->Bind(1, stream_index);
-				if ((video_row = stmt_video->Step())) {
-					metadata.SetResolution(
-						{
-							video_row->At("width")->Value<int>(),
-							video_row->At("height")->Value<int>()
-						}
-					);
-				}
-				stmt_video->Reset();
-				stmt_video = get_prepared("get_film_meta_video_color");
-				stmt_video->Bind(0, film_id);
-				stmt_video->Bind(1, stream_index);
-				if ((video_row = stmt_video->Step())) {
-					metadata.SetColor(
-						{
-							video_row->At("prim")->Value<std::string>(),
-							video_row->At("matrix")->Value<std::string>(),
-							video_row->At("transfer")->Value<std::string>(),
-							video_row->At("pix_fmt")->Value<std::string>()
-						}
-					);
-				}
-				stmt_video->Reset();
-				stmt_video = get_prepared("get_film_meta_video_hdr10");
-				stmt_video->Bind(0, film_id);
-				stmt_video->Bind(1, stream_index);
-				if ((video_row = stmt_video->Step())) {
-					Media::Video::HDR10 hdr10(
-						{
-							{ video_row->At("red_x")->Value<int>(),		video_row->At("red_y")->Value<int>() },
-							{ video_row->At("green_x")->Value<int>(),	video_row->At("green_y")->Value<int>() },
-							{ video_row->At("blue_x")->Value<int>(),	video_row->At("blue_y")->Value<int>() },
-							{ video_row->At("white_x")->Value<int>(),	video_row->At("white_y")->Value<int>() },
-							{ video_row->At("lum_min")->Value<int>(),	video_row->At("lum_max")->Value<int>() }
-						}
-					);
-					if (!video_row->At("light_max")->IsNull() && !video_row->At("light_avg")->IsNull())
-						hdr10.SetLightLevel(
+			switch(stream_type) {
+				case Media::Type::Audio: {
+					std::shared_ptr<Media::Audio::Stream> stream = std::make_shared<Media::Audio::Stream>(stream_index);
+					std::shared_ptr<SQLite::PreparedSTMT> stmt_audio = get_prepared("get_film_meta_audio");
+					stmt_audio->Bind(0, film_id);
+					stmt_audio->Bind(1, stream_index);
+					std::shared_ptr<SQLite::Row> audio_row;
+					if ((audio_row = stmt_audio->Step())) {
+						const std::string codec = audio_row->At("codec")->Value<std::string>();
+						stream->SetCodec(Media::Audio::Codec::All.at(codec));
+						stream->SetMetadata(
 							{
-								video_row->At("light_max")->Value<int>(), video_row->At("light_avg")->Value<int>()
+								audio_row->At("sample_rate")->Value<int>(),
+								audio_row->At("channels")->Value<int>()
 							}
 						);
-					if (video_row->At("has_plus")->Value<bool>())
-						hdr10.SetPlusFile("yes"); // File will be corrected by converter
-					metadata.SetHDR10(std::move(hdr10));
+						stmt_audio->Reset();
+						film->AddStream(stream);
+					}
+					break;
 				}
-				stmt_video->Reset();
-				stream->SetMetadata(std::move(metadata));
-				film->AddStream(stream);
-			}
-			else if (stream_type == "s") {
-				std::shared_ptr<Media::Subtitle::Stream> stream = std::make_shared<Media::Subtitle::Stream>(stream_index);
-				std::shared_ptr<SQLite::PreparedSTMT> stmt_subtitle = get_prepared("get_film_meta_subtitle");
-				stmt_subtitle->Bind(0, film_id);
-				stmt_subtitle->Bind(1, stream_index);
-				std::shared_ptr<SQLite::Row> subtitle_row;
-				if ((subtitle_row = stmt_subtitle->Step())) {
-					stream->SetMetadata({ subtitle_row->At("encoding")->Value<std::string>() });
+
+				case Media::Type::Video: {
+					std::shared_ptr<Media::Video::Stream> stream = std::make_shared<Media::Video::Stream>(stream_index);
+					Media::Video::Metadata metadata;
+					std::shared_ptr<SQLite::PreparedSTMT> stmt_video = get_prepared("get_film_meta_video");
+					stmt_video->Bind(0, film_id);
+					stmt_video->Bind(1, stream_index);
+					std::shared_ptr<SQLite::Row> video_row;
+					if ((video_row = stmt_video->Step())) {
+						metadata.SetFrames(video_row->At("frames")->Value<int>());
+						stream->SetCodec(Media::Video::Codec::All.at(video_row->At("codec")->Value<std::string>()));
+					}
+					stmt_video->Reset();
+					stmt_video = get_prepared("get_film_meta_video_res");
+					stmt_video->Bind(0, film_id);
+					stmt_video->Bind(1, stream_index);
+					if ((video_row = stmt_video->Step())) {
+						metadata.SetResolution(
+							{
+								video_row->At("width")->Value<int>(),
+								video_row->At("height")->Value<int>()
+							}
+						);
+					}
+					stmt_video->Reset();
+					stmt_video = get_prepared("get_film_meta_video_color");
+					stmt_video->Bind(0, film_id);
+					stmt_video->Bind(1, stream_index);
+					if ((video_row = stmt_video->Step())) {
+						metadata.SetColor(
+							{
+								video_row->At("prim")->Value<std::string>(),
+								video_row->At("matrix")->Value<std::string>(),
+								video_row->At("transfer")->Value<std::string>(),
+								video_row->At("pix_fmt")->Value<std::string>()
+							}
+						);
+					}
+					stmt_video->Reset();
+					stmt_video = get_prepared("get_film_meta_video_hdr10");
+					stmt_video->Bind(0, film_id);
+					stmt_video->Bind(1, stream_index);
+					if ((video_row = stmt_video->Step())) {
+						Media::Video::HDR10 hdr10(
+							{
+								{ video_row->At("red_x")->Value<int>(),		video_row->At("red_y")->Value<int>() },
+								{ video_row->At("green_x")->Value<int>(),	video_row->At("green_y")->Value<int>() },
+								{ video_row->At("blue_x")->Value<int>(),	video_row->At("blue_y")->Value<int>() },
+								{ video_row->At("white_x")->Value<int>(),	video_row->At("white_y")->Value<int>() },
+								{ video_row->At("lum_min")->Value<int>(),	video_row->At("lum_max")->Value<int>() }
+							}
+						);
+						if (!video_row->At("light_max")->IsNull() && !video_row->At("light_avg")->IsNull())
+							hdr10.SetLightLevel(
+								{
+									video_row->At("light_max")->Value<int>(), video_row->At("light_avg")->Value<int>()
+								}
+							);
+						if (video_row->At("has_plus")->Value<bool>())
+							hdr10.SetPlusFile("yes"); // File will be corrected by converter
+						metadata.SetHDR10(std::move(hdr10));
+					}
+					stmt_video->Reset();
+					stream->SetMetadata(std::move(metadata));
+					film->AddStream(stream);
+					break;
 				}
-				stmt_subtitle->Reset();
-				film->AddStream(stream);
+
+				case Media::Type::Subtitle: {
+					std::shared_ptr<Media::Subtitle::Stream> stream = std::make_shared<Media::Subtitle::Stream>(stream_index);
+					std::shared_ptr<SQLite::PreparedSTMT> stmt_subtitle = get_prepared("get_film_meta_subtitle");
+					stmt_subtitle->Bind(0, film_id);
+					stmt_subtitle->Bind(1, stream_index);
+					std::shared_ptr<SQLite::Row> subtitle_row;
+					if ((subtitle_row = stmt_subtitle->Step())) {
+						stream->SetMetadata({ subtitle_row->At("encoding")->Value<std::string>() });
+					}
+					stmt_subtitle->Reset();
+					film->AddStream(stream);
+				}
+				break;
 			}
 		}
 		stmt->Reset();
