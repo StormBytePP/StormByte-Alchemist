@@ -80,7 +80,7 @@ void File::SetCodec(const Codec& codec_cfg) {
 #include <iostream>
 void File::PostRead() noexcept {
 	/* Here we check validity of the successfully read config file */
-	auto new_root = std::make_shared<Group>("root"); // Name is unrelevant
+	auto new_root = std::make_unique<Group>("root"); // Name is unrelevant
 
 	if (Exists("database") && Child("database")->GetType() == Item::Type::String)
 		new_root->Add(Child("database"));
@@ -135,7 +135,7 @@ void File::PostRead() noexcept {
 		new_codec_root->AsGroup().Add(codec);
 	}
 
-	m_root = std::make_unique<Group>(*new_root);
+	m_root = std::move(new_root);
 	Write();
 }
 
