@@ -5,7 +5,7 @@
 #include <Alchemy/media/video/resolution.hxx>
 #include <Alchemy/media/metadata.hxx>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata() noexcept							= default;

@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-namespace Alchemist::Media {
+namespace Alchemy::Media {
 	class ALCHEMY_PUBLIC Codec {
 		public:
 			Codec(std::string&&, std::string&&, std::string&&) noexcept;

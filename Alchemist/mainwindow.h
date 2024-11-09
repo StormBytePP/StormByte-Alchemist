@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-namespace Alchemist::Alchemist {
+namespace Alchemy::Alchemist {
 
     namespace Ui {
         class MainWindow;

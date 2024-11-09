@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Alchemist::Media {
+namespace Alchemy::Media {
 	class ALCHEMY_PUBLIC Metadata {
 		public:
 			Metadata() noexcept							= default;

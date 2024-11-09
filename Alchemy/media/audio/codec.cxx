@@ -8,7 +8,7 @@
 #include <Alchemy/media/audio/codec/mp3.hxx>
 #include <Alchemy/media/audio/codec/wav.hxx>
 
-using namespace Alchemist::Media::Audio;
+using namespace Alchemy::Media::Audio;
 
 Codec::Codec(std::string&& name, std::string&& ffmpeg_name, std::string&& desc) noexcept:
 Media::Codec(std::move(name), std::move(ffmpeg_name), std::move(desc)) {}

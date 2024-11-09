@@ -1,6 +1,6 @@
 #include <Alchemy/database/file.hxx>
 
-using namespace Alchemist::Database;
+using namespace Alchemy::Database;
 
 int	File::GetFilmID() const noexcept { return m_film_id; }
 
@@ -46,6 +46,6 @@ bool File::GetFailedStatus() const noexcept { return m_failed; }
 
 void File::SetFailedStatus(bool failed) { m_failed = failed; }
 
-const std::vector<std::shared_ptr<Alchemist::Media::Stream>>& File::GetStreams() const noexcept { return m_streams; }
+const std::vector<std::shared_ptr<Alchemy::Media::Stream>>& File::GetStreams() const noexcept { return m_streams; }
 
-void File::AddStream(std::shared_ptr<Alchemist::Media::Stream> stream) { m_streams.push_back(stream); }
+void File::AddStream(std::shared_ptr<Alchemy::Media::Stream> stream) { m_streams.push_back(stream); }

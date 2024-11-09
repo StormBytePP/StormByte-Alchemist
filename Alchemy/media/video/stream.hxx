@@ -4,7 +4,7 @@
 #include <Alchemy/media/video/metadata.hxx>
 #include <Alchemy/media/stream.hxx>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC Stream: public Media::Stream {
 		public:
 			Stream(const int&) noexcept;

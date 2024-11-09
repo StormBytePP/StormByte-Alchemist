@@ -1,6 +1,6 @@
 #include <Alchemy/media/stream.hxx>
 
-using namespace Alchemist::Media;
+using namespace Alchemy::Media;
 
 Stream::Stream(const int& index, const Type& type) noexcept:m_index(index), m_type(type) {}
 

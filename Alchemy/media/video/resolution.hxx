@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC Resolution {
 		public:
 			Resolution(const int&, const int&);

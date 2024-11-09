@@ -2,7 +2,7 @@
 
 #include <Alchemy/media/video/codec.hxx>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC XVID: public Codec {
 		public:
 			XVID() noexcept;

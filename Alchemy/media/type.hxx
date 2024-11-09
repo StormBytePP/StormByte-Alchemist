@@ -2,7 +2,7 @@
 
 #include <Alchemy/visibility.h>
 
-namespace Alchemist::Media {
+namespace Alchemy::Media {
 	enum class ALCHEMY_PUBLIC Type: int {
 		Audio		= 1,
 		Video		= 2,

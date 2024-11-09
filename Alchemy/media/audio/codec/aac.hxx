@@ -2,7 +2,7 @@
 
 #include <Alchemy/media/audio/codec.hxx>
 
-namespace Alchemist::Media::Audio {
+namespace Alchemy::Media::Audio {
 	class ALCHEMY_PUBLIC AAC: public Codec {
 		public:
 			AAC() noexcept;

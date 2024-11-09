@@ -6,7 +6,7 @@
 #include <memory>
 #include <jsoncpp/json/json.h>
 
-namespace Alchemist::Media {
+namespace Alchemy::Media {
 	class Stream;
 	namespace Video { class HDR10; }
 

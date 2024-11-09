@@ -7,7 +7,7 @@
 #include <string>
 #include <utility>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC HDR10 {
 		public:
 			static const HDR10 DEFAULT;

@@ -1,6 +1,6 @@
 #include <Alchemy/media/video/resolution.hxx>
 
-using namespace Alchemist::Media::Video;
+using namespace Alchemy::Media::Video;
 
 Resolution::Resolution(const int& width, const int& height):
 m_width(width), m_height(height) {}

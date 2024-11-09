@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <string>
 
-namespace Alchemist {
+namespace Alchemy {
 	class ALCHEMY_PUBLIC Info {
 		public:
 			static const std::string 			Name;

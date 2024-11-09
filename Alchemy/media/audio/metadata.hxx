@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Alchemist::Media::Audio {
+namespace Alchemy::Media::Audio {
 	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const int&, const int&);

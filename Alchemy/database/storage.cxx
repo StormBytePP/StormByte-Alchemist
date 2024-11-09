@@ -1,4 +1,4 @@
-#include <Alchemy/database/alchemy.hxx>
+#include <Alchemy/database/storage.hxx>
 #include <Alchemy/database/file.hxx>
 #include <Alchemy/media/file.hxx>
 #include <Alchemy/media/audio/stream.hxx>
@@ -10,11 +10,11 @@
 #include <StormByte/database/sqlite/prepared_stmt.hxx>
 #include <StormByte/database/sqlite/result.hxx>
 
-using namespace Alchemist::Database;
+using namespace Alchemy::Database;
 using namespace StormByte::Database;
 
-const std::string Alchemy::DATABASE_CREATE_QUERY = ALCHEMY_DATABASE_CREATE_QUERY;
-const std::map<std::string, std::string> Alchemy::DATABASE_PREPARED_SENTENCES = {
+const std::string Storage::DATABASE_CREATE_QUERY = ALCHEMY_DATABASE_CREATE_QUERY;
+const std::map<std::string, std::string> Storage::DATABASE_PREPARED_SENTENCES = {
 	{ "new_film",					"INSERT INTO films(in_file, in_size, out_file, priority) VALUES (?, ?, ?, ?) RETURNING film_id"	},
 	{ "new_stream",					"INSERT INTO streams(film_id, stream_id, stream_type, title, lang) VALUES (?, ?, ?, ?, ?)"		},
 	{ "new_meta_audio",				"INSERT INTO stream_metadata_audio(film_id, stream_id, codec, sample_rate, channels) VALUES (?, ?, ?, ?, ?)"					},
@@ -39,13 +39,13 @@ const std::map<std::string, std::string> Alchemy::DATABASE_PREPARED_SENTENCES = 
 	{ "get_all_films",				"SELECT film_id FROM films ORDER BY film_id DESC" }
 };
 
-Alchemy::Alchemy(const std::filesystem::path& dbfile):SQLite::SQLite3(dbfile) {
+Storage::Storage(const std::filesystem::path& dbfile):SQLite::SQLite3(dbfile) {
 	init_database();
 }
 
-//Alchemy::~Alchemy() noexcept {}
+//Storage::~Alchemy() noexcept {}
 
-void Alchemy::ClearStatuses() {
+void Storage::ClearStatuses() {
 	begin_exclusive_transaction();
 
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("clear_statuses");
@@ -55,7 +55,7 @@ void Alchemy::ClearStatuses() {
 	commit_transaction();
 }
 
-int Alchemy::SaveFilm(const std::filesystem::path& source_file, const Media::File& outfile, const int& prio) {
+int Storage::SaveFilm(const std::filesystem::path& source_file, const Media::File& outfile, const int& prio) {
 	begin_exclusive_transaction();
 
 	/* Insert Film */
@@ -182,7 +182,7 @@ int Alchemy::SaveFilm(const std::filesystem::path& source_file, const Media::Fil
 	return film_id;
 }
 
-std::shared_ptr<File> Alchemy::GetFilm(const unsigned int& film_id) {
+std::shared_ptr<File> Storage::GetFilm(const unsigned int& film_id) {
 	std::shared_ptr<File> film;
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("get_film_data");
 	stmt->Bind(0, film_id);
@@ -320,7 +320,7 @@ std::shared_ptr<File> Alchemy::GetFilm(const unsigned int& film_id) {
 	return film;
 }
 
-std::shared_ptr<File> Alchemy::GetFilm() {
+std::shared_ptr<File> Storage::GetFilm() {
 	begin_exclusive_transaction();
 
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("get_film_id_for_encode");
@@ -340,7 +340,7 @@ std::shared_ptr<File> Alchemy::GetFilm() {
 	return film;
 }
 
-void Alchemy::SetAsFailed(const File& film) {
+void Storage::SetAsFailed(const File& film) {
 	begin_exclusive_transaction();
 
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("mark_film_as_failed");
@@ -351,7 +351,7 @@ void Alchemy::SetAsFailed(const File& film) {
 	commit_transaction();
 }
 
-void Alchemy::SetAsCompleted(const File& film) {
+void Storage::SetAsCompleted(const File& film) {
 	begin_exclusive_transaction();
 
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("complete_film");
@@ -364,7 +364,7 @@ void Alchemy::SetAsCompleted(const File& film) {
 	commit_transaction();
 }
 
-std::list<std::shared_ptr<File>> Alchemy::GetAllFilms() {
+std::list<std::shared_ptr<File>> Storage::GetAllFilms() {
 	begin_exclusive_transaction();
 
 	std::shared_ptr<SQLite::PreparedSTMT> stmt = get_prepared("get_all_films");
@@ -377,7 +377,7 @@ std::list<std::shared_ptr<File>> Alchemy::GetAllFilms() {
 	return films;
 }
 
-void Alchemy::post_init_action() noexcept {
+void Storage::post_init_action() noexcept {
 	try {
 		silent_query("SELECT * FROM films");
 	}

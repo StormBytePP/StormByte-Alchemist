@@ -2,7 +2,7 @@
 
 #include <Alchemy/media/audio/codec.hxx>
 
-namespace Alchemist::Media::Audio {
+namespace Alchemy::Media::Audio {
 	class ALCHEMY_PUBLIC MP3: public Codec {
 		public:
 			MP3() noexcept;

@@ -5,24 +5,24 @@
 #include <windows.h>
 #endif
 
-const std::string Alchemist::Info::Name 	= LIBRARY_NAME;
-const std::string Alchemist::Info::Author 	= LIBRARY_AUTHOR;
-const std::string Alchemist::Info::Version 	= LIBRARY_VERSION;
-const std::string Alchemist::Info::URI 		= PROJECT_URI;
+const std::string Alchemy::Info::Name 	= LIBRARY_NAME;
+const std::string Alchemy::Info::Author 	= LIBRARY_AUTHOR;
+const std::string Alchemy::Info::Version 	= LIBRARY_VERSION;
+const std::string Alchemy::Info::URI 		= PROJECT_URI;
 
-const std::filesystem::path Alchemist::Info::ffmpeg_path() {
+const std::filesystem::path Alchemy::Info::ffmpeg_path() {
 	return prefix() / FFMPEG_PATH;
 }
 
-const std::filesystem::path Alchemist::Info::ffprobe_path() {
+const std::filesystem::path Alchemy::Info::ffprobe_path() {
 	return prefix() / FFPROBE_PATH;
 }
 
-const std::filesystem::path Alchemist::Info::hdr10plus_tool_path() {
+const std::filesystem::path Alchemy::Info::hdr10plus_tool_path() {
 	return prefix() / HDR10PLUS_TOOL_PATH;
 }
 
-const std::filesystem::path Alchemist::Info::prefix() {
+const std::filesystem::path Alchemy::Info::prefix() {
 	#ifdef WINDOWS
 	TCHAR ownPth[MAX_PATH]; 
 

@@ -3,7 +3,7 @@
 #include <Alchemy/media/subtitle/codec/pgs.hxx>
 #include <Alchemy/media/subtitle/codec/subrip.hxx>
 
-using namespace Alchemist::Media::Subtitle;
+using namespace Alchemy::Media::Subtitle;
 
 Codec::Codec(std::string&& name, std::string&& ffmpeg_name, std::string&& desc) noexcept:
 Media::Codec(std::move(name), std::move(ffmpeg_name), std::move(desc)) {}

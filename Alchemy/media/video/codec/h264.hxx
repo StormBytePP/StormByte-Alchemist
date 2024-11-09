@@ -2,7 +2,7 @@
 
 #include <Alchemy/media/video/codec.hxx>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC H264: public Codec {
 		public:
 			H264() noexcept;

@@ -4,7 +4,7 @@
 #include <Alchemy/media/audio/metadata.hxx>
 #include <Alchemy/media/stream.hxx>
 
-namespace Alchemist::Media::Audio {
+namespace Alchemy::Media::Audio {
 	class ALCHEMY_PUBLIC Stream: public Media::Stream {
 		public:
 			Stream(const int&) noexcept;

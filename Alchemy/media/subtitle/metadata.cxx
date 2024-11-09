@@ -1,6 +1,6 @@
 #include <Alchemy/media/subtitle/metadata.hxx>
 
-using namespace Alchemist::Media::Subtitle;
+using namespace Alchemy::Media::Subtitle;
 
 Metadata::Metadata(const std::string& encoding):m_encoding(encoding) {}
 

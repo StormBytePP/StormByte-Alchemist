@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace Alchemist::Media::Subtitle {
+namespace Alchemy::Media::Subtitle {
 	class ALCHEMY_PUBLIC Metadata: public Media::Metadata {
 		public:
 			Metadata(const std::string&);

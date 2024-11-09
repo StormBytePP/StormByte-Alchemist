@@ -1,6 +1,6 @@
 #include <Alchemy/media/video/stream.hxx>
 
-using namespace Alchemist::Media::Video;
+using namespace Alchemy::Media::Video;
 
 Stream::Stream(const int& index) noexcept:Media::Stream(index, Type::Video) {}
 

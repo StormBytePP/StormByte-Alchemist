@@ -4,7 +4,7 @@
 
 #include <map>
 
-namespace Alchemist::Media::Audio {
+namespace Alchemy::Media::Audio {
 	class ALCHEMY_PUBLIC Codec: public Media::Codec {
 		public:
 			Codec(std::string&&, std::string&&, std::string&&) noexcept;

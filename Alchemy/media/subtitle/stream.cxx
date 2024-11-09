@@ -1,6 +1,6 @@
 #include <Alchemy/media/subtitle/stream.hxx>
 
-using namespace Alchemist::Media::Subtitle;
+using namespace Alchemy::Media::Subtitle;
 
 Stream::Stream(const int& index) noexcept:Media::Stream(index, Type::Subtitle) {}
 

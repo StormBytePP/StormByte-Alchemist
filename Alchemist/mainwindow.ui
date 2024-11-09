@@ -2,8 +2,8 @@
  <author/>
  <comment/>
  <exportmacro/>
- <class>Alchemist::Alchemist::MainWindow</class>
- <widget class="QMainWindow" name="Alchemist::Alchemist::MainWindow">
+ <class>Alchemy::Alchemy::MainWindow</class>
+ <widget class="QMainWindow" name="Alchemy::Alchemy::MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -4,7 +4,7 @@
 
 #include <map>
 
-namespace Alchemist::Media::Video {
+namespace Alchemy::Media::Video {
 	class ALCHEMY_PUBLIC Codec: public Media::Codec {
 		public:
 			Codec(std::string&&, std::string&&, std::string&&) noexcept;

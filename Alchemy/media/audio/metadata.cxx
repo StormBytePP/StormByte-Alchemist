@@ -1,6 +1,6 @@
 #include <Alchemy/media/audio/metadata.hxx>
 
-using namespace Alchemist::Media::Audio;
+using namespace Alchemy::Media::Audio;
 
 Metadata::Metadata(const int& sample_rate, const int& channels):
 Media::Metadata(), m_channels(channels), m_sample_rate(sample_rate) {}

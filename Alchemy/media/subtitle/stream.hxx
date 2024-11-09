@@ -4,7 +4,7 @@
 #include <Alchemy/media/subtitle/metadata.hxx>
 #include <Alchemy/media/stream.hxx>
 
-namespace Alchemist::Media::Subtitle {
+namespace Alchemy::Media::Subtitle {
 	class ALCHEMY_PUBLIC Stream: public Media::Stream {
 		public:
 			Stream(const int&) noexcept;

@@ -1,22 +1,20 @@
 #include <iostream>
 
-#include <Alchemy/database/alchemy.hxx>
+#include <Alchemy/config/file.hxx>
 
-using namespace Alchemist::Database;
+using namespace Alchemy::Config;
 
 #include <iostream>
 
 int main() {
-	// Config& cfg = Config::Instance();
+	File& cfg = File::Instance();
 
-	// std::cout << "libx265 options: ";
-	// Config::Codec codec = cfg.GetCodec("libx265");
-	// if (codec.options)
-	// 	std::cout << "\"" << *codec.options << "\"" <<  std::endl;
-	// else
-	// 	std::cout << "(not available)" << std::endl;
-
-	Alchemy al("/tmp/db.sqlite");
+	std::cout << "libx265 options: ";
+	std::optional<Codec> codec = cfg.GetCodec("libx265");
+	if (codec && codec->c_options)
+		std::cout << "\"" << *codec->c_options << "\"" <<  std::endl;
+	else
+		std::cout << "(not available)" << std::endl;
 
 	return 0;
 }

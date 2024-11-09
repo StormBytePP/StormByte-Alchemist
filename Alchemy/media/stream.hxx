@@ -7,7 +7,7 @@
 #include <optional>
 #include <string>
 
-namespace Alchemist::Media {
+namespace Alchemy::Media {
 	class ALCHEMY_PUBLIC Stream {
 		public:
 			Stream(const int&, const Type&) noexcept;

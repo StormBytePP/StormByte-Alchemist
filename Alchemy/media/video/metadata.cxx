@@ -1,6 +1,6 @@
 #include <Alchemy/media/video/metadata.hxx>
 
-using namespace Alchemist::Media::Video;
+using namespace Alchemy::Media::Video;
 
 const std::optional<Resolution>& Metadata::GetResolution() const noexcept { return m_resolution; }
 

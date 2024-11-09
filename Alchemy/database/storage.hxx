@@ -7,18 +7,18 @@
 #include <list>
 #include <map>
 
-namespace Alchemist::Media { class File; }
+namespace Alchemy::Media { class File; }
 
-namespace Alchemist::Database {
+namespace Alchemy::Database {
 	class File;
-	class ALCHEMY_PUBLIC Alchemy final: public StormByte::Database::SQLite::SQLite3 {
+	class ALCHEMY_PUBLIC Storage final: public StormByte::Database::SQLite::SQLite3 {
 		public:
-			Alchemy(const std::filesystem::path& dbfile);
-			Alchemy(const Alchemy& db) 				= delete;
-			Alchemy(Alchemy&& db) 					= default;
-			Alchemy& operator=(const Alchemy& db) 	= delete;
-			Alchemy& operator=(Alchemy&& db) 		= default;
-			~Alchemy() noexcept override			= default;
+			Storage(const std::filesystem::path& dbfile);
+			Storage(const Storage& db) 				= delete;
+			Storage(Storage&& db) 					= default;
+			Storage& operator=(const Storage& db) 	= delete;
+			Storage& operator=(Storage&& db) 		= default;
+			~Storage() noexcept override			= default;
 
 			void 									ClearStatuses();
 			int 									SaveFilm(const std::filesystem::path&, const Media::File&, const int&);

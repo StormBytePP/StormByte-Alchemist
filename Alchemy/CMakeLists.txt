@@ -3,9 +3,13 @@ set(ALCHEMY_SRCs
 	# Library informations
 	${ALCHEMY_DIR}/info.cxx
 
+	# Config
+	${ALCHEMY_DIR}/config/codec.cxx
+	${ALCHEMY_DIR}/config/file.cxx
+
 	# Database
-	${ALCHEMY_DIR}/database/alchemy.cxx
 	${ALCHEMY_DIR}/database/file.cxx
+	${ALCHEMY_DIR}/database/storage.cxx
 
 	# Media handling
 	${ALCHEMY_DIR}/media/audio/codec.cxx
@@ -43,11 +47,10 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/video/resolution.cxx
 	${ALCHEMY_DIR}/media/video/stream.cxx
 
-	# System internals
-	${ALCHEMY_DIR}/system/config.cxx
-	${ALCHEMY_DIR}/system/executable/ffmpeg.cxx
-	${ALCHEMY_DIR}/system/executable/ffprobe.cxx
-	${ALCHEMY_DIR}/system/executable/hdr10plus.cxx
+	# System
+	${ALCHEMY_DIR}/system/ffmpeg.cxx
+	${ALCHEMY_DIR}/system/ffprobe.cxx
+	${ALCHEMY_DIR}/system/hdr10plus.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})
@@ -55,7 +58,7 @@ target_compile_features(Alchemy PUBLIC cxx_std_20)
 target_compile_definitions(Alchemy PRIVATE Alchemy_EXPORTS)
 target_include_directories(Alchemy
 	SYSTEM PUBLIC ${ALCHEMIST_MAIN_DIR}
-	PRIVATE ${ALCHEMY_DIR} ${CMAKE_BINARY_DIR}
+	PRIVATE ${CMAKE_BINARY_DIR}
 )
 target_link_libraries(Alchemy
 	PUBLIC jsoncpp
@@ -84,6 +87,7 @@ else()
 	target_compile_options(Alchemy PRIVATE -fPIC -fvisibility=hidden $<$<COMPILE_LANGUAGE:CXX>:-fvisibility-inlines-hidden>)
 endif()
 
+add_subdirectory(config)
 add_subdirectory(database)
 include(OptionalFeatures)
 include(GetVersionFromGitTag)

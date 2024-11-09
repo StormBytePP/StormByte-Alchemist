@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    Alchemist::Alchemist::MainWindow w;
+    Alchemy::Alchemy::MainWindow w;
     w.show();
     return a.exec();
 }

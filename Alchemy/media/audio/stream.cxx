@@ -1,6 +1,6 @@
 #include <Alchemy/media/audio/stream.hxx>
 
-using namespace Alchemist::Media::Audio;
+using namespace Alchemy::Media::Audio;
 
 Stream::Stream(const int& index) noexcept:Media::Stream(index, Type::Audio) {}
 

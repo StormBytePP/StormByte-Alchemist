@@ -2,7 +2,7 @@
 
 #include <Alchemy/media/subtitle/codec.hxx>
 
-namespace Alchemist::Media::Subtitle {
+namespace Alchemy::Media::Subtitle {
 	class ALCHEMY_PUBLIC Subrip: public Codec {
 		public:
 			Subrip() noexcept;

@@ -6,13 +6,13 @@
 #include <Alchemy/media/video/stream.hxx>
 #include <Alchemy/media/subtitle/codec.hxx>
 #include <Alchemy/media/subtitle/stream.hxx>
-#include <Alchemy/system/executable/ffmpeg.hxx>
-#include <Alchemy/system/executable/ffprobe.hxx>
-#include <Alchemy/system/executable/hdr10plus.hxx>
+#include <Alchemy/system/ffmpeg.hxx>
+#include <Alchemy/system/ffprobe.hxx>
+#include <Alchemy/system/hdr10plus.hxx>
 
 #include <sstream>
 
-using namespace Alchemist::Media;
+using namespace Alchemy::Media;
 
 File::File(const std::filesystem::path& filename):m_filename(filename) { InitStreams(); }
 

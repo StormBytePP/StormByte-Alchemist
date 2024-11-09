@@ -6,9 +6,9 @@
 #include <optional>
 #include <vector>
 
-namespace Alchemist::Media { class Stream; }
+namespace Alchemy::Media { class Stream; }
 
-namespace Alchemist::Database {
+namespace Alchemy::Database {
 	class ALCHEMY_PUBLIC File {
 		public:
 			File()							= default;

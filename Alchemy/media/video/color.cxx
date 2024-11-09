@@ -1,6 +1,6 @@
 #include <Alchemy/media/video/color.hxx>
 
-using namespace Alchemist::Media::Video;
+using namespace Alchemy::Media::Video;
 
 const Color Color::DEFAULT = { "bt2020", "bt2020nc", "smpte2084", "yuv420p10le" };
 

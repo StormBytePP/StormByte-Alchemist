@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace Alchemist::System {
+namespace Alchemy::System {
 	class ALCHEMY_PRIVATE HDR10Plus final: public StormByte::System::Executable {
 		public:
 			HDR10Plus(const HDR10Plus&)				= delete;

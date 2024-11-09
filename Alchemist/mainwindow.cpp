@@ -1,14 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-Alchemist::Alchemist::MainWindow::MainWindow(QWidget *parent) :
+Alchemy::Alchemy::MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 }
 
-Alchemist::Alchemist::MainWindow::~MainWindow()
+Alchemy::Alchemy::MainWindow::~MainWindow()
 {
     delete ui;
 }

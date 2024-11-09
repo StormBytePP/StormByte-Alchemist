@@ -3,7 +3,7 @@
 #include <Alchemy/media/video/codec/h265.hxx>
 #include <Alchemy/media/video/codec/xvid.hxx>
 
-using namespace Alchemist::Media::Video;
+using namespace Alchemy::Media::Video;
 
 Codec::Codec(std::string&& name, std::string&& ffmpeg_name, std::string&& desc) noexcept:
 Media::Codec(std::move(name), std::move(ffmpeg_name), std::move(desc)) {}

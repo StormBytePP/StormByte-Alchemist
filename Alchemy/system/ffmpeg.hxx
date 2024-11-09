@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace Alchemist::System {
+namespace Alchemy::System {
 	class ALCHEMY_PRIVATE FFmpeg final: public StormByte::System::Executable {
 		public:
 			FFmpeg(const FFmpeg&)				= delete;
