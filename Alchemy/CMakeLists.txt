@@ -2,6 +2,7 @@ set(ALCHEMY_DIR ${ALCHEMIST_MAIN_DIR}/Alchemy)
 set(ALCHEMY_SRCs
 	# Library informations
 	${ALCHEMY_DIR}/info.cxx
+	${ALCHEMY_DIR}/path.cxx
 
 	# Config
 	${ALCHEMY_DIR}/config/codec.cxx

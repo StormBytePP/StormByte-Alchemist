@@ -29,17 +29,9 @@ namespace Alchemy::Config {
 			File& operator=(const File&)		= delete;
 			File& operator=(File&&)				= delete;
 
-			static const std::filesystem::path 	GetHomePath();
-			static const std::filesystem::path 	GetConfPath();
 			static const std::filesystem::path 	GetFilePath();
 			void 								Initialize();
 			void								PostRead() noexcept override;
-			static const std::string			ExpandEnvironmentVariable(const std::string&);
-			#ifdef WINDOWS
-			static const std::string			ExpandEnvironmentVariable(const std::wstring&);
-			static std::string					UTF8Encode(const std::wstring&);
-			static std::wstring					UTF8Decode(const std::string&);
-			#endif
 
 			static const std::string			DEFAULT_CONFIG;
 	};
