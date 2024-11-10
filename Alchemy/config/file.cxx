@@ -108,6 +108,11 @@ void File::PostRead() noexcept {
 				new_codec_item->Add("bitrate", Item::Type::String)->SetString(it->AsGroup().Child("bitrate")->AsString());
 			if (it->AsGroup().Exists("options") && it->AsGroup().Child("options")->GetType() == Item::Type::String)
 				new_codec_item->Add("options", Item::Type::String)->SetString(it->AsGroup().Child("options")->AsString());
+			if (it->AsGroup().Exists("ffmpeg") && it->AsGroup().Child("ffmpeg")->GetType() == Item::Type::Group) {
+				auto codec_ffmpeg = new_codec_item->Add("ffmpeg", Item::Type::Group);
+				for (auto ffmpeg_it = it->AsGroup().Begin(); ffmpeg_it != it->AsGroup().End(); ffmpeg_it++)
+					codec_ffmpeg->AsGroup().Add(ffmpeg_it->GetName(), Item::Type::String)->SetString(ffmpeg_it->AsString());
+			}
 
 			if (new_codec_item->Exists("bitrate") || new_codec_item->Exists("options"))
 				new_codec_root->AsGroup().Add(new_codec_item);
@@ -116,11 +121,15 @@ void File::PostRead() noexcept {
 	else {
 		// Reconstruct with default values
 		std::shared_ptr<Group> codec;
+		std::shared_ptr<Item> ffmpeg;
 
 		// Default for fdk_aac
 		codec = std::make_shared<Group>("fdk_aac");
 		codec->Add("bitrate", Item::Type::Integer)->SetInteger(128);
+		ffmpeg = codec->Add("ffmpeg", Item::Type::Group);
+		ffmpeg->AsGroup().Add("profile", Item::Type::String)->SetString("aac_he");
 		new_codec_root->AsGroup().Add(codec);
+
 
 		// Default for libx265
 		codec = std::make_shared<Group>("libx265");
