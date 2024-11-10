@@ -121,13 +121,13 @@ void File::PostRead() noexcept {
 	else {
 		// Reconstruct with default values
 		std::shared_ptr<Group> codec;
-		std::shared_ptr<Item> ffmpeg;
+		std::shared_ptr<Group> ffmpeg;
 
 		// Default for fdk_aac
 		codec = std::make_shared<Group>("fdk_aac");
 		codec->Add("bitrate", Item::Type::Integer)->SetInteger(128);
-		ffmpeg = codec->Add("ffmpeg", Item::Type::Group);
-		ffmpeg->AsGroup().Add("profile", Item::Type::String)->SetString("aac_he");
+		ffmpeg = std::dynamic_pointer_cast<Group>(codec->Add("ffmpeg", Item::Type::Group));
+		ffmpeg->Add("profile", Item::Type::String)->SetString("aac_he");
 		new_codec_root->AsGroup().Add(codec);
 
 		// Default for libopus
