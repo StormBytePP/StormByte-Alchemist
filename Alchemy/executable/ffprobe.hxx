@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace Alchemy::System {
+namespace Alchemy::Executable {
 	class ALCHEMY_PRIVATE FFprobe final: public StormByte::System::Executable {
 		public:
 			FFprobe(const FFprobe&)				= delete;

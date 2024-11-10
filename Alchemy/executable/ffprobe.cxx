@@ -1,7 +1,7 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/system/ffprobe.hxx>
+#include <Alchemy/executable/ffprobe.hxx>
 
-using namespace Alchemy::System;
+using namespace Alchemy::Executable;
 
 FFprobe::FFprobe(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
 

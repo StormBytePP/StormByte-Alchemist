@@ -1,7 +1,7 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/system/ffmpeg.hxx>
+#include <Alchemy/executable/ffmpeg.hxx>
 
-using namespace Alchemy::System;
+using namespace Alchemy::Executable;
 
 FFmpeg::FFmpeg(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) {
 	Executable::operator<<(StormByte::System::EoF);

@@ -1,7 +1,7 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/system/hdr10plus.hxx>
+#include <Alchemy/executable/hdr10plus.hxx>
 
-using namespace Alchemy::System;
+using namespace Alchemy::Executable;
 
 HDR10Plus::HDR10Plus(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
 
