@@ -32,7 +32,7 @@ namespace Alchemy::Database {
 			void												SetOutSize(const unsigned long long&);
 			const std::optional<unsigned int>&					GetEncodeTime() const noexcept;
 			void												SetEncodeTime(const int&);
-			const int&								GetPriority() const noexcept;
+			const int&											GetPriority() const noexcept;
 			void												SetPriority(const int&);
 			bool												GetActiveStatus() const noexcept;
 			void												SetActiveStatus(bool);
