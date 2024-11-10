@@ -1,11 +1,6 @@
 #pragma once
 
-// Since only Windows and Linux OS is supported...
-#if defined _WIN32 || defined __CYGWIN__
-	#define WINDOWS
-#else
-	#define LINUX
-#endif
+#include <StormByte/system/definitions.h>
 
 #ifdef WINDOWS
 	#ifdef Alchemy_EXPORTS
