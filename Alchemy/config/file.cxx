@@ -130,6 +130,11 @@ void File::PostRead() noexcept {
 		ffmpeg->AsGroup().Add("profile", Item::Type::String)->SetString("aac_he");
 		new_codec_root->AsGroup().Add(codec);
 
+		// Default for libopus
+		codec = std::make_shared<Group>("libopus");
+		codec->Add("bitrate", Item::Type::Integer)->SetInteger(96);
+		new_codec_root->AsGroup().Add(codec);
+
 
 		// Default for libx265
 		codec = std::make_shared<Group>("libx265");
