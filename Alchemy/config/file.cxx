@@ -48,26 +48,38 @@ std::optional<Codec> File::GetCodec(const std::string& codec) const {
 	try {
 		auto item = LookUp("codec/" + codec);
 		codec_cfg = { codec };
-		if (item->AsGroup().Exists("bitrate"))
+		if (item->AsGroup().Exists("bitrate") && item->AsGroup().Child("bitrate")->GetType() == Item::Type::Integer)
 			codec_cfg->c_bitrate = item->AsGroup().Child("bitrate")->AsInteger();
-		if (item->AsGroup().Exists("options"))
+		if (item->AsGroup().Exists("options") && item->AsGroup().Child("bitrate")->GetType() == Item::Type::String)
 			codec_cfg->c_options = item->AsGroup().Child("options")->AsString();
+		if (item->AsGroup().Exists("ffmpeg") && item->AsGroup().Child("ffmpeg")->GetType() == Item::Type::Group) {
+			std::list<std::pair<std::string, std::string>> ffmpeg_option_list;
+			for (auto it = item->AsGroup().Child("ffmpeg")->AsGroup().Begin(); it != item->AsGroup().Child("ffmpeg")->AsGroup().End(); it++)
+				ffmpeg_option_list.push_back({ it->GetName(), it->AsString() });
+			codec_cfg->c_ffmpeg = ffmpeg_option_list;
+		}
 	}
 	catch(...) { /* Ignored */ }
 	return codec_cfg;
 }
 
 void File::SetCodec(const Codec& codec_cfg) {
-	auto codec_group = Child("codec");
+	std::shared_ptr<Group> codec_group = std::dynamic_pointer_cast<Group>(Child("codec"));
 	if (codec_group->AsGroup().Exists(codec_cfg.c_name))
 		codec_group->AsGroup().Remove(codec_cfg.c_name);
 	
 	/* We only add the item if there is at least one valid */
-	if (codec_cfg.c_bitrate || codec_cfg.c_options) {
+	if (codec_cfg.c_bitrate || codec_cfg.c_options || codec_cfg.c_ffmpeg) {
+		codec_group = std::dynamic_pointer_cast<Group>(Add(codec_cfg.c_name, Item::Type::Group));
 		if (codec_cfg.c_bitrate)
 			codec_group->AsGroup().Add("bitrate", Item::Type::Integer)->SetInteger(*codec_cfg.c_bitrate);
 		if (codec_cfg.c_options)
 			codec_group->AsGroup().Add("options", Item::Type::String)->SetString(*codec_cfg.c_options);
+		if (codec_cfg.c_ffmpeg) {
+			std::shared_ptr<Group> codec_ffmpeg = std::dynamic_pointer_cast<Group>(codec_group->Add("ffmpeg", Item::Type::Group));
+			for (auto it = codec_cfg.c_ffmpeg->begin(); it != codec_cfg.c_ffmpeg->end(); it++)
+				codec_ffmpeg->Add(it->first, Item::Type::String)->SetString(it->second);
+		}
 	}
 }
 
