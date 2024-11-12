@@ -1,9 +1,9 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/executable/hdr10plus.hxx>
+#include <Alchemy/process/hdr10plus.hxx>
 
-using namespace Alchemy::Executable;
+using namespace Alchemy::Process;
 
-HDR10Plus::HDR10Plus(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
+HDR10Plus::HDR10Plus(const std::filesystem::path& prog, std::vector<std::string>&& args):Process(prog, std::move(args)) { }
 
 std::unique_ptr<HDR10Plus> HDR10Plus::hdr_plus_detect() {
 	return std::unique_ptr<HDR10Plus>(

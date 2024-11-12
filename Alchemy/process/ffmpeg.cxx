@@ -1,10 +1,10 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/executable/ffmpeg.hxx>
+#include <Alchemy/process/ffmpeg.hxx>
 
-using namespace Alchemy::Executable;
+using namespace Alchemy::Process;
 
-FFmpeg::FFmpeg(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) {
-	Executable::operator<<(StormByte::System::EoF);
+FFmpeg::FFmpeg(const std::filesystem::path& prog, std::vector<std::string>&& args):Process(prog, std::move(args)) {
+	Process::operator<<(StormByte::System::EoF);
 }
 
 std::unique_ptr<FFmpeg> FFmpeg::hdr_stream(const std::filesystem::path& file) {

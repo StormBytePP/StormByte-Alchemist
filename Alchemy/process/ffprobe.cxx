@@ -1,9 +1,9 @@
 #include <Alchemy/info.hxx>
-#include <Alchemy/executable/ffprobe.hxx>
+#include <Alchemy/process/ffprobe.hxx>
 
-using namespace Alchemy::Executable;
+using namespace Alchemy::Process;
 
-FFprobe::FFprobe(const std::filesystem::path& prog, std::vector<std::string>&& args):Executable(prog, std::move(args)) { }
+FFprobe::FFprobe(const std::filesystem::path& prog, std::vector<std::string>&& args):Process(prog, std::move(args)) { }
 
 std::unique_ptr<FFprobe> FFprobe::all_info(const std::filesystem::path& file) {
 	return std::unique_ptr<FFprobe>(

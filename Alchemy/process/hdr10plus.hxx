@@ -1,11 +1,11 @@
 #pragma once
 
-#include <StormByte/system/executable.hxx>
+#include <StormByte/system/process.hxx>
 
 #include <memory>
 
-namespace Alchemy::Executable {
-	class ALCHEMY_PRIVATE HDR10Plus final: public StormByte::System::Executable {
+namespace Alchemy::Process {
+	class ALCHEMY_PRIVATE HDR10Plus final: public StormByte::System::Process {
 		public:
 			HDR10Plus(const HDR10Plus&)				= delete;
 			HDR10Plus(HDR10Plus&&)					= delete;

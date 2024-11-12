@@ -48,10 +48,10 @@ set(ALCHEMY_SRCs
 	${ALCHEMY_DIR}/media/video/resolution.cxx
 	${ALCHEMY_DIR}/media/video/stream.cxx
 
-	# Executable
-	${ALCHEMY_DIR}/executable/ffmpeg.cxx
-	${ALCHEMY_DIR}/executable/ffprobe.cxx
-	${ALCHEMY_DIR}/executable/hdr10plus.cxx
+	# Process
+	${ALCHEMY_DIR}/process/ffmpeg.cxx
+	${ALCHEMY_DIR}/process/ffprobe.cxx
+	${ALCHEMY_DIR}/process/hdr10plus.cxx
 )
 
 add_library(Alchemy SHARED ${ALCHEMY_SRCs})

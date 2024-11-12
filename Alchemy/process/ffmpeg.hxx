@@ -1,11 +1,11 @@
 #pragma once
 
-#include <StormByte/system/executable.hxx>
+#include <StormByte/system/process.hxx>
 
 #include <memory>
 
-namespace Alchemy::Executable {
-	class ALCHEMY_PRIVATE FFmpeg final: public StormByte::System::Executable {
+namespace Alchemy::Process {
+	class ALCHEMY_PRIVATE FFmpeg final: public StormByte::System::Process {
 		public:
 			FFmpeg(const FFmpeg&)				= delete;
 			FFmpeg(FFmpeg&&)					= delete;

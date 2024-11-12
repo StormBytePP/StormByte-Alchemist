@@ -6,9 +6,9 @@
 #include <Alchemy/media/video/stream.hxx>
 #include <Alchemy/media/subtitle/codec.hxx>
 #include <Alchemy/media/subtitle/stream.hxx>
-#include <Alchemy/executable/ffmpeg.hxx>
-#include <Alchemy/executable/ffprobe.hxx>
-#include <Alchemy/executable/hdr10plus.hxx>
+#include <Alchemy/process/ffmpeg.hxx>
+#include <Alchemy/process/ffprobe.hxx>
+#include <Alchemy/process/hdr10plus.hxx>
 
 #include <sstream>
 
@@ -28,13 +28,13 @@ void File::InitStreams() {
 	if (!std::filesystem::exists(m_filename))
 		return;
 
-	std::unique_ptr<Executable::FFprobe> probe;
+	std::unique_ptr<Process::FFprobe> probe;
 	std::string buffer;
 	Json::Reader reader;
     Json::Value root;
 
 	/* Getting FFprobe data in Json*/
-	probe = Executable::FFprobe::all_info(m_filename);
+	probe = Process::FFprobe::all_info(m_filename);
 	probe->wait();
 	*probe >> buffer;
 
@@ -158,13 +158,13 @@ std::shared_ptr<Stream> File::ParseSubtitleInfo(const Json::Value& json_part) {
 
 std::shared_ptr<Video::HDR10> File::GetHDR10Info() {
 	std::shared_ptr<Video::HDR10> hdr10info;
-	std::unique_ptr<Executable::FFprobe> probe;
+	std::unique_ptr<Process::FFprobe> probe;
 	std::string buffer;
 	Json::Reader reader;
     Json::Value root;
 
 	/* Getting FFprobe data in Json*/
-	probe = Executable::FFprobe::hdr10_info(m_filename);
+	probe = Process::FFprobe::hdr10_info(m_filename);
 	probe->wait();
 	*probe >> buffer;
 
@@ -237,8 +237,8 @@ std::shared_ptr<Video::HDR10> File::GetHDR10Info() {
 }
 
 bool File::HasHDR10Plus() {
-	auto ffmpeg = Executable::FFmpeg::hdr_stream(m_filename);
-	auto hdr10plus = Executable::HDR10Plus::hdr_plus_detect();
+	auto ffmpeg = Process::FFmpeg::hdr_stream(m_filename);
+	auto hdr10plus = Process::HDR10Plus::hdr_plus_detect();
 	std::string buffer;
 
 	*ffmpeg >> *hdr10plus;
@@ -250,7 +250,7 @@ bool File::HasHDR10Plus() {
 }
 
 unsigned int File::CountVideoFrames() {
-	auto ffprobe = Executable::FFprobe::count_video_frames(m_filename);
+	auto ffprobe = Process::FFprobe::count_video_frames(m_filename);
 	std::string buffer;
 	Json::Reader reader;
     Json::Value root;
